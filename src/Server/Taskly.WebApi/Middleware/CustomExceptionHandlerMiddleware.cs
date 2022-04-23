@@ -37,14 +37,20 @@ public class CustomExceptionHandlerMiddleware
                 code = HttpStatusCode.BadRequest;
                 result = JsonSerializer.Serialize(validationException.Errors);
                 break;
-            case NotFoundException:
+            case NotFoundException notFoundException:
                 code = HttpStatusCode.NotFound;
+                break;
+            case AlreadyExistsException alreadyExistsException:
+                code = HttpStatusCode.Conflict;
+                break;
+            case ForbiddenException forbiddenException:
+                code = HttpStatusCode.Forbidden;
                 break;
         }
         
         if (result == string.Empty)
         {
-            result = JsonSerializer.Serialize(new {errpr = exception.Message});
+            result = JsonSerializer.Serialize(new {Error = exception.Message});
         }
 
         context.Response.ContentType = "application/json";

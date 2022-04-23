@@ -8,6 +8,7 @@ namespace Taskly.DAL
     public class TasklyDbContext : DbContext, ITasklyDbContext
     {
         public DbSet<Note> Notes { get; set; }
+        public DbSet<TasklyUser> Users { get; set; }
 
         public TasklyDbContext(DbContextOptions<TasklyDbContext> options) : base(options)
         {
@@ -17,6 +18,7 @@ namespace Taskly.DAL
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.ApplyConfiguration(new NoteConfiguration());
+            builder.ApplyConfiguration(new TasklyUserConfiguration());
             base.OnModelCreating(builder);
         }
 
