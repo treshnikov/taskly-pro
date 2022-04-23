@@ -13,14 +13,8 @@ namespace Taskly.WebApi.Controllers
         [HttpPost("token")]
         [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult> Token([FromForm] GetJwtTokenRequest tasklyUser)
+        public async Task<ActionResult> Token([FromForm] GetJwtTokenRequest request)
         {
-            var request = new GetJwtTokenRequest
-            {
-                Name = tasklyUser.Name,
-                Password = tasklyUser.Password
-            };
-
             var res = await Mediator.Send(request);
 
             return Ok(res);
