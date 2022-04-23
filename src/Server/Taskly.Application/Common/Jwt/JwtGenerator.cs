@@ -21,9 +21,12 @@ namespace Taskly.Application.Jwt
             // todo - extract roles from DB
             var claims = new List<Claim> {
                 new Claim(JwtRegisteredClaimNames.NameId, user.Name),
-                new Claim(ClaimsIdentity.DefaultRoleClaimType,"Admin"),
-                new Claim(ClaimsIdentity.DefaultRoleClaimType,"User"),
             };
+
+            foreach (var role in user.Roles)
+            {
+                claims.Add(new Claim(ClaimsIdentity.DefaultRoleClaimType, role.Name));
+            }
 
             var credentials = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
             var tokenDescriptor = new SecurityTokenDescriptor

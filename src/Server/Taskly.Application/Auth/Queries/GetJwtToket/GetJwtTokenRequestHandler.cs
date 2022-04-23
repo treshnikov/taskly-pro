@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Taskly.Application.Common.Exceptions;
 using Taskly.Application.Interfaces;
 using Taskly.Application.Jwt;
@@ -18,7 +19,7 @@ namespace Taskly.WebApi.Controllers
         }
         public Task<string> Handle(GetJwtTokenRequest request, CancellationToken cancellationToken)
         {
-            var user = _dbContext.Users.FirstOrDefault(u => u.Name == request.Name);
+            var user = _dbContext.Users.Include(u => u.Roles).FirstOrDefault(u => u.Name == request.Name);
             if (user == null)
             {
                 throw new NotFoundException($"User {request.Name} cannot be found.");
