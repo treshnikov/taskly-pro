@@ -5,13 +5,15 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Taskly.DAL.EntityTypeConfigurations
 {
-    public class TasklyUserConfiguration : IEntityTypeConfiguration<TasklyUser>
+    public class UserConfiguration : IEntityTypeConfiguration<User>
     {
-        public void Configure(EntityTypeBuilder<TasklyUser> builder)
+        public void Configure(EntityTypeBuilder<User> builder)
         {
             builder.ToTable("Users");
             builder.HasKey(u => u.Id);
             builder.HasIndex(u => u.Id).IsUnique();
+            builder.HasIndex(u => u.Name).IsUnique();
+            builder.HasIndex(u => u.Email).IsUnique();
         }
     }
 }

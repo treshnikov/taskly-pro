@@ -16,7 +16,7 @@ namespace Taskly.Application.Jwt
             _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["JwtToken"]));
         }
 
-        public string CreateToken(TasklyUser user)
+        public string CreateToken(User user)
         {
             // todo - extract roles from DB
             var claims = new List<Claim> {

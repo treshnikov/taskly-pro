@@ -21,7 +21,7 @@ namespace Taskly.Application.Auth.Commands.Register
                 throw new AlreadyExistsException("User already exists.");
             }
 
-            var user = new TasklyUser
+            var user = new User
             {
                 Name = request.Name,
                 Password = BCrypt.Net.BCrypt.HashPassword(request.Password),
