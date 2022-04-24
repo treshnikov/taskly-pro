@@ -4,7 +4,7 @@ using Taskly.Application.Common;
 
 namespace Taskly.Application.Notes.Queries
 {
-    public class NoteDetailsDto : IMapWith<Note>
+    public class NoteDetailsVm : IMapWith<Note>
     {
         public Guid Id {get; set;}
         public string Title {get; set;}
@@ -14,7 +14,7 @@ namespace Taskly.Application.Notes.Queries
 
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<Note, NoteDetailsDto>()
+            profile.CreateMap<Note, NoteDetailsVm>()
                 .ForMember(noteVm => noteVm.Title, opt => opt.MapFrom(note => note.Title))         
                 .ForMember(noteVm => noteVm.Details, opt => opt.MapFrom(note => note.Details))            
                 .ForMember(noteVm => noteVm.Id, opt => opt.MapFrom(note => note.Id))           

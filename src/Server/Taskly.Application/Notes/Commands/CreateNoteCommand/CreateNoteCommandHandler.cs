@@ -1,17 +1,9 @@
-using FluentValidation;
-using MediatR;
+﻿using MediatR;
 using Taskly.Domain;
 using Taskly.Application.Interfaces;
 
 namespace Taskly.Application.Notes.Commands
 {
-    public class CreateNoteCommand : IRequest<Guid>
-    {
-        public Guid UserId { get; set; }
-        public string? Title { get; set; }
-        public string? Details { get; set; }
-    }
-
     public class CreateNoteCommandHandler : IRequestHandler<CreateNoteCommand, Guid>
     {
         private readonly ITasklyDbContext _dbContext;
@@ -25,15 +17,6 @@ namespace Taskly.Application.Notes.Commands
             await _dbContext.Notes.AddAsync(note, cancellationToken);
             await _dbContext.SaveChangesAsync(cancellationToken);
             return note.Id;
-        }
-    }
-
-    public class CreateNoteCommandValidator : AbstractValidator<CreateNoteCommand>
-    {
-        public CreateNoteCommandValidator()
-        {
-            RuleFor(createNoteCommand => createNoteCommand.Title).NotEmpty().MaximumLength(250);
-            RuleFor(createNoteCommand => createNoteCommand.UserId).NotEmpty();
         }
     }
 }

@@ -1,20 +1,9 @@
-using FluentValidation;
-using MediatR;
-using Taskly.Domain;
+﻿using MediatR;
 using Taskly.Application.Common.Exceptions;
 using Taskly.Application.Interfaces;
 
 namespace Taskly.Application.Notes.Commands
 {
-    public class UpdateNoteCommand : IRequest
-    {
-        public Guid Id { get; set; }
-        public Guid UserId { get; set; }
-        public string? Title { get; set; }
-        public string? Details { get; set; }
-
-    }
-
     public class UpdateNoteCommandHandler : IRequestHandler<UpdateNoteCommand>
     {
         private readonly ITasklyDbContext _dbContext;
@@ -38,16 +27,6 @@ namespace Taskly.Application.Notes.Commands
             await _dbContext.SaveChangesAsync(cancellationToken);
 
             return Unit.Value;
-        }
-    }
-    
-    public class UpdateNoteCommandValidator : AbstractValidator<UpdateNoteCommand>
-    {
-        public UpdateNoteCommandValidator()
-        {
-            RuleFor(updateNoteCommand => updateNoteCommand.Title).NotEmpty().MaximumLength(250);
-            RuleFor(updateNoteCommand => updateNoteCommand.UserId).NotEmpty();
-            RuleFor(updateNoteCommand => updateNoteCommand.Id).NotEmpty();
         }
     }
 

@@ -12,6 +12,7 @@ namespace Taskly.WebApi.Controllers;
 [ApiVersion("1.0")]
 [ApiVersion("2.0")]
 [Produces("application/json")]
+[Authorize]
 [Route("api/v{version:apiVersion}/[controller]")]
 public class NoteController : BaseController
 {
@@ -23,10 +24,9 @@ public class NoteController : BaseController
     }
 
     [HttpGet]
-    //[Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<NoteLisDto>> GetAll()
+    public async Task<ActionResult<NoteLisVm>> GetAll()
     {
         var query = new GetNoteListQuery()
         {
@@ -44,10 +44,9 @@ public class NoteController : BaseController
     /// <param name="noteId"></param>
     /// <returns></returns>
     [HttpGet("{id}")]
-    // [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<NoteDetailsDto>> GetAll(Guid noteId)
+    public async Task<ActionResult<NoteDetailsVm>> GetAll(Guid noteId)
     {
         var query = new GetNoteDetailsQuery
         {
@@ -61,7 +60,6 @@ public class NoteController : BaseController
     }
 
     [HttpPost]
-    // [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<Guid>> Create([FromBody] CreateNoteDto createNoteDto)
@@ -74,7 +72,6 @@ public class NoteController : BaseController
     }
     
     [HttpPut]
-    // [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Update([FromBody] UpdateNoteDto updateNoteDto)
@@ -87,7 +84,6 @@ public class NoteController : BaseController
     }
 
     [HttpDelete("{id}")]
-    // [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Delete([FromBody] DeleteNoteDto deleteNoteDto)

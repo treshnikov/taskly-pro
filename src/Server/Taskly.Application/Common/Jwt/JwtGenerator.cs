@@ -20,7 +20,7 @@ namespace Taskly.Application.Jwt
         {
             // todo - extract roles from DB
             var claims = new List<Claim> {
-                new Claim(JwtRegisteredClaimNames.NameId, user.Name),
+                new Claim(JwtRegisteredClaimNames.NameId, user.Id.ToString()),
             };
 
             foreach (var role in user.Roles)
