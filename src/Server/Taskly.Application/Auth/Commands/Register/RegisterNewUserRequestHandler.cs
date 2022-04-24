@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Taskly.Application.Common.Exceptions;
 using Taskly.Application.Interfaces;
 using Taskly.Domain;
@@ -15,7 +16,7 @@ namespace Taskly.Application.Auth.Commands.Register
         }
         public async Task<Guid> Handle(RegisterNewUserRequest request, CancellationToken cancellationToken)
         {
-            var checkUser = _dbContext.Users.Any(u => u.Name == request.Name || u.Email == request.Email);
+            var checkUser = await _dbContext.Users.AnyAsync(u => u.Name == request.Name || u.Email == request.Email);
             if (checkUser)
             {
                 throw new AlreadyExistsException("User already exists.");
@@ -30,7 +31,7 @@ namespace Taskly.Application.Auth.Commands.Register
                 Roles = new List<Role>(defaultRoles)
             };
 
-            _dbContext.Users.Add(user);
+            await _dbContext.Users.AddAsync(user);
             await _dbContext.SaveChangesAsync(cancellationToken);
 
             return user.Id;
@@ -38,14 +39,14 @@ namespace Taskly.Application.Auth.Commands.Register
 
         private async Task<IEnumerable<Role>> GetDefaultRolesAsync(CancellationToken cancellationToken)
         {
-            var userRole = _dbContext.Roles.FirstOrDefault(i => i.Name == "User");
+            var userRole = await _dbContext.Roles.FirstOrDefaultAsync(i => i.Name == "User");
             if (userRole == null)
             {
                 userRole = new Role
                 {
                     Name = "User",
                 };
-                _dbContext.Roles.Add(userRole);
+                await _dbContext.Roles.AddAsync(userRole);
                 await _dbContext.SaveChangesAsync(cancellationToken);
             }
 

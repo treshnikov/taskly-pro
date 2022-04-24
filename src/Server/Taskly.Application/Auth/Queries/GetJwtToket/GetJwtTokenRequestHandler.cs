@@ -17,9 +17,9 @@ namespace Taskly.WebApi.Controllers
             this._dbContext = dbContext;
             this._jwtGenerator = jwtGenerator;
         }
-        public Task<string> Handle(GetJwtTokenRequest request, CancellationToken cancellationToken)
+        public async Task<string> Handle(GetJwtTokenRequest request, CancellationToken cancellationToken)
         {
-            var user = _dbContext.Users.Include(u => u.Roles).FirstOrDefault(u => u.Name == request.Name);
+            var user = await _dbContext.Users.Include(u => u.Roles).FirstOrDefaultAsync(u => u.Name == request.Name);
             if (user == null)
             {
                 throw new NotFoundException($"User {request.Name} cannot be found.");
@@ -30,7 +30,7 @@ namespace Taskly.WebApi.Controllers
                 throw new ForbiddenException("Authentication error.");
             }
 
-            return Task.FromResult(_jwtGenerator.CreateToken(user));
+            return await Task.FromResult(_jwtGenerator.CreateToken(user));
         }
     }
 }
