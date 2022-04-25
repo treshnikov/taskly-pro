@@ -19,7 +19,12 @@ namespace Taskly.WebApi.Controllers
         }
         public async Task<string> Handle(GetJwtTokenRequest request, CancellationToken cancellationToken)
         {
-            var user = await _dbContext.Users.Include(u => u.Roles).FirstOrDefaultAsync(u => u.Name == request.Name);
+            var user = await _dbContext
+                .Users
+                .AsNoTracking()
+                .Include(u => u.Roles)
+                .FirstOrDefaultAsync(u => u.Name == request.Name, cancellationToken: cancellationToken);
+
             if (user == null)
             {
                 throw new NotFoundException($"User {request.Name} cannot be found.");

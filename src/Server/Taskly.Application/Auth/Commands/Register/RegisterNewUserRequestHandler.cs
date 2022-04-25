@@ -16,7 +16,10 @@ namespace Taskly.Application.Auth.Commands.Register
         }
         public async Task<Guid> Handle(RegisterNewUserRequest request, CancellationToken cancellationToken)
         {
-            var checkUser = await _dbContext.Users.AnyAsync(u => u.Name == request.Name || u.Email == request.Email);
+            var checkUser = await _dbContext
+                .Users
+                .AsNoTracking()
+                .AnyAsync(u => u.Name == request.Name || u.Email == request.Email, cancellationToken);
             if (checkUser)
             {
                 throw new AlreadyExistsException("User already exists.");
@@ -30,7 +33,7 @@ namespace Taskly.Application.Auth.Commands.Register
                 Roles = new Role[] { }
             };
 
-            await _dbContext.Users.AddAsync(user);
+            await _dbContext.Users.AddAsync(user, cancellationToken);
             await _dbContext.SaveChangesAsync(cancellationToken);
 
             return user.Id;

@@ -20,6 +20,7 @@ namespace Taskly.Application.Auth.Queries.GetUsers
         {
             return await _dbContext
                 .Users
+                .AsNoTracking()
                 .ProjectTo<UserVm>(_mapper.ConfigurationProvider)
                 .ToListAsync(cancellationToken: cancellationToken);
         }
