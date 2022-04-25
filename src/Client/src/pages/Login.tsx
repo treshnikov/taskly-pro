@@ -1,28 +1,31 @@
 import React from 'react'
+import { useTranslation } from "react-i18next";
 
 export const Login: React.FunctionComponent = () => {
+  const { t, i18n } = useTranslation();
+
   return (
         <div className='row'>
-          <div className='col-md-4'></div>
-          <div className='col-md-4'>
+          <div className='col-md-3'></div>
+          <div className='col-md-6'>
             <main className="form-signin">
               <form>
-                <h1 className="h3 mb-3 fw-normal">Welcome to TasklyPro</h1>
+                <h2 className="h3 fw-normal">{t("welcome")}</h2>
 
                 <div className="form-floating">
                   <input type="text" className="form-control" id='inputLogin' placeholder="Name" required />
-                  <label htmlFor="inputLogin">Name</label>
+                  <label htmlFor="inputLogin">{t("name")}</label>
                 </div>
                 <div className="form-floating">
                   <input type="password" className="form-control" id='inputPassword' placeholder="Password" required />
-                  <label htmlFor="inputPassword">Password</label>
+                  <label htmlFor="inputPassword">{t("password")}</label>
                 </div>
 
-                <button className="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
+                <button className="w-100 btn btn-lg btn-primary" type="submit">{t("signin")}</button>
               </form>
             </main>
-            <div className='col-md-4'></div>
           </div>
+          <div className='col-md-3'></div>
         </div>
   )
 }
