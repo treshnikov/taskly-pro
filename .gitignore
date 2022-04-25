@@ -8,6 +8,8 @@
 *.launch
 .settings/
 *.sublime-workspace
+*.log
+taskly.db
 
 # IDE - VSCode
 .vscode/*
