@@ -22,35 +22,18 @@ namespace Taskly.Application.Auth.Commands.Register
                 throw new AlreadyExistsException("User already exists.");
             }
 
-            var defaultRoles = await GetDefaultRolesAsync(cancellationToken);
             var user = new User
             {
                 Name = request.Name,
                 Password = BCrypt.Net.BCrypt.HashPassword(request.Password),
                 Email = request.Email,
-                Roles = new List<Role>(defaultRoles)
+                Roles = new Role[] { }
             };
 
             await _dbContext.Users.AddAsync(user);
             await _dbContext.SaveChangesAsync(cancellationToken);
 
             return user.Id;
-        }
-
-        private async Task<IEnumerable<Role>> GetDefaultRolesAsync(CancellationToken cancellationToken)
-        {
-            var userRole = await _dbContext.Roles.FirstOrDefaultAsync(i => i.Name == "User");
-            if (userRole == null)
-            {
-                userRole = new Role
-                {
-                    Name = "User",
-                };
-                await _dbContext.Roles.AddAsync(userRole);
-                await _dbContext.SaveChangesAsync(cancellationToken);
-            }
-
-            return new List<Role> { userRole };
         }
     }
 }
