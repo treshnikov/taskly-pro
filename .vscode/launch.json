@@ -28,16 +28,6 @@
             "name": ".NET Core Attach",
             "type": "coreclr",
             "request": "attach"
-        },
-        {
-            "name": "test",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "build-server",
-            "program": "${workspaceFolder}/src/Server/Taskly.Tests/bin/Debug/net6.0/Taskly.Tests.dll",
-            "args": ["test"],
-            "cwd": "${workspaceFolder}/src/Server/Taskly.Tests",
-            "stopAtEntry": false,
-        },
+        }
     ]
 }

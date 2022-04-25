@@ -38,6 +38,7 @@ public class Startup
         {
             options.AddPolicy("AllowAll", policy =>
             {
+                policy.AllowAnyOrigin();
                 policy.AllowAnyHeader();
                 policy.AllowAnyMethod();
                 policy.AllowAnyOrigin();

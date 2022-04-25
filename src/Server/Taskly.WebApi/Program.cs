@@ -1,6 +1,7 @@
 using Taskly.DAL;
 using Serilog;
 using Serilog.Events;
+using Serilog.Sinks.SystemConsole.Themes;
 
 namespace Taskly.WebApi
 {
@@ -15,9 +16,10 @@ namespace Taskly.WebApi
             var logDirectory = conf!["Logger:Directory"];
             var logFileName = Path.Combine(logDirectory, "log-.log");
             Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Override("Microsoft", LogEventLevel.Debug)
+                .MinimumLevel.Debug()
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                 .WriteTo.File(logFileName, rollingInterval: RollingInterval.Day)
-                .WriteTo.Console(LogEventLevel.Debug)
+                .WriteTo.Console(theme: SystemConsoleTheme.Literate)
                 .CreateLogger();
 
             using (var scope = host.Services.CreateScope())
