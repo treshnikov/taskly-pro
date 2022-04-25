@@ -15,8 +15,9 @@ namespace Taskly.WebApi
             var logDirectory = conf!["Logger:Directory"];
             var logFileName = Path.Combine(logDirectory, "log-.log");
             Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Debug)
                 .WriteTo.File(logFileName, rollingInterval: RollingInterval.Day)
+                .WriteTo.Console(LogEventLevel.Debug)
                 .CreateLogger();
 
             using (var scope = host.Services.CreateScope())

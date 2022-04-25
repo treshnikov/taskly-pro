@@ -16,7 +16,7 @@ namespace Taskly.WebApi.Controllers;
 [Route("api/v{version:apiVersion}/[controller]")]
 public class NoteController : BaseController
 {
-    private IMapper _mapper;
+    private readonly IMapper _mapper;
 
     public NoteController(IMapper mapper)
     {
@@ -37,7 +37,7 @@ public class NoteController : BaseController
 
         return Ok(res);
     }
-    
+
     /// <summary>
     /// Returns note by Id
     /// </summary>
@@ -62,7 +62,7 @@ public class NoteController : BaseController
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<Guid>> Create([FromBody] CreateNoteDto createNoteDto)
+    public async Task<ActionResult<Guid>> Create([FromBody] CreateNoteVm createNoteDto)
     {
         var command = _mapper.Map<CreateNoteCommand>(createNoteDto);
         command.UserId = UserId;
@@ -70,11 +70,11 @@ public class NoteController : BaseController
 
         return Ok(noteId);
     }
-    
+
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> Update([FromBody] UpdateNoteDto updateNoteDto)
+    public async Task<IActionResult> Update([FromBody] UpdateNoteVm updateNoteDto)
     {
         var command = _mapper.Map<UpdateNoteCommand>(updateNoteDto);
         command.UserId = UserId;
@@ -86,7 +86,7 @@ public class NoteController : BaseController
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> Delete([FromBody] DeleteNoteDto deleteNoteDto)
+    public async Task<IActionResult> Delete([FromBody] DeleteNoteVm deleteNoteDto)
     {
         var command = _mapper.Map<DeleteNoteCommand>(deleteNoteDto);
         command.UserId = UserId;

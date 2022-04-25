@@ -21,7 +21,7 @@ namespace Taskly.DAL
             {
                 Name = "admin",
                 Email = "admin@admin.com",
-                Password = "admin",
+                Password = BCrypt.Net.BCrypt.HashPassword("admin"),
                 Roles = new[] {
                     new Role
                     {

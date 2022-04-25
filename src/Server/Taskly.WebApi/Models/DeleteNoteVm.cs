@@ -4,13 +4,13 @@ using Taskly.Application.Notes.Commands;
 
 namespace Taskly.WebApi.Models;
 
-public class DeleteNoteDto : IMapWith<DeleteNoteCommand>
+public class DeleteNoteVm : IMapWith<DeleteNoteCommand>
 {
     public Guid Id { get; set; }
 
     public void Mapping(Profile profile)
     {
-        profile.CreateMap<DeleteNoteDto, DeleteNoteCommand>()
+        profile.CreateMap<DeleteNoteVm, DeleteNoteCommand>()
             .ForMember(noteCommand => noteCommand.Id,
                 opt => opt.MapFrom((noteDto => noteDto.Id)));
 

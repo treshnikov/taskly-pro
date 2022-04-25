@@ -4,7 +4,7 @@ using Taskly.Application.Notes.Commands;
 
 namespace Taskly.WebApi.Models;
 
-public class UpdateNoteDto : IMapWith<UpdateNoteCommand>
+public class UpdateNoteVm : IMapWith<UpdateNoteCommand>
 {
     public Guid Id { get; set; }
     public string? Title { get; set; }
@@ -12,7 +12,7 @@ public class UpdateNoteDto : IMapWith<UpdateNoteCommand>
 
     public void Mapping(Profile profile)
     {
-        profile.CreateMap<UpdateNoteDto, UpdateNoteCommand>()
+        profile.CreateMap<UpdateNoteVm, UpdateNoteCommand>()
             .ForMember(noteCommand => noteCommand.Id,
                 opt => opt.MapFrom((noteDto => noteDto.Id)))
             .ForMember(noteCommand => noteCommand.Title,
