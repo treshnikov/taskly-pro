@@ -1,20 +1,20 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
+import { AuthContext } from '../context/AuthContext';
 
 export const Home: React.FunctionComponent = () => 
 {
   const [content, setContent] = useState<string>('');
+  const auth = useContext(AuthContext)
+  console.log(auth.jwt)
 
   useEffect(() =>{
     async function fetchUsers() {
       const users = await fetch("/api/v1/auth/users",
       {
         method: 'get',
-
-        // jwt will be get from the cookies
-        credentials: 'include',
-        // headers: {
-        //   Authorization: 'Bearer ' + localStorage.getItem("jwt")
-        // } 
+         headers: {
+         Authorization: `Bearer ${auth.jwt}`
+         } 
       });
 
       setContent(await users.text())
@@ -24,7 +24,7 @@ export const Home: React.FunctionComponent = () =>
   }, [])
 
   return (
-    <div>
+    <div className='container'>
       <h1>Home</h1>
       {content}
     </div>

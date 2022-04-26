@@ -1,9 +1,12 @@
-import React, { SyntheticEvent, useState } from 'react'
+import React, { SyntheticEvent, useContext, useState } from 'react'
 import { useTranslation } from "react-i18next";
 import { Navigate } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
 
 export const Login: React.FunctionComponent = () => {
   const { t } = useTranslation();
+  const auth = useContext(AuthContext)
+
   const [name, setName] = useState<string>('')
   const [password, setPassword] = useState<string>('')
   const [redirectToHome, setRedirectToHome] = useState<boolean>(false);
@@ -16,18 +19,16 @@ export const Login: React.FunctionComponent = () => {
     data.append("Name", name);
     data.append("Password", password);
 
-    const jwt = await fetch("/api/v1/auth/login",
+    const jwt = await fetch("/api/v1/auth/token",
     {
       method: 'post',
       body: data,
-
-      // jwt will be saved to cookies
-      credentials: 'include'
     });
 
-    // const jwtText = await jwt.text()
-    // console.log("Get JWT = " + jwtText);
-    // localStorage.setItem("jwt", jwtText);
+    const jwtText = await jwt.text();
+    console.log("logged in and got jwt = " + jwtText)
+    // save jwt token to storage
+    auth.login(jwtText)
 
     setRedirectToHome(true);
   }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import logo from './logo.svg';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -13,21 +13,25 @@ import {
   Route,
   Link
 } from "react-router-dom";
+import { AuthContext } from './context/AuthContext';
+import { useAuth } from './hooks/auth.hook';
+import { useRoutes } from './routes';
 
 function App() {
-  return (
-    <div className="App">
-      <Router>
-        <NavBar />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-        </Routes>
-      </Router>
+  const { jwt, login, logout } = useAuth()
+  const isAuthenticated = !!jwt
+  const routes = useRoutes(isAuthenticated)
 
-    </div >
-  );
+    return (
+      <div className="App">
+        <AuthContext.Provider value={{ jwt, login, logout, isAuthenticated}}>
+        <Router>
+          {routes}
+        </Router>
+        </AuthContext.Provider>
+      </div >
+    );
+  
 }
 
 export default App;
