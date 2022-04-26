@@ -1,9 +1,7 @@
 import React from 'react'
 import {
-  BrowserRouter as Router,
   Routes,
-  Route,
-  Link
+  Route
 } from "react-router-dom";
 import { NavBar } from './components/NavBar';
 import { Home } from './pages/Home';
@@ -25,10 +23,10 @@ export const useRoutes: React.FunctionComponent<boolean> = (isAuthenticated: boo
   return (
     <div className="App">
       <Routes>
-        <Route index element={<Login />} />
+        <Route path="*" element={<Login />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
       </Routes>
-  </div >
-    )
+    </div >
+  )
 }

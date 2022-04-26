@@ -51,7 +51,7 @@ public class Startup
         services.AddSpaStaticFiles(configuration =>
         {
             configuration.RootPath = Configuration["SpaPath"] ?? "../../../../../Client/build";
-            Log.Logger.Information($"SPA directory for Production mode is set to {configuration.RootPath}");
+            Log.Logger.Information($"SPA static files directory for Production mode is set to {configuration.RootPath}");
         });
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -102,7 +102,7 @@ public class Startup
         app.UseStaticFiles();
         if (!env.IsDevelopment())
         {
-            Log.Logger.Information("Release mode is set, SPA files will be used from the directory predefined above (see log messages below).");
+            Log.Logger.Information("Release mode is set. SPA static files will be used from the directory predefined above (see log messages below).");
             app.UseSpaStaticFiles();
         }
 
