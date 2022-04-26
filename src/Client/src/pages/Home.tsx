@@ -20,7 +20,7 @@ export const Home: React.FunctionComponent = () => {
     }
 
     fetchUsers(auth.jwt);
-  }, [])
+  }, [auth.jwt])
 
   return (
     <div className='container'>

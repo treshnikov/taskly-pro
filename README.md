@@ -8,7 +8,9 @@ The solution provides a CQRS-based project template that can be used for develop
 ## Build and Run
 ### Server
 - The project has already contained predefined `tasks.json` and `launch.json` files for `vscode` which means you can build the project using `vscode` hotkeys.
-- You also can build the server manually, For this navigate to `src/Server/Taskly.WebApi` directory and run `dotnet build` and `dotnet run`.
+- You also can build the server manually. 
+  - For this navigate to `src/Server/Taskly.WebApi` directory and run `dotnet build` and `dotnet run`.
+  - Or just run `scripts/start-server.sh`.
 - To specify paths to DB and Log folders see `appsettings.json` file:
   - `DbConnection` - the project uses SQLite DB.
   - `Logger:Directory` - path to the log folder.
