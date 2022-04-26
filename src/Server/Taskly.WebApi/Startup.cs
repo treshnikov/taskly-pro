@@ -53,6 +53,15 @@ public class Startup
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnMessageReceived = context =>
+                        {
+                            context.Token = context.Request.Cookies["jwt"];
+                            return Task.CompletedTask;
+                        }
+                    };
+
                     options.RequireHttpsMetadata = false;
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
@@ -62,6 +71,9 @@ public class Startup
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration["JwtToken"])),
                         ValidateIssuerSigningKey = true,
                     };
+
+
+
                 });
         services.AddVersionedApiExplorer(opttions =>
         {

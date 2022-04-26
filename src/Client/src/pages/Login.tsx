@@ -1,8 +1,41 @@
-import React from 'react'
+import React, { SyntheticEvent, useState } from 'react'
 import { useTranslation } from "react-i18next";
+import { Navigate } from 'react-router-dom';
 
 export const Login: React.FunctionComponent = () => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
+  const [name, setName] = useState<string>('')
+  const [password, setPassword] = useState<string>('')
+  const [redirectToHome, setRedirectToHome] = useState<boolean>(false);
+
+  const loginHanler = async (e: SyntheticEvent) =>
+  {
+    e.preventDefault();
+
+    const data = new FormData();
+    data.append("Name", name);
+    data.append("Password", password);
+
+    const jwt = await fetch("/api/v1/auth/login",
+    {
+      method: 'post',
+      body: data,
+
+      // jwt will be saved to cookies
+      credentials: 'include'
+    });
+
+    // const jwtText = await jwt.text()
+    // console.log("Get JWT = " + jwtText);
+    // localStorage.setItem("jwt", jwtText);
+
+    setRedirectToHome(true);
+  }
+
+  if (redirectToHome)
+  {
+    return <Navigate replace to="/" /> 
+  }
 
   return (
         <div className='row'>
@@ -13,15 +46,24 @@ export const Login: React.FunctionComponent = () => {
                 <h2 className="h3 fw-normal">{t("welcome")}</h2>
 
                 <div className="form-floating">
-                  <input type="text" className="form-control" id='inputLogin' placeholder="Name" required />
+                  <input type="text" className="form-control" id='inputLogin' placeholder="Name" required 
+                    value={name}
+                    onChange={e => setName(e.target.value)}
+                  />
                   <label htmlFor="inputLogin">{t("name")}</label>
                 </div>
+
                 <div className="form-floating">
-                  <input type="password" className="form-control" id='inputPassword' placeholder="Password" required />
+                  <input type="password" className="form-control" id='inputPassword' placeholder="Password" required 
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                  />
                   <label htmlFor="inputPassword">{t("password")}</label>
                 </div>
 
-                <button className="w-100 btn btn-lg btn-primary" type="submit">{t("signin")}</button>
+                <button className="w-100 btn btn-lg btn-primary" type="submit"
+                  onClick={loginHanler}
+                >{t("signin")}</button>
               </form>
             </main>
           </div>
