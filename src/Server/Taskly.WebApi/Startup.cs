@@ -13,6 +13,8 @@ using Taskly.WebApi.Controllers;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Taskly.Application.Jwt;
+using Microsoft.AspNetCore.SpaServices.Extensions;
+using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 
 namespace Taskly.WebApi;
 
@@ -45,6 +47,9 @@ public class Startup
             });
         });
 
+        services.AddSpaStaticFiles(configuration =>
+           configuration.RootPath = Configuration["SpaPath"] ?? "../../../../../Client/build");
+
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
@@ -75,8 +80,12 @@ public class Startup
         if (env.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();
-            //app.UseSwagger();
-            //app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "TodoApi v1"));
+        }
+
+        app.UseStaticFiles();
+        if (!env.IsDevelopment())
+        {
+            app.UseSpaStaticFiles();
         }
 
         app.UseSwagger();
@@ -86,8 +95,7 @@ public class Startup
             {
                 conf.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", description.GroupName.ToUpperInvariant());
             }
-            conf.RoutePrefix = String.Empty;
-            conf.SwaggerEndpoint("swagger/v1/swagger.json", "NotesAPI");
+            conf.RoutePrefix = env.IsDevelopment() ? "" : "swagger";
         });
         app.UseCustomExceptionHandler();
         app.UseRouting();

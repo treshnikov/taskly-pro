@@ -10,6 +10,8 @@
 *.sublime-workspace
 *.log
 taskly.db
+*.db-shm
+*.db-wal
 
 # IDE - VSCode
 .vscode/*
