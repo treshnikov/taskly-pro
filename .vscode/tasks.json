@@ -37,7 +37,7 @@
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary",
                 "-c",
-                "Release"
+                "Release",
             ],
             "group": "build",
             "presentation": {

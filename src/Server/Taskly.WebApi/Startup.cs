@@ -15,6 +15,7 @@ using System.Text;
 using Taskly.Application.Jwt;
 using Microsoft.AspNetCore.SpaServices.Extensions;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
+using Serilog;
 
 namespace Taskly.WebApi;
 
@@ -48,7 +49,10 @@ public class Startup
         });
 
         services.AddSpaStaticFiles(configuration =>
-           configuration.RootPath = Configuration["SpaPath"] ?? "../../../../../Client/build");
+        {
+            configuration.RootPath = Configuration["SpaPath"] ?? "../../../../../Client/build";
+            Log.Logger.Information($"SPA directory for Production mode is set to {configuration.RootPath}");
+        });
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
@@ -98,6 +102,7 @@ public class Startup
         app.UseStaticFiles();
         if (!env.IsDevelopment())
         {
+            Log.Logger.Information("Release mode is set, SPA files will be used from the directory predefined above (see log messages below).");
             app.UseSpaStaticFiles();
         }
 
