@@ -7,28 +7,27 @@ import { Login } from './pages/Login';
 import { NavBar } from './components/NavBar';
 import { Home } from './pages/Home';
 import { Register } from './pages/Register';
-import {Route} from 'react-router-dom'
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Link
+} from "react-router-dom";
 
 function App() {
   return (
     <div className="App">
-      <NavBar></NavBar>
-      {/* <Router>
-        <Switch>
-          <Route path="/">
-            <Home></Home>
-          </Route>
-          <Route path="/login">
-            <Login></Login>
-          </Route>
-          <Route path="/register">
-            <Register></Register>
-          </Route>
-        </Switch>
-      </Router> */}
+      <NavBar />
 
-      <Login></Login>
-    </div>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+        </Routes>
+      </Router>
+
+    </div >
   );
 }
 

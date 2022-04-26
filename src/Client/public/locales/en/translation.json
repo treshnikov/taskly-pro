@@ -3,6 +3,7 @@
     "register": "Sign on",
     "name": "Name",
     "password": "Password",
-    "welcome": "Welcome to TasklyPro"
+    "welcome": "Welcome to TasklyPro",
+    "email": "Email"
 }
   

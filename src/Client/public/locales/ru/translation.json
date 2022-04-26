@@ -3,5 +3,6 @@
     "register": "Регистрация",
     "name": "Имя",
     "password": "Пароль",
-    "welcome": "Добро пожаловать в TasklyPro"
+    "welcome": "Добро пожаловать в TasklyPro",
+    "email": "Email"
 }
