@@ -53,11 +53,12 @@ public class Startup
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
+                    // add an option that token can be extracted not only from "Authentication: Bearer ..." header but also from Request Cookies
                     options.Events = new JwtBearerEvents
                     {
                         OnMessageReceived = context =>
                         {
-                            context.Token = context.Request.Cookies["jwt"];
+                            context.Token = context.Request.Cookies[AuthenticationController.JwtCookiesKey];
                             return Task.CompletedTask;
                         }
                     };

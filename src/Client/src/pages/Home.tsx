@@ -5,7 +5,6 @@ export const Home: React.FunctionComponent = () =>
 {
   const [content, setContent] = useState<string>('');
   const auth = useContext(AuthContext)
-  console.log(auth.jwt)
 
   useEffect(() =>{
     async function fetchUsers() {

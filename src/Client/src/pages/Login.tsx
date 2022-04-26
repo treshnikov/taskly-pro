@@ -1,6 +1,5 @@
 import React, { SyntheticEvent, useContext, useState } from 'react'
 import { useTranslation } from "react-i18next";
-import { Navigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 
 export const Login: React.FunctionComponent = () => {
@@ -9,7 +8,6 @@ export const Login: React.FunctionComponent = () => {
 
   const [name, setName] = useState<string>('')
   const [password, setPassword] = useState<string>('')
-  const [redirectToHome, setRedirectToHome] = useState<boolean>(false);
 
   const loginHanler = async (e: SyntheticEvent) =>
   {
@@ -26,16 +24,9 @@ export const Login: React.FunctionComponent = () => {
     });
 
     const jwtText = await jwt.text();
-    console.log("logged in and got jwt = " + jwtText)
+
     // save jwt token to storage
     auth.login(jwtText)
-
-    setRedirectToHome(true);
-  }
-
-  if (redirectToHome)
-  {
-    return <Navigate replace to="/" /> 
   }
 
   return (
