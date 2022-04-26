@@ -81,5 +81,17 @@ namespace Taskly.WebApi.Controllers
             return Ok(res);
         }
 
+        [HttpGet("user")]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult> GetUser()
+        {
+            var res = await Mediator.Send(new GetUserRequest{UserId = UserId});
+            return Ok(res);
+        }
+
+        
+
     }
 }

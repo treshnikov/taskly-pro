@@ -8,7 +8,7 @@ export const Home: React.FunctionComponent = () =>
 
   useEffect(() =>{
     async function fetchUsers() {
-      const users = await fetch("/api/v1/auth/users",
+      const users = await fetch("/api/v1/auth/user",
       {
         method: 'get',
          headers: {

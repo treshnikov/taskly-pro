@@ -1,5 +1,6 @@
 import React, { SyntheticEvent, useContext, useState } from 'react'
 import { useTranslation } from "react-i18next";
+import { Link, Navigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 
 export const Login: React.FunctionComponent = () => {
@@ -8,6 +9,7 @@ export const Login: React.FunctionComponent = () => {
 
   const [name, setName] = useState<string>('')
   const [password, setPassword] = useState<string>('')
+  const [redirectToHome, setRedirectToHome] = useState<boolean>(false);
 
   const loginHanler = async (e: SyntheticEvent) =>
   {
@@ -24,9 +26,16 @@ export const Login: React.FunctionComponent = () => {
     });
 
     const jwtText = await jwt.text();
-
+        
     // save jwt token to storage
     auth.login(jwtText)
+
+    setRedirectToHome(true);
+  }
+
+  if (redirectToHome)
+  {
+    return <Navigate replace to="/" /> 
   }
 
   return (
@@ -53,9 +62,13 @@ export const Login: React.FunctionComponent = () => {
                   <label htmlFor="inputPassword">{t("password")}</label>
                 </div>
 
-                <button className="w-100 btn btn-lg btn-primary" type="submit"
-                  onClick={loginHanler}
-                >{t("signin")}</button>
+                <div>
+                  <button className="w-100 btn btn-lg btn-primary" type="submit"
+                    onClick={loginHanler}
+                  >{t("signin")}</button>
+                  <Link to='register'>{t("register")}</Link>
+                </div>
+
               </form>
             </main>
           </div>
