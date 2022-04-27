@@ -1,15 +1,14 @@
 import React, { SyntheticEvent, useContext, useState } from 'react'
 import { useTranslation } from "react-i18next";
-import { Link, Navigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 
 export const Login: React.FunctionComponent = () => {
   const { t } = useTranslation();
   const auth = useContext(AuthContext)
-
+  const navigate = useNavigate()
   const [name, setName] = useState<string>('')
   const [password, setPassword] = useState<string>('')
-  const [redirectToHome, setRedirectToHome] = useState<boolean>(false);
 
   const loginHanler = async (e: SyntheticEvent) => {
     e.preventDefault();
@@ -29,11 +28,7 @@ export const Login: React.FunctionComponent = () => {
     // save jwt token to storage
     auth.login(jwtText)
 
-    setRedirectToHome(true);
-  }
-
-  if (redirectToHome) {
-    return <Navigate replace to="/" />
+    navigate('/')
   }
 
   return (
@@ -64,7 +59,7 @@ export const Login: React.FunctionComponent = () => {
               <button className="w-100 btn btn-lg btn-primary" type="submit"
                 onClick={loginHanler}
               >{t("signin")}</button>
-              <Link to='register'>{t("register")}</Link>
+              <Link to='/register'>{t("register")}</Link>
             </div>
 
           </form>

@@ -4,5 +4,6 @@
     "name": "Имя",
     "password": "Пароль",
     "welcome": "Добро пожаловать в TasklyPro",
-    "email": "Email"
+    "email": "Email",
+    "logout": "Выйти"
 }

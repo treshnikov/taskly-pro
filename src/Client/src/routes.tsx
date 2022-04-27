@@ -9,6 +9,7 @@ import { Login } from './pages/Login'
 import { Register } from './pages/Register'
 
 export const useRoutes: React.FunctionComponent<boolean> = (isAuthenticated: boolean) => {
+
   if (isAuthenticated) {
     return (
       <div>

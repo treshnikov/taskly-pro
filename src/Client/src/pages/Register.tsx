@@ -1,6 +1,6 @@
 import React, { SyntheticEvent, useState } from 'react'
 import { useTranslation } from 'react-i18next';
-import { Navigate } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 
 export const Register: React.FunctionComponent = () => {
   const { t } = useTranslation();
@@ -63,10 +63,13 @@ export const Register: React.FunctionComponent = () => {
               <label htmlFor="inputPassword">{t("password")}</label>
             </div>
 
-            <button className="w-100 btn btn-lg btn-primary"
-              type='submit'
-              onClick={registerHandler}
-            >{t("register")}</button>
+            <div>
+              <button className="w-100 btn btn-lg btn-primary"
+                type='submit'
+                onClick={registerHandler}
+              >{t("register")}</button>
+              <Link to='/login'>{t("signin")}</Link>
+            </div>
           </form>
 
 

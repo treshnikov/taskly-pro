@@ -4,15 +4,18 @@ const storageName = 'taskly-user-data'
 
 export const useAuth = () => {
     const [jwt, setJwt] = useState<string>('')
+    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false)
 
     const login = useCallback((jwtToken: string) => {
         setJwt(jwtToken)
         localStorage.setItem(storageName, JSON.stringify({ jwt: jwtToken }))
+        setIsAuthenticated(true)
     }, [])
 
     const logout = useCallback(() => {
         setJwt('')
         localStorage.removeItem(storageName)
+        setIsAuthenticated(false)
     }, [])
 
     useEffect(() => {
@@ -27,5 +30,5 @@ export const useAuth = () => {
         }
     }, [login])
 
-    return { login, logout, jwt: jwt }
+    return { login, logout, jwt: jwt, isAuthenticated }
 }

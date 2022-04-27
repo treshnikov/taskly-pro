@@ -7,8 +7,7 @@ import { useAuth } from './hooks/auth.hook';
 import { useRoutes } from './routes';
 
 function App() {
-  const { jwt, login, logout } = useAuth()
-  const isAuthenticated = !!jwt
+  const { jwt, login, logout, isAuthenticated } = useAuth()
   const routes = useRoutes(isAuthenticated)
 
   return (
