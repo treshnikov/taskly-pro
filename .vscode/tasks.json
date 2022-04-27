@@ -1,10 +1,8 @@
 {
-    // See https://go.microsoft.com/fwlink/?LinkId=733558
-    // for the documentation about the tasks.json format
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "build-server debug",
+            "label": "build server [debug]",
             
             "command": "dotnet",
             "type": "shell",
@@ -13,9 +11,7 @@
             },
             "args": [
                 "build",
-                // Ask dotnet build to generate full paths for file names.
                 "/property:GenerateFullPaths=true",
-                // Do not generate summary otherwise it leads to duplicate errors in Problems panel
                 "/consoleloggerparameters:NoSummary"
             ],
             "group": "build",
@@ -25,7 +21,7 @@
             "problemMatcher": "$msCompile"
         },
         {
-            "label": "build-server release",
+            "label": "build server [release]",
             
             "command": "dotnet",
             "type": "shell",
@@ -44,7 +40,45 @@
                 "reveal": "silent"
             },
             "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "build client [release]",
+            
+            "command": "npm",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceFolder}/src/Client"
+            },
+            "args": [
+                "run",
+                "build",
+            ],
+            "group": "build",
+        },
+        {
+            "label": "run client [debug]",
+            
+            "command": "npm",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceFolder}/src/Client"
+            },
+            "args": [
+                "start",
+            ],
+            "group": "build",
+        },
+        {
+            "label": "run server [release]",
+            
+            "command": "./Taskly.WebApi.exe",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceFolder}/src/Server/Taskly.WebApi/bin/Release/net6.0"
+            },
+            "group": "build",
         }
+
         
     ]
 }

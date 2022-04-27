@@ -8,7 +8,7 @@
             "name": ".NET Core Launch (web) Debug",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "build-server debug",
+            "preLaunchTask": "build server [debug]",
             "program": "${workspaceFolder}/src/Server/Taskly.WebApi/bin/Debug/net6.0/Taskly.WebApi.dll",
             "args": [],
             "cwd": "${workspaceFolder}/src/Server/Taskly.WebApi",
