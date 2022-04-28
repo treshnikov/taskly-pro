@@ -50,7 +50,7 @@ public class Startup
 
         services.AddSpaStaticFiles(configuration =>
         {
-            configuration.RootPath = Configuration["SpaPath"] ?? "../../../../../Client/build";
+            configuration.RootPath = Configuration["SpaPath"] ?? "ClientApp";
             Log.Logger.Information($"SPA static files directory for Production mode is set to {configuration.RootPath}");
         });
 
@@ -128,10 +128,13 @@ public class Startup
             endpoints.MapControllers();
         });
 
-        app.UseSpa(spa =>
-       {
-           spa.Options.SourcePath = Configuration["SpaPath"] ?? "../../../../../Client/build";
-           Log.Logger.Information($"spa.Options.SourcePath = {spa.Options.SourcePath}");
-       });
+        if (!env.IsDevelopment())
+        {
+            app.UseSpa(spa =>
+                    {
+                        spa.Options.SourcePath = Configuration["SpaPath"] ?? "ClientApp";
+                        Log.Logger.Information($"spa.Options.SourcePath = {spa.Options.SourcePath}");
+                    });
+        }
     }
 }

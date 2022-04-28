@@ -12,6 +12,7 @@
 taskly.db
 *.db-shm
 *.db-wal
+dist
 
 # IDE - VSCode
 .vscode/*

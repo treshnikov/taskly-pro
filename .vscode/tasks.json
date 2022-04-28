@@ -42,6 +42,19 @@
             "problemMatcher": "$msCompile"
         },
         {
+            "label": "build client [debug]",
+            
+            "command": "npm",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceFolder}/src/Client"
+            },
+            "args": [
+                "i",
+            ],
+            "group": "build",
+        },
+        {
             "label": "build client [release]",
             
             "command": "npm",
@@ -75,6 +88,16 @@
             "type": "shell",
             "options": {
                 "cwd": "${workspaceFolder}/src/Server/Taskly.WebApi/bin/Release/net6.0"
+            },
+            "group": "build",
+        },
+        {
+            "label": "publish win [release]",
+            
+            "command": "./publish.bat",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceFolder}/scripts"
             },
             "group": "build",
         }

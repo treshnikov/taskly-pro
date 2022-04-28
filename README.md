@@ -1,4 +1,4 @@
-# Taskly
+# Overview
 The solution provides a CQRS-based project template that can be used for developing and supporting large projects. 
 The template uses the following technologies:
 * [ASP.NET Core 6](https://docs.microsoft.com/en-us/aspnet/core/introduction-to-aspnet-core?view=aspnetcore-6.0), [Entity Framework Core 6](https://docs.microsoft.com/en-us/ef/core/)
@@ -6,23 +6,35 @@ The template uses the following technologies:
 * [React](https://reactjs.org/), [i18next](https://react.i18next.com/), [React Router](https://reactrouter.com/)
 * [JWT Authentication](https://jwt.io/), [WebAPi Versioning](https://www.nuget.org/packages/Microsoft.AspNetCore.Mvc.Versioning/)
 
-## Build and Run
-- The project has already contained predefined `tasks.json` and `launch.json` files for `vscode` which means you can build server and client projects using `vscode` tasks.
-### Server
-- You also can build the server manually. For this navigate to `src/Server/Taskly.WebApi` and run `dotnet build` and then `dotnet run`.
-- Check `appsettings.json` file to specify settings:
+# Build and Run
+## Debug mode
+- Navigate to `src/Server/Taskly.WebApi` and run `dotnet build` and then `dotnet run`.
+  - The server will create a SQLite DB and populate it with default data if the DB was not created previously.
+  - Default user name and password `admin`.
+- Navigate to `src/Client` and run `npm i` and then `npm start`.
+ 
+## Production mode
+- Run `scripts/publish.bat` for Windows or `scripts\publish.sh` for Linux / Mac
+- Navigate to `dist` directory and run `Taskly.WebApi.exe`
+
+## Visual Studio Code tasks 
+- The project contains predefined `tasks.json` and `launch.json` files. See them to build and run client and server both in Debug and PRelease modes. 
+
+# Settings
+## Server
+Server stores its settings in `appsettings.json` file:
   - `DbConnection` - path to the SQLite DB file.
   - `Logger:Directory` - path to the log folder.
   - `SpaPath` - path to Client app files. This path is used only in production mode.
-- The server will create SQLite DB and populate it with default data. For instance, default user with name and password `admin`.
 
-### Client
-- Specify `proxy` key in `src/Client/package.json`. This key must refer to the server URI. Default value is `https://localhost:5000`.
-- Navigate to `src/Client` and run `npm start`.
-- In order to build the client for production usage run `npm build`. Files will be placed into the build folder. The server must link this folder via the `SpaPath` setting. 
+## Client
+- In the development mode specify the `proxy` key in `src/Client/package.json`. This key must refer to the server URI. The default value is `https://localhost:5000`.
 
-## Swagger / Postman
-Use SwaggerUI or Postman and perform the following steps:
+# Using Swagger / Postman
+For testing purposes, you can use SwaggerUI or Postman.
+By default, the API documentation is available at the address `https://localhost:5000/swagger/index.html`.
+Follow the next steps to perform requests:
 - Register a new user `/api/v1/auth/register` or use default user with name password `admin`.
 - Send a `/api/v1/auth/token` request to get the user token.
-- Pass the token to the request header `"Authentication": "Bearer %your-token%"` for other requests. 
+- Pass the token to the request header `"Authentication": "Bearer %your-token%"` for other requests.
+- Send other requests using this token.
