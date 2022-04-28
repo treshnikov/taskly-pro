@@ -92,15 +92,37 @@
             "group": "build",
         },
         {
-            "label": "publish win [release]",
+            "label": "publish all win [release]",
             
-            "command": "./publish.bat",
+            "command": "./publish-all.bat",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceFolder}/scripts"
+            },
+            "group": "build",
+        },
+        {
+            "label": "publish client win [release]",
+            
+            "command": "./publish-client.bat",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceFolder}/scripts"
+            },
+            "group": "build",
+        },
+        {
+            "label": "publish server win [release]",
+            
+            "command": "./publish-server.bat",
             "type": "shell",
             "options": {
                 "cwd": "${workspaceFolder}/scripts"
             },
             "group": "build",
         }
+
+
 
         
     ]
