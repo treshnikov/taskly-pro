@@ -14,7 +14,7 @@ The template uses the following technologies:
 - Navigate to `src/Client` and run `npm i` and then `npm start`.
  
 ## Production mode
-- Run `scripts/publish.bat` for Windows or `scripts\publish.sh` for Linux / Mac
+- Run `scripts/publish-all.bat` for Windows or `scripts\publish-all.sh` for Linux / Mac
 - Navigate to `dist` directory and run `Taskly.WebApi.exe`
 
 ## Visual Studio Code tasks 
