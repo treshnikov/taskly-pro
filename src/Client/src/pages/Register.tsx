@@ -1,6 +1,7 @@
 import React, { SyntheticEvent, useState } from 'react'
 import { useTranslation } from 'react-i18next';
-import { Link, Navigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 export const Register: React.FunctionComponent = () => {
   const { t } = useTranslation();
@@ -8,7 +9,7 @@ export const Register: React.FunctionComponent = () => {
   const [name, setName] = useState<string>('')
   const [password, setPassword] = useState<string>('')
   const [email, setEmail] = useState<string>('')
-  const [redirectToLogin, setRedirectToLogin] = useState<boolean>(false);
+  const navigate = useNavigate()
 
   const registerHandler = async (e: SyntheticEvent) => {
     e.preventDefault();
@@ -18,17 +19,26 @@ export const Register: React.FunctionComponent = () => {
     data.append("Email", email);
     data.append("Password", password);
 
-    await fetch("/api/v1/auth/register",
+    var res = await fetch("/api/v1/auth/register",
       {
         method: 'post',
         body: data
       });
 
-    setRedirectToLogin(true);
-  }
+    if (res.ok) {
+      toast.success(t('user_has_been_registered_successfully'))
+      navigate('/login')
+    }
+    else {
+      const json = await res.json()
+      let errorText = res.statusText
+      if (json.hasOwnProperty("Error")) {
+        errorText += ": " + json.Error
+      }
 
-  if (redirectToLogin) {
-    return <Navigate replace to="/login" />
+      toast.error(errorText);
+    }
+
   }
 
   return (

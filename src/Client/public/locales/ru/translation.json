@@ -5,5 +5,6 @@
     "password": "Пароль",
     "welcome": "Добро пожаловать в TasklyPro",
     "email": "Email",
-    "logout": "Выйти"
+    "logout": "Выйти",
+    "user_has_been_registered_successfully": "Пользователь успешно зарегистрирован"
 }

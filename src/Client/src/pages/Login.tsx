@@ -2,6 +2,7 @@ import React, { SyntheticEvent, useContext, useState } from 'react'
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import { toast } from 'react-toastify';
 
 export const Login: React.FunctionComponent = () => {
   const { t } = useTranslation();
@@ -23,12 +24,24 @@ export const Login: React.FunctionComponent = () => {
         body: data,
       });
 
-    const jwtText = await jwt.text();
+    if (jwt.ok) {
+      const jwtText = await jwt.text();
 
-    // save jwt token to storage
-    auth.login(jwtText)
+      // save jwt token to storage
+      auth.login(jwtText)
+      navigate('/')
+    }
+    else
+    {
+      const json = await jwt.json()
+      let errorText = jwt.statusText
+      if (json.hasOwnProperty("Error"))
+      {
+        errorText += ": " + json.Error 
+      }
 
-    navigate('/')
+      toast.error(errorText);
+    }
   }
 
   return (
