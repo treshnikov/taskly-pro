@@ -27,13 +27,6 @@ export const useRequest = () => {
             errorText += ": " + json.Error
         }
 
-        // handle errors form fluen validation
-        if (json.hasOwnProperty("errors")) {
-            // json.errors.forEach(e => {
-
-            // });
-        }
-
         toast.error(errorText);
         throw new Error(errorText)
     }, [])
