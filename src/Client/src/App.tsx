@@ -15,6 +15,11 @@ function App() {
 
   return (
     <div className="App">
+      <AuthContext.Provider value={{ jwt, login, logout, isAuthenticated }}>
+        <Router>
+          {routes}
+        </Router>
+      </AuthContext.Provider>
 
       <ToastContainer
         position="top-right"
@@ -27,13 +32,7 @@ function App() {
         draggable
         pauseOnHover
       />
-      <ToastContainer />
 
-      <AuthContext.Provider value={{ jwt, login, logout, isAuthenticated }}>
-        <Router>
-          {routes}
-        </Router>
-      </AuthContext.Provider>
     </div >
   );
 

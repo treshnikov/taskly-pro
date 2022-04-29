@@ -24,22 +24,18 @@ export const Login: React.FunctionComponent = () => {
         body: data,
       });
 
-    if (jwt.ok) {
-      const jwtText = await jwt.text();
+    const json = await jwt.json()
 
+    if (jwt.ok) {
       // save jwt token to storage
-      auth.login(jwtText)
+      auth.login(json.jwt)
       navigate('/')
     }
-    else
-    {
-      const json = await jwt.json()
+    else {
       let errorText = jwt.statusText
-      if (json.hasOwnProperty("Error"))
-      {
-        errorText += ": " + json.Error 
+      if (json.hasOwnProperty("Error")) {
+        errorText += ": " + json.Error
       }
-
       toast.error(errorText);
     }
   }

@@ -28,7 +28,7 @@ namespace Taskly.WebApi.Controllers
         {
             var res = await Mediator.Send(request);
 
-            return Ok(res);
+            return Ok(new {jwt = res});
         }
         
         [HttpPost("login")]
