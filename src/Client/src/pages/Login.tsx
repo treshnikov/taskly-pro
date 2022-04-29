@@ -2,7 +2,6 @@ import React, { SyntheticEvent, useContext, useState } from 'react'
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
-import { toast } from 'react-toastify';
 import { useRequest } from '../hooks/request.hook';
 
 export const Login: React.FunctionComponent = () => {

@@ -23,7 +23,13 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
 
         if (failures.Any())
         {
-            throw new ValidationException(failures);
+            var res = string.Empty;
+            foreach(var f in failures)
+            {
+                res += $"{f.ErrorMessage}\r\n"; 
+            }
+
+            throw new ValidationException(res);
         }
 
         return next();

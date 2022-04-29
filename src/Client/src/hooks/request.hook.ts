@@ -3,22 +3,40 @@ import { toast } from "react-toastify"
 
 export const useRequest = () => {
     const request = useCallback(async (input: RequestInfo, init?: RequestInit) => {
-        const response = await fetch(input, init)
-        const json = await response.json()
+        let response 
 
-        if (!response.ok) {
-            let errorText = response.statusText
-            if (json.hasOwnProperty("Error")) {
-                errorText += ": " + json.Error
+        try {
+            response = await fetch(input, init)
+        } catch (ex) {
+            const err = ex as Error;
+            if (err) {
+                toast.error(err.message);
             }
-            toast.error(errorText);
-
-            throw new Error(errorText)
+            throw (ex)
         }
 
-        return json;
+        const json = await response.json()
+        if (response.ok) {
+            return json;
+        }
 
+        let errorText = response.statusText
+
+        // handle error message
+        if (json.hasOwnProperty("Error")) {
+            errorText += ": " + json.Error
+        }
+
+        // handle errors form fluen validation
+        if (json.hasOwnProperty("errors")) {
+            // json.errors.forEach(e => {
+
+            // });
+        }
+
+        toast.error(errorText);
+        throw new Error(errorText)
     }, [])
 
-    return {request}
+    return { request }
 }

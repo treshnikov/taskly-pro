@@ -30,12 +30,11 @@ public class CustomExceptionHandlerMiddleware
     {
         var code = HttpStatusCode.InternalServerError;
         var result = string.Empty;
-        
+
         switch (exception)
         {
             case ValidationException validationException:
                 code = HttpStatusCode.BadRequest;
-                result = JsonSerializer.Serialize(validationException.Errors);
                 break;
             case NotFoundException notFoundException:
                 code = HttpStatusCode.NotFound;
@@ -47,15 +46,12 @@ public class CustomExceptionHandlerMiddleware
                 code = HttpStatusCode.Forbidden;
                 break;
         }
-        
-        if (result == string.Empty)
-        {
-            result = JsonSerializer.Serialize(new {Error = exception.Message});
-        }
+
+        result = JsonSerializer.Serialize(new { Error = exception.Message });
 
         context.Response.ContentType = "application/json";
-        context.Response.StatusCode = (int) code;
-        
+        context.Response.StatusCode = (int)code;
+
         return context.Response.WriteAsync(result);
     }
 }
