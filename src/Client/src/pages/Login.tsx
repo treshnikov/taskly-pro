@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { toast } from 'react-toastify';
+import { useRequest } from '../hooks/request.hook';
 
 export const Login: React.FunctionComponent = () => {
   const { t } = useTranslation();
@@ -10,6 +11,7 @@ export const Login: React.FunctionComponent = () => {
   const navigate = useNavigate()
   const [name, setName] = useState<string>('')
   const [password, setPassword] = useState<string>('')
+  const { request } = useRequest()
 
   const loginHanler = async (e: SyntheticEvent) => {
     e.preventDefault();
@@ -18,26 +20,15 @@ export const Login: React.FunctionComponent = () => {
     data.append("Name", name);
     data.append("Password", password);
 
-    const jwt = await fetch("/api/v1/auth/token",
+    const jwt = await request("/api/v1/auth/token",
       {
         method: 'post',
         body: data,
       });
 
-    const json = await jwt.json()
-
-    if (jwt.ok) {
-      // save jwt token to storage
-      auth.login(json.jwt)
-      navigate('/')
-    }
-    else {
-      let errorText = jwt.statusText
-      if (json.hasOwnProperty("Error")) {
-        errorText += ": " + json.Error
-      }
-      toast.error(errorText);
-    }
+    // save jwt token to storage
+    auth.login(jwt.jwt)
+    navigate('/')
   }
 
   return (

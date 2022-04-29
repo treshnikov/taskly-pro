@@ -2,6 +2,7 @@ import React, { SyntheticEvent, useState } from 'react'
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { useRequest } from '../hooks/request.hook';
 
 export const Register: React.FunctionComponent = () => {
   const { t } = useTranslation();
@@ -10,6 +11,7 @@ export const Register: React.FunctionComponent = () => {
   const [password, setPassword] = useState<string>('')
   const [email, setEmail] = useState<string>('')
   const navigate = useNavigate()
+  const { request } = useRequest()
 
   const registerHandler = async (e: SyntheticEvent) => {
     e.preventDefault();
@@ -19,26 +21,13 @@ export const Register: React.FunctionComponent = () => {
     data.append("Email", email);
     data.append("Password", password);
 
-    var res = await fetch("/api/v1/auth/register",
+    await request("/api/v1/auth/register",
       {
         method: 'post',
         body: data
       });
-
-    if (res.ok) {
-      toast.success(t('user_has_been_registered_successfully'))
-      navigate('/login')
-    }
-    else {
-      const json = await res.json()
-      let errorText = res.statusText
-      if (json.hasOwnProperty("Error")) {
-        errorText += ": " + json.Error
-      }
-
-      toast.error(errorText);
-    }
-
+    toast.success(t('user_has_been_registered_successfully'))
+    navigate('/login')
   }
 
   return (
