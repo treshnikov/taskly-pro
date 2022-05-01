@@ -7,10 +7,11 @@ import FormGroup from '@mui/material/FormGroup';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { regular, thin } from '@fortawesome/fontawesome-svg-core/import.macro'
+import { regular } from '@fortawesome/fontawesome-svg-core/import.macro'
 import React, { SyntheticEvent, useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AuthContext } from '../context/AuthContext'
+import { SidebarMenu } from './SidebarMenu';
 
 
 export const NavBar: React.FunctionComponent = () => {
@@ -31,22 +32,12 @@ export const NavBar: React.FunctionComponent = () => {
   };
 
   return (
-
-
     <Box sx={{ flexGrow: 1 }}>
       <FormGroup>
       </FormGroup>
       <AppBar position="static">
         <Toolbar>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            sx={{ mr: 2 }}
-          >
-            <FontAwesomeIcon icon={regular('comment')} />
-          </IconButton>
+          <SidebarMenu />
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Taskly
           </Typography>
@@ -89,17 +80,3 @@ export const NavBar: React.FunctionComponent = () => {
 
   )
 }
-
-
-{/* <nav className="navbar navbar-expand-md navbar-light bg-light">
-      <div className="container-fluid">
-        <Link className="navbar-brand" to=""><FontAwesomeIcon icon={regular('comment')} /> Taskly</Link>
-        <div>
-          <ul className="navbar-nav me-auto mb-2 mb-md-0">
-            <li className="nav-item">
-              <Link className="nav-link" onClick={logoutHandler} to={'/'}>{t("logout")}</Link>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </nav> */}
