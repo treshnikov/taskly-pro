@@ -23,11 +23,11 @@ namespace Taskly.WebApi.Controllers
                 .Users
                 .AsNoTracking()
                 .Include(u => u.Roles)
-                .FirstOrDefaultAsync(u => u.Name == request.Name, cancellationToken: cancellationToken);
+                .FirstOrDefaultAsync(u => u.Email == request.Email, cancellationToken: cancellationToken);
 
             if (user == null)
             {
-                throw new NotFoundException($"User {request.Name} cannot be found.");
+                throw new NotFoundException($"User {request.Email} cannot be found.");
             }
 
             if (!BCrypt.Net.BCrypt.Verify(request.Password, user.Password))

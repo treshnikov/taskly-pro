@@ -6,7 +6,7 @@ namespace Taskly.WebApi.Controllers
     {
         public GetJwtTokenRequestValidator()
         {
-            RuleFor(r => r.Name).NotEmpty();
+            RuleFor(r => r.Email).NotEmpty();
             RuleFor(r => r.Password).NotEmpty();
         }
     }

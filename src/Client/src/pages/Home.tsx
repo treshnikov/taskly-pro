@@ -1,3 +1,4 @@
+import { Container } from '@mui/material';
 import React, { useContext, useEffect, useState } from 'react'
 import { AuthContext } from '../context/AuthContext';
 
@@ -6,7 +7,7 @@ export const Home: React.FunctionComponent = () => {
   const auth = useContext(AuthContext)
 
   useEffect(() => {
-    
+
     async function fetchUsers(token: string) {
       const users = await fetch("/api/v1/auth/user",
         {
@@ -16,7 +17,8 @@ export const Home: React.FunctionComponent = () => {
           }
         });
 
-      setContent(await users.text())
+      const json = await users.json()
+      setContent(JSON.stringify(json, null, 2))
     }
 
     fetchUsers(auth.jwt);
@@ -24,8 +26,10 @@ export const Home: React.FunctionComponent = () => {
 
   return (
     <div className='container'>
-      <h1>Home</h1>
-      {content}
+      <Container maxWidth="lg">
+        <h1>Home</h1>
+        {content}
+      </Container>
     </div>
   )
 }
