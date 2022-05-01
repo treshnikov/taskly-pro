@@ -53,7 +53,6 @@ export const Register: React.FunctionComponent = () => {
             label={t('name')}
             name="name"
             autoComplete="name"
-            autoFocus
             value={name}
             onChange={e => setName(e.target.value)}
           />
@@ -64,8 +63,7 @@ export const Register: React.FunctionComponent = () => {
             id="email"
             label={t('email')}
             name="email"
-            autoComplete="email"
-            autoFocus
+            autoComplete="email"          
             value={email}
             onChange={e => setEmail(e.target.value)}
           />
