@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect } from 'react'
+import { toast } from 'react-toastify'
 
 const storageName = 'taskly-user-data'
 
@@ -18,6 +19,41 @@ export const useAuth = () => {
         setIsAuthenticated(false)
     }, [])
 
+    const request = async (input: RequestInfo, init?: RequestInit) => {
+        if (!init) {
+            init = {}
+            init.headers = {}
+            init.headers = { Authorization: `Bearer ${jwt}` }
+        }
+
+        let response
+        try {
+            response = await fetch(input, init)
+        } catch (ex) {
+            const err = ex as Error;
+            if (err) {
+                toast.error(err.message);
+            }
+            throw (ex)
+        }
+
+        const json = await response.json()
+        if (response.ok) {
+            return json;
+        }
+
+        let errorText = response.statusText
+
+        // handle error message
+        if (json.hasOwnProperty("Error")) {
+            errorText += ": " + json.Error
+        }
+
+        toast.error(errorText);
+        throw new Error(errorText)
+    }
+
+
     useEffect(() => {
         const storage = localStorage.getItem(storageName)
         if (!storage) {
@@ -30,5 +66,5 @@ export const useAuth = () => {
         }
     }, [login])
 
-    return { login, logout, jwt: jwt, isAuthenticated }
+    return { login, logout, request, jwt, isAuthenticated }
 }

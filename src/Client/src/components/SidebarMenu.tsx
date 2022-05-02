@@ -1,10 +1,12 @@
 import { solid } from "@fortawesome/fontawesome-svg-core/import.macro";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Box, Divider, Drawer, IconButton, List, ListItem, ListItemText } from "@mui/material";
-import { useState } from "react"
+import { useContext, useState } from "react"
+import { AuthContext } from "../context/AuthContext";
 
 export const SidebarMenu: React.FunctionComponent = () => {
     const [toggled, setToggled] = useState<boolean>(false)
+    const { logout } = useContext(AuthContext);
 
     const list = () => (
         <Box
@@ -14,7 +16,8 @@ export const SidebarMenu: React.FunctionComponent = () => {
         >
             <List>
                 {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-                    <ListItem button key={text}>
+                    <ListItem button key={text}
+                        onClick={() => logout()}>
                         <ListItemText primary={text} />
                     </ListItem>
                 ))}

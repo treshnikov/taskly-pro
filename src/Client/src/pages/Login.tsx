@@ -3,15 +3,13 @@ import React, { SyntheticEvent, useContext, useState } from 'react'
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
-import { useRequest } from '../hooks/request.hook';
 
 export const Login: React.FunctionComponent = () => {
   const { t } = useTranslation();
-  const auth = useContext(AuthContext)
+  const {request, login} = useContext(AuthContext)
   const navigate = useNavigate()
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
-  const { request } = useRequest()
 
   const loginHanler = async (e: SyntheticEvent) => {
     e.preventDefault();
@@ -20,14 +18,14 @@ export const Login: React.FunctionComponent = () => {
     data.append("Email", email);
     data.append("Password", password);
 
-    const jwt = await request("/api/v1/auth/token",
+    const json = await request("/api/v1/auth/token",
       {
         method: 'post',
         body: data,
       });
 
     // save jwt token to storage
-    auth.login(jwt.jwt)
+    login(json.jwt)
     navigate('/')
   }
 
