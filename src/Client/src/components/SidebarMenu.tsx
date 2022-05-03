@@ -33,8 +33,6 @@ export const SidebarMenu: React.FunctionComponent = () => {
                     onClick={() => navigate("/settings")}>
                     <ListItemText primary={t('settings') as string} />
                 </ListItem>
-            </List>
-            <List>
                 <ListItem button key={t('logout') as string}
                     onClick={() => logout()}>
                     <ListItemText primary={t('logout') as string} />
