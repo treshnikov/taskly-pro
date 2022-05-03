@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { toast } from 'react-toastify'
 
 const storageName = 'taskly-user-data'
@@ -13,7 +13,7 @@ export const useAuth = () => {
         setIsAuthenticated(false)
     }
 
-    const request = async (input: RequestInfo, init?: RequestInit) => {
+    const request = useCallback(async (input: RequestInfo, init?: RequestInit) => {
         if (!init) {
             init = {}
             init.headers = {}
@@ -51,7 +51,7 @@ export const useAuth = () => {
         toast.error(errorText);
 
         throw new Error(errorText)
-    }
+    }, [jwt])
 
     const login = async (data: FormData) => {
         const json = await request("/api/v1/auth/token",
