@@ -9,7 +9,7 @@ import { ToastContainer } from 'react-toastify';
 import { createTheme, CssBaseline, ThemeProvider } from '@mui/material';
 
 function App() {
-  const { jwt, login, logout, isAuthenticated, request } = useAuth()
+  const { login, logout, isAuthenticated, request } = useAuth()
   const routes = useRoutes(isAuthenticated)
   const theme = createTheme();
   
@@ -18,7 +18,7 @@ function App() {
       <ThemeProvider theme={theme}>
         <CssBaseline />
 
-        <AuthContext.Provider value={{ jwt, login, logout, isAuthenticated, request }}>
+        <AuthContext.Provider value={{ login, logout, isAuthenticated, request }}>
           <Router>
             {routes}
           </Router>

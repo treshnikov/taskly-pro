@@ -8,7 +8,6 @@ const logoutMock = () => { }
 const requestMock = (input: RequestInfo, init?: RequestInit) => {return {}}
 
 class AuthContextClass {
-  jwt: string = ''
   request: RequestFunc = requestMock
   login: LoginFunc = loginMock;
   logout: LogoutFunc = logoutMock;
