@@ -1,12 +1,15 @@
 import { solid } from "@fortawesome/fontawesome-svg-core/import.macro";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Box, Divider, Drawer, IconButton, List, ListItem, ListItemText } from "@mui/material";
+import { t } from "i18next";
 import { useContext, useState } from "react"
+import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 
 export const SidebarMenu: React.FunctionComponent = () => {
     const [toggled, setToggled] = useState<boolean>(false)
-    const { logout } = useContext(AuthContext);
+    const navigate = useNavigate()
+    const { logout } = useContext(AuthContext)
 
     const list = () => (
         <Box
@@ -15,20 +18,27 @@ export const SidebarMenu: React.FunctionComponent = () => {
             onClick={() => setToggled(false)}
         >
             <List>
-                {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-                    <ListItem button key={text}
-                        onClick={() => logout()}>
-                        <ListItemText primary={text} />
-                    </ListItem>
-                ))}
+                <ListItem button key={t('home') as string}
+                    onClick={() => navigate("/")}>
+                    <ListItemText primary={t('home') as string} />
+                </ListItem>
+                <ListItem button key={t('users') as string}
+                    onClick={() => navigate("/users")}>
+                    <ListItemText primary={t('users') as string} />
+                </ListItem>
             </List>
             <Divider />
             <List>
-                {['All mail', 'Trash', 'Spam'].map((text, index) => (
-                    <ListItem button key={text}>
-                        <ListItemText primary={text} />
-                    </ListItem>
-                ))}
+                <ListItem button key={t('settings') as string}
+                    onClick={() => navigate("/settings")}>
+                    <ListItemText primary={t('settings') as string} />
+                </ListItem>
+            </List>
+            <List>
+                <ListItem button key={t('logout') as string}
+                    onClick={() => logout()}>
+                    <ListItemText primary={t('logout') as string} />
+                </ListItem>
             </List>
         </Box>
     );

@@ -6,5 +6,8 @@
     "welcome": "Добро пожаловать в TasklyPro",
     "email": "Email",
     "logout": "Выйти",
-    "user_has_been_registered_successfully": "Пользователь успешно зарегистрирован"
-}
+    "user_has_been_registered_successfully": "Пользователь успешно зарегистрирован",
+    "settings" : "Настройки",
+    "users": "Пользователи",
+    "home": "Главная"
+}   

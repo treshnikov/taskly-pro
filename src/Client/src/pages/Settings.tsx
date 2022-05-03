@@ -1,13 +1,12 @@
 import { Container } from '@mui/material';
 import React from 'react'
 
-export const Users: React.FunctionComponent = () => {
-
+export const Settings: React.FunctionComponent = () => {
 
   return (
-    <div>
+    <div className='container'>
       <Container maxWidth="lg">
-        <h1>Users</h1>
+        <h1>Settings</h1>
       </Container>
     </div>
   )

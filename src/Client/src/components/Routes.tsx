@@ -3,10 +3,12 @@ import {
   Routes,
   Route
 } from "react-router-dom";
-import { NavBar } from './components/NavBar';
-import { Home } from './pages/Home';
-import { Login } from './pages/Login'
-import { Register } from './pages/Register'
+import { NavBar } from './NavBar';
+import { Home } from '../pages/Home';
+import { Login } from '../pages/Login'
+import { Register } from '../pages/Register'
+import { Users } from '../pages/Users';
+import { Settings } from '../pages/Settings';
 
 export const useRoutes: React.FunctionComponent<boolean> = (isAuthenticated: boolean) => {
 
@@ -16,6 +18,8 @@ export const useRoutes: React.FunctionComponent<boolean> = (isAuthenticated: boo
         <NavBar />
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/users" element={<Users />} />
+          <Route path="/settings" element={<Settings />} />
         </Routes>
       </div>
     )

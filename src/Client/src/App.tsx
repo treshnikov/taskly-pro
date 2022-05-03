@@ -4,9 +4,9 @@ import 'react-toastify/dist/ReactToastify.css';
 import { BrowserRouter as Router } from "react-router-dom";
 import { AuthContext } from './context/AuthContext';
 import { useAuth } from './hooks/auth.hook';
-import { useRoutes } from './routes';
 import { ToastContainer } from 'react-toastify';
 import { createTheme, CssBaseline, ThemeProvider } from '@mui/material';
+import { useRoutes } from './components/Routes';
 
 function App() {
   const { login, logout, isAuthenticated, request } = useAuth()
