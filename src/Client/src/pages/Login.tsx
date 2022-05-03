@@ -6,7 +6,7 @@ import { AuthContext } from '../context/AuthContext';
 
 export const Login: React.FunctionComponent = () => {
   const { t } = useTranslation();
-  const {request, login} = useContext(AuthContext)
+  const {login} = useContext(AuthContext)
   const navigate = useNavigate()
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
@@ -18,14 +18,7 @@ export const Login: React.FunctionComponent = () => {
     data.append("Email", email);
     data.append("Password", password);
 
-    const json = await request("/api/v1/auth/token",
-      {
-        method: 'post',
-        body: data,
-      });
-
-    // save jwt token to storage
-    login(json.jwt)
+    login(data)
     navigate('/')
   }
 

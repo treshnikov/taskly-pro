@@ -14,7 +14,7 @@ export const Home: React.FunctionComponent = () => {
     }
 
     fetchUsers();
-  }, [])
+  }, [request])
 
   return (
     <div className='container'>

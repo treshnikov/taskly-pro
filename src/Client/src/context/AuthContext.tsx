@@ -1,9 +1,9 @@
 import { createContext } from 'react'
 
-type LoginFunc = (jwtToken: string) => void;
+type LoginFunc = (data: FormData) => void;
 type LogoutFunc = () => void;
 type RequestFunc =  (input: RequestInfo, init?: RequestInit) => any
-const loginMock = (jwtToken: string) => { }
+const loginMock = (data: FormData) => { }
 const logoutMock = () => { }
 const requestMock = (input: RequestInfo, init?: RequestInit) => {return {}}
 
