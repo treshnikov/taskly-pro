@@ -1,13 +1,13 @@
 import { Card, Button, CardActions, CardContent, Grid, Typography } from '@mui/material';
 import React, { useContext } from 'react'
 import { AppContext } from '../context/AppContext';
-import { t } from 'i18next';
-import i18n from '../i18n';
-
+import { useTranslation } from 'react-i18next';
 
 export const Settings: React.FunctionComponent = () => {
   const { setLang } = useContext(AppContext)
-
+  // it's important to use useTranslation hook to re-render the current component when lang changing  
+  const { t, i18n } = useTranslation()
+  
   return (
     <div className='container'>
       <Grid
@@ -25,7 +25,9 @@ export const Settings: React.FunctionComponent = () => {
               {t('settings') as string}
             </Typography>
             <Typography variant="body2">
-              Navigate to the setting page.<br />&nbsp;
+              <>
+              {t('change-lang')}
+              </>
             </Typography>
           </CardContent>
           <CardActions>

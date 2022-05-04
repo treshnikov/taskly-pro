@@ -10,6 +10,10 @@
     "settings" : "Settings",
     "users": "Users",
     "home": "Home",
-    "page": "Page"
+    "page": "Page",
+    "hello": "Hello",
+    "users-welcome": "Navigate to this page to see all registered users.",
+    "settings-welcome": "Navigate to the setting page.",
+    "change-lang": "Change the app language."
 }
   

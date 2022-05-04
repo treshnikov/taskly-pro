@@ -15,7 +15,6 @@ function App() {
   const { theme, setLang } = useApp()
   const routes = useRoutes(isAuthenticated)
 
-
   return (
     <div className="App">
       <ThemeProvider theme={theme}>

@@ -13,7 +13,7 @@ i18n
     debug: false,
     interpolation: {
       escapeValue: false,
-    },
+    }
   });
 
   i18n.changeLanguage('en');

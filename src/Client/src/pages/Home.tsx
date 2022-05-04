@@ -14,9 +14,9 @@ export const Home: React.FunctionComponent = () => {
     const fetchUser = async () => {
       const u = await request("/api/v1/auth/user")
       setUser(u as UserVm)
-    } 
+    }
     fetchUser()
-  })
+  }, [request])
 
   return (
     <Grid
@@ -26,7 +26,7 @@ export const Home: React.FunctionComponent = () => {
       alignItems="flex-start"
     >
 
-      <Card sx={{ width: 275, margin: 1 }}>
+      <Card sx={{ width: 275, height: 200, margin: 1 }}>
         <CardContent>
           <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
             {t('page') as string}
@@ -35,16 +35,14 @@ export const Home: React.FunctionComponent = () => {
             {t('home') as string}
           </Typography>
           <Typography variant="body2">
-            Hello, user {user.name}!<br />
-            Your email is {user.email}.
+            <>
+              {t('hello')} {user.name} / {user.email}!<br />
+            </>
           </Typography>
         </CardContent>
-        <CardActions>
-          <Button variant='contained' onClick={e => { navigate("/") }}>{t('home') as string}</Button>
-        </CardActions>
       </Card>
 
-      <Card sx={{ width: 275, margin: 1 }}>
+      <Card sx={{ width: 275, height: 200, margin: 1 }}>
         <CardContent>
           <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
             {t('page') as string}
@@ -53,7 +51,7 @@ export const Home: React.FunctionComponent = () => {
             {t('users') as string}
           </Typography>
           <Typography variant="body2">
-            Navigate to this page to see all registered users.
+            <>{t('users-welcome')}</>
           </Typography>
         </CardContent>
         <CardActions>
@@ -61,7 +59,7 @@ export const Home: React.FunctionComponent = () => {
         </CardActions>
       </Card>
 
-      <Card sx={{ width: 275, margin: 1 }}>
+      <Card sx={{ width: 275, height: 200, margin: 1 }}>
         <CardContent>
           <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
             {t('page') as string}
@@ -70,7 +68,9 @@ export const Home: React.FunctionComponent = () => {
             {t('settings') as string}
           </Typography>
           <Typography variant="body2">
-            Navigate to the setting page.<br />&nbsp;
+            <>
+            {t('settings-welcome')}<br/>&nbsp;
+            </>
           </Typography>
         </CardContent>
         <CardActions>

@@ -12,12 +12,14 @@ import React, { SyntheticEvent, useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AuthContext } from '../context/AuthContext'
 import { SidebarMenu } from './SidebarMenu';
+import { useNavigate } from 'react-router-dom';
 
 
 export const NavBar: React.FunctionComponent = () => {
   const { t } = useTranslation();
   const { logout } = useContext(AuthContext);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const navigate = useNavigate()
 
   const logoutHandler = async (event: SyntheticEvent) => {
     logout()
@@ -39,7 +41,7 @@ export const NavBar: React.FunctionComponent = () => {
         <Toolbar>
           <SidebarMenu />
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Taskly
+            <p className='logo' onClick={e => {navigate("/")}} >Taskly</p>
           </Typography>
 
           <div>
