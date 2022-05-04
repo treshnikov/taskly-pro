@@ -9,5 +9,6 @@
     "user_has_been_registered_successfully": "Пользователь успешно зарегистрирован",
     "settings" : "Настройки",
     "users": "Пользователи",
-    "home": "Главная"
+    "home": "Главная",
+    "page": "Страница"
 }   

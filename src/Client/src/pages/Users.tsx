@@ -1,8 +1,8 @@
-import { Box, Container } from '@mui/material';
+import { Box } from '@mui/material';
 import React, { useContext, useEffect, useState } from 'react'
 import { AuthContext } from '../context/AuthContext';
 import { UserVm } from "../models/UserVm";
-import { DataGrid, GridColDef, GridEventListener, GridEvents, GridRowModel, GridRowParams, GridValueGetterParams, MuiEvent } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridEventListener, GridEvents, GridRowModel, GridRowParams, MuiEvent } from '@mui/x-data-grid';
 
 export const Users: React.FunctionComponent = () => {
   const { request } = useContext(AuthContext)
@@ -14,7 +14,7 @@ export const Users: React.FunctionComponent = () => {
       setUsers(json)
     }
     populateUsers()
-  }, [])
+  }, [request])
 
   const columns: GridColDef[] = [
     {
@@ -25,13 +25,13 @@ export const Users: React.FunctionComponent = () => {
     {
       field: 'name',
       headerName: 'Name',
-      minWidth: 150,
+      minWidth: 250,
       editable: true,
     },
     {
       field: 'email',
       headerName: 'Email',
-      minWidth: 150,
+      minWidth: 250,
       editable: true,
     }
   ];
