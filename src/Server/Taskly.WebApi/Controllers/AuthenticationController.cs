@@ -69,8 +69,8 @@ namespace Taskly.WebApi.Controllers
             return Ok(result);
         }
 
-        [HttpGet("users")]
-        [Authorize(Roles = RoleIdents.Admin)]
+        [HttpGet("users")]        
+        //[Authorize(Roles = RoleIdents.Admin)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult> GetUsers()
