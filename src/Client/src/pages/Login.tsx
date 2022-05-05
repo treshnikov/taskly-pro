@@ -2,14 +2,16 @@ import { Box, Button, Container, Grid, TextField, Typography } from '@mui/materi
 import React, { SyntheticEvent, useContext, useState } from 'react'
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from 'react-router-dom';
+import { AppContext } from '../context/AppContext';
 import { AuthContext } from '../context/AuthContext';
 
 export const Login: React.FunctionComponent = () => {
   const { t } = useTranslation();
-  const {login} = useContext(AuthContext)
+  const { login } = useContext(AuthContext)
   const navigate = useNavigate()
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
+  const { setEnLang, setRuLang } = useContext(AppContext)
 
   const loginHanler = async (e: SyntheticEvent) => {
     e.preventDefault();
@@ -23,7 +25,7 @@ export const Login: React.FunctionComponent = () => {
   }
 
   return (
-    <Container component="main" maxWidth="xs">
+    <Container component="main" maxWidth="sm">
       <Box
         sx={{
           marginTop: 8,
@@ -32,7 +34,7 @@ export const Login: React.FunctionComponent = () => {
           alignItems: 'center',
         }}
       >
-        <Typography component="h1" variant="h4">
+        <Typography variant="h3">
           {t("welcome")}
         </Typography>
         <Box component="form" onSubmit={loginHanler} noValidate sx={{ mt: 1 }}>
@@ -68,10 +70,12 @@ export const Login: React.FunctionComponent = () => {
           >
             {t("signin")}
           </Button>
-          <Grid container>
-            <Grid item xs>
+          <Grid container spacing={0}>
+            <Grid item xs={2} >
+              <Link onClick={e => setEnLang()} to={''}>EN&nbsp;</Link>
+              <Link onClick={e => setRuLang()} to={''}>RU&nbsp;</Link>
             </Grid>
-            <Grid item>
+            <Grid item xs={10} style={{textAlign: "right"}}>
               <Link to='/register'>{t("register")}
               </Link>
             </Grid>

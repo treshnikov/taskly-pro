@@ -1,6 +1,7 @@
 import { createTheme, Theme } from '@mui/material';
 import { enUS, ruRU } from '@mui/x-data-grid';
 import { useCallback, useState } from 'react'
+import i18n from '../i18n';
 
 const themeEn = createTheme({
     palette: {
@@ -15,19 +16,17 @@ const themeRu = createTheme({
 }, ruRU);
 
 export const useApp = () => {
-    const [theme, setTheme] = useState<Theme>(themeEn)
-    const setLang = useCallback((lang: string) => {
+    const [, setTheme] = useState<Theme>(themeEn)
 
-        switch (lang) {
-            case "ru":
-                setTheme(themeRu)
-                break
-
-            case "en":
-                setTheme(themeEn)
-                break
-        }
+    const setEnLang = useCallback(() => {
+        i18n.changeLanguage('en'); 
+        setTheme(themeEn)
     }, [])
 
-    return { theme, setLang }
+    const setRuLang = useCallback(() => {
+        i18n.changeLanguage('ru'); 
+        setTheme(themeRu)
+    }, [])
+
+    return { setEnLang, setRuLang }
 }

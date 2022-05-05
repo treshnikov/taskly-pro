@@ -4,14 +4,16 @@ import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { AuthContext } from '../context/AuthContext';
+import { AppContext } from '../context/AppContext';
 
 export const Register: React.FunctionComponent = () => {
   const { t } = useTranslation();
-  const {request } = useContext(AuthContext)
+  const { request } = useContext(AuthContext)
   const [name, setName] = useState<string>('')
   const [password, setPassword] = useState<string>('')
   const [email, setEmail] = useState<string>('')
   const navigate = useNavigate()
+  const { setEnLang, setRuLang } = useContext(AppContext)
 
   const registerHandler = async (e: SyntheticEvent) => {
     e.preventDefault();
@@ -31,7 +33,7 @@ export const Register: React.FunctionComponent = () => {
   }
 
   return (
-    <Container component="main" maxWidth="xs">
+    <Container component="main" maxWidth="sm">
       <Box
         sx={{
           marginTop: 8,
@@ -40,7 +42,7 @@ export const Register: React.FunctionComponent = () => {
           alignItems: 'center',
         }}
       >
-        <Typography component="h1" variant="h4">
+        <Typography variant="h3">
           {t("welcome")}
         </Typography>
         <Box component="form" onSubmit={registerHandler} noValidate sx={{ mt: 1 }}>
@@ -62,7 +64,7 @@ export const Register: React.FunctionComponent = () => {
             id="email"
             label={t('email')}
             name="email"
-            autoComplete="email"          
+            autoComplete="email"
             value={email}
             onChange={e => setEmail(e.target.value)}
           />
@@ -87,10 +89,13 @@ export const Register: React.FunctionComponent = () => {
           >
             {t("register")}
           </Button>
-          <Grid container>
-            <Grid item xs>
+
+          <Grid container spacing={0}>
+            <Grid item xs={2} >
+              <Link onClick={e => setEnLang()} to={''}>EN&nbsp;</Link>
+              <Link onClick={e => setRuLang()} to={''}>RU&nbsp;</Link>
             </Grid>
-            <Grid item>
+            <Grid item xs={10} style={{ textAlign: "right" }}>
               <Link to='/login'>{t("signin")}
               </Link>
             </Grid>

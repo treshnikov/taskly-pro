@@ -3,7 +3,7 @@
     "register": "Регистрация",
     "name": "Имя",
     "password": "Пароль",
-    "welcome": "Добро пожаловать в TasklyPro",
+    "welcome": "TasklyPro",
     "email": "Email",
     "logout": "Выйти",
     "user_has_been_registered_successfully": "Пользователь успешно зарегистрирован",

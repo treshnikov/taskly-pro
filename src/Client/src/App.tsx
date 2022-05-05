@@ -6,20 +6,20 @@ import { AuthContext } from './context/AuthContext';
 import { useAuth } from './hooks/auth.hook';
 import { useApp } from './hooks/app.hook';
 import { ToastContainer } from 'react-toastify';
-import {  CssBaseline, ThemeProvider } from '@mui/material';
+import {  createTheme, CssBaseline, ThemeProvider } from '@mui/material';
 import { useRoutes } from './components/Routes';
 import { AppContext } from './context/AppContext';
 
 function App() {
   const { login, logout, isAuthenticated, request } = useAuth()
-  const { theme, setLang } = useApp()
+  const { setEnLang, setRuLang } = useApp()
   const routes = useRoutes(isAuthenticated)
 
   return (
     <div className="App">
-      <ThemeProvider theme={theme}>
+      <ThemeProvider theme={createTheme()}>
         <CssBaseline />
-        <AppContext.Provider value={{ theme, setLang }}>
+        <AppContext.Provider value={{ setEnLang, setRuLang }}>
           <AuthContext.Provider value={{ login, logout, isAuthenticated, request }}>
             <Router>
               {routes}
