@@ -31,7 +31,16 @@ namespace Taskly.WebApi.Controllers
             return Ok(res);
         }
 
-        
-
+        /// <summary>
+        /// Finds departments.json and users.json in the execution directory and tries to update departments and users in the DB
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost("import")]
+        public async Task<ActionResult> ImportUsersAndDepartmentsAsync()
+        {
+            var request = new ImportUsersAndDepartmentsFromJsonRequest();
+            await Mediator.Send(request);
+            return Ok();
+        }
     }
 }
