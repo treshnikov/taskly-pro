@@ -10,11 +10,10 @@ namespace Taskly.DAL
         public DbSet<Note> Notes { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
-        public DbSet<Unit> Units { get; internal set; }
+        public DbSet<Unit> Units { get; set; }
 
         public TasklyDbContext(DbContextOptions<TasklyDbContext> options) : base(options)
         {
-
         }
 
         protected override void OnModelCreating(ModelBuilder builder)

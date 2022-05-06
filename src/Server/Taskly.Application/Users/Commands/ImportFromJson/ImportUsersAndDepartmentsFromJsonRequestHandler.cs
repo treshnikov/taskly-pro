@@ -1,16 +1,65 @@
 using System.Text.Json;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Taskly.Application.Common.Exceptions;
+using Taskly.Application.Interfaces;
+using Taskly.Domain;
+using Serilog;
 
 namespace Taskly.Application.Users
 {
     public class ImportUsersAndDepartmentsFromJsonRequestHandler : IRequestHandler<ImportUsersAndDepartmentsFromJsonRequest>
     {
-        public Task<Unit> Handle(ImportUsersAndDepartmentsFromJsonRequest request, CancellationToken cancellationToken)
+        private const string DefaultPasswordForNewUsers = "123456";
+        private readonly ITasklyDbContext _dbContext;
+        public ImportUsersAndDepartmentsFromJsonRequestHandler(ITasklyDbContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
+
+        public async Task<MediatR.Unit> Handle(ImportUsersAndDepartmentsFromJsonRequest request, CancellationToken cancellationToken)
         {
             Extract(request, out DepartmentJson[] deps, out UserJson[] users);
 
-            return Task.FromResult(Unit.Value);
+            await UpdateUsers(users, cancellationToken);
+            return MediatR.Unit.Value;
+        }
+
+        private async Task UpdateUsers(UserJson[] users, CancellationToken cancellationToken)
+        {
+            using (var transaction = _dbContext.Database.BeginTransaction())
+            {
+                var dbUsers = _dbContext.Users.ToList();
+                var newUsers = new List<User>();
+                foreach (var u in users)
+                {
+                    var userName = $"{u.lastname} {u.firstname} {u.middlename}";
+                    Log.Logger.Debug($"Handle user [{userName}][{u.email}]");
+
+                    var dbUser = dbUsers.FirstOrDefault(i => i.Email == u.email && i.Name == userName);
+                    var newUser = newUsers.FirstOrDefault(i => i.Email == u.email && i.Name == userName);
+                    if (dbUser == null && newUser == null)
+                    {
+                        newUsers.Add(new User
+                        {
+                            Name = userName,
+                            Password = BCrypt.Net.BCrypt.HashPassword(DefaultPasswordForNewUsers),
+                            Id = Guid.NewGuid(),
+                            Email = u.email
+                        });
+                        Log.Logger.Debug($"Added");
+                    }
+                    else
+                    {
+                        // userDb.Name = $"{u.lastname} {u.firstname} {u.middlename}";
+                        // _dbContext.Users.Update(userDb);
+                    }
+                }
+                _dbContext.Users.AddRange(newUsers);
+                await _dbContext.SaveChangesAsync(cancellationToken);
+                transaction.Commit();
+            }
         }
 
         private void Extract(ImportUsersAndDepartmentsFromJsonRequest request, out DepartmentJson[] deps, out UserJson[] users)

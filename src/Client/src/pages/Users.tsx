@@ -39,7 +39,7 @@ export const Users: React.FunctionComponent = () => {
     <div>
       <HotTable
         width='auto'
-        fixedRowsTop={1}
+        fixedRowsTop={0}
         columnSorting={true}
         data={users}
         colHeaders={headers}

@@ -11,8 +11,7 @@ namespace Taskly.DAL.EntityTypeConfigurations
         {
             builder.ToTable("Users");
             builder.HasIndex(u => u.Id).IsUnique();
-            builder.HasIndex(u => u.Name).IsUnique();
-            builder.HasIndex(u => u.Email).IsUnique();
+            builder.HasIndex(u => new {u.Name, u.Email}).IsUnique();
         }
     }
 }

@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Taskly.Domain;
 
 namespace Taskly.Application.Interfaces
@@ -8,7 +9,9 @@ namespace Taskly.Application.Interfaces
         DbSet<Note> Notes { get; set; }
         DbSet<User> Users { get; set; }
         DbSet<Role> Roles { get; set; }
+        DbSet<Unit> Units { get; set; }
 
+        DatabaseFacade Database { get; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }
