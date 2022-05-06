@@ -52,8 +52,7 @@ namespace Taskly.Application.Users
                     }
                     else
                     {
-                        // userDb.Name = $"{u.lastname} {u.firstname} {u.middlename}";
-                        // _dbContext.Users.Update(userDb);
+                        // todo - update existing user
                     }
                 }
                 _dbContext.Users.AddRange(newUsers);

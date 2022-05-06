@@ -23,38 +23,11 @@ namespace Taskly.Application.Users
                 .Users
                 .Include(u => u.UserUnits).ThenInclude(u => u.Unit)
                 .AsNoTracking()
+                .Select(u => UserVm.FromUser(u))
                 .ToListAsync(cancellationToken: cancellationToken);
             
-            return UsersToDto(users);
+            return users;
         }
 
-        private static IEnumerable<UserVm> UsersToDto(List<User> users)
-        {
-            var res = new List<UserVm>();
-            foreach(var u in users)
-            {
-                var dto = new UserVm
-                {
-                    Id = u.Id,
-                    Email = u.Email,
-                    Name = u.Name,
-                };
-
-                if (u.UserUnits == null)
-                {
-                    continue;
-                }
-
-                var units = string.Empty;
-                foreach (var uu in u.UserUnits)
-                {
-                    units += uu.Unit?.Name + " ";
-                }
-
-                dto.Unit = units;
-                res.Add(dto);
-            }
-            return res;
-        }
     }
 }
