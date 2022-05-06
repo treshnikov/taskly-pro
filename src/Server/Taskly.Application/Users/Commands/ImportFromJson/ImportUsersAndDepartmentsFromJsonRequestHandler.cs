@@ -23,42 +23,136 @@ namespace Taskly.Application.Users
             Extract(request, out DepartmentJson[] deps, out UserJson[] users);
 
             await UpdateUsers(users, cancellationToken);
+            await UpdateDepartments(deps, cancellationToken);
+            await UpdateUserUnitLinks(users, deps, cancellationToken);
+
             return MediatR.Unit.Value;
+        }
+
+        private async Task UpdateUserUnitLinks(UserJson[] users, DepartmentJson[] deps, CancellationToken cancellationToken)
+        {
+            using var transaction = _dbContext.Database.BeginTransaction();
+
+            var dbDeps = await _dbContext.Units.ToListAsync(cancellationToken: cancellationToken);
+            var dbUsers = await _dbContext.Users.ToListAsync(cancellationToken: cancellationToken);
+            foreach (var u in users)
+            {
+                if (!u.DepartmentId.HasValue)
+                {
+                    continue;
+                }
+
+                Log.Logger.Debug($"Handle {u.lastname}");
+                var dbUser = dbUsers.First(i => i.Email == u.email);
+                var depName = deps.First(i => i.prj_company_ID == u.DepartmentId).name;
+                var dbDep = dbDeps.First(i => i.Name == depName);
+                if (dbUser.UserUnits == null)
+                {
+                    dbUser.UserUnits = new List<UserUnit>();
+                }
+
+                var userUnit = dbUser.UserUnits.FirstOrDefault(i => i.User == dbUser && i.Unit == dbDep);
+                if (userUnit == null)
+                {
+                    userUnit = new UserUnit
+                    {
+                        Id = Guid.NewGuid(),
+                        Rate = 1,
+                        Unit = dbDep,
+                        User = dbUser,
+                        UserTitle = u.title,
+                        Comment = u.TypeName
+                    };
+
+                    _dbContext.UserUnits.Add(userUnit);
+                    dbUser.UserUnits.Add(userUnit);
+                }
+                else
+                {
+                    userUnit.Rate = 1;
+                    userUnit.UserTitle = u.title;
+                    userUnit.Comment = u.TypeName;
+                }
+
+                _dbContext.Users.Update(dbUser);
+            }
+            await _dbContext.SaveChangesAsync(cancellationToken);
+            transaction.Commit();
+        }
+
+        private async Task UpdateDepartments(DepartmentJson[] deps, CancellationToken cancellationToken)
+        {
+            using var transaction = _dbContext.Database.BeginTransaction();
+
+            var dbDeps = _dbContext.Units.ToList();
+            var newDeps = new List<Domain.Unit>();
+            foreach (var d in deps)
+            {
+                var dbDep = dbDeps.FirstOrDefault(i => i.Name == d.name);
+                var newDep = newDeps.FirstOrDefault(i => i.Name == d.name);
+                if (dbDep == null && newDep == null)
+                {
+                    Log.Logger.Debug($"Handle {d.name} with parent = {d.parent}");
+                    newDeps.Add(new Domain.Unit
+                    {
+                        Id = Guid.NewGuid(),
+                        Name = d.name,
+                        OrderNumber = d.order_number,
+                        ShortName = d.short_name,
+                    });
+                }
+                else
+                {
+                    dbDep.ShortName = d.name;
+                    dbDep.OrderNumber = d.order_number;
+                    _dbContext.Units.Update(dbDep);
+                }
+            }
+            _dbContext.Units.AddRange(newDeps);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+
+            // update parent departments
+            dbDeps = await _dbContext.Units.ToListAsync(cancellationToken);
+            foreach (var d in deps)
+            {
+                if (!d.parent.HasValue)
+                {
+                    continue;
+                }
+
+                dbDeps.First(i => i.Name == d.name).ParentUnit = dbDeps.First(i => i.Name == deps.First(x => x.prj_company_ID == d.parent).name);
+                _dbContext.Units.Update(dbDeps.First(i => i.Name == d.name));
+            }
+            await _dbContext.SaveChangesAsync(cancellationToken);
+
+            transaction.Commit();
         }
 
         private async Task UpdateUsers(UserJson[] users, CancellationToken cancellationToken)
         {
-            using (var transaction = _dbContext.Database.BeginTransaction())
-            {
-                var dbUsers = _dbContext.Users.ToList();
-                var newUsers = new List<User>();
-                foreach (var u in users)
-                {
-                    var userName = $"{u.lastname} {u.firstname} {u.middlename}";
-                    Log.Logger.Debug($"Handle user [{userName}][{u.email}]");
+            using var transaction = _dbContext.Database.BeginTransaction();
 
-                    var dbUser = dbUsers.FirstOrDefault(i => i.Email == u.email && i.Name == userName);
-                    var newUser = newUsers.FirstOrDefault(i => i.Email == u.email && i.Name == userName);
-                    if (dbUser == null && newUser == null)
+            var dbUsers = _dbContext.Users.ToList();
+            var newUsers = new List<User>();
+            foreach (var u in users)
+            {
+                var userName = $"{u.lastname} {u.firstname} {u.middlename}";
+                var dbUser = dbUsers.FirstOrDefault(i => i.Email == u.email && i.Name == userName);
+                var newUser = newUsers.FirstOrDefault(i => i.Email == u.email && i.Name == userName);
+                if (dbUser == null && newUser == null)
+                {
+                    newUsers.Add(new User
                     {
-                        newUsers.Add(new User
-                        {
-                            Name = userName,
-                            Password = BCrypt.Net.BCrypt.HashPassword(DefaultPasswordForNewUsers),
-                            Id = Guid.NewGuid(),
-                            Email = u.email
-                        });
-                        Log.Logger.Debug($"Added");
-                    }
-                    else
-                    {
-                        // todo - update existing user
-                    }
+                        Name = userName,
+                        Password = BCrypt.Net.BCrypt.HashPassword(DefaultPasswordForNewUsers),
+                        Id = Guid.NewGuid(),
+                        Email = u.email
+                    });
                 }
-                _dbContext.Users.AddRange(newUsers);
-                await _dbContext.SaveChangesAsync(cancellationToken);
-                transaction.Commit();
             }
+            _dbContext.Users.AddRange(newUsers);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+            transaction.Commit();
         }
 
         private void Extract(ImportUsersAndDepartmentsFromJsonRequest request, out DepartmentJson[] deps, out UserJson[] users)

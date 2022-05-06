@@ -10,7 +10,7 @@ namespace Taskly.Application.Interfaces
         DbSet<User> Users { get; set; }
         DbSet<Role> Roles { get; set; }
         DbSet<Unit> Units { get; set; }
-
+        DbSet<UserUnit> UserUnits { get; set; }
         DatabaseFacade Database { get; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }

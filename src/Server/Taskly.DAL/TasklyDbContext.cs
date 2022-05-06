@@ -11,6 +11,7 @@ namespace Taskly.DAL
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<Unit> Units { get; set; }
+        public DbSet<UserUnit> UserUnits { get; set; }
 
         public TasklyDbContext(DbContextOptions<TasklyDbContext> options) : base(options)
         {
