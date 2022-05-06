@@ -23,9 +23,9 @@ export const Users: React.FunctionComponent = () => {
   const headers = ['ID', t('name'), t('email'), t('unit')]
   const hiddenColumns = { columns: [0] }
   const columns = [
-    {data:"id", editor: false },
-    {data:"name", editor: false },
-    { data:"email", editor: false },
+    { data: "id", editor: false },
+    { data: "name", editor: false },
+    { data: "email", editor: false },
     {
       data: 'unit',
       type: 'dropdown',
@@ -34,18 +34,21 @@ export const Users: React.FunctionComponent = () => {
       source: ['IT']
     }
   ]
+  const colWidths = [100, 250, 220, 400]
 
   return (
     <div>
       <HotTable
-        width='auto'
         fixedRowsTop={0}
         columnSorting={true}
         data={users}
         colHeaders={headers}
         columns={columns}
-        rowHeaders={false}
-        manualColumnResize={true}
+        colWidths={colWidths}
+        wordWrap={false}
+        rowHeaders={true}
+        fillHandle={false}
+        //manualColumnResize={true}
         hiddenColumns={hiddenColumns}
         afterChange={(changes: CellChange[] | null, source: ChangeSource) => { console.log("afterChange", changes) }}
       />

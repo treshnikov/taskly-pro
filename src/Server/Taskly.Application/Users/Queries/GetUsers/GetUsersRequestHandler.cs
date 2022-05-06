@@ -23,6 +23,7 @@ namespace Taskly.Application.Users
                 .Users
                 .Include(u => u.UserUnits).ThenInclude(u => u.Unit)
                 .AsNoTracking()
+                .OrderBy(u => u.Name)
                 .Select(u => UserVm.FromUser(u))
                 .ToListAsync(cancellationToken: cancellationToken);
             
