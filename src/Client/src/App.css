@@ -1,3 +1,9 @@
+@import 'handsontable/dist/handsontable.full.css';
+
 .logo{
     cursor: pointer;
+}
+
+#hot-display-license-info{
+    display: none;
 }

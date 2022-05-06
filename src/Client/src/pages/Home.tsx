@@ -12,7 +12,7 @@ export const Home: React.FunctionComponent = () => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const u = await request("/api/v1/auth/user")
+      const u = await request("/api/v1/users/user")
       setUser(u as UserVm)
     }
     fetchUser()

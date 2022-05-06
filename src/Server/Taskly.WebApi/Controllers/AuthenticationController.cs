@@ -1,11 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Serilog;
 using Taskly.Application.Auth.Commands.Register;
-using Taskly.Application.Auth.Consts;
-using Taskly.Application.Auth.Queries.GetUsers;
-using Taskly.Application.Jwt;
-using Taskly.Domain;
 
 namespace Taskly.WebApi.Controllers
 {
@@ -68,30 +63,5 @@ namespace Taskly.WebApi.Controllers
 
             return Ok(result);
         }
-
-        [HttpGet("users")]        
-        //[Authorize(Roles = RoleIdents.Admin)]
-        [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult> GetUsers()
-        {
-            Log.Warning($"User[{UserId}] requests user list.");
-            
-            var res = await Mediator.Send(new GetUsersRequest());
-            return Ok(res);
-        }
-
-        [HttpGet("user")]
-        [Authorize]
-        [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult> GetUser()
-        {
-            var res = await Mediator.Send(new GetUserRequest{UserId = UserId});
-            return Ok(res);
-        }
-
-        
-
     }
 }

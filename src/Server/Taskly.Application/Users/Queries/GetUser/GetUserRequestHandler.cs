@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Taskly.Application.Common.Exceptions;
 using Taskly.Application.Interfaces;
 
-namespace Taskly.Application.Auth.Queries.GetUsers
+namespace Taskly.Application.Users
 {
     public class GetUserRequestHandler : IRequestHandler<GetUserRequest, UserVm>
     {

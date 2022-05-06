@@ -4,7 +4,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Taskly.Application.Interfaces;
 
-namespace Taskly.Application.Auth.Queries.GetUsers
+namespace Taskly.Application.Users
 {
     public class GetUsersRequestHandler : IRequestHandler<GetUsersRequest, IEnumerable<UserVm>>
     {
@@ -20,6 +20,7 @@ namespace Taskly.Application.Auth.Queries.GetUsers
         {
             return await _dbContext
                 .Users
+                .Include(u => u.Unit)
                 .AsNoTracking()
                 .ProjectTo<UserVm>(_mapper.ConfigurationProvider)
                 .ToListAsync(cancellationToken: cancellationToken);

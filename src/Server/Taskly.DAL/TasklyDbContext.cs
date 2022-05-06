@@ -9,8 +9,8 @@ namespace Taskly.DAL
     {
         public DbSet<Note> Notes { get; set; }
         public DbSet<User> Users { get; set; }
-
         public DbSet<Role> Roles { get; set; }
+        public DbSet<Unit> Units { get; internal set; }
 
         public TasklyDbContext(DbContextOptions<TasklyDbContext> options) : base(options)
         {
@@ -22,6 +22,7 @@ namespace Taskly.DAL
             builder.ApplyConfiguration(new NoteConfiguration());
             builder.ApplyConfiguration(new UserConfiguration());
             builder.ApplyConfiguration(new RoleConfiguration());
+            builder.ApplyConfiguration(new UnitConfiguration());
             base.OnModelCreating(builder);
         }
 

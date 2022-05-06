@@ -17,10 +17,18 @@ namespace Taskly.DAL
 
         private static void PopulateDefaultUsersAndRoles(TasklyDbContext context)
         {
+            var unit = new Unit
+            {
+                Id = Guid.NewGuid(),
+                Name = "IT",
+
+            };
+
             var admin = new User
             {
                 Name = "admin",
                 Email = "admin@admin.com",
+                Unit = unit,
                 Password = BCrypt.Net.BCrypt.HashPassword("admin"),
                 Roles = new[] {
                     new Role
@@ -29,6 +37,7 @@ namespace Taskly.DAL
                     }
                 }
             };
+            context.Units.Add(unit);
             context.Users.Add(admin);
             context.SaveChanges();
         }

@@ -5,10 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Taskly.Application.Auth.Queries.GetUsers
+namespace Taskly.Application.Users
 {
-    public class GetUserRequest : IRequest<UserVm>
+    public  class GetUsersRequest : IRequest<IEnumerable<UserVm>>
     {
-        public Guid UserId { get; set; }
     }
 }
