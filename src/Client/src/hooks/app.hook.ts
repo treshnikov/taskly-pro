@@ -1,5 +1,5 @@
 import { createTheme, Theme } from '@mui/material';
-import { enUS, ruRU } from '@mui/x-data-grid';
+import { enUS, ruRU } from 'handsontable/i18n';
 import { useCallback, useState } from 'react'
 import i18n from '../i18n';
 

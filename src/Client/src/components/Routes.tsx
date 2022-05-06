@@ -9,6 +9,7 @@ import { Login } from '../pages/Login'
 import { Register } from '../pages/Register'
 import { Users } from '../pages/Users';
 import { Settings } from '../pages/Settings';
+import Departments from '../pages/Departments';
 
 export const useRoutes: React.FunctionComponent<boolean> = (isAuthenticated: boolean) => {
 
@@ -19,6 +20,7 @@ export const useRoutes: React.FunctionComponent<boolean> = (isAuthenticated: boo
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/users" element={<Users />} />
+          <Route path="/departments" element={<Departments />} />
           <Route path="/settings" element={<Settings />} />
         </Routes>
       </div>
