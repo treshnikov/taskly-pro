@@ -14,7 +14,7 @@ namespace Taskly.DAL
 
         public TasklyDbContext(DbContextOptions<TasklyDbContext> options) : base(options)
         {
-            
+
         }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -23,6 +23,7 @@ namespace Taskly.DAL
             builder.ApplyConfiguration(new UserConfiguration());
             builder.ApplyConfiguration(new RoleConfiguration());
             builder.ApplyConfiguration(new UnitConfiguration());
+            builder.ApplyConfiguration(new UserUnitConfiguration());
             base.OnModelCreating(builder);
         }
 

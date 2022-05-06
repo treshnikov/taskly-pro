@@ -3,6 +3,7 @@ using AutoMapper.QueryableExtensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Taskly.Application.Interfaces;
+using Taskly.Domain;
 
 namespace Taskly.Application.Users
 {
@@ -18,12 +19,42 @@ namespace Taskly.Application.Users
         }
         public async Task<IEnumerable<UserVm>> Handle(GetUsersRequest request, CancellationToken cancellationToken)
         {
-            return await _dbContext
+            var users = await _dbContext
                 .Users
-                .Include(u => u.Unit)
+                .Include(u => u.UserUnits).ThenInclude(u => u.Unit)
                 .AsNoTracking()
-                .ProjectTo<UserVm>(_mapper.ConfigurationProvider)
                 .ToListAsync(cancellationToken: cancellationToken);
+            
+            return UsersToDto(users);
+        }
+
+        private static IEnumerable<UserVm> UsersToDto(List<User> users)
+        {
+            var res = new List<UserVm>();
+            foreach(var u in users)
+            {
+                var dto = new UserVm
+                {
+                    Id = u.Id,
+                    Email = u.Email,
+                    Name = u.Name,
+                };
+
+                if (u.UserUnits == null)
+                {
+                    continue;
+                }
+
+                var units = string.Empty;
+                foreach (var uu in u.UserUnits)
+                {
+                    units += uu.Unit?.Name + " ";
+                }
+
+                dto.Unit = units;
+                res.Add(dto);
+            }
+            return res;
         }
     }
 }

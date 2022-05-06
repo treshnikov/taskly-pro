@@ -4,21 +4,12 @@ using Taskly.Domain;
 
 namespace Taskly.Application.Users
 {
-    public class UserVm : IMapWith<User>
+    public class UserVm
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
         public string Unit { get; set; }
-
-        public void Mapping(Profile profile)
-        {
-            profile.CreateMap<User, UserVm>()
-                .ForMember(u => u.Id, u => u.MapFrom(u => u.Id))
-                .ForMember(u => u.Name, u => u.MapFrom(u => u.Name))
-                .ForMember(u => u.Email, u => u.MapFrom(u => u.Email))
-                .ForMember(u => u.Unit, u => u.MapFrom(u => u.Unit.Name));
-        }
 
     }
 }

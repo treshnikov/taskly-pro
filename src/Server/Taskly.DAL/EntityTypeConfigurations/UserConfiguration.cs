@@ -15,5 +15,4 @@ namespace Taskly.DAL.EntityTypeConfigurations
             builder.HasIndex(u => u.Email).IsUnique();
         }
     }
-
 }

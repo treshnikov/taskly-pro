@@ -20,15 +20,23 @@ namespace Taskly.DAL
             var unit = new Unit
             {
                 Id = Guid.NewGuid(),
-                Name = "IT",
-
+                Name = "System",
+                OrderNumber=0,
+                ShortName="System"                
             };
 
             var admin = new User
             {
                 Name = "admin",
                 Email = "admin@admin.com",
-                Unit = unit,
+                UserUnits = new List<UserUnit>{
+                    new UserUnit {
+                        Rate = 1,
+                        Unit = unit,
+                        Comment="admin",
+                        UserTitle="admin"
+                    }
+                },
                 Password = BCrypt.Net.BCrypt.HashPassword("admin"),
                 Roles = new[] {
                     new Role
