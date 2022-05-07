@@ -14,8 +14,8 @@ import { useNavigate } from 'react-router-dom';
 import { Divider } from '@mui/material';
 import { UserVm } from '../models/UserVm';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import LogoutIcon from '@mui/icons-material/Logout';
 import { Logout } from '@mui/icons-material';
+import TaskAltIcon from '@mui/icons-material/TaskAlt';
 
 export const NavBar: React.FunctionComponent = () => {
   const { t } = useTranslation();
@@ -53,7 +53,7 @@ export const NavBar: React.FunctionComponent = () => {
         <Toolbar>
           <SidebarMenu />
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            <p className='logo' onClick={e => { navigate("/") }} >Taskly</p>
+            <p className='logo' onClick={e => { navigate("/") }} ><TaskAltIcon/>&nbsp;Taskly</p>
           </Typography>
 
           <div>

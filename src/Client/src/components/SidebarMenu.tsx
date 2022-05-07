@@ -25,6 +25,10 @@ export const SidebarMenu: React.FunctionComponent = () => {
                     onClick={() => navigate("/users")}>
                     <ListItemText primary={t('users') as string} />
                 </ListItem>
+                <ListItem button key={t('units') as string}
+                    onClick={() => navigate("/units")}>
+                    <ListItemText primary={t('units') as string} />
+                </ListItem>
             </List>
             <Divider />
             <List>
@@ -42,16 +46,18 @@ export const SidebarMenu: React.FunctionComponent = () => {
 
     return (
         <div>
-            <IconButton
-                size="large"
-                edge="start"
-                color="inherit"
-                aria-label="menu"
-                sx={{ mr: 2 }}
-                onClick={() => setToggled(true)}
-            >
-                <MenuIcon/>
-            </IconButton>
+            <div >
+                <IconButton
+                    size="large"
+                    edge="start"
+                    color="inherit"
+                    aria-label="menu"
+                    sx={{ mr: 1 }}
+                    onClick={() => setToggled(true)}
+                >
+                    <MenuIcon />
+                </IconButton>
+            </div>
             <Drawer
                 anchor={'left'}
                 open={toggled}
