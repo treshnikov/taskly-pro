@@ -4,6 +4,8 @@ import { Container } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import { AuthContext } from '../context/AuthContext';
+import { useContext, useEffect, useState } from 'react';
 
 interface RenderTree {
     id: string;
@@ -11,28 +13,26 @@ interface RenderTree {
     children?: readonly RenderTree[];
 }
 
-const data: RenderTree = {
+const initData: RenderTree = {
     id: 'root',
-    name: 'Parent',
-    children: [
-        {
-            id: '1',
-            name: 'Child - 1',
-        },
-        {
-            id: '3',
-            name: 'Child - 3',
-            children: [
-                {
-                    id: '4',
-                    name: 'Child - 4',
-                },
-            ],
-        },
-    ],
+    name: '...'
 };
 
 export default function Units() {
+    const { request } = useContext(AuthContext)
+    const [data, setData] = useState<RenderTree>(initData)
+
+    useEffect(() => {
+
+        async function fetchUnits() {
+            const units = await request("/api/v1/units")
+            setData(units)
+        }
+
+        fetchUnits()
+    }, [request])
+
+
     const renderTree = (nodes: RenderTree) => (
         <TreeItem key={nodes.id} nodeId={nodes.id} label={nodes.name}>
             {Array.isArray(nodes.children)
@@ -51,7 +51,7 @@ export default function Units() {
                 defaultCollapseIcon={<ChevronRightIcon />}
                 defaultExpanded={['root']}
                 defaultExpandIcon={<ExpandMoreIcon />}
-                sx={{ height: 110, flexGrow: 1, maxWidth: 400, overflowY: 'auto' }}
+                sx={{ flexGrow: 1, overflowY: 'auto' }}
             >
                 {renderTree(data)}
             </TreeView>
