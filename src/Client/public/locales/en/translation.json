@@ -17,6 +17,8 @@
     "change-lang": "Change the app language.",
     "unit": "Department",
     "units": "Departments",
-    "units-welcome": "List of departments of enterprise."
+    "units-welcome": "List of departments of enterprise.",
+    "expand-all": "Exapnd all",
+    "collapse-all": "Collapse all"
 }
   
