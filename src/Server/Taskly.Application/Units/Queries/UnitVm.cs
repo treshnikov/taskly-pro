@@ -5,6 +5,6 @@ namespace Taskly.Application.Units.Queries
         public Guid Id { get; set; }
         public string? Name { get; set; }
 
-        public UnitVm[]? Children { get; set; }
+        public List<UnitVm>? Children { get; set; }
     }
 }
