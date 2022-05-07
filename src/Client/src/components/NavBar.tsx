@@ -6,19 +6,22 @@ import IconButton from '@mui/material/IconButton';
 import FormGroup from '@mui/material/FormGroup';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { regular } from '@fortawesome/fontawesome-svg-core/import.macro'
-import React, { SyntheticEvent, useContext } from 'react'
+import React, { SyntheticEvent, useContext, useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AuthContext } from '../context/AuthContext'
 import { SidebarMenu } from './SidebarMenu';
 import { useNavigate } from 'react-router-dom';
-
+import { Divider } from '@mui/material';
+import { UserVm } from '../models/UserVm';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import LogoutIcon from '@mui/icons-material/Logout';
+import { Logout } from '@mui/icons-material';
 
 export const NavBar: React.FunctionComponent = () => {
   const { t } = useTranslation();
-  const { logout } = useContext(AuthContext);
+  const { request, logout } = useContext(AuthContext);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [user, setUser] = useState<UserVm>(new UserVm());
   const navigate = useNavigate()
 
   const logoutHandler = async (event: SyntheticEvent) => {
@@ -33,6 +36,15 @@ export const NavBar: React.FunctionComponent = () => {
     setAnchorEl(null);
   };
 
+  useEffect(() => {
+    const fetchUser = async () => {
+      const u = await request("/api/v1/users/user")
+      setUser(u as UserVm)
+    }
+    fetchUser()
+  }, [request])
+
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <FormGroup>
@@ -41,7 +53,7 @@ export const NavBar: React.FunctionComponent = () => {
         <Toolbar>
           <SidebarMenu />
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            <p className='logo' onClick={e => {navigate("/")}} >Taskly</p>
+            <p className='logo' onClick={e => { navigate("/") }} >Taskly</p>
           </Typography>
 
           <div>
@@ -52,8 +64,7 @@ export const NavBar: React.FunctionComponent = () => {
               onClick={handleMenu}
               color="inherit"
             >
-              <FontAwesomeIcon icon={regular('user-circle')} />
-
+              <AccountCircleIcon/>
             </IconButton>
             <Menu
               id="menu-appbar"
@@ -70,8 +81,12 @@ export const NavBar: React.FunctionComponent = () => {
               open={Boolean(anchorEl)}
               onClose={handleClose}
             >
+              <div style={{paddingLeft: 10, paddingRight: 10, cursor: 'default', textAlign: 'center' }}>
+                {user.name}
+              </div>
+              <Divider />
               <MenuItem onClick={(logoutHandler)}>
-                <FontAwesomeIcon icon={regular('user-circle')} />
+                <Logout />
                 &nbsp;{t("logout")}
               </MenuItem>
             </Menu>

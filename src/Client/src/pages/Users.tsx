@@ -5,6 +5,7 @@ import { HotTable } from '@handsontable/react';
 import { registerAllModules } from 'handsontable/registry';
 import { useTranslation } from 'react-i18next';
 import { CellChange, ChangeSource } from 'handsontable/common';
+import { Container } from '@mui/material';
 registerAllModules();
 
 export const Users: React.FunctionComponent = () => {
@@ -37,7 +38,8 @@ export const Users: React.FunctionComponent = () => {
   const colWidths = [100, 250, 220, 400]
 
   return (
-    <div>
+    <Container>
+      <h3>{t('users')}</h3>
       <HotTable
         fixedRowsTop={0}
         columnSorting={true}
@@ -52,6 +54,6 @@ export const Users: React.FunctionComponent = () => {
         hiddenColumns={hiddenColumns}
         afterChange={(changes: CellChange[] | null, source: ChangeSource) => { console.log("afterChange", changes) }}
       />
-    </div>
+    </Container>
   )
 }

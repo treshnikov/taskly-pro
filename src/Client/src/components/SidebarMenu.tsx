@@ -1,10 +1,9 @@
-import { solid } from "@fortawesome/fontawesome-svg-core/import.macro";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Box, Divider, Drawer, IconButton, List, ListItem, ListItemText } from "@mui/material";
 import { t } from "i18next";
 import { useContext, useState } from "react"
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import MenuIcon from '@mui/icons-material/Menu';
 
 export const SidebarMenu: React.FunctionComponent = () => {
     const [toggled, setToggled] = useState<boolean>(false)
@@ -51,7 +50,7 @@ export const SidebarMenu: React.FunctionComponent = () => {
                 sx={{ mr: 2 }}
                 onClick={() => setToggled(true)}
             >
-                <FontAwesomeIcon icon={solid('bars')} />
+                <MenuIcon/>
             </IconButton>
             <Drawer
                 anchor={'left'}

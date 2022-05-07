@@ -1,22 +1,13 @@
 import { Card, Button, CardActions, CardContent, Grid, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import React, { useContext, useEffect, useState } from 'react'
-import { AuthContext } from '../context/AuthContext';
-import { UserVm } from '../models/UserVm';
+import React from 'react'
 import { t } from 'i18next';
+import PeopleIcon from '@mui/icons-material/People';
+import AccountTreeIcon from '@mui/icons-material/AccountTree';
+import SettingsIcon from '@mui/icons-material/Settings';
 
 export const Home: React.FunctionComponent = () => {
-  const { request } = useContext(AuthContext)
-  const [user, setUser] = useState<UserVm>(new UserVm());
   const navigate = useNavigate()
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      const u = await request("/api/v1/users/user")
-      setUser(u as UserVm)
-    }
-    fetchUser()
-  }, [request])
 
   return (
     <Grid
@@ -26,29 +17,10 @@ export const Home: React.FunctionComponent = () => {
       alignItems="flex-start"
     >
 
-      <Card sx={{ width: 275, height: 200, margin: 1 }}>
+      <Card sx={{ width: 275, margin: 1 }}>
         <CardContent>
-          <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-            {t('page') as string}
-          </Typography>
           <Typography variant="h5" component="div">
-            {t('home') as string}
-          </Typography>
-          <Typography variant="body2">
-            <>
-              {t('hello')} {user.name} / {user.email}!<br />
-            </>
-          </Typography>
-        </CardContent>
-      </Card>
-
-      <Card sx={{ width: 275, height: 200, margin: 1 }}>
-        <CardContent>
-          <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-            {t('page') as string}
-          </Typography>
-          <Typography variant="h5" component="div">
-            {t('users') as string}
+          <PeopleIcon />&nbsp;{t('users') as string}
           </Typography>
           <Typography variant="body2">
             <>{t('users-welcome')}</>
@@ -59,13 +31,24 @@ export const Home: React.FunctionComponent = () => {
         </CardActions>
       </Card>
 
-      <Card sx={{ width: 275, height: 200, margin: 1 }}>
+      <Card sx={{ width: 275, margin: 1 }}>
         <CardContent>
-          <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-            {t('page') as string}
-          </Typography>
           <Typography variant="h5" component="div">
-            {t('settings') as string}
+          <AccountTreeIcon/>&nbsp;{t('units') as string}
+          </Typography>
+          <Typography variant="body2">
+            <>{t('units-welcome')}</><br/>&nbsp;
+          </Typography>
+        </CardContent>
+        <CardActions>
+          <Button variant='contained' onClick={e => { navigate("/units") }}>{t('units') as string}</Button>
+        </CardActions>
+      </Card>
+
+      <Card sx={{ width: 275, margin: 1 }}>
+        <CardContent>
+          <Typography variant="h5" component="div">
+            <SettingsIcon/>&nbsp;{t('settings') as string}
           </Typography>
           <Typography variant="body2">
             <>
@@ -77,6 +60,7 @@ export const Home: React.FunctionComponent = () => {
           <Button variant='contained' onClick={e => { navigate("/settings") }}>{t('settings') as string}</Button>
         </CardActions>
       </Card>
+
     </Grid>
   )
 }
