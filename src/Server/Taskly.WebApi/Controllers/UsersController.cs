@@ -36,6 +36,7 @@ namespace Taskly.WebApi.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost("import")]
+        [Authorize]
         public async Task<ActionResult> ImportUsersAndDepartmentsAsync()
         {
             var request = new ImportUsersAndDepartmentsFromJsonRequest();

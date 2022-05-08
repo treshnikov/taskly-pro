@@ -103,9 +103,12 @@ namespace Taskly.Application.Users
                 }
                 else
                 {
-                    dbDep.ShortName = d.name;
-                    dbDep.OrderNumber = d.order_number;
-                    _dbContext.Units.Update(dbDep);
+                    if (dbDep != null)
+                    {
+                        dbDep.ShortName = d.name;
+                        dbDep.OrderNumber = d.order_number;
+                        _dbContext.Units.Update(dbDep);
+                    }
                 }
             }
             _dbContext.Units.AddRange(newDeps);
