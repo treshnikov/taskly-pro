@@ -6,7 +6,7 @@ import { AuthContext } from './context/AuthContext';
 import { useAuth } from './hooks/auth.hook';
 import { useApp } from './hooks/app.hook';
 import { ToastContainer } from 'react-toastify';
-import {  createTheme, CssBaseline, ThemeProvider } from '@mui/material';
+import { createTheme, CssBaseline, ThemeProvider } from '@mui/material';
 import { useRoutes } from './components/Routes';
 import { AppContext } from './context/AppContext';
 
@@ -17,7 +17,11 @@ function App() {
 
   return (
     <div className="App">
-      <ThemeProvider theme={createTheme()}>
+      <ThemeProvider theme={createTheme({
+        palette: {
+          primary: { main: '#3178c6' },
+        }
+      })}>
         <CssBaseline />
         <AppContext.Provider value={{ setEnLang, setRuLang }}>
           <AuthContext.Provider value={{ login, logout, isAuthenticated, request }}>
