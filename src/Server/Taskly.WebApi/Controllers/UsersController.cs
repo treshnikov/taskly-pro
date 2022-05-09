@@ -41,7 +41,7 @@ namespace Taskly.WebApi.Controllers
         {
             var request = new ImportUsersAndDepartmentsFromJsonRequest();
             await Mediator.Send(request);
-            return Ok();
+            return Ok(new {msg = "Ok"});
         }
     }
 }
