@@ -33,8 +33,8 @@ namespace Taskly.Application.Users
         {
             using var transaction = _dbContext.Database.BeginTransaction();
 
-            var dbDeps = await _dbContext.Units.ToListAsync(cancellationToken: cancellationToken);
-            var dbUsers = await _dbContext.Users.ToListAsync(cancellationToken: cancellationToken);
+            var dbDeps = await _dbContext.Units.Include(u => u.UserUnits).ToListAsync(cancellationToken: cancellationToken);
+            var dbUsers = await _dbContext.Users.Include(u => u.UserUnits).ToListAsync(cancellationToken: cancellationToken);
             foreach (var u in users)
             {
                 if (!u.DepartmentId.HasValue)
@@ -51,10 +51,10 @@ namespace Taskly.Application.Users
                     dbUser.UserUnits = new List<UserUnit>();
                 }
 
-                var userUnit = dbUser.UserUnits.FirstOrDefault(i => i.User == dbUser && i.Unit == dbDep);
-                if (userUnit == null)
+                var dbUserUnit = dbUser.UserUnits.FirstOrDefault(i => i.User == dbUser && i.Unit == dbDep);
+                if (dbUserUnit == null)
                 {
-                    userUnit = new UserUnit
+                    dbUserUnit = new UserUnit
                     {
                         Id = Guid.NewGuid(),
                         Rate = 1,
@@ -64,14 +64,14 @@ namespace Taskly.Application.Users
                         Comment = u.TypeName
                     };
 
-                    _dbContext.UserUnits.Add(userUnit);
-                    dbUser.UserUnits.Add(userUnit);
+                    _dbContext.UserUnits.Add(dbUserUnit);
+                    dbUser.UserUnits.Add(dbUserUnit);
                 }
                 else
                 {
-                    userUnit.Rate = 1;
-                    userUnit.UserTitle = u.title;
-                    userUnit.Comment = u.TypeName;
+                    dbUserUnit.Rate = 1;
+                    dbUserUnit.UserTitle = u.title;
+                    dbUserUnit.Comment = u.TypeName;
                 }
 
                 _dbContext.Users.Update(dbUser);

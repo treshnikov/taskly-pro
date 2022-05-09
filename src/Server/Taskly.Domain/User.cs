@@ -9,5 +9,4 @@
         public ICollection<Role> Roles { get; set; }
         public ICollection<UserUnit> UserUnits { get; set; }
     }
-
 }

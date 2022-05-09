@@ -20,5 +20,9 @@
     "units-welcome": "Список отделов.",
     "expand-all": "Развернуть всё",
     "collapse-all": "Свернуть всё",
-    "position": "Должность"
+    "position": "Должность",
+    "language": "Язык",
+    "import-users-and-units-records": "Импорт списка пользователей и отделов из файлов users.json и departments.json.",
+    "import": "Импорт"
+
 }   

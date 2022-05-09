@@ -20,6 +20,9 @@
     "units-welcome": "List of departments of enterprise.",
     "expand-all": "Exapnd all",
     "collapse-all": "Collapse all",
-    "position": "Position"
+    "position": "Position",
+    "language": "Language",
+    "import-users-and-units-records": "Import lis of users and departments from files users.json and departments.json.",
+    "import": "Import"
 }
   
