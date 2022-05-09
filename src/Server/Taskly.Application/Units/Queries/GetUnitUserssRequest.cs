@@ -2,7 +2,7 @@ using MediatR;
 
 namespace Taskly.Application.Units.Queries
 {
-    public class GetUnitsRequest : IRequest<UnitVm>
+    public class GetUnitUserssRequest : IRequest<UnitUserVm>
     {
 
     }

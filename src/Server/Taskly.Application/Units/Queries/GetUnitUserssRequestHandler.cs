@@ -1,25 +1,24 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Serilog;
 using Taskly.Application.Interfaces;
 
 namespace Taskly.Application.Units.Queries
 {
-    public class GetUnitsRequestHandler : IRequestHandler<GetUnitsRequest, UnitVm>
+    public class GetUnitUserssRequestHandler : IRequestHandler<GetUnitUserssRequest, UnitUserVm>
     {
         private readonly ITasklyDbContext _dbContext;
-        public GetUnitsRequestHandler(ITasklyDbContext dbContext)
+        public GetUnitUserssRequestHandler(ITasklyDbContext dbContext)
         {
             _dbContext = dbContext;
         }
 
-        public async Task<UnitVm> Handle(GetUnitsRequest request, CancellationToken cancellationToken)
+        public async Task<UnitUserVm> Handle(GetUnitUserssRequest request, CancellationToken cancellationToken)
         {
-            var root = new UnitVm()
+            var root = new UnitUserVm()
             {
                 Id = Guid.NewGuid(),
                 Name = "Departments",
-                Children = new List<UnitVm>()
+                Children = new List<UnitUserVm>()
             };
 
             var units = await _dbContext.Units.OrderBy(i => i.ParentUnitId).Include(u => u.ParentUnit).AsNoTracking().ToListAsync(cancellationToken: cancellationToken);
@@ -30,16 +29,17 @@ namespace Taskly.Application.Units.Queries
             return await Task.FromResult(root);
         }
 
-        private void HandleUnit(Guid? parentId, UnitVm parentVm, List<Domain.Unit> units, List<Domain.User> users)
+        private void HandleUnit(Guid? parentId, UnitUserVm parentVm, List<Domain.Unit> units, List<Domain.User> users)
         {
             var childs = units.Where(i => i.ParentUnitId == parentId).ToList();
             foreach (var c in childs)
             {
-                var newUnitVm = new UnitVm
+                var newUnitVm = new UnitUserVm
                 {
                     Id = c.Id,
                     Name = c.Name,
-                    Children = new List<UnitVm>()
+                    Children = new List<UnitUserVm>(),
+                    Type = UnitUserType.Unit
                 };
 
                 parentVm.Children!.Add(newUnitVm);
@@ -47,11 +47,12 @@ namespace Taskly.Application.Units.Queries
                 // add users
                 foreach (var u in users.Where(u => u.UserUnits.Any(uu => uu.UnitId == newUnitVm.Id)).OrderBy(u => u.Name))
                 {
-                    var userVm = new UnitVm
+                    var userVm = new UnitUserVm
                     {
                         Id = u.Id,
                         Name = u.Name,
-                        Children = new List<UnitVm>()
+                        Children = new List<UnitUserVm>(),
+                        Type = UnitUserType.User
                     };
 
                     newUnitVm.Children.Add(userVm);

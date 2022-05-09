@@ -12,7 +12,7 @@ namespace Taskly.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult> Get()
         {
-            var res = await Mediator.Send(new GetUnitsRequest());
+            var res = await Mediator.Send(new GetUnitUserssRequest());
             return Ok(res);
         }
     }
