@@ -3,12 +3,12 @@ import { Box, Button, Container, Grid, TextField, Typography } from '@mui/materi
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { AuthContext } from '../context/AuthContext';
 import { AppContext } from '../context/AppContext';
+import { useAuth } from '../hooks/auth.hook';
 
 export const Register: React.FunctionComponent = () => {
   const { t } = useTranslation();
-  const { request } = useContext(AuthContext)
+  const { request } = useAuth()
   const [name, setName] = useState<string>('')
   const [password, setPassword] = useState<string>('')
   const [email, setEmail] = useState<string>('')

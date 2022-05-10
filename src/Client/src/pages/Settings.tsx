@@ -1,14 +1,14 @@
-import { Card, Button, CardActions, CardContent, Grid, Typography, Container, CardHeader, Divider, Box } from '@mui/material';
+import { Card, Button, CardActions, CardContent, Container, CardHeader, Divider } from '@mui/material';
 import React, { useContext } from 'react'
 import { AppContext } from '../context/AppContext';
 import { useTranslation } from 'react-i18next';
-import { AuthContext } from '../context/AuthContext';
+import { useAuth } from '../hooks/auth.hook';
 
 export const Settings: React.FunctionComponent = () => {
   // it's important to use useTranslation hook to re-render the current component when lang changing  
   const { t } = useTranslation()
   const { setEnLang, setRuLang } = useContext(AppContext)
-  const { request } = useContext(AuthContext)
+  const { request } = useAuth()
 
   return (
 

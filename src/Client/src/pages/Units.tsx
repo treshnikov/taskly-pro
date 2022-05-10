@@ -4,12 +4,12 @@ import { Button, Container, Stack, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { AuthContext } from '../context/AuthContext';
 import { useContext, useEffect, useState } from 'react';
 import { UnitUserVm } from '../models/UnitUserVm';
+import { useAuth } from '../hooks/auth.hook';
 
 export default function Units() {
-    const { request } = useContext(AuthContext)
+    const { request } = useAuth()
     const [units, setUnits] = useState<UnitUserVm>({
         id: 'root',
         name: '...',

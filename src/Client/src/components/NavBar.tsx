@@ -6,9 +6,8 @@ import IconButton from '@mui/material/IconButton';
 import FormGroup from '@mui/material/FormGroup';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
-import React, { SyntheticEvent, useContext, useState, useEffect } from 'react'
+import React, { SyntheticEvent, useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { AuthContext } from '../context/AuthContext'
 import { SidebarMenu } from './SidebarMenu';
 import { useNavigate } from 'react-router-dom';
 import { Divider } from '@mui/material';
@@ -16,10 +15,11 @@ import { UserVm } from '../models/UserVm';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { Logout } from '@mui/icons-material';
 import TaskAltIcon from '@mui/icons-material/TaskAlt';
+import { useAuth } from '../hooks/auth.hook';
 
 export const NavBar: React.FunctionComponent = () => {
   const { t } = useTranslation();
-  const { request, logout } = useContext(AuthContext);
+  const { request, logout } = useAuth();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [user, setUser] = useState<UserVm>(new UserVm());
   const navigate = useNavigate()

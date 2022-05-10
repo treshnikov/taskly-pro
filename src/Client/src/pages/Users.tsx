@@ -1,15 +1,15 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { AuthContext } from '../context/AuthContext';
 import { UserVm } from "../models/UserVm";
 import { HotTable } from '@handsontable/react';
 import { registerAllModules } from 'handsontable/registry';
 import { useTranslation } from 'react-i18next';
 import { CellChange, ChangeSource } from 'handsontable/common';
 import { Container } from '@mui/material';
+import { useAuth } from '../hooks/auth.hook';
 registerAllModules();
 
 export const Users: React.FunctionComponent = () => {
-  const { request } = useContext(AuthContext)
+  const { request } = useAuth()
   const [users, setUsers] = useState<UserVm[]>([])
   const { t } = useTranslation();
 

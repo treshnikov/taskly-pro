@@ -10,10 +10,15 @@ import { Register } from '../pages/Register'
 import { Users } from '../pages/Users';
 import { Settings } from '../pages/Settings';
 import Units from '../pages/Units';
+import { useSelector, TypedUseSelectorHook } from "react-redux"
+import { selectAuth } from '../redux/authSlice';
+import { RootState } from '../redux/store';
 
-export const useRoutes: React.FunctionComponent<boolean> = (isAuthenticated: boolean) => {
+export const useAppRoutes: React.FunctionComponent = () => {
+  const useAuthSelector: TypedUseSelectorHook<RootState> = useSelector;
+  const auth = useAuthSelector(selectAuth)
 
-  if (isAuthenticated) {
+  if (auth.isAuthenticated) {
     return (
       <div>
         <NavBar />

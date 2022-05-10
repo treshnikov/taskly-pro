@@ -2,18 +2,15 @@ import './App.css';
 import 'react-toastify/dist/ReactToastify.css';
 
 import { BrowserRouter as Router } from "react-router-dom";
-import { AuthContext } from './context/AuthContext';
-import { useAuth } from './hooks/auth.hook';
 import { useApp } from './hooks/app.hook';
 import { ToastContainer } from 'react-toastify';
 import { createTheme, CssBaseline, ThemeProvider } from '@mui/material';
-import { useRoutes } from './components/Routes';
+import { useAppRoutes } from './components/Routes';
 import { AppContext } from './context/AppContext';
 
 function App() {
-  const { login, logout, isAuthenticated, request } = useAuth()
   const { setEnLang, setRuLang } = useApp()
-  const routes = useRoutes(isAuthenticated)
+  const routes = useAppRoutes({})
 
   return (
     <div className="App">
@@ -24,11 +21,9 @@ function App() {
       })}>
         <CssBaseline />
         <AppContext.Provider value={{ setEnLang, setRuLang }}>
-          <AuthContext.Provider value={{ login, logout, isAuthenticated, request }}>
-            <Router>
-              {routes}
-            </Router>
-          </AuthContext.Provider>
+          <Router>
+            {routes}
+          </Router>
         </AppContext.Provider>
       </ThemeProvider>
       <ToastContainer
