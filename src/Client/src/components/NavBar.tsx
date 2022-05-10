@@ -16,6 +16,8 @@ import { UserVm } from '../models/UserVm';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { Logout } from '@mui/icons-material';
 import TaskAltIcon from '@mui/icons-material/TaskAlt';
+import { useSelector } from "react-redux";
+import { AuthState } from '../redux/reducer';
 
 export const NavBar: React.FunctionComponent = () => {
   const { t } = useTranslation();
@@ -23,6 +25,15 @@ export const NavBar: React.FunctionComponent = () => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [user, setUser] = useState<UserVm>(new UserVm());
   const navigate = useNavigate()
+
+  const notes = useSelector<AuthState, AuthState["notes"]>(
+    (state) => state.notes
+  );
+
+  useEffect(() => {
+    console.log("Notes have been changed", notes.length)
+  }, [notes])
+
 
   const logoutHandler = async (event: SyntheticEvent) => {
     logout()

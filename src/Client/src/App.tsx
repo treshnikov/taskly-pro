@@ -9,6 +9,8 @@ import { ToastContainer } from 'react-toastify';
 import { createTheme, CssBaseline, ThemeProvider } from '@mui/material';
 import { useRoutes } from './components/Routes';
 import { AppContext } from './context/AppContext';
+import { Provider } from "react-redux";
+import { store } from "./redux/store";
 
 function App() {
   const { login, logout, isAuthenticated, request } = useAuth()
@@ -16,32 +18,30 @@ function App() {
   const routes = useRoutes(isAuthenticated)
 
   return (
-    <div className="App">
-      <ThemeProvider theme={createTheme({
-        palette: {
-          primary: { main: '#3178c6' },
-        }
-      })}>
-        <CssBaseline />
-        <AppContext.Provider value={{ setEnLang, setRuLang }}>
-          <AuthContext.Provider value={{ login, logout, isAuthenticated, request }}>
-            <Router>
-              {routes}
-            </Router>
-          </AuthContext.Provider>
-        </AppContext.Provider>
-      </ThemeProvider>
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover />
-    </div>
+    <Provider store={store}>
+      <div className="App">
+        <ThemeProvider theme={createTheme({ palette: { primary: { main: '#3178c6' } } })}>
+          <CssBaseline />
+          <AppContext.Provider value={{ setEnLang, setRuLang }}>
+            <AuthContext.Provider value={{ login, logout, isAuthenticated, request }}>
+              <Router>
+                {routes}
+              </Router>
+            </AuthContext.Provider>
+          </AppContext.Provider>
+        </ThemeProvider>
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover />
+      </div>
+    </Provider>
   );
 
 }
