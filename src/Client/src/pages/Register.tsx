@@ -4,11 +4,11 @@ import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { AppContext } from '../context/AppContext';
-import { useAuth } from '../hooks/auth.hook';
+import { useHttp } from '../hooks/http.hook';
 
 export const Register: React.FunctionComponent = () => {
   const { t } = useTranslation();
-  const { request } = useAuth()
+  const { request } = useHttp()
   const [name, setName] = useState<string>('')
   const [password, setPassword] = useState<string>('')
   const [email, setEmail] = useState<string>('')

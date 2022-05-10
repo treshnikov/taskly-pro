@@ -6,10 +6,10 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { useEffect, useState } from 'react';
 import { UnitUserVm } from '../models/UnitUserVm';
-import { useAuth } from '../hooks/auth.hook';
+import { useHttp } from '../hooks/http.hook';
 
 export default function Units() {
-    const { request } = useAuth()
+    const { request } = useHttp()
     const [units, setUnits] = useState<UnitUserVm>({
         id: 'root',
         name: '...',

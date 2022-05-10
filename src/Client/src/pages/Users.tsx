@@ -4,11 +4,11 @@ import { HotTable } from '@handsontable/react';
 import { registerAllModules } from 'handsontable/registry';
 import { useTranslation } from 'react-i18next';
 import { Container } from '@mui/material';
-import { useAuth } from '../hooks/auth.hook';
+import { useHttp } from '../hooks/http.hook';
 registerAllModules();
 
 export const Users: React.FunctionComponent = () => {
-  const { request } = useAuth()
+  const { request } = useHttp()
   const [users, setUsers] = useState<UserVm[]>([])
   const { t } = useTranslation();
 

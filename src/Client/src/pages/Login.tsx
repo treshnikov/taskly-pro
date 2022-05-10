@@ -3,11 +3,11 @@ import React, { SyntheticEvent, useContext, useState } from 'react'
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from 'react-router-dom';
 import { AppContext } from '../context/AppContext';
-import { useAuth } from '../hooks/auth.hook';
+import { useHttp } from '../hooks/http.hook';
 
 export const Login: React.FunctionComponent = () => {
   const { t } = useTranslation();
-  const { login } = useAuth()
+  const { login } = useHttp()
   const navigate = useNavigate()
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')

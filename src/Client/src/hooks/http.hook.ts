@@ -4,7 +4,7 @@ import { onSignin, onSignout, selectAuth } from "../redux/authSlice"
 import { RootState } from '../redux/store'
 import { useCallback } from 'react'
 
-export const useAuth = () => {
+export const useHttp = () => {
     const dispatch = useDispatch();
     const useAuthSelector: TypedUseSelectorHook<RootState> = useSelector;
     const auth = useAuthSelector(selectAuth)

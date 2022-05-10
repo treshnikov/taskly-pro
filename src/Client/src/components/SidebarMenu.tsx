@@ -3,12 +3,12 @@ import { t } from "i18next";
 import { useState } from "react"
 import { useNavigate } from "react-router-dom";
 import MenuIcon from '@mui/icons-material/Menu';
-import { useAuth } from "../hooks/auth.hook";
+import { useHttp } from "../hooks/http.hook";
 
 export const SidebarMenu: React.FunctionComponent = () => {
     const [toggled, setToggled] = useState<boolean>(false)
     const navigate = useNavigate()
-    const { logout } = useAuth()
+    const { logout } = useHttp()
 
     const list = () => (
         <Box

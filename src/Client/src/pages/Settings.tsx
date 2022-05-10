@@ -2,13 +2,13 @@ import { Card, Button, CardActions, CardContent, Container, CardHeader, Divider 
 import React, { useContext } from 'react'
 import { AppContext } from '../context/AppContext';
 import { useTranslation } from 'react-i18next';
-import { useAuth } from '../hooks/auth.hook';
+import { useHttp } from '../hooks/http.hook';
 
 export const Settings: React.FunctionComponent = () => {
   // it's important to use useTranslation hook to re-render the current component when lang changing  
   const { t } = useTranslation()
   const { setEnLang, setRuLang } = useContext(AppContext)
-  const { request } = useAuth()
+  const { request } = useHttp()
 
   return (
 

@@ -15,11 +15,11 @@ import { UserVm } from '../models/UserVm';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { Logout } from '@mui/icons-material';
 import TaskAltIcon from '@mui/icons-material/TaskAlt';
-import { useAuth } from '../hooks/auth.hook';
+import { useHttp } from '../hooks/http.hook';
 
 export const NavBar: React.FunctionComponent = () => {
   const { t } = useTranslation();
-  const { request, logout } = useAuth();
+  const { request, logout } = useHttp();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [user, setUser] = useState<UserVm>(new UserVm());
   const navigate = useNavigate()
