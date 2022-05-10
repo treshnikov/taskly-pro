@@ -53,7 +53,7 @@ export const Users: React.FunctionComponent = () => {
         fillHandle={false}
         //manualColumnResize={true}
         hiddenColumns={hiddenColumns}
-        afterChange={(changes: CellChange[] | null, source: ChangeSource) => { console.log("afterChange", changes) }}
+        //afterChange={(changes: CellChange[] | null, source: ChangeSource) => { console.log("afterChange", changes) }}
       />
     </Container>
   )

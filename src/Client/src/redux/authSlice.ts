@@ -33,7 +33,6 @@ const initAuthState = () : AuthState => {
     res.jwt = data.jwt
     res.isAuthenticated = true
 
-    console.log("Init auth store", res)
     return res
 }
 
@@ -42,7 +41,7 @@ export const authSlice = createSlice({
     initialState: initAuthState(),
     reducers: {
         onSignin(state: AuthState, action: PayloadAction<JWT>) {
-            console.log("sign in", action.payload)
+            //console.log("sign in", action.payload)
           
             state.isAuthenticated = true
             state.jwt = action.payload
@@ -51,7 +50,7 @@ export const authSlice = createSlice({
         },
 
         onSignout(state: AuthState) {
-            console.log("sign out")
+            //console.log("sign out")
             state.isAuthenticated = false
             state.jwt = ""
             localStorage.removeItem(storageName)
