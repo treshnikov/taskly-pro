@@ -52,7 +52,8 @@ namespace Taskly.DAL
                 Name = "Default customer"
             };
 
-            var project = new Project{
+            var project = new Project
+            {
                 Id = 1,
                 ChiefEngineer = admin,
                 ProjectManager = admin,
@@ -63,6 +64,59 @@ namespace Taskly.DAL
                 Name = "Project",
                 Start = new DateTime(DateTime.Today.Year, 01, 01),
                 End = new DateTime(DateTime.Today.Year, 12, 31),
+                Tasks = new List<ProjectTask>
+                {
+                    new ProjectTask
+                    {
+                        Description = "Task #1",
+                        Start = new DateTime(DateTime.Today.Year, 01, 01),
+                        End = new DateTime(DateTime.Today.Year, 12, 31),
+                        Estimations = new List<ProjectTaskUnitEstimation>
+                        {
+                            new ProjectTaskUnitEstimation
+                            {
+                                Unit = unit,
+                                DepartmentHeadHours = 40,
+                                EngineerOfTheFirstCategoryHours = 80,
+                                EngineerOfTheSecondCategoryHours = 40,
+                                EngineerOfTheThirdCategoryHours = 120,
+                                LeadEngineerHours = 80,
+                            }
+                        }
+
+                    },
+                    new ProjectTask
+                    {
+                        Description = "Task #2",
+                        Start = new DateTime(DateTime.Today.Year, 01, 01),
+                        End = new DateTime(DateTime.Today.Year, 06, 30),
+                        Estimations = new List<ProjectTaskUnitEstimation>
+                        {
+                            new ProjectTaskUnitEstimation
+                            {
+                                Unit = unit,
+                                DepartmentHeadHours = 80,
+                                EngineerOfTheFirstCategoryHours = 360,
+                                EngineerOfTheSecondCategoryHours = 40
+                            }
+                        }
+                    },
+                    new ProjectTask
+                    {
+                        Description = "Task #3",
+                        Start = new DateTime(DateTime.Today.Year, 05, 01),
+                        End = new DateTime(DateTime.Today.Year, 10, 30),
+                        Estimations = new List<ProjectTaskUnitEstimation>
+                        {
+                            new ProjectTaskUnitEstimation
+                            {
+                                Unit = unit,
+                                DepartmentHeadHours = 240,
+                                EngineerOfTheThirdCategoryHours = 240,
+                            }
+                        }
+                    }
+                }
             };
 
             context.Projects.Add(project);

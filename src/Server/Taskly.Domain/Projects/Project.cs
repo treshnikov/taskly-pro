@@ -16,6 +16,6 @@ namespace Taskly.Domain
         public virtual Customer Customer { get; set; }
         public Guid CustomerId { get; set; }
         public string Contract { get; set; }
+        public ICollection<ProjectTask> Tasks { get; set; }
     }
-
 }

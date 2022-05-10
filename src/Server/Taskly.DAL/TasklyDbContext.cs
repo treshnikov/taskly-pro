@@ -27,6 +27,9 @@ namespace Taskly.DAL
             builder.ApplyConfiguration(new UnitConfiguration());
             builder.ApplyConfiguration(new UserUnitConfiguration());
             builder.ApplyConfiguration(new ProjectConfiguration());
+            builder.ApplyConfiguration(new CustomerConfiguration());
+            builder.ApplyConfiguration(new ProjectTaskConfiguration());
+            builder.ApplyConfiguration(new ProjectTaskUnitEstimationConfiguration());
             base.OnModelCreating(builder);
         }
 
