@@ -2,12 +2,13 @@ using FluentValidation;
 
 namespace Taskly.Application.Users
 {
-    public class ImportUsersAndDepartmentsFromJsonRequestValidator : AbstractValidator<ImportUsersAndDepartmentsFromJsonRequest>
+    public class ImportDataFromJsonRequestValidator : AbstractValidator<ImportDataFromJsonRequest>
     {
-        public ImportUsersAndDepartmentsFromJsonRequestValidator()
+        public ImportDataFromJsonRequestValidator()
         {
             RuleFor(i => i.UsersFileName).NotEmpty();
             RuleFor(i => i.DepartmentsFileName).NotEmpty();
+            RuleFor(i => i.ProjectsFileName).NotEmpty();
         }
     }
 }

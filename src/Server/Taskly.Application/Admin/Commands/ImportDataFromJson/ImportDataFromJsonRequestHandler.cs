@@ -9,24 +9,100 @@ using Serilog;
 
 namespace Taskly.Application.Users
 {
-    public class ImportUsersAndDepartmentsFromJsonRequestHandler : IRequestHandler<ImportUsersAndDepartmentsFromJsonRequest>
+    public class ImportDataFromJsonRequestHandler : IRequestHandler<ImportDataFromJsonRequest>
     {
         private const string DefaultPasswordForNewUsers = "123456";
         private readonly ITasklyDbContext _dbContext;
-        public ImportUsersAndDepartmentsFromJsonRequestHandler(ITasklyDbContext dbContext)
+        public ImportDataFromJsonRequestHandler(ITasklyDbContext dbContext)
         {
             _dbContext = dbContext;
         }
 
-        public async Task<MediatR.Unit> Handle(ImportUsersAndDepartmentsFromJsonRequest request, CancellationToken cancellationToken)
+        public async Task<MediatR.Unit> Handle(ImportDataFromJsonRequest request, CancellationToken cancellationToken)
         {
-            Extract(request, out DepartmentJson[] deps, out UserJson[] users);
+            Extract(request, out DepartmentJson[] deps, out UserJson[] users, out ProjectJson[] projects);
 
             await UpdateUsers(users, cancellationToken);
             await UpdateDepartments(deps, cancellationToken);
             await UpdateUserUnitLinks(users, deps, cancellationToken);
+            await UpdateProjects(projects, cancellationToken);
 
             return MediatR.Unit.Value;
+        }
+
+        private async Task UpdateProjects(ProjectJson[] projects, CancellationToken cancellationToken)
+        {
+            using var transaction = _dbContext.Database.BeginTransaction();
+
+            var dbProjects = _dbContext.Projects.ToList();
+            var dbUsers = _dbContext.Users.ToList();
+            var dbCustomers = _dbContext.Customers.ToList();
+            var dbUnits = _dbContext.Units.ToList();
+
+            var newProjects = new List<Project>();
+            foreach (var p in projects)
+            {
+                Log.Logger.Debug($"Handle project ${JsonSerializer.Serialize(p)}");
+
+                var dbProject = dbProjects.FirstOrDefault(i => i.Id == p.project_id);
+                var newProject = newProjects.FirstOrDefault(i => i.Id == p.project_id);
+
+                var company = dbUnits.FirstOrDefault(i => i.Name == p.company);
+                var start = DateTime.Parse(p.start_stop_dates.Split(" ")[0]);
+                var end = DateTime.Parse(p.start_stop_dates.Split(" ")[2]);
+                DateTime? closeDate = string.IsNullOrWhiteSpace(p.close_date) ? null : DateTime.Parse(p.close_date);
+                var pm = dbUsers.FirstOrDefault(i => i.Name == p.project_manager);
+                var lead = dbUsers.FirstOrDefault(i => i.Name == p.lead_engineer);
+                var isOpened = !string.IsNullOrWhiteSpace(p.opened) && (p.opened.ToLower() == "да");
+                var customer = dbCustomers.FirstOrDefault(i => i.Name == p.customer);
+                if (customer == null)
+                {
+                    customer = new Customer
+                    {
+                        Name = p.customer
+                    };
+                    dbCustomers.Add(customer);
+                    _dbContext.Customers.Add(customer);
+                }
+
+                if (dbProject == null && newProject == null)
+                {
+                    newProjects.Add(new Project
+                    {
+                        Id = p.project_id,
+                        ShortName = p.short_name,
+                        Name = p.name,
+                        IsOpened = isOpened,
+                        Company = company,
+                        Start = start,
+                        End = end,
+                        CloseDate = closeDate,
+                        ProjectManager = pm,
+                        ChiefEngineer = lead,
+                        Customer = customer,
+                        Contract = p.contract
+                    });
+                }
+                else
+                {
+                    dbProject.ShortName = p.short_name;
+                    dbProject.Name = p.name;
+                    dbProject.IsOpened = isOpened;
+                    dbProject.Company = company;
+                    dbProject.Start = start;
+                    dbProject.End = end;
+                    dbProject.CloseDate = closeDate;
+                    dbProject.ProjectManager = pm;
+                    dbProject.ChiefEngineer = lead;
+                    dbProject.Customer = customer;
+                    dbProject.Contract = p.contract;
+
+                    _dbContext.Projects.Update(dbProject);
+                }
+            }
+            _dbContext.Projects.AddRange(newProjects);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+            transaction.Commit();
         }
 
         private async Task UpdateUserUnitLinks(UserJson[] users, DepartmentJson[] deps, CancellationToken cancellationToken)
@@ -105,7 +181,7 @@ namespace Taskly.Application.Users
                 {
                     if (dbDep != null)
                     {
-                        dbDep.ShortName = d.name;
+                        dbDep.ShortName = d.short_name;
                         dbDep.OrderNumber = d.order_number;
                         _dbContext.Units.Update(dbDep);
                     }
@@ -158,11 +234,12 @@ namespace Taskly.Application.Users
             transaction.Commit();
         }
 
-        private void Extract(ImportUsersAndDepartmentsFromJsonRequest request, out DepartmentJson[] deps, out UserJson[] users)
+        private void Extract(ImportDataFromJsonRequest request, out DepartmentJson[] deps, out UserJson[] users, out ProjectJson[] projects)
         {
-            var path = Directory.GetParent(typeof(ImportUsersAndDepartmentsFromJsonRequestHandler).Assembly.Location)!.FullName;
+            var path = Directory.GetParent(typeof(ImportDataFromJsonRequestHandler).Assembly.Location)!.FullName;
             var departmentFileName = Path.Combine(path, request.DepartmentsFileName);
             var usersFileName = Path.Combine(path, request.UsersFileName);
+            var projectsFileName = Path.Combine(path, request.ProjectsFileName);
 
             if (!File.Exists(departmentFileName))
             {
@@ -174,8 +251,14 @@ namespace Taskly.Application.Users
                 throw new NotFoundException($"Cannot find {usersFileName}");
             }
 
+            if (!File.Exists(projectsFileName))
+            {
+                throw new NotFoundException($"Cannot find {projectsFileName}");
+            }
+
             deps = JsonSerializer.Deserialize<DepartmentJson[]>(File.ReadAllText(departmentFileName));
             users = JsonSerializer.Deserialize<UserJson[]>(File.ReadAllText(usersFileName));
+            projects = JsonSerializer.Deserialize<ProjectJson[]>(File.ReadAllText(projectsFileName));
         }
     }
 
@@ -222,5 +305,36 @@ namespace Taskly.Application.Users
         public string name { get; set; }
         public int? DepartmentId { get; set; }
     }
+
+    /*
+    {
+        "project_id": 256,
+        "short_name": "РусГидро КГЭС САУ ГА",
+        "name": "Замена релейных защит, регуляторов, технологической автоматики,  панели управления на микропроцессорные системы САУ гидроагрегатов",
+        "opened": "",
+        "company": "НВФ СМС",
+        "start_stop_dates": "20.06.2011 - 31.12.2015",
+        "close_date": "",
+        "project_manager": "Кашапов Ильяс Динаратович",
+        "lead_engineer": "Аболмасов Виктор Иванович",
+        "customer": "Камская ГЭС, ОАО",
+        "contract": "№ 222/11 от 03.06.2011 г."
+    }
+    */
+    internal class ProjectJson
+    {
+        public int project_id { get; set; }
+        public string short_name { get; set; }
+        public string name { get; set; }
+        public string opened { get; set; }
+        public string? company { get; set; }
+        public string start_stop_dates { get; set; }
+        public string? close_date { get; set; }
+        public string? project_manager { get; set; }
+        public string? lead_engineer { get; set; }
+        public string? customer { get; set; }
+        public string? contract { get; set; }
+    }
+
 
 }
