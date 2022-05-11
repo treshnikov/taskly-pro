@@ -3,7 +3,6 @@ import { UserVm } from "../models/UserVm";
 import { HotTable } from '@handsontable/react';
 import { registerAllModules } from 'handsontable/registry';
 import { useTranslation } from 'react-i18next';
-import { Container as div } from '@mui/material';
 import { useHttp } from '../hooks/http.hook';
 registerAllModules();
 

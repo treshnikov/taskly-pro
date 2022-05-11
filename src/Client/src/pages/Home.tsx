@@ -1,4 +1,4 @@
-import { Card, Button, CardActions, CardContent, Grid, Typography, Container } from '@mui/material';
+import { Card, Button, CardActions, CardContent, Grid, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import React from 'react'
 import { t } from 'i18next';
@@ -13,11 +13,26 @@ export const Home: React.FunctionComponent = () => {
     <div className='page-container'>
       <Grid
         container
-        spacing={2} 
+        spacing={2}
         padding={2}
         direction="row"
         alignItems="flex-start"
       >
+        <Grid item xs={3}>
+          <Card className="home-card">
+            <CardContent>
+              <Typography variant="h5" component="div">
+                <PeopleIcon />&nbsp;{t('projects') as string}
+              </Typography>
+              <Typography variant="body2">
+                <>{t('projects-welcome')}</><br />&nbsp;
+              </Typography>
+            </CardContent>
+            <CardActions>
+              <Button variant='contained' onClick={e => { navigate("/projects") }}>{t('projects') as string}</Button>
+            </CardActions>
+          </Card>
+        </Grid>
 
         <Grid item xs={3}>
           <Card className="home-card">
@@ -50,6 +65,16 @@ export const Home: React.FunctionComponent = () => {
             </CardActions>
           </Card>
         </Grid>
+
+      </Grid>
+
+      <Grid
+        container
+        spacing={2}
+        padding={2}
+        direction="row"
+        alignItems="flex-start"
+      >
         <Grid item xs={3}>
           <Card className="home-card">
             <CardContent>
@@ -69,9 +94,6 @@ export const Home: React.FunctionComponent = () => {
         </Grid>
         <Grid item xs={3}>
         </Grid>
-
-
-
 
       </Grid>
     </div>

@@ -1,6 +1,6 @@
 import TreeView from '@mui/lab/TreeView';
 import TreeItem from '@mui/lab/TreeItem';
-import { Button, Container, Stack, Typography } from '@mui/material';
+import { Button, Stack, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -28,9 +28,13 @@ export default function Units() {
         fetchUnits()
     }, [request])
 
+    useEffect(() => {
+        setExpanded([units.id])
+    }, [units])
+
     const renderTree = (node: UnitUserVm) => (
         <TreeItem key={node.id} nodeId={node.id} label={
-            <Typography sx={node.type === 0 ? { fontWeight: "bold" } : {m: 0}}>{node.name}</Typography>
+            <Typography sx={node.type === 0 ? { fontWeight: "bold" } : { m: 0 }}>{node.name}</Typography>
         }>
             {Array.isArray(node.children)
                 ? node.children.map((node) => renderTree(node))
@@ -63,7 +67,7 @@ export default function Units() {
 
     return (
         <div className='page-container'>
-        <h3>{t('units')}</h3>
+            <h3>{t('units')}</h3>
             <Stack spacing={1} paddingBottom={1} direction="row">
                 <Button onClick={e => { expandAll() }} variant='contained'>{t('expand-all')}</Button>
                 <Button onClick={e => { setExpanded([]) }} variant='contained'>{t('collapse-all')}</Button>

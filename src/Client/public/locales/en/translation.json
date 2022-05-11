@@ -7,7 +7,7 @@
     "email": "Email",
     "logout": "Log out",
     "user_has_been_registered_successfully": "User has been registered successfully",
-    "settings" : "Settings",
+    "settings": "Settings",
     "users": "Users",
     "home": "Home",
     "page": "Page",
@@ -23,6 +23,17 @@
     "position": "Position",
     "language": "Language",
     "import-users-and-units-records": "Import lis of users and departments from files users.json, departments.json, and projects.json.",
-    "import": "Import"
+    "import": "Import",
+    "projects": "Projects",
+    "projects-welcome": "List of projects.",
+    "short-name": "Short name",
+    "company": "Company",
+    "is-opened": "Open",
+    "project-manager": "Project manager",
+    "chief-engineer": "Chief engineer",
+    "start": "Start",
+    "end": "End",
+    "close-date": "Close date",
+    "customer": "Customer",
+    "contract": "Contract"
 }
-  

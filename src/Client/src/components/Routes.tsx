@@ -13,6 +13,7 @@ import Units from '../pages/Units';
 import { useSelector, TypedUseSelectorHook } from "react-redux"
 import { selectAuth } from '../redux/authSlice';
 import { RootState } from '../redux/store';
+import { Projects } from '../pages/Projects';
 
 export const useAppRoutes: React.FunctionComponent = () => {
   const useAuthSelector: TypedUseSelectorHook<RootState> = useSelector;
@@ -24,6 +25,7 @@ export const useAppRoutes: React.FunctionComponent = () => {
         <NavBar />
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/projects" element={<Projects />} />
           <Route path="/users" element={<Users />} />
           <Route path="/units" element={<Units />} />
           <Route path="/settings" element={<Settings />} />

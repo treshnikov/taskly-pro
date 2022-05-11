@@ -46,6 +46,12 @@ export const useHttp = () => {
             dispatch(onSignout())
         }
 
+        if (response.status === 404)
+        {
+            toast.error(response.statusText);
+            throw new Error(response.statusText)    
+        }
+
         const json = await response.json()
 
         if (response.ok) {

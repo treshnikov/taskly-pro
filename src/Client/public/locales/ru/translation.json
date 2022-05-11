@@ -23,6 +23,17 @@
     "position": "Должность",
     "language": "Язык",
     "import-users-and-units-records": "Импорт списка пользователей и отделов из файлов users.json, departments.json и projects.json.",
-    "import": "Импорт"
-
+    "import": "Импорт",
+    "projects": "Проекты",
+    "projects-welcome": "Реестр проектов.",
+    "short-name" : "Код проекта", 
+    "company" : "Компания",
+    "is-opened" : "Открыт", 
+    "project-manager" : "Руководитель проекта", 
+    "chief-engineer" : "Главный инженер",
+    "start" : "Начало", 
+    "end" : "Окончание", 
+    "close-date" : "Дата закрытия", 
+    "customer" : "Заказчик", 
+    "contract" : "Договор"    
 }   

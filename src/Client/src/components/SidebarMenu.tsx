@@ -21,6 +21,10 @@ export const SidebarMenu: React.FunctionComponent = () => {
                     onClick={() => navigate("/")}>
                     <ListItemText primary={t('home') as string} />
                 </ListItem>
+                <ListItem button key={t('projects') as string}
+                    onClick={() => navigate("/projects")}>
+                    <ListItemText primary={t('projects') as string} />
+                </ListItem>
                 <ListItem button key={t('users') as string}
                     onClick={() => navigate("/users")}>
                     <ListItemText primary={t('users') as string} />
