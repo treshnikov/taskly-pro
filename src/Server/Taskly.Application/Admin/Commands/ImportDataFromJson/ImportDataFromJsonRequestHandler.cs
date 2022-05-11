@@ -164,14 +164,15 @@ namespace Taskly.Application.Users
             var newDeps = new List<Domain.Unit>();
             foreach (var d in deps)
             {
-                var dbDep = dbDeps.FirstOrDefault(i => i.Name == d.name);
-                var newDep = newDeps.FirstOrDefault(i => i.Name == d.name);
+                var dbDep = dbDeps.FirstOrDefault(i => i.Code == d.prj_company_ID);
+                var newDep = newDeps.FirstOrDefault(i => i.Code == d.prj_company_ID);
                 if (dbDep == null && newDep == null)
                 {
                     Log.Logger.Debug($"Handle {d.name} with parent = {d.parent}");
                     newDeps.Add(new Domain.Unit
                     {
                         Id = Guid.NewGuid(),
+                        Code = d.prj_company_ID,
                         Name = d.name,
                         OrderNumber = d.order_number,
                         ShortName = d.short_name,
@@ -199,8 +200,9 @@ namespace Taskly.Application.Users
                     continue;
                 }
 
-                dbDeps.First(i => i.Name == d.name).ParentUnit = dbDeps.First(i => i.Name == deps.First(x => x.prj_company_ID == d.parent).name);
-                _dbContext.Units.Update(dbDeps.First(i => i.Name == d.name));
+                var dpDep = dbDeps.First(i => i.Code == d.prj_company_ID); 
+                dpDep.ParentUnit = dbDeps.First(i => i.Code == d.parent);
+                _dbContext.Units.Update(dpDep);
             }
             await _dbContext.SaveChangesAsync(cancellationToken);
 
