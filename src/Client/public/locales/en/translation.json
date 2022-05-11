@@ -12,7 +12,7 @@
     "home": "Home",
     "page": "Page",
     "hello": "Hello",
-    "users-welcome": "Navigate to this page to see all registered users.",
+    "users-welcome": "List of company employees.",
     "settings-welcome": "Navigate to the setting page.",
     "change-lang": "Change the app language.",
     "unit": "Department",
@@ -22,7 +22,7 @@
     "collapse-all": "Collapse all",
     "position": "Position",
     "language": "Language",
-    "import-users-and-units-records": "Import lis of users and departments from files users.json and departments.json.",
+    "import-users-and-units-records": "Import lis of users and departments from files users.json, departments.json, and projects.json.",
     "import": "Import"
 }
   

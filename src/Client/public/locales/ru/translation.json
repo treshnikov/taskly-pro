@@ -12,7 +12,7 @@
     "home": "Главная",
     "page": "Страница",
     "hello": "Привет",
-    "users-welcome": "Перейдите на эту страницу чтобы просмотреть всех пользователей.",
+    "users-welcome": "Список сотрудников компании.",
     "settings-welcome": "Перейти на страницу настроек.",
     "change-lang": "Изменить язык приложения.",
     "unit": "Отдел",
@@ -22,7 +22,7 @@
     "collapse-all": "Свернуть всё",
     "position": "Должность",
     "language": "Язык",
-    "import-users-and-units-records": "Импорт списка пользователей и отделов из файлов users.json и departments.json.",
+    "import-users-and-units-records": "Импорт списка пользователей и отделов из файлов users.json, departments.json и projects.json.",
     "import": "Импорт"
 
 }   

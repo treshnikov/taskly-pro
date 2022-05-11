@@ -1,4 +1,4 @@
-import { Card, Button, CardActions, CardContent, Container, CardHeader, Divider } from '@mui/material';
+import { Card, Button, CardActions, CardContent, Container, CardHeader, Divider, Grid } from '@mui/material';
 import React, { useContext } from 'react'
 import { AppContext } from '../context/AppContext';
 import { useTranslation } from 'react-i18next';
@@ -13,45 +13,47 @@ export const Settings: React.FunctionComponent = () => {
   return (
 
     <div className='page-container'>
+      <Grid
+        container
+        spacing={2}
+        padding={2}
+        direction="row"
+        alignItems="flex-start">
 
-      <Card
-        sx={{ marginTop: 1 }}>
-        <CardHeader
-          title={t('language') as string}
-        />
-        <Divider />
-        <CardContent>
-          {t('change-lang')}
-        </CardContent>
-        <Divider />
-        <CardActions>
-          <Button variant='contained' onClick={e => { setEnLang() }}>EN</Button>
-          <Button variant='contained' onClick={e => { setRuLang() }}>RU</Button>
-        </CardActions>
-      </Card>
 
-      <Card
-        sx={{ marginTop: 1 }}>
-        <CardHeader
-          title={t('import')}
-        />
-        <Divider />
-        <CardContent>
-          {t('import-users-and-units-records')}
-        </CardContent>
-        <Divider />
-        <CardActions>
-          <Button variant='contained' onClick={async e => {
+        <Grid item xs={3}>
+          <Card className='settings-card'>
+            <CardHeader title={t('language') as string} />
+            <CardContent>
+              {t('change-lang')}<br/>&nbsp;
+            </CardContent>
+            <CardActions>
+              <Button variant='contained' onClick={e => { setEnLang() }}>EN</Button>
+              <Button variant='contained' onClick={e => { setRuLang() }}>RU</Button>
+            </CardActions>
+          </Card>
 
-            await request("/api/v1/admin/import",
-              {
-                method: 'post',
-              });
+        </Grid>
 
-          }}>{t('import')}</Button>
-        </CardActions>
-      </Card>
+        <Grid item xs={4}>
+          <Card className='settings-card'>
+            <CardHeader title={t('import')} />
+            <CardContent>
+              {t('import-users-and-units-records')}
+            </CardContent>
+            <CardActions>
+              <Button variant='contained' onClick={async e => {
 
+                await request("/api/v1/admin/import",
+                  {
+                    method: 'post',
+                  });
+
+              }}>{t('import')}</Button>
+            </CardActions>
+          </Card>
+        </Grid>
+      </Grid> 
     </div>
   )
 }

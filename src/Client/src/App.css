@@ -8,3 +8,11 @@
     margin-left: 1em;
     margin-right: 1em;
 }
+
+.home-card{
+    height: 10em;
+}
+
+.settings-card{
+    height: 13em;
+}

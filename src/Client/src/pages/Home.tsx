@@ -13,54 +13,65 @@ export const Home: React.FunctionComponent = () => {
     <div className='page-container'>
       <Grid
         container
-        padding={1}
+        spacing={2} 
+        padding={2}
         direction="row"
         alignItems="flex-start"
       >
 
-        <Card sx={{ width: 275, margin: 1 }}>
-          <CardContent>
-            <Typography variant="h5" component="div">
-              <PeopleIcon />&nbsp;{t('users') as string}
-            </Typography>
-            <Typography variant="body2">
-              <>{t('users-welcome')}</>
-            </Typography>
-          </CardContent>
-          <CardActions>
-            <Button variant='contained' onClick={e => { navigate("/users") }}>{t('users') as string}</Button>
-          </CardActions>
-        </Card>
+        <Grid item xs={3}>
+          <Card className="home-card">
+            <CardContent>
+              <Typography variant="h5" component="div">
+                <PeopleIcon />&nbsp;{t('users') as string}
+              </Typography>
+              <Typography variant="body2">
+                <>{t('users-welcome')}</><br />&nbsp;
+              </Typography>
+            </CardContent>
+            <CardActions>
+              <Button variant='contained' onClick={e => { navigate("/users") }}>{t('users') as string}</Button>
+            </CardActions>
+          </Card>
+        </Grid>
 
-        <Card sx={{ width: 275, margin: 1 }}>
-          <CardContent>
-            <Typography variant="h5" component="div">
-              <AccountTreeIcon />&nbsp;{t('units') as string}
-            </Typography>
-            <Typography variant="body2">
-              <>{t('units-welcome')}</><br />&nbsp;
-            </Typography>
-          </CardContent>
-          <CardActions>
-            <Button variant='contained' onClick={e => { navigate("/units") }}>{t('units') as string}</Button>
-          </CardActions>
-        </Card>
+        <Grid item xs={3}>
+          <Card className="home-card">
+            <CardContent>
+              <Typography variant="h5" component="div">
+                <AccountTreeIcon />&nbsp;{t('units') as string}
+              </Typography>
+              <Typography variant="body2">
+                <>{t('units-welcome')}</><br />&nbsp;
+              </Typography>
+            </CardContent>
+            <CardActions>
+              <Button variant='contained' onClick={e => { navigate("/units") }}>{t('units') as string}</Button>
+            </CardActions>
+          </Card>
+        </Grid>
+        <Grid item xs={3}>
+          <Card className="home-card">
+            <CardContent>
+              <Typography variant="h5" component="div">
+                <SettingsIcon />&nbsp;{t('settings') as string}
+              </Typography>
+              <Typography variant="body2">
+                <>
+                  {t('settings-welcome')}<br />&nbsp;
+                </>
+              </Typography>
+            </CardContent>
+            <CardActions>
+              <Button variant='contained' onClick={e => { navigate("/settings") }}>{t('settings') as string}</Button>
+            </CardActions>
+          </Card>
+        </Grid>
+        <Grid item xs={3}>
+        </Grid>
 
-        <Card sx={{ width: 275, margin: 1 }}>
-          <CardContent>
-            <Typography variant="h5" component="div">
-              <SettingsIcon />&nbsp;{t('settings') as string}
-            </Typography>
-            <Typography variant="body2">
-              <>
-                {t('settings-welcome')}<br />&nbsp;
-              </>
-            </Typography>
-          </CardContent>
-          <CardActions>
-            <Button variant='contained' onClick={e => { navigate("/settings") }}>{t('settings') as string}</Button>
-          </CardActions>
-        </Card>
+
+
 
       </Grid>
     </div>
