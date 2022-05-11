@@ -4,7 +4,7 @@ namespace Taskly.Domain
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public string ShortName { get; set; }
+        public string? ShortName { get; set; }
         public virtual Unit? Company { get; set; }
         public Guid? UnitId { get; set; }
         public bool IsOpened { get; set; }
