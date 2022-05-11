@@ -4,6 +4,7 @@
     cursor: pointer;
 }
 
-#hot-display-license-info{
-    display: none;
+.page-container{
+    margin-left: 1em;
+    margin-right: 1em;
 }

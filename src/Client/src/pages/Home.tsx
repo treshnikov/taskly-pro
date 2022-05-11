@@ -10,7 +10,7 @@ export const Home: React.FunctionComponent = () => {
   const navigate = useNavigate()
 
   return (
-    <Container>
+    <div className='page-container'>
       <Grid
         container
         padding={1}
@@ -63,6 +63,6 @@ export const Home: React.FunctionComponent = () => {
         </Card>
 
       </Grid>
-    </Container>
+    </div>
   )
 }

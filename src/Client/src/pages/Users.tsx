@@ -3,7 +3,7 @@ import { UserVm } from "../models/UserVm";
 import { HotTable } from '@handsontable/react';
 import { registerAllModules } from 'handsontable/registry';
 import { useTranslation } from 'react-i18next';
-import { Container } from '@mui/material';
+import { Container as div } from '@mui/material';
 import { useHttp } from '../hooks/http.hook';
 registerAllModules();
 
@@ -38,7 +38,7 @@ export const Users: React.FunctionComponent = () => {
   const colWidths = [100, 250, 220, 300, 400]
 
   return (
-    <Container>
+    <div className='page-container'>
       <h3>{t('users')}</h3>
       <HotTable
         fixedRowsTop={0}
@@ -50,10 +50,12 @@ export const Users: React.FunctionComponent = () => {
         wordWrap={false}
         rowHeaders={true}
         fillHandle={false}
-        //manualColumnResize={true}
+        stretchH="all"
         hiddenColumns={hiddenColumns}
+        //manualColumnResize={true}
         //afterChange={(changes: CellChange[] | null, source: ChangeSource) => { console.log("afterChange", changes) }}
+        licenseKey='non-commercial-and-evaluation'
       />
-    </Container>
+    </div>
   )
 }

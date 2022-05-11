@@ -62,8 +62,8 @@ export default function Units() {
     }
 
     return (
-        <Container>
-            <h3>{t('units')}</h3>
+        <div className='page-container'>
+        <h3>{t('units')}</h3>
             <Stack spacing={1} paddingBottom={1} direction="row">
                 <Button onClick={e => { expandAll() }} variant='contained'>{t('expand-all')}</Button>
                 <Button onClick={e => { setExpanded([]) }} variant='contained'>{t('collapse-all')}</Button>
@@ -78,6 +78,6 @@ export default function Units() {
             >
                 {renderTree(units)}
             </TreeView>
-        </Container>
+        </div>
     );
 }

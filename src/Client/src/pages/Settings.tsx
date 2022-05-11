@@ -12,7 +12,7 @@ export const Settings: React.FunctionComponent = () => {
 
   return (
 
-    <Container>
+    <div className='page-container'>
 
       <Card
         sx={{ marginTop: 1 }}>
@@ -52,6 +52,6 @@ export const Settings: React.FunctionComponent = () => {
         </CardActions>
       </Card>
 
-    </Container>
+    </div>
   )
 }
