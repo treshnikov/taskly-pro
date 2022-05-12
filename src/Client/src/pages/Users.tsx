@@ -40,7 +40,7 @@ export const Users: React.FunctionComponent = () => {
     <div className='page-container'>
       <h3>{t('users')}</h3>
       <HotTable
-        fixedRowsTop={0}
+        //fixedRowsTop={0}
         columnSorting={true}
         data={users}
         colHeaders={headers}

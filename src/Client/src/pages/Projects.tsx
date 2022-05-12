@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { HotTable } from '@handsontable/react';
+import { HotColumn, HotTable } from '@handsontable/react';
 import { registerAllModules } from 'handsontable/registry';
 import { useTranslation } from 'react-i18next';
 import { useHttp } from '../hooks/http.hook';
@@ -39,25 +39,9 @@ export const Projects: React.FunctionComponent = () => {
     populateProjects()
   }, [request])
 
-  const headers = ['ID', t('name'), t('short-name'), t('company'),
+  const headers = ['ID', t('name'), t('short-name'), t('customer'), t('company'),
     t('is-opened'), t('project-manager'), t('chief-engineer'),
-    t('start'), t('end'), t('close-date'), t('customer'), t('contract')]
-
-  const columns = [
-    { data: "id", editor: false, type: "text" },
-    { data: "name", editor: false, type: "text" },
-    { data: "shortName", editor: false, type: "text" },
-    { data: "customer", editor: false, type: "text" },
-    { data: "company", editor: false, type: "text" },
-    { data: "isOpened", editor: false, type: 'checkbox', className: 'htCenter', readOnly: true },
-    { data: "projectManager", editor: false, type: "text" },
-    { data: "chiefEngineer", editor: false, type: "text" },
-    { data: "start", editor: false, type: "text" },
-    { data: "end", editor: false, type: "text" },
-    { data: "closeDate", editor: false, type: "text" },
-    { data: "contract", editor: false, type: "text" }
-  ]
-  const colWidths = [25, 250]
+    t('start'), t('end'), t('close-date'), t('contract')]
 
   return (
     <div className='page-container'>
@@ -70,12 +54,11 @@ export const Projects: React.FunctionComponent = () => {
         />
       </Box>
       <HotTable
-        fixedRowsTop={0}
+        //fixedRowsTop={0}
         columnSorting={true}
         data={filteredProjects}
         colHeaders={headers}
-        columns={columns}
-        colWidths={colWidths}
+        colWidths={[25, 250]}
         //wordWrap={false}
         rowHeaders={true}
         fillHandle={false}
@@ -84,7 +67,21 @@ export const Projects: React.FunctionComponent = () => {
         //manualColumnResize={true}
         //afterChange={(changes: CellChange[] | null, source: ChangeSource) => { console.log("afterChange", changes) }}
         licenseKey='non-commercial-and-evaluation'
-      />
+      >
+        <HotColumn data={"id"} editor={false} type={"text"} />
+        <HotColumn data={"name"} editor={false} type={"text"} />
+        <HotColumn data={"shortName"} editor={false} type={"text"} />
+        <HotColumn data={"customer"} editor={false} type={"text"} />
+        <HotColumn data={"company"} editor={false} type={"text"} />
+        <HotColumn data={"isOpened"} editor={false} type={'checkbox'} className='htCenter' readOnly />
+        <HotColumn data={"projectManager"} editor={false} type={"text"} />
+        <HotColumn data={"chiefEngineer"} editor={false} type={"text"} />
+        <HotColumn data={"start"} editor={false} type={"text"} />
+        <HotColumn data={"end"} editor={false} type={"text"} />
+        <HotColumn data={"closeDate"} editor={false} type={"text"} />
+        <HotColumn data={"contract"} editor={false} type={"text"} />
+
+      </HotTable>
     </div>
   )
 }
