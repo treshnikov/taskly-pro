@@ -37,5 +37,6 @@
     "customer": "Customer",
     "contract": "Contract",
     "project-search": "Project search",
-    "open": "Open"
+    "open": "Open",
+    "task": "Task"
 }

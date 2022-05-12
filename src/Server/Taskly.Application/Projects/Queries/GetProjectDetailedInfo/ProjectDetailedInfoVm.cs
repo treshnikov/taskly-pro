@@ -37,8 +37,8 @@ namespace Taskly.Application.Projects
     public class ProjectTaskVm
     {
         public Guid Id { get; set; }
-        public DateTime Start { get; set; }
-        public DateTime End { get; set; }
+        public string Start { get; set; }
+        public string End { get; set; }
         public string Description { get; set; }
         public ProjectTaskUnitEstimationVm[] Estimations { get; set; }
 
@@ -48,8 +48,8 @@ namespace Taskly.Application.Projects
             {
                 Id = arg.Id,
                 Description = arg.Description,
-                Start = arg.Start,
-                End = arg.End,
+                Start = arg.Start.ToString("dd.MM.yyyy"),
+                End = arg.End.ToString("dd.MM.yyyy"),
                 Estimations = arg.Estimations.Select(i => ProjectTaskUnitEstimationVm.From(i)).ToArray()
             };
         }
