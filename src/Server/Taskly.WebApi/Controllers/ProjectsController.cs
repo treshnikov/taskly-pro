@@ -18,5 +18,16 @@ namespace Taskly.WebApi.Controllers
             var res = await Mediator.Send(new GetProjectsShortInfoRequest());
             return Ok(res);
         }
+
+        [HttpGet("{id}")]        
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult> GetProject(int id)
+        {            
+            var res = await Mediator.Send(new GetProjectsDetailedInfoRequest{
+                ProjectId = id
+            });
+            return Ok(res);
+        }
     }
 }
