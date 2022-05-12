@@ -4,9 +4,25 @@ import { registerAllModules } from 'handsontable/registry';
 import { useTranslation } from 'react-i18next';
 import { useHttp } from '../hooks/http.hook';
 import { ProjectShortInfoVm } from "../models/ProjectShortInfoVm";
-import { Box, TextField } from '@mui/material';
+import { Box, Button, TextField } from '@mui/material';
+
 
 registerAllModules();
+
+const OpenProjectDetailsButtonRenderer = (props: any) => {
+  const { value } = props
+  const { t } = useTranslation();
+
+  return (
+    <React.Fragment>
+      <Button
+        size='small'
+        variant='text'
+      onClick={(e) => {alert(value)}}
+      >{t('open')}</Button>
+    </React.Fragment>
+  );
+}
 
 export const Projects: React.FunctionComponent = () => {
   const { request } = useHttp()
@@ -39,7 +55,7 @@ export const Projects: React.FunctionComponent = () => {
     populateProjects()
   }, [request])
 
-  const headers = ['ID', t('name'), t('short-name'), t('customer'), t('company'),
+  const headers = ['', 'ID', t('name'), t('short-name'), t('customer'), t('company'),
     t('is-opened'), t('project-manager'), t('chief-engineer'),
     t('start'), t('end'), t('close-date'), t('contract')]
 
@@ -58,9 +74,9 @@ export const Projects: React.FunctionComponent = () => {
         columnSorting={true}
         data={filteredProjects}
         colHeaders={headers}
-        colWidths={[25, 250]}
+        colWidths={[25, 25, 250]}
         //wordWrap={false}
-        rowHeaders={true}
+        //rowHeaders={true}
         fillHandle={false}
         stretchH="all"
         //hiddenColumns={hiddenColumns}
@@ -68,6 +84,9 @@ export const Projects: React.FunctionComponent = () => {
         //afterChange={(changes: CellChange[] | null, source: ChangeSource) => { console.log("afterChange", changes) }}
         licenseKey='non-commercial-and-evaluation'
       >
+        <HotColumn width={55} data={"id"} readOnly>
+          <OpenProjectDetailsButtonRenderer hot-renderer />
+        </HotColumn>
         <HotColumn data={"id"} editor={false} type={"text"} />
         <HotColumn data={"name"} editor={false} type={"text"} />
         <HotColumn data={"shortName"} editor={false} type={"text"} />

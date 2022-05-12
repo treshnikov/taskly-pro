@@ -36,5 +36,6 @@
     "close-date" : "Дата закрытия", 
     "customer" : "Заказчик", 
     "contract" : "Договор",
-    "project-search": "Поиск проекта"    
+    "project-search": "Поиск проекта",
+    "open": "Открыть"    
 }   

@@ -36,5 +36,6 @@
     "close-date": "Close date",
     "customer": "Customer",
     "contract": "Contract",
-    "project-search": "Project search"
+    "project-search": "Project search",
+    "open": "Open"
 }
