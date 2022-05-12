@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useHttp } from '../hooks/http.hook';
 import { ProjectShortInfoVm } from "../models/ProjectShortInfoVm";
 import { Box, Link, TextField } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 
 registerAllModules();
@@ -12,10 +13,11 @@ registerAllModules();
 const OpenProjectDetailsButtonRenderer = (props: any) => {
   const { value } = props
   const { t } = useTranslation();
-
+  const navigate = useNavigate()
+  
   return (
     <React.Fragment>
-      <Link href={"/projects/" + value}>{t('open')}</Link>
+      <Link href={"#"} onClick={e => { navigate("/projects/" + value) }}>{t('open')}</Link>
     </React.Fragment>
   );
 }
