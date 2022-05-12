@@ -1,18 +1,31 @@
 @import 'handsontable/dist/handsontable.full.css';
 
-.logo{
+.logo {
     cursor: pointer;
 }
 
-.page-container{
+.page-container {
     margin-left: 1em;
     margin-right: 1em;
 }
 
-.home-card{
+.home-card {
     height: 10em;
 }
 
-.settings-card{
+.settings-card {
     height: 13em;
+}
+
+.htCore > thead > tr > th {
+    line-height: 1.5rem;
+    font-size: 0.820rem;
+    font-family: Public Sans, sans-serif;
+    font-weight: 200;
+    display: table-cell;
+    vertical-align: inherit;
+    border-bottom: 1px solid rgb(241, 243, 244);
+    text-align: left;
+    /* padding: 16px; */
+    color: rgb(33, 43, 54);
 }
