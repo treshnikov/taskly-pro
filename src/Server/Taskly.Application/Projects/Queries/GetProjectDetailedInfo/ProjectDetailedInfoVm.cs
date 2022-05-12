@@ -6,11 +6,15 @@ namespace Taskly.Application.Projects
     {
         public Guid Id { get; set; }
         public Guid UnitId { get; set; }
+        public string UnitName { get; set; }
         public int DepartmentHeadHours { get; set; }
         public int LeadEngineerHours { get; set; }
         public int EngineerOfTheFirstCategoryHours { get; set; }
         public int EngineerOfTheSecondCategoryHours { get; set; }
         public int EngineerOfTheThirdCategoryHours { get; set; }
+        public int ChiefSpecialistHours { get; set; }
+        public int TechniclaWriterHours { get; set; }
+
 
         public static ProjectTaskUnitEstimationVm From(ProjectTaskUnitEstimation arg)
         {
@@ -21,8 +25,11 @@ namespace Taskly.Application.Projects
                 EngineerOfTheSecondCategoryHours = arg.EngineerOfTheSecondCategoryHours,
                 EngineerOfTheThirdCategoryHours = arg.EngineerOfTheThirdCategoryHours,
                 LeadEngineerHours = arg.LeadEngineerHours,
+                ChiefSpecialistHours = arg.ChiefSpecialistHours,
+                TechniclaWriterHours = arg.TechniclaWriterHours,
                 Id = arg.Id,
-                UnitId = arg.UnitId
+                UnitId = arg.UnitId,
+                UnitName = arg.Unit.Name
             };
         }
     }

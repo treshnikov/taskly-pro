@@ -17,7 +17,13 @@ namespace Taskly.Application.Projects
             var project = await _dbContext
                 .Projects
                 .AsNoTracking()
-                .Include(p => p.Customer).Include(p => p.ProjectManager).Include(p => p.ChiefEngineer).Include(p => p.Company).Include(p => p.Tasks).ThenInclude(p => p.Estimations)
+                    .Include(p => p.Customer)
+                    .Include(p => p.ProjectManager)
+                    .Include(p => p.ChiefEngineer)
+                    .Include(p => p.Company).
+                    Include(p => p.Tasks)
+                        .ThenInclude(p => p.Estimations)
+                        .ThenInclude(p => p.Unit)
                 .FirstAsync(i => i.Id == request.ProjectId, cancellationToken: cancellationToken);
 
             return ProjectDetailedInfoVm.From(project);

@@ -20,9 +20,9 @@ namespace Taskly.DAL
             var unit = new Unit
             {
                 Id = Guid.NewGuid(),
-                Name = "System",
+                Name = "Main department",
                 OrderNumber = 0,
-                ShortName = "System"
+                ShortName = "MD"
             };
 
             var admin = new User
@@ -49,7 +49,7 @@ namespace Taskly.DAL
             var customer = new Customer
             {
                 Id = Guid.NewGuid(),
-                Name = "Default customer"
+                Name = "Demo customer"
             };
 
             var project = new Project
@@ -60,8 +60,8 @@ namespace Taskly.DAL
                 Company = unit,
                 Customer = customer,
                 IsOpened = true,
-                Contract = "Contract",
-                Name = "Project",
+                Contract = "Demo contract",
+                Name = "Demo project",
                 Start = new DateTime(DateTime.Today.Year, 01, 01),
                 End = new DateTime(DateTime.Today.Year, 12, 31),
                 Tasks = new List<ProjectTask>
