@@ -6,6 +6,7 @@ using Taskly.Application.Common.Exceptions;
 using Taskly.Application.Interfaces;
 using Taskly.Domain;
 using Serilog;
+using System.Globalization;
 
 namespace Taskly.Application.Users
 {
@@ -48,9 +49,9 @@ namespace Taskly.Application.Users
                 var newProject = newProjects.FirstOrDefault(i => i.Id == p.project_id);
 
                 var company = dbUnits.FirstOrDefault(i => i.Name == p.company);
-                var start = DateTime.Parse(p.start_stop_dates.Split(" ")[0]);
-                var end = DateTime.Parse(p.start_stop_dates.Split(" ")[2]);
-                DateTime? closeDate = string.IsNullOrWhiteSpace(p.close_date) ? null : DateTime.Parse(p.close_date);
+                var start = DateTime.ParseExact(p.start_stop_dates.Split(" ")[0], "dd.MM.yyyy", CultureInfo.InvariantCulture);
+                var end = DateTime.ParseExact(p.start_stop_dates.Split(" ")[2], "dd.MM.yyyy", CultureInfo.InvariantCulture);
+                DateTime? closeDate = string.IsNullOrWhiteSpace(p.close_date) ? null : DateTime.ParseExact(p.close_date, "dd.MM.yyyy", CultureInfo.InvariantCulture);
                 var pm = dbUsers.FirstOrDefault(i => i.Name == p.project_manager);
                 var lead = dbUsers.FirstOrDefault(i => i.Name == p.lead_engineer);
                 var isOpened = !string.IsNullOrWhiteSpace(p.opened) && (p.opened.ToLower() == "да");
