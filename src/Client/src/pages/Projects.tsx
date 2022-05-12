@@ -4,7 +4,7 @@ import { registerAllModules } from 'handsontable/registry';
 import { useTranslation } from 'react-i18next';
 import { useHttp } from '../hooks/http.hook';
 import { ProjectShortInfoVm } from "../models/ProjectShortInfoVm";
-import { Box, Button, TextField } from '@mui/material';
+import { Box, Link, TextField } from '@mui/material';
 
 
 registerAllModules();
@@ -15,11 +15,7 @@ const OpenProjectDetailsButtonRenderer = (props: any) => {
 
   return (
     <React.Fragment>
-      <Button
-        size='small'
-        variant='text'
-      onClick={(e) => {alert(value)}}
-      >{t('open')}</Button>
+      <Link href={"/projects/" + value}>{t('open')}</Link>
     </React.Fragment>
   );
 }
@@ -74,7 +70,7 @@ export const Projects: React.FunctionComponent = () => {
         columnSorting={true}
         data={filteredProjects}
         colHeaders={headers}
-        colWidths={[25, 25, 250]}
+        colWidths={[20, 25, 250]}
         //wordWrap={false}
         //rowHeaders={true}
         fillHandle={false}
