@@ -70,8 +70,8 @@ export const ProjectDetails: React.FunctionComponent = () => {
     })
     const weekColsWidths = Array.from(Array(weeksCount).keys()).map(i => 80)
   
-    setHeaders([...headers, ...weekHeaders])
-    setColWidths([...colWidths, ...weekColsWidths])
+    setHeaders(h => [...h, ...weekHeaders])
+    setColWidths(c => [...c, ...weekColsWidths])
 
   }, [request, projectId])
 
@@ -79,7 +79,7 @@ export const ProjectDetails: React.FunctionComponent = () => {
   const [tableHeight, setTableHeight] = useState<number>(500)
   useLayoutEffect(() => {
     setTableHeight(window.innerHeight - 145)
-  })
+  }, [])
 
   return (
     <div className='page-container'>

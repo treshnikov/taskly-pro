@@ -1,11 +1,8 @@
-import { ProjectTaskVm } from "../../models/ProjectTaskVm";
 import { ProjectTaskUnitEstimationVm } from "../../models/ProjectTaskUnitEstimationVm";
-import { useTranslation } from 'react-i18next';
 
 export const WeekCellRenderer = (props: any) => {
-    const { col, value } = props
+    const { value } = props
     const estimations = value as ProjectTaskUnitEstimationVm[]
-    const { t } = useTranslation();
 
     return (
         <>
