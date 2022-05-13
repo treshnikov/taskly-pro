@@ -4,9 +4,30 @@ import { useTranslation } from 'react-i18next';
 import { useHttp } from '../hooks/http.hook';
 import { useParams } from 'react-router-dom';
 import HotTable, { HotColumn } from '@handsontable/react';
-import { ProjectDetailedInfoVm, ProjectTaskVm } from '../models/ProjectShortInfoVm';
+import { ProjectDetailedInfoVm, ProjectTaskUnitEstimationVm, ProjectTaskVm } from '../models/ProjectShortInfoVm';
 
 registerAllModules();
+
+const DepartmentsCellRenderer = (props: any) => {
+  const { value } = props
+  const estimations = value as ProjectTaskUnitEstimationVm[]
+  const { t } = useTranslation();
+
+  return (
+    <>
+      {
+        estimations?.map((i, idx) => {
+          return (
+            <div key={i.id}>
+              {i.unitName + " " + ProjectTaskUnitEstimationVm.getTotalHours(i)}
+            </div>
+          )
+        })
+      }
+    </>
+  );
+}
+
 
 export const ProjectDetails: React.FunctionComponent = () => {
   const projectId = useParams<{ id?: string }>()!.id
@@ -18,42 +39,45 @@ export const ProjectDetails: React.FunctionComponent = () => {
   useEffect(() => {
     async function requestDetails() {
       const json = await request("/api/v1/projects/" + projectId)
-      setTasks((json as ProjectDetailedInfoVm).tasks)
+      const newTasks = (json as ProjectDetailedInfoVm).tasks
+      setTasks(newTasks)
     }
     requestDetails()
   }, [request, projectId])
 
   const startDate = new Date(2022, 0, 3)
+  const weeksCount = 52
+
   let headers = ['', t('task'), t('start'), t('end'), t('units')]
-  const weekHeaders = Array.from(Array(52).keys()).map(i => {
+  let colWidths = [25, 350, 90, 90, 150]
+
+  const weekHeaders = Array.from(Array(weeksCount).keys()).map((i, idx) => {
     const date = startDate
-    date.setDate(date.getDate() + i * 7)
+    date.setDate(date.getDate() + idx * 7)
     return `${date.getDate().toLocaleString('en-US', { minimumIntegerDigits: 2 })}.${(1 + date.getMonth()).toLocaleString('en-US', { minimumIntegerDigits: 2 })}.${date.getFullYear()}`
   })
-  headers = [...headers, ...weekHeaders]
+  const weekColsWidths = Array.from(Array(weeksCount).keys()).map(i => 80)
 
-  let headerWidths = [25, 350, 100, 100, 150]
-  const weekHeaderWidths = Array.from(Array(52).keys()).map(i => 80)
-  headerWidths = [...headerWidths, ...weekHeaderWidths]
+  headers = [...headers, ...weekHeaders]
+  colWidths = [...colWidths, ...weekColsWidths]
 
   return (
     <div className='page-container'>
       <h3>Project #{projectId}</h3>
-      <div style={{overflowX: 'auto', height: 'auto'}}>
+      <div style={{ overflowX: 'auto', height: '800px' }}>
         <HotTable
-          width={'100%'}
+          renderAllRows={true}
+          viewportColumnRenderingOffset={colWidths.length}
+          autoRowSize={true}
           fixedColumnsLeft={5}
-          columnSorting={true}
-          manualColumnResize={true}
           data={tasks}
-          colWidths={headerWidths}
+          colWidths={colWidths}
           colHeaders={headers}
-          rowHeaders={true}
+          wordWrap={false}
           fillHandle={false}
           hiddenColumns={{
             columns: [0]
           }}
-          //manualColumnResize={true}
           //afterChange={(changes: CellChange[] | null, source: ChangeSource) => { console.log("afterChange", changes) }}
           licenseKey='non-commercial-and-evaluation'
         >
@@ -61,19 +85,18 @@ export const ProjectDetails: React.FunctionComponent = () => {
           <HotColumn data={"description"} type={"text"} />
           <HotColumn data={"start"} type={"date"} />
           <HotColumn data={"end"} type={"date"} />
-          <HotColumn type={"text"} />
+          <HotColumn data={"estimations"} >
+            <DepartmentsCellRenderer hot-renderer></DepartmentsCellRenderer>
+          </HotColumn>
           {
-            Array.from(Array(52).keys()).map((i, idx) => {
+            Array.from(Array(weeksCount).keys()).map((i, idx) => {
               return (
-                <HotColumn header type={"text"} />
+                <HotColumn header type={"text"} key={"weekColumn" + idx} />
               )
             })
           }
         </HotTable>
       </div>
-
-      <br />
-      {JSON.stringify(tasks, null, 2)}
     </div>
   )
 }

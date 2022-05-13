@@ -1,16 +1,16 @@
 export class ProjectShortInfoVm {
     id: string = ''
-    name: string = ''    
-    shortName: string = '' 
-    company: string = '' 
-    isOpened: boolean = false 
-    projectManager: string = '' 
-    chiefEngineer: string = '' 
-    start: Date = new Date() 
+    name: string = ''
+    shortName: string = ''
+    company: string = ''
+    isOpened: boolean = false
+    projectManager: string = ''
+    chiefEngineer: string = ''
+    start: Date = new Date()
     end: Date = new Date()
     closeDate: Date = new Date()
-    сustomer: string = '' 
-    сontract: string = ''     
+    сustomer: string = ''
+    сontract: string = ''
 }
 
 export class ProjectTaskUnitEstimationVm {
@@ -24,6 +24,11 @@ export class ProjectTaskUnitEstimationVm {
     engineerOfTheThirdCategoryHours: number = 0;
     chiefSpecialistHours: number = 0;
     techniclaWriterHours: number = 0;
+
+    static getTotalHours(arg: ProjectTaskUnitEstimationVm) {
+        return arg.departmentHeadHours + arg.leadEngineerHours + arg.engineerOfTheFirstCategoryHours + arg.engineerOfTheSecondCategoryHours
+            + arg.engineerOfTheThirdCategoryHours + arg.chiefSpecialistHours + arg.techniclaWriterHours;
+    }
 }
 
 export class ProjectTaskVm {
