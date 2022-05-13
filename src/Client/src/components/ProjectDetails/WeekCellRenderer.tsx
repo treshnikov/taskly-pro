@@ -16,6 +16,8 @@ export const WeekCellRenderer = (props: any) => {
                             key={"est_week_" + e.id.toString()}
                             style={
                                 {
+                                    textAlign: "center",
+                                    verticalAlign: "middle",
                                     width: "100%",
                                     fontSize: "11px",
                                     display: "table",

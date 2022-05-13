@@ -37,44 +37,45 @@ export const DepartmentsCellRenderer = (props: any) => {
                             }}>
                             </span>
                             <span style={{
-                                maxWidth: "182px",
+                                maxWidth: "220px",
                                 whiteSpace: "pre-wrap",
                                 display: "inline-block"
-                            }}>{i.unitName + " " + i.totalHours}</span>
-                            <span style={{ float: "right" }}>
+                            }}>{i.unitName + " " + i.totalHours + t('hour')}</span>
+                            <span style={{  display: "block", fontSize: "10px", color: "dimgray" }}>
+                                <div style={{width: "20px", display: "inline-block"}}></div>
                                 {
                                     (i.departmentHeadHours !== 0)
-                                        ? <div>{t('departmentHeadHours')}: {i.departmentHeadHours}</div>
+                                        ? <div style={{display: "inline", marginRight: "5px"}}>{t('departmentHeadHours')}: {i.departmentHeadHours + t('hour')}</div>
                                         : <></>
                                 }
                                 {
                                     (i.chiefSpecialistHours !== 0)
-                                        ? <div>{t('chiefSpecialistHours')}: {i.chiefSpecialistHours}</div>
+                                        ? <div style={{display: "inline", marginRight: "5px"}}>{t('chiefSpecialistHours')}: {i.chiefSpecialistHours + t('hour')}</div>
                                         : <></>
                                 }
                                 {
                                     (i.leadEngineerHours !== 0)
-                                        ? <div>{t('leadEngineerHours')}: {i.leadEngineerHours}</div>
+                                        ? <div style={{display: "inline", marginRight: "5px"}}>{t('leadEngineerHours')}: {i.leadEngineerHours + t('hour')}</div>
                                         : <></>
                                 }
                                 {
                                     (i.engineerOfTheFirstCategoryHours !== 0)
-                                        ? <div>{t('engineerOfTheFirstCategoryHours')}: {i.engineerOfTheFirstCategoryHours}</div>
+                                        ? <div style={{display: "inline", marginRight: "5px"}}>{t('engineerOfTheFirstCategoryHours')}: {i.engineerOfTheFirstCategoryHours + t('hour')}</div>
                                         : <></>
                                 }
                                 {
                                     (i.engineerOfTheSecondCategoryHours !== 0)
-                                        ? <div>{t('engineerOfTheSecondCategoryHours')}: {i.engineerOfTheSecondCategoryHours}</div>
+                                        ? <div style={{display: "inline", marginRight: "5px"}}>{t('engineerOfTheSecondCategoryHours')}: {i.engineerOfTheSecondCategoryHours + t('hour')}</div>
                                         : <></>
                                 }
                                 {
                                     (i.engineerOfTheThirdCategoryHours !== 0)
-                                        ? <div>{t('engineerOfTheThirdCategoryHours')}: {i.engineerOfTheThirdCategoryHours}</div>
+                                        ? <div style={{display: "inline", marginRight: "5px"}}>{t('engineerOfTheThirdCategoryHours')}: {i.engineerOfTheThirdCategoryHours + t('hour')}</div>
                                         : <></>
                                 }
                                 {
                                     (i.techniclaWriterHours !== 0)
-                                        ? <div>{t('techniclaWriterHours')}: {i.techniclaWriterHours}</div>
+                                        ? <div style={{display: "inline", marginRight: "5px"}}>{t('techniclaWriterHours')}: {i.techniclaWriterHours + t('hour')}</div>
                                         : <></>
                                 }
                             </span>

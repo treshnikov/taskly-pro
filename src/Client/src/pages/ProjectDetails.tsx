@@ -14,10 +14,12 @@ registerAllModules();
 
 export const ProjectDetails: React.FunctionComponent = () => {
   const projectId = useParams<{ id?: string }>()!.id
-  const [tasks, setTasks] = useState<ProjectTaskVm[]>([])
-
   const { request } = useHttp()
   const { t } = useTranslation();
+
+  const [tasks, setTasks] = useState<ProjectTaskVm[]>([])
+  const [headers, setHeaders] = useState<string[]>(['', t('task'), t('start'), t('end'), t('units')])
+  const [colWidths, setColWidths] = useState<number[]>([25, 350, 90, 90, 310])
 
   useEffect(() => {
     async function requestDetails() {
@@ -31,8 +33,12 @@ export const ProjectDetails: React.FunctionComponent = () => {
       const testEstimation1 = new ProjectTaskUnitEstimationVm()
       testEstimation1.id = "asdfasdfsdf"
       testEstimation1.unitName = "Отдел программирования РСУ"
-      testEstimation1.chiefSpecialistHours = 123
+      testEstimation1.chiefSpecialistHours = 120
+      testEstimation1.leadEngineerHours = 40
       testEstimation1.engineerOfTheSecondCategoryHours = 90
+      testEstimation1.engineerOfTheFirstCategoryHours = 40
+      testEstimation1.engineerOfTheThirdCategoryHours = 120
+      testEstimation1.techniclaWriterHours = 900
 
       const testEstimation2 = new ProjectTaskUnitEstimationVm()
       testEstimation2.id = "dfgsdfg"
@@ -53,23 +59,22 @@ export const ProjectDetails: React.FunctionComponent = () => {
       setTasks(newTasks)
     }
     requestDetails()
+
+    const startDate = new Date(2022, 0, 3)
+    const weeksCount = 52
+
+    const weekHeaders = Array.from(Array(weeksCount).keys()).map((i, idx) => {
+      const date = new Date(startDate)
+      date.setDate(date.getDate() + idx * 7)
+      return `${date.getDate().toLocaleString('en-US', { minimumIntegerDigits: 2 })}.${(1 + date.getMonth()).toLocaleString('en-US', { minimumIntegerDigits: 2 })}.${date.getFullYear()}`
+    })
+    const weekColsWidths = Array.from(Array(weeksCount).keys()).map(i => 80)
+  
+    setHeaders([...headers, ...weekHeaders])
+    setColWidths([...colWidths, ...weekColsWidths])
+
   }, [request, projectId])
 
-  const startDate = new Date(2022, 0, 3)
-  const weeksCount = 52
-
-  let headers = ['', t('task'), t('start'), t('end'), t('units')]
-  let colWidths = [25, 350, 90, 90, 300]
-
-  const weekHeaders = Array.from(Array(weeksCount).keys()).map((i, idx) => {
-    const date = new Date(startDate)
-    date.setDate(date.getDate() + idx * 7)
-    return `${date.getDate().toLocaleString('en-US', { minimumIntegerDigits: 2 })}.${(1 + date.getMonth()).toLocaleString('en-US', { minimumIntegerDigits: 2 })}.${date.getFullYear()}`
-  })
-  const weekColsWidths = Array.from(Array(weeksCount).keys()).map(i => 80)
-
-  headers = [...headers, ...weekHeaders]
-  colWidths = [...colWidths, ...weekColsWidths]
 
   const [tableHeight, setTableHeight] = useState<number>(500)
   useLayoutEffect(() => {
@@ -82,7 +87,7 @@ export const ProjectDetails: React.FunctionComponent = () => {
       <div style={{ overflowX: 'auto', height: tableHeight }}>
         <HotTable
           renderAllRows={true}
-          viewportColumnRenderingOffset={colWidths.length}
+          viewportColumnRenderingOffset={headers.length}
           fixedColumnsLeft={5}
           data={tasks}
           colWidths={colWidths}
@@ -102,7 +107,7 @@ export const ProjectDetails: React.FunctionComponent = () => {
             <DepartmentsCellRenderer hot-renderer></DepartmentsCellRenderer>
           </HotColumn>
           {
-            weekColsWidths.map((i, idx) => {
+            headers.slice(4).map((i, idx) => {
               return (
                 <HotColumn data={"estimations"} key={"weekColumn" + idx} readOnly >
                   <WeekCellRenderer hot-renderer></WeekCellRenderer>
