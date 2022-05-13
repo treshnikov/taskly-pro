@@ -21,7 +21,8 @@ export const ProjectDetails: React.FunctionComponent = () => {
   useEffect(() => {
     async function requestDetails() {
       const json = await request("/api/v1/projects/" + projectId)
-      const newTasks = (json as ProjectDetailedInfoVm).tasks
+      const info = (json as ProjectDetailedInfoVm)
+      let newTasks = info.tasks
 
       const testTask = new ProjectTaskVm()
       testTask.description = "Отдел программирования РСУ"
@@ -38,7 +39,10 @@ export const ProjectDetails: React.FunctionComponent = () => {
 
       testTask.estimations = [testEstimation1, testEstimation2, testEstimation3]
 
-      setTasks([...newTasks, testTask])
+      newTasks = [...newTasks, testTask]
+      ProjectDetailedInfoVm.init(info)
+
+      setTasks(newTasks)
     }
     requestDetails()
   }, [request, projectId])
@@ -61,8 +65,6 @@ export const ProjectDetails: React.FunctionComponent = () => {
 
   const [tableHeight, setTableHeight] = useState<number>(500)
   useLayoutEffect(() => {
-    console.log(document.getElementsByClassName("wtSpreader")[0]["scrollHeight"])
-
     setTableHeight(window.innerHeight - 145)
   })
 
@@ -88,7 +90,7 @@ export const ProjectDetails: React.FunctionComponent = () => {
           <HotColumn data={"description"} type={"text"} />
           <HotColumn data={"start"} type={"date"} dateFormat='DD.MM.YYYY' correctFormat={true} defaultDate='01.01.2022' />
           <HotColumn data={"end"} type={"date"} dateFormat='DD.MM.YYYY' correctFormat={true} defaultDate='01.01.2022' />
-          <HotColumn data={"estimations"} readOnly>
+          <HotColumn data={"estimations"} readOnly >
             <DepartmentsCellRenderer hot-renderer></DepartmentsCellRenderer>
           </HotColumn>
           {

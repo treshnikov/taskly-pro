@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ProjectTaskUnitEstimationVm } from "../../models/ProjectTaskUnitEstimationVm";
 
@@ -26,9 +27,9 @@ export const DepartmentsCellRenderer = (props: any) => {
                                 }}>
                             <span style={{
                                 //   backgroundColor: '#' + (0x1000000 + Math.random() * 0xffffff).toString(16).substr(1, 6),
-                                backgroundColor: ProjectTaskUnitEstimationVm.getColor(i),
+                                backgroundColor: i.color,
                                 display: "inline-block",
-                                height: "15px",
+                                height: i.lineHeight + "px",
                                 width: "20px",
                                 marginLeft: "-2px",
                                 marginTop: "2px",
