@@ -1,52 +1,13 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useLayoutEffect, useState } from 'react'
 import { registerAllModules } from 'handsontable/registry';
 import { useTranslation } from 'react-i18next';
 import { useHttp } from '../hooks/http.hook';
 import { useParams } from 'react-router-dom';
 import HotTable, { HotColumn } from '@handsontable/react';
 import { ProjectDetailedInfoVm, ProjectTaskUnitEstimationVm, ProjectTaskVm } from '../models/ProjectShortInfoVm';
-import { green } from '@mui/material/colors';
-import { Stack } from '@mui/material';
+import {DepartmentsCellRenderer} from "../components/ProjectDetails/DepartmentsCellRenderer"
 
 registerAllModules();
-
-const DepartmentsCellRenderer = (props: any) => {
-  const { value } = props
-  const estimations = value as ProjectTaskUnitEstimationVm[]
-  const { t } = useTranslation();
-  const departmentElementFlagStyle =
-  {
-    backgroundColor: '#' + (0x1000000 + Math.random() * 0xffffff).toString(16).substr(1, 6),
-    height: "5px",
-    width: "30px",
-    marginLeft: "-3px",
-    marginTop: "3px"
-  }
-  const departmentElementTextStyle = 
-  {
-    whiteSpace: 'nowrap'
-  }
-
-  const departmentElementStyle = {
-    width: "100%"
-  }
-
-  return (
-    <>
-      {
-        estimations?.map((i, idx) => {
-          return (
-            <Stack direction="row" key={i.id} style={departmentElementStyle}>
-              <div style={departmentElementFlagStyle}></div>
-              <div style={{whiteSpace: "nowrap"}}>{i.unitName + " " + ProjectTaskUnitEstimationVm.getTotalHours(i)}</div>
-            </Stack>
-          )
-        })
-      }
-    </>
-  );
-}
-
 
 export const ProjectDetails: React.FunctionComponent = () => {
   const projectId = useParams<{ id?: string }>()!.id
@@ -59,7 +20,23 @@ export const ProjectDetails: React.FunctionComponent = () => {
     async function requestDetails() {
       const json = await request("/api/v1/projects/" + projectId)
       const newTasks = (json as ProjectDetailedInfoVm).tasks
-      setTasks(newTasks)
+
+      const testTask = new ProjectTaskVm()
+      testTask.description = "Отдел программирования РСУ"
+
+      const testEstimation1 = new ProjectTaskUnitEstimationVm()
+      testEstimation1.unitName = "Отдел программирования РСУ"
+      testEstimation1.id = "123123"
+      const testEstimation2 = new ProjectTaskUnitEstimationVm()
+      testEstimation2.id = "1123123"
+      testEstimation2.unitName = "Отдел программирования СУПП"
+      const testEstimation3 = new ProjectTaskUnitEstimationVm()
+      testEstimation3.id = "11123123"
+      testEstimation3.unitName = "Отдел программирования с очень длинным именем"
+
+      testTask.estimations = [testEstimation1, testEstimation2, testEstimation3]
+
+      setTasks([...newTasks, testTask])
     }
     requestDetails()
   }, [request, projectId])
@@ -68,7 +45,7 @@ export const ProjectDetails: React.FunctionComponent = () => {
   const weeksCount = 52
 
   let headers = ['', t('task'), t('start'), t('end'), t('units')]
-  let colWidths = [25, 350, 90, 90, 150]
+  let colWidths = [25, 350, 90, 90, 250]
 
   const weekHeaders = Array.from(Array(weeksCount).keys()).map((i, idx) => {
     const date = startDate
@@ -80,14 +57,20 @@ export const ProjectDetails: React.FunctionComponent = () => {
   headers = [...headers, ...weekHeaders]
   colWidths = [...colWidths, ...weekColsWidths]
 
+  const [tableHeight, setTableHeight] = useState<number>(500)
+  useLayoutEffect(() => {
+    console.log(document.getElementsByClassName("wtSpreader")[0]["scrollHeight"])
+
+    setTableHeight(window.innerHeight - 145)
+  })
+
   return (
     <div className='page-container'>
       <h3>Project #{projectId}</h3>
-      <div style={{ overflowX: 'auto', height: '800px' }}>
+      <div style={{ overflowX: 'auto', height: tableHeight }}>
         <HotTable
           renderAllRows={true}
           viewportColumnRenderingOffset={colWidths.length}
-          autoRowSize={true}
           fixedColumnsLeft={5}
           data={tasks}
           colWidths={colWidths}
