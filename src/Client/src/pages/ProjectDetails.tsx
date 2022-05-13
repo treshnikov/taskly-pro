@@ -5,6 +5,8 @@ import { useHttp } from '../hooks/http.hook';
 import { useParams } from 'react-router-dom';
 import HotTable, { HotColumn } from '@handsontable/react';
 import { ProjectDetailedInfoVm, ProjectTaskUnitEstimationVm, ProjectTaskVm } from '../models/ProjectShortInfoVm';
+import { green } from '@mui/material/colors';
+import { Stack } from '@mui/material';
 
 registerAllModules();
 
@@ -12,15 +14,32 @@ const DepartmentsCellRenderer = (props: any) => {
   const { value } = props
   const estimations = value as ProjectTaskUnitEstimationVm[]
   const { t } = useTranslation();
+  const departmentElementFlagStyle =
+  {
+    backgroundColor: '#' + (0x1000000 + Math.random() * 0xffffff).toString(16).substr(1, 6),
+    height: "5px",
+    width: "30px",
+    marginLeft: "-3px",
+    marginTop: "3px"
+  }
+  const departmentElementTextStyle = 
+  {
+    whiteSpace: 'nowrap'
+  }
+
+  const departmentElementStyle = {
+    width: "100%"
+  }
 
   return (
     <>
       {
         estimations?.map((i, idx) => {
           return (
-            <div key={i.id}>
-              {i.unitName + " " + ProjectTaskUnitEstimationVm.getTotalHours(i)}
-            </div>
+            <Stack direction="row" key={i.id} style={departmentElementStyle}>
+              <div style={departmentElementFlagStyle}></div>
+              <div style={{whiteSpace: "nowrap"}}>{i.unitName + " " + ProjectTaskUnitEstimationVm.getTotalHours(i)}</div>
+            </Stack>
           )
         })
       }
@@ -73,7 +92,7 @@ export const ProjectDetails: React.FunctionComponent = () => {
           data={tasks}
           colWidths={colWidths}
           colHeaders={headers}
-          wordWrap={false}
+          wordWrap={true}
           fillHandle={false}
           hiddenColumns={{
             columns: [0]
