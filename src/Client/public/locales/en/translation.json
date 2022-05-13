@@ -38,5 +38,12 @@
     "contract": "Contract",
     "project-search": "Project search",
     "open": "Open",
-    "task": "Task"
+    "task": "Task",
+    "departmentHeadHours": "Hd",
+    "leadEngineerHours": "Ld",
+    "engineerOfTheFirstCategoryHours": "D1",
+    "engineerOfTheSecondCategoryHours": "D2",
+    "engineerOfTheThirdCategoryHours": "D3",
+    "chiefSpecialistHours": "Cs",
+    "techniclaWriterHours": "Tw"
 }

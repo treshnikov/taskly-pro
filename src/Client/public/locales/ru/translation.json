@@ -38,5 +38,12 @@
     "contract" : "Договор",
     "project-search": "Поиск проекта",
     "open": "Открыть",
-    "task": "Задача"
+    "task": "Задача",
+    "departmentHeadHours": "Рук",
+    "leadEngineerHours": "ВИ",
+    "engineerOfTheFirstCategoryHours": "И1",
+    "engineerOfTheSecondCategoryHours": "И2",
+    "engineerOfTheThirdCategoryHours": "И3",
+    "chiefSpecialistHours": "ГС",
+    "techniclaWriterHours": "Т"
 }   

@@ -4,7 +4,9 @@ import { useTranslation } from 'react-i18next';
 import { useHttp } from '../hooks/http.hook';
 import { useParams } from 'react-router-dom';
 import HotTable, { HotColumn } from '@handsontable/react';
-import { ProjectDetailedInfoVm, ProjectTaskUnitEstimationVm, ProjectTaskVm } from '../models/ProjectShortInfoVm';
+import { ProjectDetailedInfoVm } from "../models/ProjectDetailedInfoVm";
+import { ProjectTaskVm } from "../models/ProjectTaskVm";
+import { ProjectTaskUnitEstimationVm } from "../models/ProjectTaskUnitEstimationVm";
 import { DepartmentsCellRenderer } from "../components/ProjectDetails/DepartmentsCellRenderer"
 
 registerAllModules();
@@ -31,7 +33,7 @@ export const ProjectDetails: React.FunctionComponent = () => {
       testEstimation2.id = "1123123"
       testEstimation2.unitName = "Отдел программирования СУПП"
       const testEstimation3 = new ProjectTaskUnitEstimationVm()
-      testEstimation3.id = "11123123"
+      testEstimation3.id = "12399"
       testEstimation3.unitName = "Отдел программирования с очень длинным именем"
 
       testTask.estimations = [testEstimation1, testEstimation2, testEstimation3]
@@ -84,8 +86,8 @@ export const ProjectDetails: React.FunctionComponent = () => {
         >
           <HotColumn hiddenColumns data={"id"} editor={false} type={"text"} />
           <HotColumn data={"description"} type={"text"} />
-          <HotColumn data={"start"} type={"date"} />
-          <HotColumn data={"end"} type={"date"} />
+          <HotColumn data={"start"} type={"date"} dateFormat='DD.MM.YYYY' correctFormat={true} defaultDate='01.01.2022' />
+          <HotColumn data={"end"} type={"date"} dateFormat='DD.MM.YYYY' correctFormat={true} defaultDate='01.01.2022' />
           <HotColumn data={"estimations"} readOnly>
             <DepartmentsCellRenderer hot-renderer></DepartmentsCellRenderer>
           </HotColumn>
