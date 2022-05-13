@@ -10,9 +10,9 @@ export const DepartmentsCellRenderer = (props: any) => {
     return (
         <>
             {
-                estimations?.map((i, idx) => {
+                estimations?.sort((a, b) => (a.totalHours < b.totalHours ? 1 : -1)).map((i, idx) => {
                     return (
-                        <div key={i.id} style={
+                        <div key={"dep_" + i.id.toString()} style={
                             (estimations?.length - 1 === idx) ?
                                 {
                                     width: "100%",
@@ -26,17 +26,21 @@ export const DepartmentsCellRenderer = (props: any) => {
                                     borderBottom: "solid rgb(204, 204, 204) 0.8px"
                                 }}>
                             <span style={{
-                                //   backgroundColor: '#' + (0x1000000 + Math.random() * 0xffffff).toString(16).substr(1, 6),
                                 backgroundColor: i.color,
                                 display: "inline-block",
+                                verticalAlign: "top",
                                 height: i.lineHeight + "px",
                                 width: "20px",
                                 marginLeft: "-2px",
-                                marginTop: "2px",
+                                marginTop: "5px",
                                 marginRight: "2px"
                             }}>
                             </span>
-                            <span style={{ maxWidth: "200px", whiteSpace: "pre-wrap", display: "inline-block" }}>{i.unitName + " " + ProjectTaskUnitEstimationVm.getTotalHours(i)}</span>
+                            <span style={{
+                                maxWidth: "182px",
+                                whiteSpace: "pre-wrap",
+                                display: "inline-block"
+                            }}>{i.unitName + " " + i.totalHours}</span>
                             <span style={{ float: "right" }}>
                                 {
                                     (i.departmentHeadHours !== 0)
@@ -73,9 +77,6 @@ export const DepartmentsCellRenderer = (props: any) => {
                                         ? <div>{t('techniclaWriterHours')}: {i.techniclaWriterHours}</div>
                                         : <></>
                                 }
-
-
-
                             </span>
                         </div>
                     )

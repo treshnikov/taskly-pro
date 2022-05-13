@@ -13,7 +13,10 @@ export class ProjectTaskUnitEstimationVm {
 
     // these fields are supposed to be calculated on the client after get fetched
     lineHeight: number = 5
+    totalHours: number = 0
     color: string = ''
+    start: string = ''
+    end: string = ''
 
     static getTotalHours(arg: ProjectTaskUnitEstimationVm) {
         return arg.departmentHeadHours + arg.leadEngineerHours + arg.engineerOfTheFirstCategoryHours + arg.engineerOfTheSecondCategoryHours

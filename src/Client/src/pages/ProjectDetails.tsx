@@ -8,12 +8,13 @@ import { ProjectDetailedInfoVm } from "../models/ProjectDetailedInfoVm";
 import { ProjectTaskVm } from "../models/ProjectTaskVm";
 import { ProjectTaskUnitEstimationVm } from "../models/ProjectTaskUnitEstimationVm";
 import { DepartmentsCellRenderer } from "../components/ProjectDetails/DepartmentsCellRenderer"
+import { WeekCellRenderer } from '../components/ProjectDetails/WeekCellRenderer';
 
 registerAllModules();
 
 export const ProjectDetails: React.FunctionComponent = () => {
   const projectId = useParams<{ id?: string }>()!.id
-  const [tasks, setTasks] = useState<ProjectTaskVm[]>()
+  const [tasks, setTasks] = useState<ProjectTaskVm[]>([])
 
   const { request } = useHttp()
   const { t } = useTranslation();
@@ -25,21 +26,28 @@ export const ProjectDetails: React.FunctionComponent = () => {
       let newTasks = info.tasks
 
       const testTask = new ProjectTaskVm()
-      testTask.description = "Отдел программирования РСУ"
+      testTask.description = "Монтажные и пусконаладочные работы схемы управления разъединителями ОРУ-110 кВ"
 
       const testEstimation1 = new ProjectTaskUnitEstimationVm()
+      testEstimation1.id = "asdfasdfsdf"
       testEstimation1.unitName = "Отдел программирования РСУ"
-      testEstimation1.id = "123123"
+      testEstimation1.chiefSpecialistHours = 123
+      testEstimation1.engineerOfTheSecondCategoryHours = 90
+
       const testEstimation2 = new ProjectTaskUnitEstimationVm()
-      testEstimation2.id = "1123123"
+      testEstimation2.id = "dfgsdfg"
       testEstimation2.unitName = "Отдел программирования СУПП"
+      testEstimation2.chiefSpecialistHours = 800
+
       const testEstimation3 = new ProjectTaskUnitEstimationVm()
-      testEstimation3.id = "12399"
+      testEstimation3.id = "iuthoi3hti2hpi"
       testEstimation3.unitName = "Отдел программирования с очень длинным именем"
+      testEstimation3.engineerOfTheThirdCategoryHours = 16
 
       testTask.estimations = [testEstimation1, testEstimation2, testEstimation3]
 
       newTasks = [...newTasks, testTask]
+      info.tasks = newTasks
       ProjectDetailedInfoVm.init(info)
 
       setTasks(newTasks)
@@ -51,10 +59,10 @@ export const ProjectDetails: React.FunctionComponent = () => {
   const weeksCount = 52
 
   let headers = ['', t('task'), t('start'), t('end'), t('units')]
-  let colWidths = [25, 350, 90, 90, 250]
+  let colWidths = [25, 350, 90, 90, 300]
 
   const weekHeaders = Array.from(Array(weeksCount).keys()).map((i, idx) => {
-    const date = startDate
+    const date = new Date(startDate)
     date.setDate(date.getDate() + idx * 7)
     return `${date.getDate().toLocaleString('en-US', { minimumIntegerDigits: 2 })}.${(1 + date.getMonth()).toLocaleString('en-US', { minimumIntegerDigits: 2 })}.${date.getFullYear()}`
   })
@@ -94,9 +102,11 @@ export const ProjectDetails: React.FunctionComponent = () => {
             <DepartmentsCellRenderer hot-renderer></DepartmentsCellRenderer>
           </HotColumn>
           {
-            Array.from(Array(weeksCount).keys()).map((i, idx) => {
+            weekColsWidths.map((i, idx) => {
               return (
-                <HotColumn header type={"text"} key={"weekColumn" + idx} />
+                <HotColumn data={"estimations"} key={"weekColumn" + idx} readOnly >
+                  <WeekCellRenderer hot-renderer></WeekCellRenderer>
+                </HotColumn>
               )
             })
           }

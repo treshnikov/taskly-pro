@@ -29,8 +29,11 @@ export class ProjectDetailedInfoVm {
 
         arg.tasks?.forEach(t => {
             t.estimations?.forEach(e => {
+                e.start = t.start
+                e.end = t.end
                 e.lineHeight = Math.max(3, Math.trunc(maxLineHeight * (ProjectTaskUnitEstimationVm.getTotalHours(e) / sumEstimation)))
                 e.color = ProjectTaskUnitEstimationVm.getColor(e)
+                e.totalHours = ProjectTaskUnitEstimationVm.getTotalHours(e)
             });
         });
     }
