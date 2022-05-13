@@ -5,7 +5,7 @@ import { useHttp } from '../hooks/http.hook';
 import { useParams } from 'react-router-dom';
 import HotTable, { HotColumn } from '@handsontable/react';
 import { ProjectDetailedInfoVm, ProjectTaskUnitEstimationVm, ProjectTaskVm } from '../models/ProjectShortInfoVm';
-import {DepartmentsCellRenderer} from "../components/ProjectDetails/DepartmentsCellRenderer"
+import { DepartmentsCellRenderer } from "../components/ProjectDetails/DepartmentsCellRenderer"
 
 registerAllModules();
 
@@ -80,14 +80,13 @@ export const ProjectDetails: React.FunctionComponent = () => {
           hiddenColumns={{
             columns: [0]
           }}
-          //afterChange={(changes: CellChange[] | null, source: ChangeSource) => { console.log("afterChange", changes) }}
           licenseKey='non-commercial-and-evaluation'
         >
           <HotColumn hiddenColumns data={"id"} editor={false} type={"text"} />
           <HotColumn data={"description"} type={"text"} />
           <HotColumn data={"start"} type={"date"} />
           <HotColumn data={"end"} type={"date"} />
-          <HotColumn data={"estimations"} >
+          <HotColumn data={"estimations"} readOnly>
             <DepartmentsCellRenderer hot-renderer></DepartmentsCellRenderer>
           </HotColumn>
           {

@@ -36,10 +36,44 @@ export const  DepartmentsCellRenderer = (props: any) => {
                 </span>
                 <span style={{ maxWidth: "200px", whiteSpace: "pre-wrap", display: "inline-block" }}>{i.unitName + " " + ProjectTaskUnitEstimationVm.getTotalHours(i)}</span>
                 <span style={{ float: "right" }}>
-                  <div>И1</div>
-                  <div>И1</div>
-                  <div>И1</div>
-                  <div>И1</div>
+                  {
+                    (i.departmentHeadHours !== 0)
+                     ? <div>Рук: {i.departmentHeadHours}</div>
+                     : <></>
+                  }
+                  {
+                    (i.chiefSpecialistHours !== 0)
+                     ? <div>ГС: {i.chiefSpecialistHours}</div>
+                     : <></>
+                  }
+                  {
+                    (i.leadEngineerHours !== 0)
+                     ? <div>ВИ: {i.leadEngineerHours}</div>
+                     : <></>
+                  }
+                  {
+                    (i.engineerOfTheFirstCategoryHours !== 0)
+                     ? <div>И1: {i.engineerOfTheFirstCategoryHours}</div>
+                     : <></>
+                  }
+                  {
+                    (i.engineerOfTheSecondCategoryHours !== 0)
+                     ? <div>И2: {i.engineerOfTheSecondCategoryHours}</div>
+                     : <></>
+                  }
+                  {
+                    (i.engineerOfTheThirdCategoryHours !== 0)
+                     ? <div>И3: {i.engineerOfTheThirdCategoryHours}</div>
+                     : <></>
+                  }
+                  {
+                    (i.techniclaWriterHours !== 0)
+                     ? <div>Т: {i.techniclaWriterHours}</div>
+                     : <></>
+                  }
+
+                  
+                  
                 </span>
               </div>
             )
