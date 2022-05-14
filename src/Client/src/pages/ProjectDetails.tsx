@@ -9,6 +9,8 @@ import { ProjectTaskVm } from "../models/ProjectTaskVm";
 import { ProjectTaskUnitEstimationVm } from "../models/ProjectTaskUnitEstimationVm";
 import { DepartmentsCellRenderer } from "../components/ProjectDetails/DepartmentsCellRenderer"
 import { WeekCellRenderer } from '../components/ProjectDetails/WeekCellRenderer';
+import { Stack, TextField } from '@mui/material';
+import { DatePicker } from '@mui/lab';
 
 registerAllModules();
 
@@ -17,18 +19,22 @@ export const ProjectDetails: React.FunctionComponent = () => {
   const { request } = useHttp()
   const { t } = useTranslation();
 
+  let projectInfo = new ProjectDetailedInfoVm()
   const [tasks, setTasks] = useState<ProjectTaskVm[]>([])
   const [headers, setHeaders] = useState<string[]>(['', t('task'), t('start'), t('end'), t('units')])
   const [colWidths, setColWidths] = useState<number[]>([25, 350, 90, 90, 310])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     async function requestDetails() {
       const json = await request("/api/v1/projects/" + projectId)
-      const info = (json as ProjectDetailedInfoVm)
-      let newTasks = info.tasks
+      projectInfo = (json as ProjectDetailedInfoVm)
+      
+      let newTasks = projectInfo.tasks
 
       const testTask = new ProjectTaskVm()
       testTask.description = "Монтажные и пусконаладочные работы схемы управления разъединителями ОРУ-110 кВ"
+      testTask.start = new Date(2022, 3, 5)
+      testTask.end = new Date(2022, 4, 8)
 
       const testEstimation1 = new ProjectTaskUnitEstimationVm()
       testEstimation1.id = "asdfasdfsdf"
@@ -53,8 +59,8 @@ export const ProjectDetails: React.FunctionComponent = () => {
       testTask.estimations = [testEstimation1, testEstimation2, testEstimation3]
 
       newTasks = [...newTasks, testTask]
-      info.tasks = newTasks
-      ProjectDetailedInfoVm.init(info)
+      projectInfo.tasks = newTasks
+      ProjectDetailedInfoVm.init(projectInfo)
 
       setTasks(newTasks)
     }
@@ -69,7 +75,7 @@ export const ProjectDetails: React.FunctionComponent = () => {
       return `${date.getDate().toLocaleString('en-US', { minimumIntegerDigits: 2 })}.${(1 + date.getMonth()).toLocaleString('en-US', { minimumIntegerDigits: 2 })}.${date.getFullYear()}`
     })
     const weekColsWidths = Array.from(Array(weeksCount).keys()).map(i => 80)
-  
+
     setHeaders(h => [...h, ...weekHeaders])
     setColWidths(c => [...c, ...weekColsWidths])
 
@@ -84,6 +90,10 @@ export const ProjectDetails: React.FunctionComponent = () => {
   return (
     <div className='page-container'>
       <h3>Project #{projectId}</h3>
+      <div style={{ width: "100%" }}>
+        <Stack spacing={1}>
+        </Stack>
+      </div>
       <div style={{ overflowX: 'auto', height: tableHeight }}>
         <HotTable
           renderAllRows={true}
@@ -107,7 +117,7 @@ export const ProjectDetails: React.FunctionComponent = () => {
             <DepartmentsCellRenderer hot-renderer></DepartmentsCellRenderer>
           </HotColumn>
           {
-            headers.slice(4).map((i, idx) => {
+            headers.slice(5).map((i, idx) => {
               return (
                 <HotColumn data={"estimations"} key={"weekColumn" + idx} readOnly >
                   <WeekCellRenderer hot-renderer></WeekCellRenderer>

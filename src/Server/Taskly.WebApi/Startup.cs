@@ -12,10 +12,9 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 using Taskly.WebApi.Controllers;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Taskly.Application.Jwt;
-using Microsoft.AspNetCore.SpaServices.Extensions;
-using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Serilog;
+using Taskly.WebApi.Common;
+using Microsoft.AspNetCore.Http.Json;
 
 namespace Taskly.WebApi;
 
@@ -35,7 +34,10 @@ public class Startup
 
         services.AddApplication();
         services.AddPersistence(Configuration);
-        services.AddControllers();
+        services.AddControllers().AddJsonOptions(j =>
+        {
+            j.JsonSerializerOptions.Converters.Add(new AppDateTimeJsonConverter());
+        });
 
         services.AddCors(options =>
         {
@@ -80,6 +82,7 @@ public class Startup
 
 
                 });
+
         services.AddVersionedApiExplorer(opttions =>
         {
             opttions.GroupNameFormat = "'v'VVV";

@@ -15,8 +15,8 @@ export class ProjectTaskUnitEstimationVm {
     lineHeight: number = 5
     totalHours: number = 0
     color: string = ''
-    start: string = ''
-    end: string = ''
+    start: Date = new Date()
+    end: Date = new Date()
 
     static getTotalHours(arg: ProjectTaskUnitEstimationVm) {
         return arg.departmentHeadHours + arg.leadEngineerHours + arg.engineerOfTheFirstCategoryHours + arg.engineerOfTheSecondCategoryHours
