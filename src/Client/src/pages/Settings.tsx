@@ -44,7 +44,7 @@ export const Settings: React.FunctionComponent = () => {
             <CardActions>
               <Button variant='contained' onClick={async e => {
 
-                await request("/api/v1/admin/import",
+                await request<{msg: string}>("/api/v1/admin/import",
                   {
                     method: 'post',
                   });

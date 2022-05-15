@@ -21,7 +21,7 @@ export default function Units() {
     useEffect(() => {
 
         async function fetchUnits() {
-            const units = await request("/api/v1/units")
+            const units = await request<UnitUserVm>("/api/v1/units")
             setUnits(units)
         }
 

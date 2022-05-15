@@ -13,7 +13,7 @@ export const Users: React.FunctionComponent = () => {
 
   useEffect(() => {
     async function populateUsers() {
-      const json = await request("/api/v1/users")
+      const json = await request<UserVm[]>("/api/v1/users")
       setUsers(json)
     }
     populateUsers()

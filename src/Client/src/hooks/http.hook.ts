@@ -10,7 +10,7 @@ export const useHttp = () => {
     const auth = useAuthSelector(selectAuth)
     
     const login = async (data: FormData) => {
-        const json = await request("/api/v1/auth/token",
+        const json = await request<{jwt: string}>("/api/v1/auth/token",
             {
                 method: 'post',
                 body: data,
@@ -23,7 +23,7 @@ export const useHttp = () => {
         dispatch(onSignout())
     }
 
-    const request = useCallback(async (input: RequestInfo, init?: RequestInit) => {
+    const request = useCallback(async<T> (input: RequestInfo, init?: RequestInit) => {
         if (!init) {
             init = {}
         }
@@ -55,7 +55,7 @@ export const useHttp = () => {
         const json = await response.json()
 
         if (response.ok) {
-            return json;
+            return json as T;
         }
 
         // handle error message from server's custom exceptions

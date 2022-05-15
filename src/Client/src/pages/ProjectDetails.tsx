@@ -24,8 +24,7 @@ export const ProjectDetails: React.FunctionComponent = () => {
 
   useLayoutEffect(() => {
     async function requestDetails() {
-      const json = await request("/api/v1/projects/" + projectId)
-      const projectInfo = (json as ProjectDetailedInfoVm)
+      const projectInfo = await request<ProjectDetailedInfoVm>("/api/v1/projects/" + projectId)
       
       let newTasks = projectInfo.tasks
 

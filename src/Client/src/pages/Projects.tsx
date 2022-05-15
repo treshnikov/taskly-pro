@@ -46,7 +46,7 @@ export const Projects: React.FunctionComponent = () => {
 
   useEffect(() => {
     async function populateProjects() {
-      const json = await request("/api/v1/projects")
+      const json = await request<ProjectShortInfoVm[]>("/api/v1/projects")
       setProjects(json)
       setfilteredProjects(json)
     }

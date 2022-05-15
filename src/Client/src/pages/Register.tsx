@@ -23,7 +23,7 @@ export const Register: React.FunctionComponent = () => {
     data.append("Email", email);
     data.append("Password", password);
 
-    await request("/api/v1/auth/register",
+    await request<string>("/api/v1/auth/register",
       {
         method: 'post',
         body: data
