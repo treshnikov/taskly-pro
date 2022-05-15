@@ -10,6 +10,7 @@ import { ProjectTaskUnitEstimationVm } from "../models/ProjectTaskUnitEstimation
 import { DepartmentsCellRenderer } from "../components/ProjectDetails/DepartmentsCellRenderer"
 import { WeekCellRenderer } from '../components/ProjectDetails/WeekCellRenderer';
 import { Stack } from '@mui/material';
+import { DateCellRenderer } from '../components/ProjectDetails/DateCellRenderer';
 
 registerAllModules();
 
@@ -108,8 +109,14 @@ export const ProjectDetails: React.FunctionComponent = () => {
         >
           <HotColumn hiddenColumns data={"id"} editor={false} type={"text"} />
           <HotColumn data={"description"} type={"text"} />
-          <HotColumn data={"start"} type={"date"} dateFormat='DD.MM.YYYY' correctFormat={true} defaultDate='01.01.2022' />
-          <HotColumn data={"end"} type={"date"} dateFormat='DD.MM.YYYY' correctFormat={true} defaultDate='01.01.2022' />
+          {/* <HotColumn data={"start"} type={"date"} dateFormat='DD.MM.YYYY' correctFormat={true} defaultDate='01.01.2022' />
+          <HotColumn data={"end"} type={"date"} dateFormat='DD.MM.YYYY' correctFormat={true} defaultDate='01.01.2022' /> */}
+          <HotColumn data={"start"} readOnly >
+            <DateCellRenderer hot-renderer></DateCellRenderer>
+          </HotColumn>
+          <HotColumn data={"end"} readOnly >
+            <DateCellRenderer hot-renderer></DateCellRenderer>
+          </HotColumn>
           <HotColumn data={"estimations"} readOnly >
             <DepartmentsCellRenderer hot-renderer></DepartmentsCellRenderer>
           </HotColumn>
