@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useState } from 'react'
+import React, { useLayoutEffect, useState } from 'react'
 import { registerAllModules } from 'handsontable/registry';
 import { useTranslation } from 'react-i18next';
 import { useHttp } from '../hooks/http.hook';
@@ -9,8 +9,7 @@ import { ProjectTaskVm } from "../models/ProjectTaskVm";
 import { ProjectTaskUnitEstimationVm } from "../models/ProjectTaskUnitEstimationVm";
 import { DepartmentsCellRenderer } from "../components/ProjectDetails/DepartmentsCellRenderer"
 import { WeekCellRenderer } from '../components/ProjectDetails/WeekCellRenderer';
-import { Stack, TextField } from '@mui/material';
-import { DatePicker } from '@mui/lab';
+import { Stack } from '@mui/material';
 
 registerAllModules();
 
@@ -19,22 +18,21 @@ export const ProjectDetails: React.FunctionComponent = () => {
   const { request } = useHttp()
   const { t } = useTranslation();
 
-  let projectInfo = new ProjectDetailedInfoVm()
   const [tasks, setTasks] = useState<ProjectTaskVm[]>([])
   const [headers, setHeaders] = useState<string[]>(['', t('task'), t('start'), t('end'), t('units')])
-  const [colWidths, setColWidths] = useState<number[]>([25, 350, 90, 90, 310])
+  const [colWidths, setColWidths] = useState<number[]>([25, 350, 100, 100, 310])
 
   useLayoutEffect(() => {
     async function requestDetails() {
       const json = await request("/api/v1/projects/" + projectId)
-      projectInfo = (json as ProjectDetailedInfoVm)
+      const projectInfo = (json as ProjectDetailedInfoVm)
       
       let newTasks = projectInfo.tasks
 
       const testTask = new ProjectTaskVm()
       testTask.description = "Монтажные и пусконаладочные работы схемы управления разъединителями ОРУ-110 кВ"
-      testTask.start = new Date(2022, 3, 5)
-      testTask.end = new Date(2022, 4, 8)
+      testTask.start = new Date(2022, 3, 5, 0, 0, 0, 0)
+      testTask.end = new Date(2022, 4, 8, 0, 0, 0, 0)
 
       const testEstimation1 = new ProjectTaskUnitEstimationVm()
       testEstimation1.id = "asdfasdfsdf"
