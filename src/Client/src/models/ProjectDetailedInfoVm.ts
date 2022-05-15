@@ -2,7 +2,6 @@ import { ProjectTaskUnitEstimationVm } from "./ProjectTaskUnitEstimationVm"
 import { ProjectTaskVm } from "./ProjectTaskVm"
 
 export class ProjectWeekVm {
-    header: string = ''
     monday: Date = new Date()
 }
 
@@ -35,8 +34,7 @@ export class ProjectDetailedInfoVm {
 
         while (currentDate < end) { 
             const w = new ProjectWeekVm()
-            w.monday = currentDate
-            w.header = currentDate.toLocaleDateString()
+            w.monday = new Date(currentDate)
             arg.weeks.push(w)
             currentDate.setDate(currentDate.getDate() + 7)
         }
@@ -61,7 +59,6 @@ export class ProjectDetailedInfoVm {
             task.estimations?.forEach(e => {
                 sumEstimation += ProjectTaskUnitEstimationVm.getTotalHours(e)
             })
-
 
             if (task.start <= taskMinDate) {
                 taskMinDate = task.start

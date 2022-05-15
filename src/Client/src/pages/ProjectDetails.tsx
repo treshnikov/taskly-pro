@@ -22,12 +22,13 @@ export const ProjectDetails: React.FunctionComponent = () => {
   const [tasks, setTasks] = useState<ProjectTaskVm[]>([])
   const [headers, setHeaders] = useState<string[]>(['', t('task'), t('start'), t('end'), t('units')])
   const [colWidths, setColWidths] = useState<number[]>([25, 350, 100, 100, 310])
+  const [firstMonday, setFirstMonday] = useState<Date>(new Date())
 
   useLayoutEffect(() => {
     let projectInfo = new ProjectDetailedInfoVm()
     async function requestDetails() {
-     projectInfo = await request<ProjectDetailedInfoVm>("/api/v1/projects/" + projectId)
-      
+      projectInfo = await request<ProjectDetailedInfoVm>("/api/v1/projects/" + projectId)
+
       let newTasks = projectInfo.tasks
 
       const testTask = new ProjectTaskVm()
@@ -60,13 +61,17 @@ export const ProjectDetails: React.FunctionComponent = () => {
       newTasks = [...newTasks, testTask]
       projectInfo.tasks = newTasks
       ProjectDetailedInfoVm.init(projectInfo)
+      setFirstMonday(projectInfo.weeks[0]?.monday)
 
       setTasks(newTasks)
     }
+
     requestDetails().then(arg => {
-      const weekHeaders = projectInfo.weeks.map((i, idx) => {return i.header})
+      const weekHeaders = projectInfo.weeks.map((i, idx) => {
+        return i.monday.toLocaleDateString()
+      })
       const weekColsWidths = projectInfo.weeks.map(i => 80)
-  
+
       setHeaders(h => [...h, ...weekHeaders])
       setColWidths(c => [...c, ...weekColsWidths])
     })
@@ -117,7 +122,7 @@ export const ProjectDetails: React.FunctionComponent = () => {
             headers.slice(5).map((i, idx) => {
               return (
                 <HotColumn data={"estimations"} key={"weekColumn" + idx} readOnly >
-                  <WeekCellRenderer hot-renderer></WeekCellRenderer>
+                  <WeekCellRenderer firstMonday={firstMonday} hot-renderer></WeekCellRenderer>
                 </HotColumn>
               )
             })
