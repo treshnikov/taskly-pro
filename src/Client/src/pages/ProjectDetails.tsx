@@ -24,8 +24,9 @@ export const ProjectDetails: React.FunctionComponent = () => {
   const [colWidths, setColWidths] = useState<number[]>([25, 350, 100, 100, 310])
 
   useLayoutEffect(() => {
+    let projectInfo = new ProjectDetailedInfoVm()
     async function requestDetails() {
-      const projectInfo = await request<ProjectDetailedInfoVm>("/api/v1/projects/" + projectId)
+     projectInfo = await request<ProjectDetailedInfoVm>("/api/v1/projects/" + projectId)
       
       let newTasks = projectInfo.tasks
 
@@ -62,21 +63,13 @@ export const ProjectDetails: React.FunctionComponent = () => {
 
       setTasks(newTasks)
     }
-    requestDetails()
-
-    const startDate = new Date(2022, 0, 3)
-    const weeksCount = 52
-
-    const weekHeaders = Array.from(Array(weeksCount).keys()).map((i, idx) => {
-      const date = new Date(startDate)
-      date.setDate(date.getDate() + idx * 7)
-      return `${date.getDate().toLocaleString('en-US', { minimumIntegerDigits: 2 })}.${(1 + date.getMonth()).toLocaleString('en-US', { minimumIntegerDigits: 2 })}.${date.getFullYear()}`
+    requestDetails().then(arg => {
+      const weekHeaders = projectInfo.weeks.map((i, idx) => {return i.header})
+      const weekColsWidths = projectInfo.weeks.map(i => 80)
+  
+      setHeaders(h => [...h, ...weekHeaders])
+      setColWidths(c => [...c, ...weekColsWidths])
     })
-    const weekColsWidths = Array.from(Array(weeksCount).keys()).map(i => 80)
-
-    setHeaders(h => [...h, ...weekHeaders])
-    setColWidths(c => [...c, ...weekColsWidths])
-
   }, [request, projectId])
 
 

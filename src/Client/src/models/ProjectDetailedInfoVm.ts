@@ -1,6 +1,10 @@
 import { ProjectTaskUnitEstimationVm } from "./ProjectTaskUnitEstimationVm"
 import { ProjectTaskVm } from "./ProjectTaskVm"
 
+export class ProjectWeekVm {
+    header: string = ''
+    monday: Date = new Date()
+}
 
 export class ProjectDetailedInfoVm {
     id: number = 0
@@ -17,15 +21,34 @@ export class ProjectDetailedInfoVm {
     contract: string = ''
     tasks: ProjectTaskVm[] = []
 
-    taskMinDate: Date = new Date()
-    taskMaxDate: Date = new Date()
+    // calculated fields
+    weeks: ProjectWeekVm[] = []
 
-    static init(arg: ProjectDetailedInfoVm) {
+    private static handleWeeks(arg: ProjectDetailedInfoVm, start: Date, end: Date) {
+        arg.weeks = []
+        let currentDate = new Date(start)
+
+        // find first left monday
+        while (currentDate.getDay() != 1) {
+            currentDate.setDate(currentDate.getDate() - 1)
+        }
+
+        while (currentDate < end) { 
+            const w = new ProjectWeekVm()
+            w.monday = currentDate
+            w.header = currentDate.toLocaleDateString()
+            arg.weeks.push(w)
+            currentDate.setDate(currentDate.getDate() + 7)
+        }
+    }
+
+
+    public static init(arg: ProjectDetailedInfoVm) {
         //todo
         arg.start = new Date(arg.start)
         arg.end = new Date(arg.end)
-        arg.taskMaxDate = new Date()
-        arg.taskMinDate = new Date()
+        let taskMaxDate = new Date()
+        let taskMinDate = new Date()
 
         let sumEstimation = 0
         const maxLineHeight = 60
@@ -40,14 +63,16 @@ export class ProjectDetailedInfoVm {
             })
 
 
-            if (task.start <= arg.taskMinDate) {
-                arg.taskMinDate = task.start
+            if (task.start <= taskMinDate) {
+                taskMinDate = task.start
             }
 
-            if (task.end > arg.taskMaxDate) {
-                arg.taskMaxDate = task.end
+            if (task.end > taskMaxDate) {
+                taskMaxDate = task.end
             }
         })
+
+        this.handleWeeks(arg, taskMinDate, taskMaxDate)
 
         arg.tasks?.forEach(task => {
             task.estimations?.forEach(taskDepartmentEstimation => {
@@ -68,3 +93,4 @@ export class ProjectDetailedInfoVm {
         })
     }
 }
+
