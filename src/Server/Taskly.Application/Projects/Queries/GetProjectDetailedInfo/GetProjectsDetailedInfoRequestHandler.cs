@@ -20,10 +20,11 @@ namespace Taskly.Application.Projects
                     .Include(p => p.Customer)
                     .Include(p => p.ProjectManager)
                     .Include(p => p.ChiefEngineer)
-                    .Include(p => p.Company).
-                    Include(p => p.Tasks)
-                        .ThenInclude(p => p.Estimations)
-                        .ThenInclude(p => p.Unit)
+                    .Include(p => p.Company)
+                    .Include(p => p.Tasks)
+                        .ThenInclude(p => p.UnitEstimations).ThenInclude(i => i.Estimations).ThenInclude(i => i.UserPosition)
+                    .Include(p => p.Tasks)
+                        .ThenInclude(p => p.UnitEstimations).ThenInclude(p => p.Unit)
                 .FirstAsync(i => i.Id == request.ProjectId, cancellationToken: cancellationToken);
 
             return ProjectDetailedInfoVm.From(project);

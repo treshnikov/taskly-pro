@@ -14,5 +14,4 @@ namespace Taskly.DAL.EntityTypeConfigurations
             builder.HasIndex(u => new {u.UserId, u.UnitId}).IsUnique();
         }
     }
-
 }

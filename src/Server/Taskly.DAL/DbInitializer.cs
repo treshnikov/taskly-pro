@@ -75,16 +75,18 @@ namespace Taskly.DAL
                         Description = "Task #1",
                         Start = new DateTime(DateTime.Today.Year, 01, 01),
                         End = new DateTime(DateTime.Today.Year, 12, 31),
-                        Estimations = new List<ProjectTaskUnitEstimation>
+                        UnitEstimations = new List<ProjectTaskUnitEstimation>
                         {
                             new ProjectTaskUnitEstimation
                             {
                                 Unit = unit,
-                                DepartmentHeadHours = 40,
-                                EngineerOfTheFirstCategoryHours = 80,
-                                EngineerOfTheSecondCategoryHours = 40,
-                                EngineerOfTheThirdCategoryHours = 120,
-                                LeadEngineerHours = 80,
+                                Estimations = new List<ProjectTaskUnitEstimationToUserPosition>
+                                {
+                                    new ProjectTaskUnitEstimationToUserPosition{
+                                        Hours = 360,
+                                        UserPosition = userPosition
+                                    }
+                                }
                             }
                         }
 
@@ -94,14 +96,18 @@ namespace Taskly.DAL
                         Description = "Task #2",
                         Start = new DateTime(DateTime.Today.Year, 01, 01),
                         End = new DateTime(DateTime.Today.Year, 06, 30),
-                        Estimations = new List<ProjectTaskUnitEstimation>
+                        UnitEstimations = new List<ProjectTaskUnitEstimation>
                         {
                             new ProjectTaskUnitEstimation
                             {
                                 Unit = unit,
-                                DepartmentHeadHours = 80,
-                                EngineerOfTheFirstCategoryHours = 360,
-                                EngineerOfTheSecondCategoryHours = 40
+                                Estimations = new List<ProjectTaskUnitEstimationToUserPosition>
+                                {
+                                    new ProjectTaskUnitEstimationToUserPosition{
+                                        Hours = 80,
+                                        UserPosition = userPosition
+                                    }
+                                }
                             }
                         }
                     },
@@ -110,13 +116,18 @@ namespace Taskly.DAL
                         Description = "Task #3",
                         Start = new DateTime(DateTime.Today.Year, 05, 01),
                         End = new DateTime(DateTime.Today.Year, 10, 30),
-                        Estimations = new List<ProjectTaskUnitEstimation>
+                        UnitEstimations = new List<ProjectTaskUnitEstimation>
                         {
                             new ProjectTaskUnitEstimation
                             {
                                 Unit = unit,
-                                DepartmentHeadHours = 240,
-                                EngineerOfTheThirdCategoryHours = 240,
+                                Estimations = new List<ProjectTaskUnitEstimationToUserPosition>
+                                {
+                                    new ProjectTaskUnitEstimationToUserPosition{
+                                        Hours = 280,
+                                        UserPosition = userPosition
+                                    }
+                                }
                             }
                         }
                     }

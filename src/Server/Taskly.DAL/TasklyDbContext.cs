@@ -16,6 +16,7 @@ namespace Taskly.DAL
         public DbSet<Project> Projects { get; set; }
         
         public DbSet<UserPosition> UserePositions { get; set; }
+        public DbSet<ProjectTaskUnitEstimationToUserPosition> ProjectTaskUnitEstimationToUserPosition { get; set; }
 
         public TasklyDbContext(DbContextOptions<TasklyDbContext> options) : base(options)
         {
@@ -33,6 +34,7 @@ namespace Taskly.DAL
             builder.ApplyConfiguration(new ProjectTaskConfiguration());
             builder.ApplyConfiguration(new ProjectTaskUnitEstimationConfiguration());
             builder.ApplyConfiguration(new UserPositionConfiguration());
+            builder.ApplyConfiguration(new ProjectTaskUnitEstimationToUserPositionConfiguration());
             base.OnModelCreating(builder);
         }
 

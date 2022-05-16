@@ -7,34 +7,26 @@ namespace Taskly.Application.Projects
         public Guid Id { get; set; }
         public Guid UnitId { get; set; }
         public string UnitName { get; set; }
-        public int DepartmentHeadHours { get; set; }
-        public int LeadEngineerHours { get; set; }
-        public int EngineerOfTheFirstCategoryHours { get; set; }
-        public int EngineerOfTheSecondCategoryHours { get; set; }
-        public int EngineerOfTheThirdCategoryHours { get; set; }
-        public int ChiefSpecialistHours { get; set; }
-        public int TechniclaWriterHours { get; set; }
 
+        public EstimationVm[] Estimations { get; set; }
 
         public static ProjectTaskUnitEstimationVm From(ProjectTaskUnitEstimation arg)
         {
             return new ProjectTaskUnitEstimationVm
             {
-                DepartmentHeadHours = arg.DepartmentHeadHours,
-                EngineerOfTheFirstCategoryHours = arg.EngineerOfTheFirstCategoryHours,
-                EngineerOfTheSecondCategoryHours = arg.EngineerOfTheSecondCategoryHours,
-                EngineerOfTheThirdCategoryHours = arg.EngineerOfTheThirdCategoryHours,
-                LeadEngineerHours = arg.LeadEngineerHours,
-                ChiefSpecialistHours = arg.ChiefSpecialistHours,
-                TechniclaWriterHours = arg.TechniclaWriterHours,
                 Id = arg.Id,
                 UnitId = arg.UnitId,
-                UnitName = arg.Unit.Name
+                UnitName = arg.Unit.Name,
+                Estimations = arg.Estimations.Select(i => new EstimationVm
+                {
+                    Hours = i.Hours,
+                    UserPositionIdent = i.UserPosition.Ident
+                }).OrderBy(i => i.UserPositionIdent).ToArray()
             };
         }
     }
 
-    public class ProjectTaskVm
+public class ProjectTaskVm
     {
         public Guid Id { get; set; }
         public DateTime Start { get; set; }
@@ -50,7 +42,7 @@ namespace Taskly.Application.Projects
                 Description = arg.Description,
                 Start = arg.Start,
                 End = arg.End,
-                Estimations = arg.Estimations.Select(i => ProjectTaskUnitEstimationVm.From(i)).ToArray()
+                Estimations = arg.UnitEstimations.Select(i => ProjectTaskUnitEstimationVm.From(i)).ToArray()
             };
         }
     }

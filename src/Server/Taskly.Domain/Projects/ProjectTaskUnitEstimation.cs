@@ -5,14 +5,6 @@ namespace Taskly.Domain
         public Guid Id { get; set; }
         public Unit Unit { get; set; }
         public Guid UnitId { get; set; }
-
-        // todo - move the following set of positions to a separated table if/when needed
-        public int DepartmentHeadHours { get; set; }
-        public int ChiefSpecialistHours { get; set; }
-        public int LeadEngineerHours { get; set; }
-        public int EngineerOfTheFirstCategoryHours { get; set; }
-        public int EngineerOfTheSecondCategoryHours { get; set; }
-        public int EngineerOfTheThirdCategoryHours { get; set; }
-        public int TechniclaWriterHours { get; set; }
+        public ICollection<ProjectTaskUnitEstimationToUserPosition> Estimations { get; set; }
     }
 }
