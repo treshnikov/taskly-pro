@@ -1,5 +1,25 @@
 
-export class ProjectTaskUnitEstimationVm {
+export interface IProjectTaskUnitEstimationVm {
+    id: string
+    unitId: string
+    unitName: string
+    departmentHeadHours: number
+    leadEngineerHours: number
+    engineerOfTheFirstCategoryHours: number
+    engineerOfTheSecondCategoryHours: number
+    engineerOfTheThirdCategoryHours: number
+    chiefSpecialistHours: number
+    techniclaWriterHours: number
+
+    // these fields are supposed to be calculated on the client after get fetched
+    lineHeight: number
+    totalHours: number
+    color: string
+    start: Date
+    end: Date
+}
+
+export class ProjectTaskUnitEstimationVm implements IProjectTaskUnitEstimationVm {
     id: string = ''
     unitId: string = ''
     unitName: string = ''
@@ -17,6 +37,9 @@ export class ProjectTaskUnitEstimationVm {
     color: string = ''
     start: Date = new Date()
     end: Date = new Date()
+}
+
+export class ProjectTaskUnitEstimationVmHelper {
 
     public static getTotalHours(arg: ProjectTaskUnitEstimationVm) {
         return arg.departmentHeadHours + arg.leadEngineerHours + arg.engineerOfTheFirstCategoryHours + arg.engineerOfTheSecondCategoryHours
@@ -39,7 +62,7 @@ export class ProjectTaskUnitEstimationVm {
         const colors = ["#34568B", "#FF6F61", "#6B5B95", "#F7CAC9", "#92A8D1", "#98B4D4", "#C3447A", "#BC243C", "#7FCDCD", "#E15D44",
             "#55B4B0", "#DFCFBE", "#9B2335", "#5B5EA6", "#88B04B", "#EFC050", "#45B8AC", "#D65076", "#DD4124", "#009B77", "#B565A7",
             "#955251", "#DAF7A6", "#FFC300", "#FF5733", "#C70039", "#900C3F", "#581845"]
-        const idx = Math.abs(ProjectTaskUnitEstimationVm.getHash(arg) % colors.length - 1)
+        const idx = Math.abs(ProjectTaskUnitEstimationVmHelper.getHash(arg) % colors.length - 1)
         return colors[idx]
     }
 }

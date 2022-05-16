@@ -1,11 +1,35 @@
-import { ProjectTaskUnitEstimationVm } from "./ProjectTaskUnitEstimationVm"
-import { ProjectTaskVm } from "./ProjectTaskVm"
+import { ProjectTaskUnitEstimationVm, ProjectTaskUnitEstimationVmHelper } from "./ProjectTaskUnitEstimationVm"
+import { IProjectTaskVm, ProjectTaskVm } from "./ProjectTaskVm"
 
-export class ProjectWeekVm {
+export interface IProjectWeekVm {
+    monday: Date
+}
+
+export class ProjectWeekVm implements IProjectWeekVm {
     monday: Date = new Date()
 }
 
-export class ProjectDetailedInfoVm {
+export interface IProjectDetailedInfoVm {
+    id: number
+    name: string
+    shortName: string
+    company: string
+    isOpened: boolean
+    projectManager: string
+    chiefEngineer: string
+    start: Date
+    end: Date
+    closeDate: Date | null
+    customer: string
+    contract: string
+    tasks: IProjectTaskVm[]
+
+    // calculated fields
+    weeks: IProjectWeekVm[]
+}
+
+
+export class ProjectDetailedInfoVm implements IProjectDetailedInfoVm {
     id: number = 0
     name: string = ''
     shortName: string = ''
@@ -22,7 +46,9 @@ export class ProjectDetailedInfoVm {
 
     // calculated fields
     weeks: ProjectWeekVm[] = []
+}
 
+export class ProjectDetailedInfoVmHelper {
     private static handleWeeks(arg: ProjectDetailedInfoVm, start: Date, end: Date) {
         arg.weeks = []
         let currentDate = new Date(start)
@@ -32,15 +58,13 @@ export class ProjectDetailedInfoVm {
             currentDate.setDate(currentDate.getDate() - 1)
         }
 
-        while (currentDate < end) { 
+        while (currentDate < end) {
             const w = new ProjectWeekVm()
             w.monday = new Date(currentDate)
             arg.weeks.push(w)
             currentDate.setDate(currentDate.getDate() + 7)
         }
     }
-
-
     public static init(arg: ProjectDetailedInfoVm) {
         //todo
         arg.start = new Date(arg.start)
@@ -57,7 +81,7 @@ export class ProjectDetailedInfoVm {
 
             // calculate total project estimation
             task.estimations?.forEach(e => {
-                sumEstimation += ProjectTaskUnitEstimationVm.getTotalHours(e)
+                sumEstimation += ProjectTaskUnitEstimationVmHelper.getTotalHours(e)
             })
 
             if (task.start <= taskMinDate) {
@@ -78,16 +102,17 @@ export class ProjectDetailedInfoVm {
                 taskDepartmentEstimation.end = task.end
 
                 // get summ of all estimation for the current department
-                taskDepartmentEstimation.totalHours = ProjectTaskUnitEstimationVm.getTotalHours(taskDepartmentEstimation)
+                taskDepartmentEstimation.totalHours = ProjectTaskUnitEstimationVmHelper.getTotalHours(taskDepartmentEstimation)
 
                 // calculate the height of the each ProjectTaskUnitEstimationVm depending on total estimation
                 taskDepartmentEstimation.lineHeight = Math.max(3, Math.trunc(maxLineHeight * (taskDepartmentEstimation.totalHours / sumEstimation)))
 
                 // prepare color for gant chart
-                taskDepartmentEstimation.color = ProjectTaskUnitEstimationVm.getColor(taskDepartmentEstimation)
+                taskDepartmentEstimation.color = ProjectTaskUnitEstimationVmHelper.getColor(taskDepartmentEstimation)
 
             })
         })
     }
+
 }
 

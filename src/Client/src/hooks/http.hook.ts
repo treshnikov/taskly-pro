@@ -70,3 +70,5 @@ export const useHttp = () => {
 
     return { login, logout, request }
 }
+
+export default useHttp
