@@ -6,8 +6,8 @@ import { useCallback } from 'react'
 
 export const useHttp = () => {
     const dispatch = useDispatch();
-    const useAuthSelector: TypedUseSelectorHook<RootState> = useSelector;
-    const auth = useAuthSelector(selectAuth)
+    const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
+    const auth = useAppSelector(selectAuth)
     
     const login = async (data: FormData) => {
         const json = await request<{jwt: string}>("/api/v1/auth/token",

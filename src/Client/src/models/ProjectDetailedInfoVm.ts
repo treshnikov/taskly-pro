@@ -1,4 +1,4 @@
-import { ProjectTaskUnitEstimationVm, ProjectTaskUnitEstimationVmHelper } from "./ProjectTaskUnitEstimationVm"
+import { ProjectTaskUnitEstimationVmHelper } from "./ProjectTaskUnitEstimationVm"
 import { IProjectTaskVm, ProjectTaskVm } from "./ProjectTaskVm"
 
 export interface IProjectWeekVm {
@@ -18,7 +18,7 @@ export interface IProjectDetailedInfoVm {
     projectManager: string
     chiefEngineer: string
     start: Date
-    end: Date
+    end: Date 
     closeDate: Date | null
     customer: string
     contract: string
@@ -54,7 +54,7 @@ export class ProjectDetailedInfoVmHelper {
         let currentDate = new Date(start)
 
         // find first left monday
-        while (currentDate.getDay() != 1) {
+        while (currentDate.getDay() !== 1) {
             currentDate.setDate(currentDate.getDate() - 1)
         }
 
@@ -65,7 +65,7 @@ export class ProjectDetailedInfoVmHelper {
             currentDate.setDate(currentDate.getDate() + 7)
         }
     }
-    public static init(arg: ProjectDetailedInfoVm) {
+    public static init(arg: IProjectDetailedInfoVm) {
         //todo
         arg.start = new Date(arg.start)
         arg.end = new Date(arg.end)

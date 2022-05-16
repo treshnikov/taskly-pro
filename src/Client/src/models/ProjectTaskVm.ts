@@ -1,4 +1,4 @@
-import { IProjectTaskUnitEstimationVm, ProjectTaskUnitEstimationVm } from "./ProjectTaskUnitEstimationVm"
+import { IProjectTaskUnitEstimationVm } from "./ProjectTaskUnitEstimationVm"
 
 export interface IProjectTaskVm {
     id: string
