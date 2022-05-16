@@ -11,8 +11,7 @@ namespace Taskly.DAL.EntityTypeConfigurations
         {
             builder.ToTable("UserPositions");
             builder.HasKey(i => i.Id);
-            builder.HasIndex(i => i.ShortName).IsUnique();
-            builder.HasIndex(i => i.LongName).IsUnique();
+            builder.HasIndex(i => i.Name).IsUnique();
         }
     }
     }

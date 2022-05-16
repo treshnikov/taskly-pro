@@ -26,8 +26,7 @@ namespace Taskly.DAL
             };
 
             var userPosition = new UserPosition{
-                LongName = "Employee role",
-                ShortName = "Emp. Role"
+                Name = "Employee role"
             };
 
             var admin = new User

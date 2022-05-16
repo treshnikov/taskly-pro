@@ -139,7 +139,7 @@ namespace Taskly.Application.Users
                         Rate = 1,
                         Unit = dbDep,
                         User = dbUser,
-                        UserPosition = dpUserPositions.First(i => i.LongName == u.title),
+                        UserPosition = dpUserPositions.First(i => i.Name == u.title),
                         Comment = u.TypeName
                     };
 
@@ -149,7 +149,7 @@ namespace Taskly.Application.Users
                 else
                 {
                     dbUserUnit.Rate = 1;
-                    dbUserUnit.UserPosition = dpUserPositions.First(i => i.LongName == u.title);
+                    dbUserUnit.UserPosition = dpUserPositions.First(i => i.Name == u.title);
                     dbUserUnit.Comment = u.TypeName;
                 }
 
@@ -203,7 +203,7 @@ namespace Taskly.Application.Users
                     continue;
                 }
 
-                var dpDep = dbDeps.First(i => i.Code == d.prj_company_ID); 
+                var dpDep = dbDeps.First(i => i.Code == d.prj_company_ID);
                 dpDep.ParentUnit = dbDeps.First(i => i.Code == d.parent);
                 _dbContext.Units.Update(dpDep);
             }
@@ -247,22 +247,58 @@ namespace Taskly.Application.Users
             var newUserPositions = new List<UserPosition>();
             foreach (var u in users)
             {
-                var dbUserPosition = dbUserPositions.FirstOrDefault(i => i.LongName == u.title);
-                var newUserPosition = newUserPositions.FirstOrDefault(i => i.LongName == u.title);
+                var dbUserPosition = dbUserPositions.FirstOrDefault(i => i.Name == u.title);
+                var newUserPosition = newUserPositions.FirstOrDefault(i => i.Name == u.title);
                 if (dbUserPosition == null && newUserPosition == null)
                 {
                     newUserPositions.Add(new UserPosition
                     {
                         Id = Guid.NewGuid(),
-                        LongName = u.title,
-                        // todo switch short names
-                        ShortName = u.title
+                        Name = u.title,
+                        Ident = ConvertTitleToIdent(u.title)
                     });
                 }
             }
             _dbContext.UserePositions.AddRange(newUserPositions);
             await _dbContext.SaveChangesAsync(cancellationToken);
             transaction.Commit();
+        }
+
+        private string? ConvertTitleToIdent(string title)
+        {
+            var lowerCaseTitle = title.ToLower();
+            if (lowerCaseTitle.Contains("ведущий"))
+            {
+                return "ВИ";
+            }
+
+            if (lowerCaseTitle.Contains("главный") || lowerCaseTitle.Contains("старший"))
+            {
+                return "ГС";
+            }
+
+            if (lowerCaseTitle.Contains("начальник") || lowerCaseTitle.Contains("руководител") 
+                || lowerCaseTitle.Contains("заместитель") || lowerCaseTitle.Contains("директор"))
+            {
+                return "Рук";
+            }
+
+            if (lowerCaseTitle.Contains("1 категории"))
+            {
+                return "И1";
+            }
+
+            if (lowerCaseTitle.Contains("2 категории"))
+            {
+                return "И2";
+            }
+
+            if (lowerCaseTitle.Contains("3 категории") || lowerCaseTitle.Contains("техник") || lowerCaseTitle.Contains("писатель"))
+            {
+                return "И3";
+            }
+
+            return null;
         }
 
         private void Extract(ImportDataFromJsonRequest request, out DepartmentJson[] deps, out UserJson[] users, out ProjectJson[] projects)

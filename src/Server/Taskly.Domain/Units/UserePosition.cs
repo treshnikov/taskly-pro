@@ -3,8 +3,7 @@ namespace Taskly.Domain
     public class UserPosition
     {
         public Guid Id { get; set; }
-        public string ShortName { get; set; }
-        public string LongName { get; set; }
-
+        public string? Ident { get; set; }
+        public string Name { get; set; }
     }
 }

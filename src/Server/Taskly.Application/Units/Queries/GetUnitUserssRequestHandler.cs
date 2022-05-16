@@ -50,7 +50,7 @@ namespace Taskly.Application.Units.Queries
                     var userVm = new UnitUserVm
                     {
                         Id = u.Id,
-                        Name = $"{u.Name} / {u.UserUnits.First(uu => uu.UnitId == newUnitVm.Id).UserPosition.LongName}",
+                        Name = $"{u.Name} / {u.UserUnits.First(uu => uu.UnitId == newUnitVm.Id).UserPosition.Name}",
                         Children = new List<UnitUserVm>(),
                         Type = UnitUserType.User
                     };
