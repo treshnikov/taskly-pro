@@ -24,6 +24,7 @@ namespace Taskly.Application.Users
             Extract(request, out DepartmentJson[] deps, out UserJson[] users, out ProjectJson[] projects);
 
             await UpdateUsers(users, cancellationToken);
+            await UpdateUserPositions(users, cancellationToken);
             await UpdateDepartments(deps, cancellationToken);
             await UpdateUserUnitLinks(users, deps, cancellationToken);
             await UpdateProjects(projects, cancellationToken);
@@ -111,7 +112,8 @@ namespace Taskly.Application.Users
             using var transaction = _dbContext.Database.BeginTransaction();
 
             var dbDeps = await _dbContext.Units.Include(u => u.UserUnits).ToListAsync(cancellationToken: cancellationToken);
-            var dbUsers = await _dbContext.Users.Include(u => u.UserUnits).ToListAsync(cancellationToken: cancellationToken);
+            var dbUsers = await _dbContext.Users.Include(u => u.UserUnits).ThenInclude(u => u.UserPosition).ToListAsync(cancellationToken: cancellationToken);
+            var dpUserPositions = await _dbContext.UserePositions.ToListAsync(cancellationToken);
             foreach (var u in users)
             {
                 if (!u.DepartmentId.HasValue)
@@ -137,7 +139,7 @@ namespace Taskly.Application.Users
                         Rate = 1,
                         Unit = dbDep,
                         User = dbUser,
-                        UserTitle = u.title,
+                        UserPosition = dpUserPositions.First(i => i.LongName == u.title),
                         Comment = u.TypeName
                     };
 
@@ -147,7 +149,7 @@ namespace Taskly.Application.Users
                 else
                 {
                     dbUserUnit.Rate = 1;
-                    dbUserUnit.UserTitle = u.title;
+                    dbUserUnit.UserPosition = dpUserPositions.First(i => i.LongName == u.title);
                     dbUserUnit.Comment = u.TypeName;
                 }
 
@@ -233,6 +235,32 @@ namespace Taskly.Application.Users
                 }
             }
             _dbContext.Users.AddRange(newUsers);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+            transaction.Commit();
+        }
+
+        private async Task UpdateUserPositions(UserJson[] users, CancellationToken cancellationToken)
+        {
+            using var transaction = _dbContext.Database.BeginTransaction();
+
+            var dbUserPositions = _dbContext.UserePositions.ToList();
+            var newUserPositions = new List<UserPosition>();
+            foreach (var u in users)
+            {
+                var dbUserPosition = dbUserPositions.FirstOrDefault(i => i.LongName == u.title);
+                var newUserPosition = newUserPositions.FirstOrDefault(i => i.LongName == u.title);
+                if (dbUserPosition == null && newUserPosition == null)
+                {
+                    newUserPositions.Add(new UserPosition
+                    {
+                        Id = Guid.NewGuid(),
+                        LongName = u.title,
+                        // todo switch short names
+                        ShortName = u.title
+                    });
+                }
+            }
+            _dbContext.UserePositions.AddRange(newUserPositions);
             await _dbContext.SaveChangesAsync(cancellationToken);
             transaction.Commit();
         }

@@ -25,6 +25,11 @@ namespace Taskly.DAL
                 ShortName = "MD"
             };
 
+            var userPosition = new UserPosition{
+                LongName = "Employee role",
+                ShortName = "Emp. Role"
+            };
+
             var admin = new User
             {
                 Name = "admin",
@@ -34,7 +39,7 @@ namespace Taskly.DAL
                         Rate = 1,
                         Unit = unit,
                         Comment="admin",
-                        UserTitle="admin"
+                        UserPosition= userPosition
                     }
                 },
                 Password = BCrypt.Net.BCrypt.HashPassword("admin"),

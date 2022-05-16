@@ -22,6 +22,7 @@ namespace Taskly.Application.Users
             var users = await _dbContext
                 .Users
                 .Include(u => u.UserUnits).ThenInclude(u => u.Unit)
+                .Include(u => u.UserUnits).ThenInclude(u => u.UserPosition)
                 .AsNoTracking()
                 .OrderBy(u => u.Name)
                 .Select(u => UserVm.FromUser(u))

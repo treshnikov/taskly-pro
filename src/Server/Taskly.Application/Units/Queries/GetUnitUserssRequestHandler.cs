@@ -22,7 +22,7 @@ namespace Taskly.Application.Units.Queries
             };
 
             var units = await _dbContext.Units.OrderBy(i => i.ParentUnitId).Include(u => u.ParentUnit).AsNoTracking().ToListAsync(cancellationToken: cancellationToken);
-            var users = await _dbContext.Users.Include(u => u.UserUnits).AsNoTracking().ToListAsync(cancellationToken: cancellationToken);
+            var users = await _dbContext.Users.Include(u => u.UserUnits).ThenInclude(u => u.UserPosition).AsNoTracking().ToListAsync(cancellationToken: cancellationToken);
 
             HandleUnit(null, root, units, users);        
 
@@ -50,7 +50,7 @@ namespace Taskly.Application.Units.Queries
                     var userVm = new UnitUserVm
                     {
                         Id = u.Id,
-                        Name = u.Name,
+                        Name = $"{u.Name} / {u.UserUnits.First(uu => uu.UnitId == newUnitVm.Id).UserPosition.LongName}",
                         Children = new List<UnitUserVm>(),
                         Type = UnitUserType.User
                     };

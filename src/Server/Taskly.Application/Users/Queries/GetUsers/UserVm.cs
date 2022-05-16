@@ -28,7 +28,7 @@ namespace Taskly.Application.Users
                 for (int i = 0; i < user.UserUnits.Count; i++)
                 {
                     units += user.UserUnits.ElementAt(i).Unit?.Name;
-                    positions += user.UserUnits.ElementAt(i).UserTitle;
+                    positions += user.UserUnits.ElementAt(i).UserPosition.LongName;
                     if (i != user.UserUnits.Count - 1)
                     {
                         units += ", ";
