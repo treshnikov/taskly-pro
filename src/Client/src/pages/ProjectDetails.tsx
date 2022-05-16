@@ -1,9 +1,9 @@
 import React, { useLayoutEffect, useState } from 'react'
+import HotTable, { HotColumn } from '@handsontable/react';
 import { registerAllModules } from 'handsontable/registry';
 import { useTranslation } from 'react-i18next';
 import { useHttp } from '../hooks/http.hook';
 import { useParams } from 'react-router-dom';
-import HotTable, { HotColumn } from '@handsontable/react';
 import { ProjectDetailedInfoVm } from "../models/ProjectDetailedInfoVm";
 import { ProjectTaskVm } from "../models/ProjectTaskVm";
 import { ProjectTaskUnitEstimationVm } from "../models/ProjectTaskUnitEstimationVm";
@@ -19,8 +19,10 @@ export const ProjectDetails: React.FunctionComponent = () => {
   const { request } = useHttp()
   const { t } = useTranslation();
 
+  const staticHeaders = ['', t('task'), t('start'), t('end'), t('units')]
+  
   const [tasks, setTasks] = useState<ProjectTaskVm[]>([])
-  const [headers, setHeaders] = useState<string[]>(['', t('task'), t('start'), t('end'), t('units')])
+  const [headers, setHeaders] = useState<string[]>(staticHeaders)
   const [colWidths, setColWidths] = useState<number[]>([25, 350, 100, 100, 310])
   const [firstMonday, setFirstMonday] = useState<Date>(new Date())
 
@@ -94,7 +96,7 @@ export const ProjectDetails: React.FunctionComponent = () => {
         <HotTable
           renderAllRows={true}
           viewportColumnRenderingOffset={headers.length}
-          fixedColumnsLeft={5}
+          fixedColumnsLeft={staticHeaders.length}
           data={tasks}
           colWidths={colWidths}
           colHeaders={headers}
@@ -119,7 +121,7 @@ export const ProjectDetails: React.FunctionComponent = () => {
             <DepartmentsCellRenderer hot-renderer></DepartmentsCellRenderer>
           </HotColumn>
           {
-            headers.slice(5).map((i, idx) => {
+            headers.slice(staticHeaders.length).map((i, idx) => {
               return (
                 <HotColumn data={"estimations"} key={"weekColumn" + idx} readOnly >
                   <WeekCellRenderer firstMonday={firstMonday} hot-renderer></WeekCellRenderer>
