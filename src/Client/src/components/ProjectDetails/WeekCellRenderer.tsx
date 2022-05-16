@@ -3,11 +3,14 @@ import { ProjectTaskUnitEstimationVm } from "../../models/ProjectTaskUnitEstimat
 export const WeekCellRenderer = (props: any) => {
     const { col, value, firstMonday } = props
     const estimations = value as ProjectTaskUnitEstimationVm[]
+    console.log(estimations)
 
     const startDate = firstMonday as Date
     const colDate = new Date(startDate)
     colDate.setDate(colDate.getDate() + (col - 5) * 7)
-    const startDateToCheck = new Date(estimations[0].start)
+    const startDateToCheck = estimations 
+        ? new Date(estimations[0].start)
+        : new Date()
     startDateToCheck.setDate(startDateToCheck.getDate() - 7)
 
     const draw =

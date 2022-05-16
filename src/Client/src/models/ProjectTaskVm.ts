@@ -6,5 +6,5 @@ export class ProjectTaskVm {
     start: Date = new Date()
     end: Date = new Date()
     description: string = ''
-    estimations: ProjectTaskUnitEstimationVm[] = []
+    unitEstimations: ProjectTaskUnitEstimationVm[] = []
 }

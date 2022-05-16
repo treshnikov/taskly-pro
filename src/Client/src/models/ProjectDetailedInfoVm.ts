@@ -56,7 +56,7 @@ export class ProjectDetailedInfoVm {
             task.end = new Date(task.end)
 
             // calculate total project estimation
-            task.estimations?.forEach(e => {
+            task.unitEstimations?.forEach(e => {
                 sumEstimation += ProjectTaskUnitEstimationVm.getTotalHours(e)
             })
 
@@ -72,7 +72,7 @@ export class ProjectDetailedInfoVm {
         this.handleWeeks(arg, taskMinDate, taskMaxDate)
 
         arg.tasks?.forEach(task => {
-            task.estimations?.forEach(taskDepartmentEstimation => {
+            task.unitEstimations?.forEach(taskDepartmentEstimation => {
                 // copy start and end dates to each task ProjectTaskUnitEstimationVm instance to handle render easier
                 taskDepartmentEstimation.start = task.start
                 taskDepartmentEstimation.end = task.end

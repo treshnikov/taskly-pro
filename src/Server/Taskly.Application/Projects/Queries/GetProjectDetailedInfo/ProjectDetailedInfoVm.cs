@@ -32,7 +32,7 @@ public class ProjectTaskVm
         public DateTime Start { get; set; }
         public DateTime End { get; set; }
         public string Description { get; set; }
-        public ProjectTaskUnitEstimationVm[] Estimations { get; set; }
+        public ProjectTaskUnitEstimationVm[] UnitEstimations { get; set; }
 
         public static ProjectTaskVm From(ProjectTask arg)
         {
@@ -42,7 +42,7 @@ public class ProjectTaskVm
                 Description = arg.Description,
                 Start = arg.Start,
                 End = arg.End,
-                Estimations = arg.UnitEstimations.Select(i => ProjectTaskUnitEstimationVm.From(i)).ToArray()
+                UnitEstimations = arg.UnitEstimations.Select(i => ProjectTaskUnitEstimationVm.From(i)).ToArray()
             };
         }
     }

@@ -86,13 +86,13 @@ export const ProjectDetails: React.FunctionComponent = () => {
           <HotColumn data={"end"} readOnly >
             <DateCellRenderer hot-renderer></DateCellRenderer>
           </HotColumn>
-          <HotColumn data={"estimations"} readOnly >
+          <HotColumn data={"unitEstimations"} readOnly >
             <DepartmentsCellRenderer hot-renderer></DepartmentsCellRenderer>
           </HotColumn>
           {
             headers.slice(staticHeaders.length).map((i, idx) => {
               return (
-                <HotColumn data={"estimations"} key={"weekColumn" + idx} readOnly >
+                <HotColumn data={"unitEstimations"} key={"weekColumn" + idx} readOnly >
                   <WeekCellRenderer firstMonday={firstMonday} hot-renderer></WeekCellRenderer>
                 </HotColumn>
               )
@@ -132,7 +132,7 @@ function populateDemoTasks(projectInfo: ProjectDetailedInfoVm) {
   testEstimation3.unitName = "Отдел программирования с очень длинным именем"
   testEstimation3.engineerOfTheThirdCategoryHours = 16
 
-  testTask.estimations = [testEstimation1, testEstimation2, testEstimation3]
+  testTask.unitEstimations = [testEstimation1, testEstimation2, testEstimation3]
 
   newTasks = [...newTasks, testTask]
   projectInfo.tasks = newTasks

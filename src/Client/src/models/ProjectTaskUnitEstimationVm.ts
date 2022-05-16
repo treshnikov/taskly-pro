@@ -19,8 +19,7 @@ export class ProjectTaskUnitEstimationVm {
     end: Date = new Date()
 
     public static getTotalHours(arg: ProjectTaskUnitEstimationVm) {
-        return arg.departmentHeadHours + arg.leadEngineerHours + arg.engineerOfTheFirstCategoryHours + arg.engineerOfTheSecondCategoryHours
-            + arg.engineerOfTheThirdCategoryHours + arg.chiefSpecialistHours + arg.techniclaWriterHours;
+        return 0;
     }
 
     private static getHash(arg: ProjectTaskUnitEstimationVm) {
