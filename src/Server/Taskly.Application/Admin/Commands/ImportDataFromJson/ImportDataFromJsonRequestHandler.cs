@@ -123,8 +123,7 @@ namespace Taskly.Application.Users
 
                 Log.Logger.Debug($"Handle {u.lastname}");
                 var dbUser = dbUsers.First(i => i.Email == u.email);
-                var depName = deps.First(i => i.prj_company_ID == u.DepartmentId).name;
-                var dbDep = dbDeps.First(i => i.Name == depName);
+                var dbDep = dbDeps.First(i => i.Code == u.DepartmentId);
                 if (dbUser.UserUnits == null)
                 {
                     dbUser.UserUnits = new List<UserUnit>();
