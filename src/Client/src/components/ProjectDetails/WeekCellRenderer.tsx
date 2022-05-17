@@ -25,7 +25,7 @@ export const WeekCellRenderer = (props: any) => {
     return (
         <>
             {
-                estimations?.sort((a, b) => (a.totalHours < b.totalHours ? 1 : -1)).map((e, idx) => {
+                estimations?.filter(i => i.totalHours > 0).sort((a, b) => (a.totalHours < b.totalHours ? 1 : -1)).map((e, idx) => {
                     return (
                         <div
                             key={"est_week_" + e.id.toString()}

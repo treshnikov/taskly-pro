@@ -9,7 +9,7 @@ export const DepartmentsCellRenderer = (props: any) => {
     return (
         <>
             {
-                estimations?.sort((a, b) => (a.totalHours < b.totalHours ? 1 : -1)).map((i, idx) => {
+                estimations?.filter(i => i.totalHours > 0).sort((a, b) => (a.totalHours < b.totalHours ? 1 : -1)).map((i, idx) => {
                     return (
                         <div key={"dep_" + i.id.toString()} style={
                             (estimations?.length - 1 === idx) ?

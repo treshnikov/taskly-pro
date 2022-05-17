@@ -27,6 +27,8 @@ namespace Taskly.Application.Projects
                         .ThenInclude(p => p.UnitEstimations).ThenInclude(p => p.Unit)
                 .FirstAsync(i => i.Id == request.ProjectId, cancellationToken: cancellationToken);
 
+            project.Tasks = project.Tasks.OrderBy(i => i.Start).ToArray(); 
+
             return ProjectDetailedInfoVm.From(project);
         }
     }

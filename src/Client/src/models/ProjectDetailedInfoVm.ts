@@ -49,7 +49,7 @@ export class ProjectDetailedInfoVm {
         let taskMinDate = new Date()
 
         let sumEstimation = 0
-        const maxLineHeight = 60
+        const maxLineHeight = 150
 
         arg.tasks?.forEach(task => {
             task.start = new Date(task.start)
@@ -85,7 +85,7 @@ export class ProjectDetailedInfoVm {
 
                 // calculate the height of the each ProjectTaskUnitEstimationVm depending on total estimation
                 taskDepartmentEstimation.lineHeight = Math.max(
-                        10, 
+                        3, 
                         Math.trunc(maxLineHeight * (taskDepartmentEstimation.totalHours / sumEstimation)))
 
                 // prepare color for gant chart

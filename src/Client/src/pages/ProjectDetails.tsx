@@ -19,18 +19,18 @@ export const ProjectDetails: React.FunctionComponent = () => {
   const { request } = useHttp()
   const { t } = useTranslation();
 
-  const staticHeaders = ['', t('task'), t('comment'), t('start'), t('end'), t('units')]
+  const staticHeaders = ['', t('task'), t('comment'), t('units'), t('start'), t('end')]
 
   const [projectInfo, setProjectInfo] = useState<ProjectDetailedInfoVm>(new ProjectDetailedInfoVm())
   const [headers, setHeaders] = useState<string[]>(staticHeaders)
-  const [colWidths, setColWidths] = useState<number[]>([5, 300, 150, 100, 100, 310])
+  const [colWidths, setColWidths] = useState<number[]>([5, 300, 150, 310, 100, 100])
   const [firstMonday, setFirstMonday] = useState<Date>(new Date())
   const [tableHeight, setTableHeight] = useState<number>(500)
 
   useEffect(() => {
     async function requestDetails() {
       let data = await request<ProjectDetailedInfoVm>("/api/v1/projects/" + projectId)
-      populateDemoTasks(data)
+      //populateDemoTasks(data)
       ProjectDetailedInfoVm.init(data)
       setProjectInfo(data)
     }
@@ -59,12 +59,13 @@ export const ProjectDetails: React.FunctionComponent = () => {
         <Stack spacing={1}>
         </Stack>
       </div>
-      <div style={{ overflowX: 'auto', height: tableHeight }}>
+      <div style={{ overflowX: 'auto', height: tableHeight }} onClickCapture ={e => {e.stopPropagation()}}>
         <HotTable
+          columnSorting={true}
           rowHeaders={true}
           renderAllRows={true}
           viewportColumnRenderingOffset={headers.length}
-          fixedColumnsLeft={staticHeaders.length}
+          fixedColumnsLeft={staticHeaders.length - 2}
           data={projectInfo.tasks}
           colWidths={colWidths}
           colHeaders={headers}
@@ -74,11 +75,19 @@ export const ProjectDetails: React.FunctionComponent = () => {
           hiddenColumns={{
             columns: [0]
           }}
+          afterSelection={(row: number, column: number, row2: number, column2: number, preventScrolling: { value: boolean }, selectionLayerLevel: number) => {
+            preventScrolling.value = true
+          }}
           licenseKey='non-commercial-and-evaluation'
         >
           <HotColumn hiddenColumns data={"id"} editor={false} type={"text"} />
           <HotColumn data={"description"} type={"text"} />
           <HotColumn data={"comment"} wordWrap={false} type={"text"} />
+
+          <HotColumn data={"unitEstimations"} readOnly >
+            <DepartmentsCellRenderer hot-renderer></DepartmentsCellRenderer>
+          </HotColumn>
+
           <HotColumn data={"startAsStr"} type={"text"} />
           <HotColumn data={"endAsStr"} type={"text"} />
           {/* 
@@ -91,9 +100,6 @@ export const ProjectDetails: React.FunctionComponent = () => {
           <HotColumn data={"end"} readOnly >
             <DateCellRenderer hot-renderer></DateCellRenderer>
           </HotColumn> */}
-          <HotColumn data={"unitEstimations"} readOnly >
-            <DepartmentsCellRenderer hot-renderer></DepartmentsCellRenderer>
-          </HotColumn>
           {
             headers.slice(staticHeaders.length).map((i, idx) => {
               return (

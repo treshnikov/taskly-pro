@@ -25,7 +25,7 @@ export class ProjectTaskUnitEstimationVm {
     private static getHash(arg: ProjectTaskUnitEstimationVm) {
         var hash = 0, i, chr;
         if (arg.unitName.length === 0) return hash;
-        for (i = 0; i < arg.id.length; i++) {
+        for (i = 0; i < arg.unitName.length; i++) {
             chr = arg.unitName.charCodeAt(i)
             hash = ((hash << 5) - hash) + chr
             hash |= 0
