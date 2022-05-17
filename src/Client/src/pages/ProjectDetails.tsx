@@ -54,7 +54,7 @@ export const ProjectDetails: React.FunctionComponent = () => {
 
   return (
     <div className='page-container'>
-      <h3>Project #{projectId}</h3>
+      <h3>{projectInfo.shortName + " [" + projectInfo.start.toLocaleDateString() + " - " + projectInfo.end.toLocaleDateString() + "]"}</h3>
       <div style={{ width: "100%" }}>
         <Stack spacing={1}>
         </Stack>
