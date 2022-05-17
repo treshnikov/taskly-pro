@@ -85,7 +85,6 @@ namespace Taskly.Application.Users
                 };
 
                 // estimations by departments
-                var startColumn = 15;
                 var idx = 0;
                 var positionIdx = 1;
                 var depCode = 0;
@@ -109,6 +108,32 @@ namespace Taskly.Application.Users
                     else
                     {
                         Console.WriteLine($"{positionIdx}       >> " + dbPosition.Name);
+                        var unitEst = newTask.UnitEstimations.FirstOrDefault(i => i.Unit.Id == dbDep.Id);
+                        if (unitEst == null)
+                        {
+                            unitEst = new ProjectTaskUnitEstimation
+                            {
+                                Id = Guid.NewGuid(),
+                                Estimations = new List<ProjectTaskUnitEstimationToUserPosition>(),
+                                ProjectTask = newTask,
+                                ProjectTaskId = newTask.Id,
+                                Unit = dbDep
+                            };
+                            newTask.UnitEstimations.Add(unitEst);
+                        }
+
+                        if (int.TryParse(t.Estimations[positionIdx - 1], out int hours))
+                        {
+                            unitEst.Estimations.Add(new ProjectTaskUnitEstimationToUserPosition
+                            {
+                                Id = Guid.NewGuid(),
+                                Hours = hours,
+                                ProjectTaskUnitEstimation = unitEst,
+                                ProjectTaskUnitEstimationId = unitEst.Id,
+                                UserPosition = dbPosition
+                            });
+                        }
+
                     }
                     positionIdx++;
                     idx++;
@@ -131,6 +156,7 @@ namespace Taskly.Application.Users
             public string Comment { get; set; }
             public DateTime Start { get; set; }
             public DateTime End { get; set; }
+            public string[] Estimations { get; set; }
         }
         private static ProjectTaskInfoXlsx[] ParseTasks(string projectTasksFileName)
         {
@@ -170,13 +196,23 @@ namespace Taskly.Application.Users
                     ? DateTime.Today
                     : DateTime.Parse(endStr);
                 var comment = worksheet.Cell(rowIdx, 5).GetValue<string>() + " " + worksheet.Cell(rowIdx, 6).GetValue<string>();
+
+                var est = new List<string>();
+                // estimations
+                var startColumn = 16;
+                for (int i = 0; i < 91; i++)
+                {
+                    est.Add(worksheet.Cell(rowIdx, startColumn + i).GetValue<string>());
+                }
+
                 res.Add(new ProjectTaskInfoXlsx
                 {
                     ProjectId = projectId,
                     Description = task,
                     Comment = comment,
                     Start = start,
-                    End = end
+                    End = end,
+                    Estimations = est.ToArray()
                 });
             }
 
