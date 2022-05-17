@@ -20,7 +20,9 @@ namespace Taskly.Application.Projects
                 Estimations = arg.Estimations.Select(i => new EstimationVm
                 {
                     Hours = i.Hours,
-                    UserPositionIdent = i.UserPosition.Ident
+                    UserPositionIdent = i.UserPosition.Ident,
+                    UserPositionId = i.UserPositionId
+
                 }).OrderBy(i => i.UserPositionIdent).ToArray()
             };
         }

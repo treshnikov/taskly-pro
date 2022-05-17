@@ -1,15 +1,15 @@
 
+export class EstimationVm{
+    userPositionId: string = ''
+    userPositionIdent: string = ''
+    hours: number = 0
+}
+
 export class ProjectTaskUnitEstimationVm {
     id: string = ''
     unitId: string = ''
     unitName: string = ''
-    departmentHeadHours: number = 0
-    leadEngineerHours: number = 0
-    engineerOfTheFirstCategoryHours: number = 0
-    engineerOfTheSecondCategoryHours: number = 0
-    engineerOfTheThirdCategoryHours: number = 0
-    chiefSpecialistHours: number = 0
-    techniclaWriterHours: number = 0
+    estimations: EstimationVm[] = []
 
     // these fields are supposed to be calculated on the client after get fetched
     lineHeight: number = 5
@@ -19,7 +19,7 @@ export class ProjectTaskUnitEstimationVm {
     end: Date = new Date()
 
     public static getTotalHours(arg: ProjectTaskUnitEstimationVm) {
-        return 0;
+        return arg.estimations?.map(i => i.hours).reduce( (acc, i) => acc += i, 0);
     }
 
     private static getHash(arg: ProjectTaskUnitEstimationVm) {

@@ -115,22 +115,25 @@ function populateDemoTasks(projectInfo: ProjectDetailedInfoVm) {
   const testEstimation1 = new ProjectTaskUnitEstimationVm()
   testEstimation1.id = "asdfasdfsdf"
   testEstimation1.unitName = "Отдел программирования РСУ"
-  testEstimation1.chiefSpecialistHours = 120
-  testEstimation1.leadEngineerHours = 40
-  testEstimation1.engineerOfTheSecondCategoryHours = 90
-  testEstimation1.engineerOfTheFirstCategoryHours = 40
-  testEstimation1.engineerOfTheThirdCategoryHours = 120
-  testEstimation1.techniclaWriterHours = 900
+  testEstimation1.estimations = [
+    {userPositionId: '1', userPositionIdent: 'И1', hours: 80},
+    {userPositionId: '2', userPositionIdent: 'И2', hours: 240},
+    {userPositionId: '3', userPositionIdent: 'И3', hours: 360},
+  ]
 
   const testEstimation2 = new ProjectTaskUnitEstimationVm()
   testEstimation2.id = "dfgsdfg"
   testEstimation2.unitName = "Отдел программирования СУПП"
-  testEstimation2.chiefSpecialistHours = 800
+  testEstimation2.estimations = [
+    {userPositionId: '4', userPositionIdent: 'ГС', hours: 180},
+  ]
 
   const testEstimation3 = new ProjectTaskUnitEstimationVm()
   testEstimation3.id = "iuthoi3hti2hpi"
   testEstimation3.unitName = "Отдел программирования с очень длинным именем"
-  testEstimation3.engineerOfTheThirdCategoryHours = 16
+  testEstimation3.estimations = [
+    {userPositionId: '5', userPositionIdent: 'DB', hours: 40},
+  ]
 
   testTask.unitEstimations = [testEstimation1, testEstimation2, testEstimation3]
 

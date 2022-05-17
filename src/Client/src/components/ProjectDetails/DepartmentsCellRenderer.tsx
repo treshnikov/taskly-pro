@@ -40,42 +40,20 @@ export const DepartmentsCellRenderer = (props: any) => {
                                 whiteSpace: "pre-wrap",
                                 display: "inline-block"
                             }}>{i.unitName + " " + i.totalHours + t('hour')}</span>
-                            <span style={{  display: "block", fontSize: "10px", color: "dimgray" }}>
-                                <div style={{width: "20px", display: "inline-block"}}></div>
+                            <span style={{ display: "block", fontSize: "10px", color: "dimgray" }}>
+                                <div style={{ width: "20px", display: "inline-block" }}></div>
                                 {
-                                    (i.departmentHeadHours !== 0)
-                                        ? <div style={{display: "inline", marginRight: "5px"}}>{t('departmentHeadHours')}: {i.departmentHeadHours + t('hour')}</div>
-                                        : <></>
-                                }
-                                {
-                                    (i.chiefSpecialistHours !== 0)
-                                        ? <div style={{display: "inline", marginRight: "5px"}}>{t('chiefSpecialistHours')}: {i.chiefSpecialistHours + t('hour')}</div>
-                                        : <></>
-                                }
-                                {
-                                    (i.leadEngineerHours !== 0)
-                                        ? <div style={{display: "inline", marginRight: "5px"}}>{t('leadEngineerHours')}: {i.leadEngineerHours + t('hour')}</div>
-                                        : <></>
-                                }
-                                {
-                                    (i.engineerOfTheFirstCategoryHours !== 0)
-                                        ? <div style={{display: "inline", marginRight: "5px"}}>{t('engineerOfTheFirstCategoryHours')}: {i.engineerOfTheFirstCategoryHours + t('hour')}</div>
-                                        : <></>
-                                }
-                                {
-                                    (i.engineerOfTheSecondCategoryHours !== 0)
-                                        ? <div style={{display: "inline", marginRight: "5px"}}>{t('engineerOfTheSecondCategoryHours')}: {i.engineerOfTheSecondCategoryHours + t('hour')}</div>
-                                        : <></>
-                                }
-                                {
-                                    (i.engineerOfTheThirdCategoryHours !== 0)
-                                        ? <div style={{display: "inline", marginRight: "5px"}}>{t('engineerOfTheThirdCategoryHours')}: {i.engineerOfTheThirdCategoryHours + t('hour')}</div>
-                                        : <></>
-                                }
-                                {
-                                    (i.techniclaWriterHours !== 0)
-                                        ? <div style={{display: "inline", marginRight: "5px"}}>{t('techniclaWriterHours')}: {i.techniclaWriterHours + t('hour')}</div>
-                                        : <></>
+                                    i.estimations.map(p => {
+                                        if (p.hours === 0)
+                                            return (
+                                                <></>
+                                            )
+
+                                        return (
+                                            <div key={i.id + p.userPositionId} style={{ display: "inline", marginRight: "5px" }}>{p.userPositionIdent}: {p.hours + t('hour')}</div>
+                                        )
+                                    }
+                                    )
                                 }
                             </span>
                         </div>
