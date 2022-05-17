@@ -46,5 +46,6 @@
     "engineerOfTheThirdCategoryHours": "D3",
     "chiefSpecialistHours": "Cs",
     "techniclaWriterHours": "Tw",
-    "hour": "h"
+    "hour": "h",
+    "comment": "Comment"
 }

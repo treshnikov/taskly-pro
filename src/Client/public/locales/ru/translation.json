@@ -46,5 +46,6 @@
     "engineerOfTheThirdCategoryHours": "И3",
     "chiefSpecialistHours": "ГС",
     "techniclaWriterHours": "Т",
-    "hour": "ч"
+    "hour": "ч",
+    "comment": "Комментарий"
 }   

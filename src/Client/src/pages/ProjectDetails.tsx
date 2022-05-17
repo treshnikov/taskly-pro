@@ -19,11 +19,11 @@ export const ProjectDetails: React.FunctionComponent = () => {
   const { request } = useHttp()
   const { t } = useTranslation();
 
-  const staticHeaders = ['', t('task'), t('start'), t('end'), t('units')]
+  const staticHeaders = ['', t('task'), t('comment'), t('start'), t('end'), t('units')]
 
   const [projectInfo, setProjectInfo] = useState<ProjectDetailedInfoVm>(new ProjectDetailedInfoVm())
   const [headers, setHeaders] = useState<string[]>(staticHeaders)
-  const [colWidths, setColWidths] = useState<number[]>([25, 350, 100, 100, 310])
+  const [colWidths, setColWidths] = useState<number[]>([5, 300, 150, 100, 100, 310])
   const [firstMonday, setFirstMonday] = useState<Date>(new Date())
   const [tableHeight, setTableHeight] = useState<number>(500)
 
@@ -61,6 +61,7 @@ export const ProjectDetails: React.FunctionComponent = () => {
       </div>
       <div style={{ overflowX: 'auto', height: tableHeight }}>
         <HotTable
+          rowHeaders={true}
           renderAllRows={true}
           viewportColumnRenderingOffset={headers.length}
           fixedColumnsLeft={staticHeaders.length}
@@ -69,6 +70,7 @@ export const ProjectDetails: React.FunctionComponent = () => {
           colHeaders={headers}
           wordWrap={true}
           fillHandle={false}
+          rowHeights={45}
           hiddenColumns={{
             columns: [0]
           }}
@@ -76,16 +78,19 @@ export const ProjectDetails: React.FunctionComponent = () => {
         >
           <HotColumn hiddenColumns data={"id"} editor={false} type={"text"} />
           <HotColumn data={"description"} type={"text"} />
+          <HotColumn data={"comment"} wordWrap={false} type={"text"} />
+          <HotColumn data={"startAsStr"} type={"text"} />
+          <HotColumn data={"endAsStr"} type={"text"} />
           {/* 
             <HotColumn data={"start"} type={"date"} dateFormat='DD.MM.YYYY' correctFormat={true} defaultDate='01.01.2022' />
             <HotColumn data={"end"} type={"date"} dateFormat='DD.MM.YYYY' correctFormat={true} defaultDate='01.01.2022' /> 
           */}
-          <HotColumn data={"start"} readOnly >
+          {/* <HotColumn data={"start"} readOnly >
             <DateCellRenderer hot-renderer></DateCellRenderer>
           </HotColumn>
           <HotColumn data={"end"} readOnly >
             <DateCellRenderer hot-renderer></DateCellRenderer>
-          </HotColumn>
+          </HotColumn> */}
           <HotColumn data={"unitEstimations"} readOnly >
             <DepartmentsCellRenderer hot-renderer></DepartmentsCellRenderer>
           </HotColumn>

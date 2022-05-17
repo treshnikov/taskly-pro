@@ -28,7 +28,7 @@ export class ProjectDetailedInfoVm {
         let currentDate = new Date(start)
 
         // find first left monday
-        while (currentDate.getDay() != 1) {
+        while (currentDate.getDay() !== 1) {
             currentDate.setDate(currentDate.getDate() - 1)
         }
 
@@ -54,6 +54,9 @@ export class ProjectDetailedInfoVm {
         arg.tasks?.forEach(task => {
             task.start = new Date(task.start)
             task.end = new Date(task.end)
+            
+            task.startAsStr = task.start.getDate().toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false}) + "." + (task.start.getMonth() + 1).toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false}) + "." + task.start.getFullYear()
+            task.endAsStr = task.end.getDate().toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false}) + "." + (task.end.getMonth() + 1).toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false}) + "." + task.end.getFullYear()
 
             // calculate total project estimation
             task.unitEstimations?.forEach(e => {
@@ -81,7 +84,9 @@ export class ProjectDetailedInfoVm {
                 taskDepartmentEstimation.totalHours = ProjectTaskUnitEstimationVm.getTotalHours(taskDepartmentEstimation)
 
                 // calculate the height of the each ProjectTaskUnitEstimationVm depending on total estimation
-                taskDepartmentEstimation.lineHeight = Math.max(3, Math.trunc(maxLineHeight * (taskDepartmentEstimation.totalHours / sumEstimation)))
+                taskDepartmentEstimation.lineHeight = Math.max(
+                        10, 
+                        Math.trunc(maxLineHeight * (taskDepartmentEstimation.totalHours / sumEstimation)))
 
                 // prepare color for gant chart
                 taskDepartmentEstimation.color = ProjectTaskUnitEstimationVm.getColor(taskDepartmentEstimation)

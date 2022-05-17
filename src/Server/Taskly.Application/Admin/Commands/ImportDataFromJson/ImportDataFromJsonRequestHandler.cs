@@ -53,6 +53,8 @@ namespace Taskly.Application.Users
             var dbProjects = _dbContext.Projects
                 .Include(p => p.Tasks)
                 .ToList();
+            var dbPositions = await _dbContext.UserePositions.ToListAsync(cancellationToken);
+            var dbDeps = await _dbContext.Units.ToListAsync(cancellationToken);
 
             foreach (var p in dbProjects)
             {
@@ -70,15 +72,47 @@ namespace Taskly.Application.Users
                     continue;
                 }
 
+                // task
                 var newTask = new ProjectTask
                 {
                     Id = Guid.NewGuid(),
                     ProjectId = dbProject.Id,
-                    UnitEstimations = new List<ProjectTaskUnitEstimation>(),
                     Description = t.Description,
+                    Comment = t.Comment,
                     Start = t.Start,
                     End = t.End,
+                    UnitEstimations = new List<ProjectTaskUnitEstimation>(),
                 };
+
+                // estimations by departments
+                var startColumn = 15;
+                var idx = 0;
+                var positionIdx = 1;
+                var depCode = 0;
+                Domain.Unit dbDep = null;
+                while (idx < UnitUserMap.Length)
+                {
+                    if (int.TryParse(UnitUserMap[idx], out depCode))
+                    {
+                        dbDep = dbDeps.First(i => i.Code == depCode);
+                        Console.WriteLine($">> " + dbDep.Name);
+                        idx++;
+                        continue;
+                    }
+
+                    var positionName = UnitUserMap[idx];
+                    var dbPosition = dbPositions.FirstOrDefault(p => p.Name == positionName);
+                    if (dbPosition == null)
+                    {
+                        Console.WriteLine($"{positionIdx}       >> Cannot find user position with the name = {UnitUserMap[idx]}");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"{positionIdx}       >> " + dbPosition.Name);
+                    }
+                    positionIdx++;
+                    idx++;
+                }
 
                 _dbContext.ProjectTasks.Add(newTask);
 
@@ -94,6 +128,7 @@ namespace Taskly.Application.Users
         {
             public int ProjectId { get; set; }
             public string Description { get; set; }
+            public string Comment { get; set; }
             public DateTime Start { get; set; }
             public DateTime End { get; set; }
         }
@@ -134,11 +169,12 @@ namespace Taskly.Application.Users
                 var end = string.IsNullOrWhiteSpace(endStr)
                     ? DateTime.Today
                     : DateTime.Parse(endStr);
-
+                var comment = worksheet.Cell(rowIdx, 5).GetValue<string>() + " " + worksheet.Cell(rowIdx, 6).GetValue<string>();
                 res.Add(new ProjectTaskInfoXlsx
                 {
                     ProjectId = projectId,
                     Description = task,
+                    Comment = comment,
                     Start = start,
                     End = end
                 });
@@ -412,6 +448,56 @@ namespace Taskly.Application.Users
                 return "И3";
             }
 
+            if (lowerCaseTitle.Contains("электромонтажник 1 разряда"))
+            {
+                return "Мон1";
+            }
+
+            if (lowerCaseTitle.Contains("электромонтажник 2 разряда"))
+            {
+                return "Мон2";
+            }
+
+            if (lowerCaseTitle.Contains("электромонтажник 3 разряда"))
+            {
+                return "Мон3";
+            }
+
+            if (lowerCaseTitle.Contains("электромонтажник 4 разряда"))
+            {
+                return "Мон4";
+            }
+
+            if (lowerCaseTitle.Contains("электрогазосварщик 6 разряда"))
+            {
+                return "Св6";
+            }
+
+            if (lowerCaseTitle.Contains("электрогазосварщик 5 разряда"))
+            {
+                return "Св5";
+            }
+
+            if (lowerCaseTitle.Contains("электрогазосварщик 4 разряда"))
+            {
+                return "Св4";
+            }
+
+            if (lowerCaseTitle.Contains("электрогазосварщик 3 разряда"))
+            {
+                return "Св3";
+            }
+
+            if (lowerCaseTitle.Contains("электрогазосварщик 2 разряда"))
+            {
+                return "Св2";
+            }
+
+            if (lowerCaseTitle.Contains("электрогазосварщик 1 разряда"))
+            {
+                return "Св1";
+            }
+
             return null;
         }
 
@@ -447,6 +533,43 @@ namespace Taskly.Application.Users
             users = JsonSerializer.Deserialize<UserJson[]>(File.ReadAllText(usersFileName));
             projects = JsonSerializer.Deserialize<ProjectJson[]>(File.ReadAllText(projectsFileName));
         }
+
+        /// <summary>
+        /// Map for parsing project_tasks.xlsx
+        /// </summary>
+        /// <value></value>
+        private string[] UnitUserMap = new string[]{
+            "141",
+                "Технический директор",
+            "244",
+                "Главный специалист", "Ведущий инженер", "Инженер 1 категории", "Инженер 2 категории", "Инженер 3 категории", "Техник", "Начальник отдела",
+            "245",
+                "Главный специалист", "Ведущий инженер", "Инженер 1 категории", "Инженер 2 категории", "Инженер 3 категории", "Техник", "Начальник отдела",
+            "234",
+                "Главный специалист", "Ведущий инженер-программист", "Инженер-программист 1 категории", "Инженер-программист 2 категории", "Инженер-программист 3 категории", "Техник", "Начальник отдела",
+            "176",
+                "Главный специалист", "Ведущий инженер", "Инженер 1 категории", "Инженер 2 категории", "Инженер 3 категории", "Техник", "Начальник отдела",
+            "232",
+                "Главный специалист", "Ведущий инженер", "Инженер 1 категории", "Инженер 2 категории", "Инженер 3 категории", "Техник", "Начальник отдела",
+            "233",
+                "Главный специалист", "Ведущий инженер", "Инженер 1 категории", "Инженер 2 категории", "Инженер 3 категории", "Техник", "Начальник отдела",
+            "242",
+                "Главный специалист", "Ведущий инженер", "Инженер 1 категории", "Инженер 2 категории", "Инженер 3 категории", "Техник", "Начальник отдела",
+            "243",
+                "Главный специалист", "Ведущий инженер", "Инженер 1 категории", "Инженер 2 категории", "Инженер 3 категории", "Техник", "Начальник отдела",
+            "177",
+                "Главный специалист", "Ведущий инженер", "Инженер 1 категории", "Инженер 2 категории", "Инженер 3 категории", "Техник", "Начальник ЭТЛ",
+            "198",
+                "Главный специалист", "Ведущий инженер", "Инженер 1 категории", "Инженер 2 категории", "Инженер 3 категории", "Техник",
+            "199",
+                "Главный специалист", "Ведущий инженер", "Инженер 1 категории", "Инженер 2 категории", "Инженер 3 категории", "Техник",
+            "178",
+                "Начальник отдела",
+            "179",
+                "Электрогазосварщик 6 разряда", "Электрогазосварщик 5 разряда", "Электрогазосварщик 4 разряда", "Электромонтажник 5 разряда", "Электромонтажник 4 разряда", "Электромонтажник 3 разряда", "Начальник электромонтажного участка",
+            "239",
+                "Главный специалист", "Ведущий инженер", "Инженер 1 категории", "Инженер 2 категории", "Инженер 3 категории", "Техник", "Заместитель главного инженера по проектам-начальник отдела"
+                    };
     }
 
     /*
@@ -522,6 +645,7 @@ namespace Taskly.Application.Users
         public string? customer { get; set; }
         public string? contract { get; set; }
     }
+
 
 
 }

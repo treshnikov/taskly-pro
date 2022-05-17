@@ -6,5 +6,10 @@ export class ProjectTaskVm {
     start: Date = new Date()
     end: Date = new Date()
     description: string = ''
+    comment: string = ''
     unitEstimations: ProjectTaskUnitEstimationVm[] = []
+
+    // calculated
+    startAsStr: string = ''
+    endAsStr: string = ''
 }

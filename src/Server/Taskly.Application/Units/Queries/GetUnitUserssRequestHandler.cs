@@ -37,7 +37,7 @@ namespace Taskly.Application.Units.Queries
                 var newUnitVm = new UnitUserVm
                 {
                     Id = c.Id,
-                    Name = c.Name,
+                    Name = $"{c.Name}  {c.Code}",
                     Children = new List<UnitUserVm>(),
                     Type = UnitUserType.Unit
                 };

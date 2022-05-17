@@ -34,6 +34,7 @@ public class ProjectTaskVm
         public DateTime Start { get; set; }
         public DateTime End { get; set; }
         public string Description { get; set; }
+        public string Comment { get; set; }
         public ProjectTaskUnitEstimationVm[] UnitEstimations { get; set; }
 
         public static ProjectTaskVm From(ProjectTask arg)
@@ -42,6 +43,7 @@ public class ProjectTaskVm
             {
                 Id = arg.Id,
                 Description = arg.Description,
+                Comment = arg.Comment,
                 Start = arg.Start,
                 End = arg.End,
                 UnitEstimations = arg.UnitEstimations.Select(i => ProjectTaskUnitEstimationVm.From(i)).ToArray()
