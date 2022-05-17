@@ -11,7 +11,10 @@ namespace Taskly.DAL.EntityTypeConfigurations
         {
             builder.ToTable("ProjectEstimations");
             builder.HasIndex(u => u.Id).IsUnique();
-            builder.HasIndex(u => new {u.ProjectTaskUnitEstimationID, u.UserPositionId}).IsUnique();
+            //builder.HasIndex(u => new {u.ProjectTaskUnitEstimationId, u.UserPositionId}).IsUnique();
+            //builder.HasOne(u => u.ProjectTaskUnitEstimation);
+            builder.HasOne(u => u.UserPosition);
+            //builder.HasIndex(u => new {u.ProjectTaskUnitEstimationId, u.UserPositionId}).IsUnique();
         }
     }
 

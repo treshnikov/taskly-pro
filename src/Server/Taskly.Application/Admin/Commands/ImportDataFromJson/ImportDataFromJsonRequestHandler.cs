@@ -7,6 +7,7 @@ using Taskly.Application.Interfaces;
 using Taskly.Domain;
 using Serilog;
 using System.Globalization;
+using ClosedXML.Excel;
 
 namespace Taskly.Application.Users
 {
@@ -21,15 +22,129 @@ namespace Taskly.Application.Users
 
         public async Task<MediatR.Unit> Handle(ImportDataFromJsonRequest request, CancellationToken cancellationToken)
         {
-            Extract(request, out DepartmentJson[] deps, out UserJson[] users, out ProjectJson[] projects);
+            try
+            {
+                Extract(request, out DepartmentJson[] deps, out UserJson[] users, out ProjectJson[] projects);
 
-            await UpdateUsers(users, cancellationToken);
-            await UpdateUserPositions(users, cancellationToken);
-            await UpdateDepartments(deps, cancellationToken);
-            await UpdateUserUnitLinks(users, deps, cancellationToken);
-            await UpdateProjects(projects, cancellationToken);
+                await UpdateUsers(users, cancellationToken);
+                await UpdateUserPositions(users, cancellationToken);
+                await UpdateDepartments(deps, cancellationToken);
+                await UpdateUserUnitLinks(users, deps, cancellationToken);
+                await UpdateProjects(projects, cancellationToken);
+                await UpdateProjectTasks(request, cancellationToken);
 
-            return MediatR.Unit.Value;
+                return MediatR.Unit.Value;
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+
+        }
+
+        private async Task UpdateProjectTasks(ImportDataFromJsonRequest request, CancellationToken cancellationToken)
+        {
+            var path = Directory.GetParent(typeof(ImportDataFromJsonRequestHandler).Assembly.Location)!.FullName;
+            var projectTasksFileName = Path.Combine(path, request.ProjectTasksFileName);
+            var tasks = ParseTasks(projectTasksFileName);
+
+            using var transaction = _dbContext.Database.BeginTransaction();
+
+            var dbProjects = _dbContext.Projects
+                .Include(p => p.Tasks)
+                .ToList();
+
+            foreach (var p in dbProjects)
+            {
+                p.Tasks.Clear();
+            }
+
+            await _dbContext.SaveChangesAsync(cancellationToken);
+
+            foreach (var t in tasks)
+            {
+                var dbProject = dbProjects.FirstOrDefault(i => i.Id == t.ProjectId);
+                if (dbProject == null)
+                {
+                    Log.Logger.Warning($"Cannot import tasks for projectId={t.ProjectId}");
+                    continue;
+                }
+
+                var newTask = new ProjectTask
+                {
+                    Id = Guid.NewGuid(),
+                    ProjectId = dbProject.Id,
+                    UnitEstimations = new List<ProjectTaskUnitEstimation>(),
+                    Description = t.Description,
+                    Start = t.Start,
+                    End = t.End,
+                };
+
+                _dbContext.ProjectTasks.Add(newTask);
+
+                dbProject.Tasks.Add(newTask);
+                _dbContext.Projects.Update(dbProject);
+            }
+
+            await _dbContext.SaveChangesAsync(cancellationToken);
+            transaction.Commit();
+        }
+
+        internal class ProjectTaskInfoXlsx
+        {
+            public int ProjectId { get; set; }
+            public string Description { get; set; }
+            public DateTime Start { get; set; }
+            public DateTime End { get; set; }
+        }
+        private static ProjectTaskInfoXlsx[] ParseTasks(string projectTasksFileName)
+        {
+            var res = new List<ProjectTaskInfoXlsx>();
+            using var workbook = new XLWorkbook(projectTasksFileName);
+            var worksheet = workbook.Worksheets.First(i => i.Name == "Задачи");
+            var rowCount = Math.Min(worksheet.RowCount(), 5000);
+
+            // skip first 4 lines with headers
+            for (int rowIdx = 4; rowIdx <= rowCount; rowIdx++)
+            {
+                //Log.Logger.Debug($"#{rowIdx}");
+
+                // project can contains . symbol - 985.1 
+                // we need to take only the first part
+                var projectIdAsStr = worksheet.Cell(rowIdx, 3).GetValue<string>();
+                projectIdAsStr = projectIdAsStr.Split(".")[0];
+                if (!int.TryParse(projectIdAsStr, out int projectId))
+                {
+                    Console.WriteLine($"Skip {projectIdAsStr}");
+                    continue;
+                }
+
+                var task = worksheet.Cell(rowIdx, 9).GetValue<string>();
+
+                if (string.IsNullOrWhiteSpace(task))
+                {
+                    break;
+                }
+
+                var startStr = worksheet.Cell(rowIdx, 12).GetValue<string>();
+                var start = string.IsNullOrWhiteSpace(startStr)
+                    ? DateTime.Today.AddDays(-1)
+                    : DateTime.Parse(startStr);
+                var endStr = worksheet.Cell(rowIdx, 13).GetValue<string>();
+                var end = string.IsNullOrWhiteSpace(endStr)
+                    ? DateTime.Today
+                    : DateTime.Parse(endStr);
+
+                res.Add(new ProjectTaskInfoXlsx
+                {
+                    ProjectId = projectId,
+                    Description = task,
+                    Start = start,
+                    End = end
+                });
+            }
+
+            return res.ToArray();
         }
 
         private async Task UpdateProjects(ProjectJson[] projects, CancellationToken cancellationToken)
@@ -276,7 +391,7 @@ namespace Taskly.Application.Users
                 return "ГС";
             }
 
-            if (lowerCaseTitle.Contains("начальник") || lowerCaseTitle.Contains("руководител") 
+            if (lowerCaseTitle.Contains("начальник") || lowerCaseTitle.Contains("руководител")
                 || lowerCaseTitle.Contains("заместитель") || lowerCaseTitle.Contains("директор"))
             {
                 return "Рук";
@@ -306,6 +421,7 @@ namespace Taskly.Application.Users
             var departmentFileName = Path.Combine(path, request.DepartmentsFileName);
             var usersFileName = Path.Combine(path, request.UsersFileName);
             var projectsFileName = Path.Combine(path, request.ProjectsFileName);
+            var projectTasksFileName = Path.Combine(path, request.ProjectTasksFileName);
 
             if (!File.Exists(departmentFileName))
             {
@@ -320,6 +436,11 @@ namespace Taskly.Application.Users
             if (!File.Exists(projectsFileName))
             {
                 throw new NotFoundException($"Cannot find {projectsFileName}");
+            }
+
+            if (!File.Exists(projectTasksFileName))
+            {
+                throw new NotFoundException($"Cannot find {projectTasksFileName}");
             }
 
             deps = JsonSerializer.Deserialize<DepartmentJson[]>(File.ReadAllText(departmentFileName));

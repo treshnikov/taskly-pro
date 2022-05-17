@@ -14,7 +14,7 @@ namespace Taskly.DAL
         public DbSet<UserUnit> UserUnits { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Project> Projects { get; set; }
-        
+        public DbSet<ProjectTask> ProjectTasks { get; set; }
         public DbSet<UserPosition> UserePositions { get; set; }
         public DbSet<ProjectTaskUnitEstimationToUserPosition> ProjectTaskUnitEstimationToUserPosition { get; set; }
 

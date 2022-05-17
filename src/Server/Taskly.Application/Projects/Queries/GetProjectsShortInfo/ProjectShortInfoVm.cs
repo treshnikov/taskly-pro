@@ -8,6 +8,7 @@ namespace Taskly.Application.Projects
         public string Name { get; set; }
         public string? ShortName { get; set; }
         public string Company { get; set; }
+        public ProjectType Type { get; set; }
         public bool IsOpened { get; set; }
         public string ProjectManager { get; set; }
         public string ChiefEngineer { get; set; }
@@ -27,6 +28,7 @@ namespace Taskly.Application.Projects
                 Company = p.Company?.Name,
                 Contract = p.Contract,
                 Customer = p.Customer.Name,
+                Type = p.Type,
                 End = p.End.ToString("dd.MM.yyyy"),
                 IsOpened = p.IsOpened,
                 Name = p.Name,

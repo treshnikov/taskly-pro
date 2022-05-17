@@ -9,6 +9,7 @@ namespace Taskly.Application.Users
             RuleFor(i => i.UsersFileName).NotEmpty();
             RuleFor(i => i.DepartmentsFileName).NotEmpty();
             RuleFor(i => i.ProjectsFileName).NotEmpty();
+            RuleFor(i => i.ProjectTasksFileName).NotEmpty();
         }
     }
 }

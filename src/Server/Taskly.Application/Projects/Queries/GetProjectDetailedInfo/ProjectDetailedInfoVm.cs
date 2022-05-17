@@ -15,13 +15,13 @@ namespace Taskly.Application.Projects
             return new ProjectTaskUnitEstimationVm
             {
                 Id = arg.Id,
-                UnitId = arg.UnitId,
+                UnitId = arg.Unit.Id,
                 UnitName = arg.Unit.Name,
-                Estimations = arg.Estimations.Select(i => new EstimationVm
+                Estimations = arg.Estimations.OrderBy(i => i.UserPosition?.Ident).Select(i => new EstimationVm
                 {
                     Hours = i.Hours,
-                    UserPositionIdent = i.UserPosition.Ident,
-                    UserPositionId = i.UserPositionId
+                    UserPositionIdent = i.UserPosition?.Ident,
+                    UserPositionId = i.UserPosition.Id
 
                 }).OrderBy(i => i.UserPositionIdent).ToArray()
             };

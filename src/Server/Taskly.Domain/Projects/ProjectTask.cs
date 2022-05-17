@@ -7,5 +7,9 @@ namespace Taskly.Domain
         public DateTime End { get; set; }
         public string Description { get; set; }
         public ICollection<ProjectTaskUnitEstimation> UnitEstimations { get; set; }
+
+        // navigation
+        public int ProjectId { get; set; }
+        public Project Project { get; set; }
     }
 }

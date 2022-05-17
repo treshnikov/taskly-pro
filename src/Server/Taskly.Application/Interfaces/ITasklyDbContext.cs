@@ -15,6 +15,7 @@ namespace Taskly.Application.Interfaces
         DatabaseFacade Database { get; }
         DbSet<Customer> Customers { get; set; }
         DbSet<Project> Projects { get; set; }
+        DbSet<ProjectTask> ProjectTasks { get; set; }
         DbSet<ProjectTaskUnitEstimationToUserPosition> ProjectTaskUnitEstimationToUserPosition { get; set; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }

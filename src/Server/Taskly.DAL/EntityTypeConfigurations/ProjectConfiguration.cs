@@ -15,6 +15,7 @@ namespace Taskly.DAL.EntityTypeConfigurations
             builder.HasOne(u => u.ChiefEngineer);
             builder.HasOne(u => u.Customer);
             builder.HasOne(u => u.Company);
+            //builder.HasMany(p => p.Tasks).WithOne().OnDelete(DeleteBehavior.Cascade);
         }
     }
 
