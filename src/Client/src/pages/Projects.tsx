@@ -3,7 +3,7 @@ import { HotColumn, HotTable } from '@handsontable/react';
 import { registerAllModules } from 'handsontable/registry';
 import { useTranslation } from 'react-i18next';
 import { useHttp } from '../hooks/http.hook';
-import { Box, Link, TextField } from '@mui/material';
+import { Box, Button, Link, TextField } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { ProjectShortInfoVm } from '../models/ProjectShortInfoVm';
 
@@ -17,7 +17,7 @@ const OpenProjectDetailsButtonRenderer = (props: any) => {
   
   return (
     <React.Fragment>
-      <Link href={"#"} onClick={e => { navigate("/projects/" + value) }}>{t('open')}</Link>
+      <Button variant='text' size='small' onClick={e => { navigate("/projects/" + value) }}>{t('open')}</Button>
     </React.Fragment>
   );
 }

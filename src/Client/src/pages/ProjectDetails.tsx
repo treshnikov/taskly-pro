@@ -11,8 +11,12 @@ import { ProjectTaskVm } from '../models/ProjectTaskVm';
 import { ProjectTaskUnitEstimationVm } from '../models/ProjectTaskUnitEstimationVm';
 import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
 import BarChartIcon from '@mui/icons-material/BarChart';
-import { GanttCellRenderer, GanttOneDayWidthInPixel } from '../components/ProjectDetails/GanttCellRenderer';
+import { GanttCellRenderer } from '../components/ProjectDetails/GanttCellRenderer';
 import { dateAsShortStr } from '../common/dateFormatter';
+import { ganttZoomIn, ganttZoomOut } from '../redux/projectDetailsSlice';
+import { useAppSelector, useAppDispatch } from '../redux/hooks'
+import ZoomInIcon from '@mui/icons-material/ZoomIn';
+import ZoomOutIcon from '@mui/icons-material/ZoomOut';
 
 registerAllModules();
 
@@ -20,6 +24,8 @@ export const ProjectDetails: React.FunctionComponent = () => {
   const projectId = useParams<{ id?: string }>()!.id
   const { request } = useHttp()
   const { t } = useTranslation();
+  const dispatch = useAppDispatch()
+  const ganttChartZoomLevel = useAppSelector(state => state.projectDetailsReducer.ganttChartZoomLevel)
 
   const staticHeaders = ['', t('task'), t('comment'), t('estimationH'), t('units'), t('start'), t('end')]
 
@@ -54,6 +60,8 @@ export const ProjectDetails: React.FunctionComponent = () => {
             <Stack direction="row" spacing={1} paddingTop={1} paddingBottom={1}>
               <Button variant='contained' size='small' startIcon={<PlaylistAddIcon />}>Add</Button>
               <Button variant='contained' size='small' startIcon={<BarChartIcon />}>Statistics</Button>
+              <Button variant='contained' size='small' startIcon={<ZoomInIcon/>} onClick={e => {dispatch(ganttZoomIn())}} >Zoom in</Button>
+              <Button variant='contained' size='small' startIcon={<ZoomOutIcon/>} onClick={e => {dispatch(ganttZoomOut())}} >Zoom out</Button>
               <FormControlLabel label="Show details" control={<Checkbox checked={showDetails} onChange={e => setShowDetails(e.target.checked)} size='small' />} />
             </Stack>
           </Grid>
@@ -109,8 +117,8 @@ export const ProjectDetails: React.FunctionComponent = () => {
           <HotColumn data={"end"} readOnly >
             <DateCellRenderer hot-renderer></DateCellRenderer>
           </HotColumn> */}
-          <HotColumn data={"unitEstimations"} key={"ganttColumn"} width={getGanttWidth(projectInfo)} readOnly>
-            <GanttCellRenderer width={getGanttWidth(projectInfo)} startDate={projectInfo.taskMinDate} hot-renderer></GanttCellRenderer>
+          <HotColumn data={"unitEstimations"} key={"ganttColumn"} width={getGanttWidth(ganttChartZoomLevel, projectInfo)} readOnly>
+            <GanttCellRenderer width={getGanttWidth(ganttChartZoomLevel, projectInfo)} startDate={projectInfo.taskMinDate} hot-renderer></GanttCellRenderer>
           </HotColumn>
         </HotTable>
       </div>
@@ -118,8 +126,8 @@ export const ProjectDetails: React.FunctionComponent = () => {
   )
 }
 
-const getGanttWidth = (proj: ProjectDetailedInfoVm): number => {
-  return GanttOneDayWidthInPixel * (proj.taskMaxDate.getTime() - proj.taskMinDate.getTime()) / (1000 * 3600 * 24)
+const getGanttWidth = (ganttChartZoomLevel: number, proj: ProjectDetailedInfoVm): number => {
+  return ganttChartZoomLevel * (proj.taskMaxDate.getTime() - proj.taskMinDate.getTime()) / (1000 * 3600 * 24)
 }
 
 function populateDemoTasks(projectInfo: ProjectDetailedInfoVm) {

@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { dateAsShortStr } from "../../common/dateFormatter";
 import { ProjectTaskUnitEstimationVm } from "../../models/ProjectTaskUnitEstimationVm";
-
-export const GanttOneDayWidthInPixel = 1
+import { useAppSelector, useAppDispatch } from '../../redux/hooks'
 
 export const GanttCellRenderer = (props: any) => {
     const { width, value, startDate } = props
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [ganttDivHeight, setGanttDivHeight] = useState<number>(0)
+    const ganttChartZoomLevel = useAppSelector(state => state.projectDetailsReducer.ganttChartZoomLevel)
 
     const estimations = value as ProjectTaskUnitEstimationVm[]
     const startDt = startDate as Date
@@ -39,8 +39,8 @@ export const GanttCellRenderer = (props: any) => {
         let totalHeight = 0
         let top = 5
         estimationToDraw.forEach(e => {
-            const startX = GanttOneDayWidthInPixel * (e.start.getTime() - startDt.getTime()) / (1000 * 3600 * 24)
-            const lineWidth = GanttOneDayWidthInPixel * (e.end.getTime() - e.start.getTime()) / (1000 * 3600 * 24)
+            const startX = ganttChartZoomLevel * (e.start.getTime() - startDt.getTime()) / (1000 * 3600 * 24)
+            const lineWidth = ganttChartZoomLevel * (e.end.getTime() - e.start.getTime()) / (1000 * 3600 * 24)
 
             drawLine(
                 startX, top + e.lineHeight / 2,
