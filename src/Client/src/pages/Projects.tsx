@@ -68,18 +68,12 @@ export const Projects: React.FunctionComponent = () => {
         />
       </Box>
       <HotTable
-        //fixedRowsTop={0}
         columnSorting={true}
         data={filteredProjects}
         colHeaders={headers}
         colWidths={[20, 25, 250]}
-        //wordWrap={false}
-        //rowHeaders={true}
         fillHandle={false}
         stretchH="all"
-        //hiddenColumns={hiddenColumns}
-        //manualColumnResize={true}
-        //afterChange={(changes: CellChange[] | null, source: ChangeSource) => { console.log("afterChange", changes) }}
         licenseKey='non-commercial-and-evaluation'
       >
         <HotColumn width={55} data={"id"} readOnly>

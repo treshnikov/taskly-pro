@@ -2,9 +2,10 @@ import { useTranslation } from 'react-i18next';
 import { ProjectTaskUnitEstimationVm } from "../../models/ProjectTaskUnitEstimationVm";
 
 export const DepartmentsCellRenderer = (props: any) => {
-    const { value } = props
+    const { showDetails, value } = props
     const estimations = value as ProjectTaskUnitEstimationVm[]
     const { t } = useTranslation();
+    const showDetailsAsBool = showDetails as boolean
 
     return (
         <>
@@ -40,7 +41,7 @@ export const DepartmentsCellRenderer = (props: any) => {
                                 whiteSpace: "pre-wrap",
                                 display: "inline-block"
                             }}>{i.unitName + " " + i.totalHours + t('hour')}</span>
-                            <span style={{ display: "block", fontSize: "10px", color: "dimgray" }}>
+                            <span style={{ display: showDetailsAsBool ? "block" : "none", fontSize: "10px", color: "dimgray" }}>
                                 <div style={{ width: "20px", display: "inline-block" }}></div>
                                 {
                                     i.estimations.map(p => {
@@ -50,7 +51,11 @@ export const DepartmentsCellRenderer = (props: any) => {
                                             )
 
                                         return (
-                                            <div key={i.id + p.userPositionId} style={{ display: "inline", marginRight: "5px" }}>{p.userPositionIdent}: {p.hours + t('hour')}</div>
+                                            <div key={i.id + p.userPositionId} 
+                                            style={{ 
+                                                display: "inline", 
+                                                marginRight: "5px"
+                                             }}>{p.userPositionIdent}: {p.hours + t('hour')}</div>
                                         )
                                     }
                                     )

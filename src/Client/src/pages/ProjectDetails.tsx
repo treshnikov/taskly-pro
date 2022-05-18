@@ -6,11 +6,12 @@ import { useHttp } from '../hooks/http.hook';
 import { useParams } from 'react-router-dom';
 import { ProjectDetailedInfoVm } from "../models/ProjectDetailedInfoVm";
 import { DepartmentsCellRenderer } from "../components/ProjectDetails/DepartmentsCellRenderer"
-import { WeekCellRenderer } from '../components/ProjectDetails/WeekCellRenderer';
-import { Stack } from '@mui/material';
-import { DateCellRenderer } from '../components/ProjectDetails/DateCellRenderer';
+import { Button, Checkbox, FormControlLabel, Stack, Typography } from '@mui/material';
 import { ProjectTaskVm } from '../models/ProjectTaskVm';
 import { ProjectTaskUnitEstimationVm } from '../models/ProjectTaskUnitEstimationVm';
+import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
+import BarChartIcon from '@mui/icons-material/BarChart';
+import { GanttCellRenderer } from '../components/ProjectDetails/GanttCellRenderer';
 
 registerAllModules();
 
@@ -25,7 +26,8 @@ export const ProjectDetails: React.FunctionComponent = () => {
   const [headers, setHeaders] = useState<string[]>(staticHeaders)
   const [colWidths, setColWidths] = useState<number[]>([5, 300, 150, 310, 100, 100])
   const [firstMonday, setFirstMonday] = useState<Date>(new Date())
-  const [tableHeight, setTableHeight] = useState<number>(500)
+  const [tableHeight, setTableHeight] = useState<number>(3500)
+  const [showDetails, setShowDetails] = useState<boolean>(false)
 
   useEffect(() => {
     async function requestDetails() {
@@ -54,16 +56,20 @@ export const ProjectDetails: React.FunctionComponent = () => {
 
   return (
     <div className='page-container'>
-      <h3>{projectInfo.shortName + " [" + projectInfo.start.toLocaleDateString() + " - " + projectInfo.end.toLocaleDateString() + "]"}</h3>
       <div style={{ width: "100%" }}>
-        <Stack spacing={1}>
+        <Stack spacing={1} paddingTop={1} paddingBottom={1} direction="row">
+          <Typography variant='h5'>{projectInfo.shortName}</Typography>
+          <Button variant='contained' size='small' startIcon={<PlaylistAddIcon />}>Add</Button>
+          <Button variant='contained' size='small' startIcon={<BarChartIcon />}>Statistics</Button>
+          <FormControlLabel label="Show details" control={<Checkbox checked={showDetails} onChange={e => setShowDetails(e.target.checked)} size='small' />} />
         </Stack>
       </div>
-      <div style={{ overflowX: 'auto', height: tableHeight }} onClickCapture ={e => {e.stopPropagation()}}>
+      <div style={{ overflowX: 'auto', height: tableHeight }} onClickCapture={e => { e.stopPropagation() }}>
         <HotTable
           columnSorting={true}
           rowHeaders={true}
           renderAllRows={true}
+          autoRowSize={true}
           viewportColumnRenderingOffset={headers.length}
           fixedColumnsLeft={staticHeaders.length - 2}
           data={projectInfo.tasks}
@@ -78,6 +84,7 @@ export const ProjectDetails: React.FunctionComponent = () => {
           afterSelection={(row: number, column: number, row2: number, column2: number, preventScrolling: { value: boolean }, selectionLayerLevel: number) => {
             preventScrolling.value = true
           }}
+
           licenseKey='non-commercial-and-evaluation'
         >
           <HotColumn hiddenColumns data={"id"} editor={false} type={"text"} />
@@ -85,7 +92,7 @@ export const ProjectDetails: React.FunctionComponent = () => {
           <HotColumn data={"comment"} wordWrap={false} type={"text"} />
 
           <HotColumn data={"unitEstimations"} readOnly >
-            <DepartmentsCellRenderer hot-renderer></DepartmentsCellRenderer>
+            <DepartmentsCellRenderer showDetails={showDetails} hot-renderer></DepartmentsCellRenderer>
           </HotColumn>
 
           <HotColumn data={"startAsStr"} type={"text"} />
@@ -100,15 +107,9 @@ export const ProjectDetails: React.FunctionComponent = () => {
           <HotColumn data={"end"} readOnly >
             <DateCellRenderer hot-renderer></DateCellRenderer>
           </HotColumn> */}
-          {
-            headers.slice(staticHeaders.length).map((i, idx) => {
-              return (
-                <HotColumn data={"unitEstimations"} key={"weekColumn" + idx} readOnly >
-                  <WeekCellRenderer firstMonday={firstMonday} hot-renderer></WeekCellRenderer>
-                </HotColumn>
-              )
-            })
-          }
+          <HotColumn data={"unitEstimations"} key={"weekColumn"} readOnly width={5000} >
+            <GanttCellRenderer firstMonday={firstMonday} hot-renderer></GanttCellRenderer>
+          </HotColumn>
         </HotTable>
       </div>
     </div>
@@ -127,23 +128,23 @@ function populateDemoTasks(projectInfo: ProjectDetailedInfoVm) {
   testEstimation1.id = "asdfasdfsdf"
   testEstimation1.unitName = "Отдел программирования РСУ"
   testEstimation1.estimations = [
-    {userPositionId: '1', userPositionIdent: 'И1', hours: 80},
-    {userPositionId: '2', userPositionIdent: 'И2', hours: 240},
-    {userPositionId: '3', userPositionIdent: 'И3', hours: 360},
+    { userPositionId: '1', userPositionIdent: 'И1', hours: 80 },
+    { userPositionId: '2', userPositionIdent: 'И2', hours: 240 },
+    { userPositionId: '3', userPositionIdent: 'И3', hours: 360 },
   ]
 
   const testEstimation2 = new ProjectTaskUnitEstimationVm()
   testEstimation2.id = "dfgsdfg"
   testEstimation2.unitName = "Отдел программирования СУПП"
   testEstimation2.estimations = [
-    {userPositionId: '4', userPositionIdent: 'ГС', hours: 180},
+    { userPositionId: '4', userPositionIdent: 'ГС', hours: 180 },
   ]
 
   const testEstimation3 = new ProjectTaskUnitEstimationVm()
   testEstimation3.id = "iuthoi3hti2hpi"
   testEstimation3.unitName = "Отдел программирования с очень длинным именем"
   testEstimation3.estimations = [
-    {userPositionId: '5', userPositionIdent: 'DB', hours: 40},
+    { userPositionId: '5', userPositionIdent: 'DB', hours: 40 },
   ]
 
   testTask.unitEstimations = [testEstimation1, testEstimation2, testEstimation3]
@@ -151,4 +152,3 @@ function populateDemoTasks(projectInfo: ProjectDetailedInfoVm) {
   newTasks = [...newTasks, testTask]
   projectInfo.tasks = newTasks
 }
-

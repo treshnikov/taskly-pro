@@ -41,8 +41,6 @@ export const authSlice = createSlice({
     initialState: initAuthState(),
     reducers: {
         onSignin(state: AuthState, action: PayloadAction<JWT>) {
-            //console.log("sign in", action.payload)
-          
             state.isAuthenticated = true
             state.jwt = action.payload
 
@@ -50,7 +48,6 @@ export const authSlice = createSlice({
         },
 
         onSignout(state: AuthState) {
-            //console.log("sign out")
             state.isAuthenticated = false
             state.jwt = ""
             localStorage.removeItem(storageName)

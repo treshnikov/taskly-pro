@@ -51,8 +51,6 @@ export const Users: React.FunctionComponent = () => {
         fillHandle={false}
         stretchH="all"
         hiddenColumns={hiddenColumns}
-        //manualColumnResize={true}
-        //afterChange={(changes: CellChange[] | null, source: ChangeSource) => { console.log("afterChange", changes) }}
         licenseKey='non-commercial-and-evaluation'
       />
     </div>
