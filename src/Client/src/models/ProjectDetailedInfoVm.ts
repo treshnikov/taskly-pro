@@ -1,10 +1,6 @@
 import { ProjectTaskUnitEstimationVm } from "./ProjectTaskUnitEstimationVm"
 import { ProjectTaskVm } from "./ProjectTaskVm"
 
-export class ProjectWeekVm {
-    monday: Date = new Date()
-}
-
 export class ProjectDetailedInfoVm {
     id: number = 0
     name: string = ''
@@ -21,46 +17,32 @@ export class ProjectDetailedInfoVm {
     tasks: ProjectTaskVm[] = []
 
     // calculated fields
-    weeks: ProjectWeekVm[] = []
-
-    private static handleWeeks(arg: ProjectDetailedInfoVm, start: Date, end: Date) {
-        arg.weeks = []
-        let currentDate = new Date(start)
-
-        // find first left monday
-        while (currentDate.getDay() !== 1) {
-            currentDate.setDate(currentDate.getDate() - 1)
-        }
-
-        while (currentDate < end) { 
-            const w = new ProjectWeekVm()
-            w.monday = new Date(currentDate)
-            arg.weeks.push(w)
-            currentDate.setDate(currentDate.getDate() + 7)
-        }
-    }
-
+    totalHours: number = 0
 
     public static init(arg: ProjectDetailedInfoVm) {
         //todo
         arg.start = new Date(arg.start)
         arg.end = new Date(arg.end)
+        arg.totalHours = 0
         let taskMaxDate = new Date()
         let taskMinDate = new Date()
 
-        let sumEstimation = 0
         const maxLineHeight = 150
 
         arg.tasks?.forEach(task => {
+            task.totalHours = 0
             task.start = new Date(task.start)
             task.end = new Date(task.end)
             
             task.startAsStr = task.start.getDate().toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false}) + "." + (task.start.getMonth() + 1).toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false}) + "." + task.start.getFullYear()
             task.endAsStr = task.end.getDate().toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false}) + "." + (task.end.getMonth() + 1).toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false}) + "." + task.end.getFullYear()
-
+            
             // calculate total project estimation
             task.unitEstimations?.forEach(e => {
-                sumEstimation += ProjectTaskUnitEstimationVm.getTotalHours(e)
+                const depEstimation = ProjectTaskUnitEstimationVm.getTotalHours(e)
+                task.totalHours += depEstimation
+                arg.totalHours += depEstimation
+
             })
 
             if (task.start <= taskMinDate) {
@@ -72,7 +54,7 @@ export class ProjectDetailedInfoVm {
             }
         })
 
-        this.handleWeeks(arg, taskMinDate, taskMaxDate)
+        
 
         arg.tasks?.forEach(task => {
             task.unitEstimations?.forEach(taskDepartmentEstimation => {
@@ -86,7 +68,7 @@ export class ProjectDetailedInfoVm {
                 // calculate the height of the each ProjectTaskUnitEstimationVm depending on total estimation
                 taskDepartmentEstimation.lineHeight = Math.max(
                         3, 
-                        Math.trunc(maxLineHeight * (taskDepartmentEstimation.totalHours / sumEstimation)))
+                        Math.trunc(maxLineHeight * (taskDepartmentEstimation.totalHours / arg.totalHours)))
 
                 // prepare color for gant chart
                 taskDepartmentEstimation.color = ProjectTaskUnitEstimationVm.getColor(taskDepartmentEstimation)

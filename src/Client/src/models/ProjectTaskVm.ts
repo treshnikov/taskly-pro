@@ -12,4 +12,5 @@ export class ProjectTaskVm {
     // calculated
     startAsStr: string = ''
     endAsStr: string = ''
+    totalHours: number = 0
 }

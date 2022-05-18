@@ -20,11 +20,11 @@ export const ProjectDetails: React.FunctionComponent = () => {
   const { request } = useHttp()
   const { t } = useTranslation();
 
-  const staticHeaders = ['', t('task'), t('comment'), t('units'), t('start'), t('end')]
+  const staticHeaders = ['', t('task'), t('comment'), '', t('units'), t('start'), t('end'), '']
 
   const [projectInfo, setProjectInfo] = useState<ProjectDetailedInfoVm>(new ProjectDetailedInfoVm())
   const [headers, setHeaders] = useState<string[]>(staticHeaders)
-  const [colWidths, setColWidths] = useState<number[]>([5, 300, 150, 310, 100, 100])
+  const [colWidths, setColWidths] = useState<number[]>([5, 300, 150, 50, 310, 100, 100, 300])
   const [firstMonday, setFirstMonday] = useState<Date>(new Date())
   const [tableHeight, setTableHeight] = useState<number>(3500)
   const [showDetails, setShowDetails] = useState<boolean>(false)
@@ -38,17 +38,6 @@ export const ProjectDetails: React.FunctionComponent = () => {
     }
     requestDetails()
   }, [request, projectId])
-
-  useEffect(() => {
-    const weekHeaders = projectInfo.weeks.map((i, idx) => {
-      return i.monday.toLocaleDateString()
-    })
-    const weekColsWidths = projectInfo.weeks.map(i => 80)
-
-    setFirstMonday(projectInfo.weeks[0]?.monday)
-    setHeaders(h => [...h, ...weekHeaders])
-    setColWidths(c => [...c, ...weekColsWidths])
-  }, [projectInfo])
 
   useLayoutEffect(() => {
     setTableHeight(window.innerHeight - 145)
@@ -91,6 +80,7 @@ export const ProjectDetails: React.FunctionComponent = () => {
           <HotColumn data={"description"} type={"text"} />
           <HotColumn data={"comment"} wordWrap={false} type={"text"} />
 
+          <HotColumn data={"totalHours"} type={"text"} />
           <HotColumn data={"unitEstimations"} readOnly >
             <DepartmentsCellRenderer showDetails={showDetails} hot-renderer></DepartmentsCellRenderer>
           </HotColumn>
@@ -107,7 +97,7 @@ export const ProjectDetails: React.FunctionComponent = () => {
           <HotColumn data={"end"} readOnly >
             <DateCellRenderer hot-renderer></DateCellRenderer>
           </HotColumn> */}
-          <HotColumn data={"unitEstimations"} key={"weekColumn"} readOnly width={5000} >
+          <HotColumn data={"unitEstimations"} key={"weekColumn"} readOnly>
             <GanttCellRenderer firstMonday={firstMonday} hot-renderer></GanttCellRenderer>
           </HotColumn>
         </HotTable>
