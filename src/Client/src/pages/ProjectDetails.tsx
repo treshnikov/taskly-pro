@@ -77,6 +77,7 @@ export const ProjectDetails: React.FunctionComponent = () => {
           colHeaders={headers}
           wordWrap={true}
           fillHandle={false}
+          manualColumnResize={true}
           //rowHeights={45}
           hiddenColumns={{
             columns: [0]
@@ -88,7 +89,7 @@ export const ProjectDetails: React.FunctionComponent = () => {
           licenseKey='non-commercial-and-evaluation'
         >
           <HotColumn hiddenColumns data={"id"} editor={false} type={"text"} />
-          <HotColumn data={"description"} type={"text"} />
+          <HotColumn data={"description"} wordWrap={false} type={"text"} className="ellipsis-text" />
           <HotColumn data={"comment"} wordWrap={false} className="ellipsis-text" type={"text"} />
 
           <HotColumn data={"totalHours"} type={"text"} className='htCenter' />
