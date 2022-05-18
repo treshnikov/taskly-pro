@@ -1,3 +1,4 @@
+import { dateAsShortStr } from "../common/dateFormatter"
 import { ProjectTaskUnitEstimationVm } from "./ProjectTaskUnitEstimationVm"
 import { ProjectTaskVm } from "./ProjectTaskVm"
 
@@ -18,14 +19,16 @@ export class ProjectDetailedInfoVm {
 
     // calculated fields
     totalHours: number = 0
+    taskMaxDate: Date = new Date()
+    taskMinDate: Date = new Date()
 
     public static init(arg: ProjectDetailedInfoVm) {
         //todo
         arg.start = new Date(arg.start)
         arg.end = new Date(arg.end)
         arg.totalHours = 0
-        let taskMaxDate = new Date()
-        let taskMinDate = new Date()
+        arg.taskMaxDate = new Date()
+        arg.taskMinDate = new Date()
 
         const maxLineHeight = 150
 
@@ -34,8 +37,8 @@ export class ProjectDetailedInfoVm {
             task.start = new Date(task.start)
             task.end = new Date(task.end)
             
-            task.startAsStr = task.start.getDate().toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false}) + "." + (task.start.getMonth() + 1).toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false}) + "." + task.start.getFullYear()
-            task.endAsStr = task.end.getDate().toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false}) + "." + (task.end.getMonth() + 1).toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false}) + "." + task.end.getFullYear()
+            task.startAsStr = dateAsShortStr(task.start)
+            task.endAsStr = dateAsShortStr(task.end)
             
             // calculate total project estimation
             task.unitEstimations?.forEach(e => {
@@ -45,16 +48,14 @@ export class ProjectDetailedInfoVm {
 
             })
 
-            if (task.start <= taskMinDate) {
-                taskMinDate = task.start
+            if (task.start <= arg.taskMinDate) {
+                arg.taskMinDate = task.start
             }
 
-            if (task.end > taskMaxDate) {
-                taskMaxDate = task.end
+            if (task.end > arg.taskMaxDate) {
+                arg.taskMaxDate = task.end
             }
         })
-
-        
 
         arg.tasks?.forEach(task => {
             task.unitEstimations?.forEach(taskDepartmentEstimation => {

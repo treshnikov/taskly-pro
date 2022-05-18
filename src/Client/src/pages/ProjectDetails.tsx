@@ -11,7 +11,8 @@ import { ProjectTaskVm } from '../models/ProjectTaskVm';
 import { ProjectTaskUnitEstimationVm } from '../models/ProjectTaskUnitEstimationVm';
 import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
 import BarChartIcon from '@mui/icons-material/BarChart';
-import { GanttCellRenderer } from '../components/ProjectDetails/GanttCellRenderer';
+import { GanttCellRenderer, GanttOneDayWidthInPixel } from '../components/ProjectDetails/GanttCellRenderer';
+import { dateAsShortStr } from '../common/dateFormatter';
 
 registerAllModules();
 
@@ -20,12 +21,11 @@ export const ProjectDetails: React.FunctionComponent = () => {
   const { request } = useHttp()
   const { t } = useTranslation();
 
-  const staticHeaders = ['', t('task'), t('comment'), '', t('units'), t('start'), t('end'), '']
+  const staticHeaders = ['', t('task'), t('comment'), '', t('units'), t('start'), t('end')]
 
   const [projectInfo, setProjectInfo] = useState<ProjectDetailedInfoVm>(new ProjectDetailedInfoVm())
   const [headers, setHeaders] = useState<string[]>(staticHeaders)
-  const [colWidths, setColWidths] = useState<number[]>([5, 300, 150, 50, 310, 100, 100, 300])
-  const [firstMonday, setFirstMonday] = useState<Date>(new Date())
+  const [colWidths, setColWidths] = useState<number[]>([5, 300, 150, 50, 310, 100, 100])
   const [tableHeight, setTableHeight] = useState<number>(3500)
   const [showDetails, setShowDetails] = useState<boolean>(false)
 
@@ -35,6 +35,8 @@ export const ProjectDetails: React.FunctionComponent = () => {
       //populateDemoTasks(data)
       ProjectDetailedInfoVm.init(data)
       setProjectInfo(data)
+      setHeaders([...staticHeaders, dateAsShortStr(data.taskMinDate) + " - " + dateAsShortStr(data.taskMaxDate)
+      ])
     }
     requestDetails()
   }, [request, projectId])
@@ -97,13 +99,18 @@ export const ProjectDetails: React.FunctionComponent = () => {
           <HotColumn data={"end"} readOnly >
             <DateCellRenderer hot-renderer></DateCellRenderer>
           </HotColumn> */}
-          <HotColumn data={"unitEstimations"} key={"weekColumn"} readOnly>
-            <GanttCellRenderer firstMonday={firstMonday} hot-renderer></GanttCellRenderer>
+          <HotColumn data={"unitEstimations"} key={"ganttColumn"} width={getGanttWidth(projectInfo)} readOnly>
+            <GanttCellRenderer width={getGanttWidth(projectInfo)} startDate={projectInfo.taskMinDate} hot-renderer></GanttCellRenderer>
           </HotColumn>
         </HotTable>
       </div>
     </div>
   )
+}
+
+const getGanttWidth = (proj: ProjectDetailedInfoVm) : number =>
+{
+  return GanttOneDayWidthInPixel * (proj.taskMaxDate.getTime() - proj.taskMinDate.getTime()) / (1000 * 3600 * 24)
 }
 
 function populateDemoTasks(projectInfo: ProjectDetailedInfoVm) {

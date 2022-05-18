@@ -1,26 +1,16 @@
 import { useEffect, useRef, useState } from "react";
-import useTilg from "tilg";
+import { dateAsShortStr } from "../../common/dateFormatter";
 import { ProjectTaskUnitEstimationVm } from "../../models/ProjectTaskUnitEstimationVm";
 
+export const GanttOneDayWidthInPixel = 1
+
 export const GanttCellRenderer = (props: any) => {
-    const { col, value, firstMonday } = props
+    const { width, value, startDate } = props
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [ganttDivHeight, setGanttDivHeight] = useState<number>(0)
 
     const estimations = value as ProjectTaskUnitEstimationVm[]
-    const startDate = firstMonday as Date
-    const colDate = new Date(startDate)
-    colDate.setDate(colDate.getDate() + (col - 5) * 7)
-    const startDateToCheck = estimations && estimations.length >= 1
-        ? new Date(estimations[0].start)
-        : new Date()
-    startDateToCheck.setDate(startDateToCheck.getDate() - 7)
-
-    // const draw =
-    //     estimations &&
-    //     estimations.length > 0 &&
-    //     colDate >= startDateToCheck &&
-    //     colDate <= estimations[0].end
+    const startDt = startDate as Date
 
     const drawLine = (x1: number, y1: number, x2: number, y2: number, color: string, lineWidth: number) => {
         if (!canvasRef.current) {
@@ -49,9 +39,12 @@ export const GanttCellRenderer = (props: any) => {
         let totalHeight = 0
         let top = 5
         estimationToDraw.forEach(e => {
+            const startX = GanttOneDayWidthInPixel * (e.start.getTime() - startDt.getTime()) / (1000 * 3600 * 24)
+            const lineWidth = GanttOneDayWidthInPixel * (e.end.getTime() - e.start.getTime()) / (1000 * 3600 * 24)
+
             drawLine(
-                0, top + e.lineHeight / 2,
-                500, top + e.lineHeight / 2,
+                startX, top + e.lineHeight / 2,
+                startX + lineWidth, top + e.lineHeight / 2,
                 e.color, e.lineHeight)
             top += e.lineHeight + 1
             totalHeight += e.lineHeight + 1
@@ -61,7 +54,19 @@ export const GanttCellRenderer = (props: any) => {
     }, [estimations])
 
     return (
-        <div style={{ height: ganttDivHeight }}>
-            <canvas ref={canvasRef} width={500}></canvas>
+        <div style={{
+            height: ganttDivHeight,
+            marginLeft: "-4px",
+            paddingRight: "8px"
+        }}
+            title={getCanvasTitle(estimations)}>
+            <canvas ref={canvasRef} width={width}></canvas>
         </div>)
+}
+
+const getCanvasTitle = (arg: ProjectTaskUnitEstimationVm[]): string => {
+    if (!arg || arg.length === 0) {
+        return ""
+    }
+    return dateAsShortStr(arg[0].start) + " - " + dateAsShortStr(arg[0].end)
 }
