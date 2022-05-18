@@ -17,7 +17,7 @@
     height: 13em;
 }
 
-.htCore > thead > tr > th {
+.htCore>thead>tr>th {
     line-height: 1.5rem;
     font-size: 0.820rem;
     font-family: Public Sans, sans-serif;
@@ -28,4 +28,8 @@
     text-align: left;
     /* padding: 16px; */
     color: rgb(33, 43, 54);
+}
+
+.ellipsis-text {
+    text-overflow: ellipsis;
 }

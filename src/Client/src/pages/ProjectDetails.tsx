@@ -6,7 +6,7 @@ import { useHttp } from '../hooks/http.hook';
 import { useParams } from 'react-router-dom';
 import { ProjectDetailedInfoVm } from "../models/ProjectDetailedInfoVm";
 import { DepartmentsCellRenderer } from "../components/ProjectDetails/DepartmentsCellRenderer"
-import { Button, Checkbox, FormControlLabel, Stack, Typography } from '@mui/material';
+import { Button, Checkbox, FormControlLabel, Grid, Stack, Typography } from '@mui/material';
 import { ProjectTaskVm } from '../models/ProjectTaskVm';
 import { ProjectTaskUnitEstimationVm } from '../models/ProjectTaskUnitEstimationVm';
 import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
@@ -21,11 +21,11 @@ export const ProjectDetails: React.FunctionComponent = () => {
   const { request } = useHttp()
   const { t } = useTranslation();
 
-  const staticHeaders = ['', t('task'), t('comment'), '', t('units'), t('start'), t('end')]
+  const staticHeaders = ['', t('task'), t('comment'), t('estimationH'), t('units'), t('start'), t('end')]
 
   const [projectInfo, setProjectInfo] = useState<ProjectDetailedInfoVm>(new ProjectDetailedInfoVm())
   const [headers, setHeaders] = useState<string[]>(staticHeaders)
-  const [colWidths, setColWidths] = useState<number[]>([5, 300, 150, 50, 310, 100, 100])
+  const [colWidths, setColWidths] = useState<number[]>([5, 300, 150, 70, 310, 100, 100])
   const [tableHeight, setTableHeight] = useState<number>(3500)
   const [showDetails, setShowDetails] = useState<boolean>(false)
 
@@ -48,19 +48,28 @@ export const ProjectDetails: React.FunctionComponent = () => {
   return (
     <div className='page-container'>
       <div style={{ width: "100%" }}>
-        <Stack spacing={1} paddingTop={1} paddingBottom={1} direction="row">
-          <Typography variant='h5'>{projectInfo.shortName}</Typography>
-          <Button variant='contained' size='small' startIcon={<PlaylistAddIcon />}>Add</Button>
-          <Button variant='contained' size='small' startIcon={<BarChartIcon />}>Statistics</Button>
-          <FormControlLabel label="Show details" control={<Checkbox checked={showDetails} onChange={e => setShowDetails(e.target.checked)} size='small' />} />
-        </Stack>
+
+        <Grid container  >
+          <Grid item xs={8} >
+            <Stack direction="row" spacing={1} paddingTop={1} paddingBottom={1}>
+              <Button variant='contained' size='small' startIcon={<PlaylistAddIcon />}>Add</Button>
+              <Button variant='contained' size='small' startIcon={<BarChartIcon />}>Statistics</Button>
+              <FormControlLabel label="Show details" control={<Checkbox checked={showDetails} onChange={e => setShowDetails(e.target.checked)} size='small' />} />
+            </Stack>
+          </Grid>
+          <Grid item xs={4} style={{ textAlign: "right" }} paddingTop={1} paddingBottom={1}>
+            <Typography variant='h5'>{projectInfo.shortName}</Typography>
+          </Grid>
+        </Grid>
+
+
       </div>
       <div style={{ overflowX: 'auto', height: tableHeight }} onClickCapture={e => { e.stopPropagation() }}>
         <HotTable
           columnSorting={true}
           rowHeaders={true}
           renderAllRows={true}
-          autoRowSize={true}
+          //autoRowSize={true}
           viewportColumnRenderingOffset={headers.length}
           fixedColumnsLeft={staticHeaders.length - 2}
           data={projectInfo.tasks}
@@ -68,7 +77,7 @@ export const ProjectDetails: React.FunctionComponent = () => {
           colHeaders={headers}
           wordWrap={true}
           fillHandle={false}
-          rowHeights={45}
+          //rowHeights={45}
           hiddenColumns={{
             columns: [0]
           }}
@@ -80,9 +89,9 @@ export const ProjectDetails: React.FunctionComponent = () => {
         >
           <HotColumn hiddenColumns data={"id"} editor={false} type={"text"} />
           <HotColumn data={"description"} type={"text"} />
-          <HotColumn data={"comment"} wordWrap={false} type={"text"} />
+          <HotColumn data={"comment"} wordWrap={false} className="ellipsis-text" type={"text"} />
 
-          <HotColumn data={"totalHours"} type={"text"} />
+          <HotColumn data={"totalHours"} type={"text"} className='htCenter' />
           <HotColumn data={"unitEstimations"} readOnly >
             <DepartmentsCellRenderer showDetails={showDetails} hot-renderer></DepartmentsCellRenderer>
           </HotColumn>
@@ -108,8 +117,7 @@ export const ProjectDetails: React.FunctionComponent = () => {
   )
 }
 
-const getGanttWidth = (proj: ProjectDetailedInfoVm) : number =>
-{
+const getGanttWidth = (proj: ProjectDetailedInfoVm): number => {
   return GanttOneDayWidthInPixel * (proj.taskMaxDate.getTime() - proj.taskMinDate.getTime()) / (1000 * 3600 * 24)
 }
 

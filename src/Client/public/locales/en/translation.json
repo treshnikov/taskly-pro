@@ -47,5 +47,6 @@
     "chiefSpecialistHours": "Cs",
     "techniclaWriterHours": "Tw",
     "hour": "h",
-    "comment": "Comment"
+    "comment": "Comment",
+    "estimationH": "Est., h"
 }

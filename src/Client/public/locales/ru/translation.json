@@ -47,5 +47,6 @@
     "chiefSpecialistHours": "ГС",
     "techniclaWriterHours": "Т",
     "hour": "ч",
-    "comment": "Комментарий"
+    "comment": "Комментарий",
+    "estimationH": "Оценка, ч"
 }   
