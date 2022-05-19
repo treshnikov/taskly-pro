@@ -139,6 +139,8 @@ namespace Taskly.Application.Users
                     idx++;
                 }
 
+                // remove records with zero estimation
+                newTask.UnitEstimations = newTask.UnitEstimations.Where(e => e.Estimations.Count > 0).ToList();
                 _dbContext.ProjectTasks.Add(newTask);
 
                 dbProject.Tasks.Add(newTask);
