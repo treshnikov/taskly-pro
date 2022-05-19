@@ -54,7 +54,7 @@ export const Projects: React.FunctionComponent = () => {
   }, [request])
 
   const headers = ['', 'ID', t('name'), t('short-name'), t('customer'), t('company'),
-    t('is-opened'), t('project-manager'), t('chief-engineer'),
+    t('is-opened'), t('external'), t('project-manager'), t('chief-engineer'),
     t('start'), t('end'), t('close-date'), t('contract')]
 
   return (
@@ -85,6 +85,7 @@ export const Projects: React.FunctionComponent = () => {
         <HotColumn data={"customer"} editor={false} type={"text"} />
         <HotColumn data={"company"} editor={false} type={"text"} />
         <HotColumn data={"isOpened"} editor={false} type={'checkbox'} className='htCenter' readOnly />
+        <HotColumn data={"isExternal"} editor={false} type={'checkbox'} className='htCenter' readOnly />
         <HotColumn data={"projectManager"} editor={false} type={"text"} />
         <HotColumn data={"chiefEngineer"} editor={false} type={"text"} />
         <HotColumn data={"start"} editor={false} type={"text"} />

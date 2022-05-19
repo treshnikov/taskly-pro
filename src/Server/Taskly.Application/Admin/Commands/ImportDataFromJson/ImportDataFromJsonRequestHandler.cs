@@ -71,7 +71,9 @@ namespace Taskly.Application.Users
                     //Log.Logger.Warning($"Cannot import tasks for projectId={t.ProjectId}");
                     continue;
                 }
-                dbProject.Type = t.ProjectType;
+                dbProject.Type = t.ProjectType == ProjectType.External && !dbProject.ShortName!.Contains("Внутр.") 
+                    ? ProjectType.External
+                    : ProjectType.Internal;
 
                 // task
                 var newTask = new ProjectTask
@@ -277,6 +279,10 @@ namespace Taskly.Application.Users
                     _dbContext.Customers.Add(customer);
                 }
 
+                var projectType = p.short_name.Contains("Внутр.")
+                    ? ProjectType.Internal
+                    : ProjectType.External;
+
                 if (dbProject == null && newProject == null)
                 {
                     newProjects.Add(new Project
@@ -288,7 +294,7 @@ namespace Taskly.Application.Users
                         Company = company,
                         Start = start,
                         End = end,
-                        Type = ProjectType.External,
+                        Type = projectType,
                         CloseDate = closeDate,
                         ProjectManager = pm,
                         ChiefEngineer = lead,
@@ -308,6 +314,7 @@ namespace Taskly.Application.Users
                     dbProject.ProjectManager = pm;
                     dbProject.ChiefEngineer = lead;
                     dbProject.Customer = customer;
+                    dbProject.Type = projectType;
                     dbProject.Contract = p.contract;
 
                     _dbContext.Projects.Update(dbProject);

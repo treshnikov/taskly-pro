@@ -4,7 +4,7 @@ export class ProjectShortInfoVm {
     shortName: string = ''
     company: string = ''
     isOpened: boolean = false
-    type: number = 0 // 0 - internal, 1 - external
+    isExternal: boolean = false
     projectManager: string = ''
     chiefEngineer: string = ''
     start: Date = new Date()
