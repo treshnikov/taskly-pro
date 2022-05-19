@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { useEffect, useState } from 'react';
-import { UnitUserVm } from '../models/UnitUserVm';
+import { UnitUserVm } from '../models/Users/UnitUserVm';
 import { useHttp } from '../hooks/http.hook';
 
 export default function Units() {

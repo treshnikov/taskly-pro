@@ -3,7 +3,7 @@ import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import ZoomInIcon from '@mui/icons-material/ZoomIn';
 import ZoomOutIcon from '@mui/icons-material/ZoomOut';
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../../hooks/redux.hook";
 import { ganttZoomIn, ganttZoomOut, toggleShowDetails } from '../../redux/projectDetailsSlice';
 import { useTranslation } from "react-i18next";
 

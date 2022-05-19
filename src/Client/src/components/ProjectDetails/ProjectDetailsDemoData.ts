@@ -1,6 +1,6 @@
-import { ProjectDetailedInfoVm } from "../../models/ProjectDetailedInfoVm"
-import { ProjectTaskUnitEstimationVm } from "../../models/ProjectTaskUnitEstimationVm"
-import { ProjectTaskVm } from "../../models/ProjectTaskVm"
+import { ProjectDetailedInfoVm } from "../../models/ProjectDetails/ProjectDetailedInfoVm"
+import { ProjectTaskUnitEstimationVm } from "../../models/ProjectDetails/ProjectTaskUnitEstimationVm"
+import { ProjectTaskVm } from "../../models/ProjectDetails/ProjectTaskVm"
 
 export function populateDemoTasks(projectInfo: ProjectDetailedInfoVm) {
     let newTasks = projectInfo.tasks

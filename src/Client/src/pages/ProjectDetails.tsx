@@ -4,12 +4,12 @@ import { registerAllModules } from 'handsontable/registry';
 import { useTranslation } from 'react-i18next';
 import { useHttp } from '../hooks/http.hook';
 import { useParams } from 'react-router-dom';
-import { ProjectDetailedInfoVm } from "../models/ProjectDetailedInfoVm";
+import { ProjectDetailedInfoVm } from "../models/ProjectDetails/ProjectDetailedInfoVm";
 import { DepartmentsCellRenderer } from "../components/ProjectDetails/DepartmentsCellRenderer"
 import { GanttCellRenderer } from '../components/ProjectDetails/GanttCellRenderer';
 import { dateAsShortStrFromNumber } from '../common/dateFormatter';
 import { ProjectDetailsToolBar } from '../components/ProjectDetails/ProjectDetailsToolBar';
-import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../hooks/redux.hook";
 import { updateProjectData } from '../redux/projectDetailsSlice';
 
 registerAllModules();

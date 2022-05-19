@@ -1,6 +1,5 @@
-import { dateAsShortStr } from "../common/dateFormatter"
+import { dateAsShortStr } from "../../common/dateFormatter"
 import { ProjectTaskUnitEstimationVm } from "./ProjectTaskUnitEstimationVm"
-
 
 export class ProjectTaskVm {
     id: string = ''

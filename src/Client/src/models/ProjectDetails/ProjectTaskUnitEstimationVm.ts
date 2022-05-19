@@ -1,10 +1,5 @@
+import { EstimationVm } from "./EstimationVm"
 import { ProjectTaskVm } from "./ProjectTaskVm"
-
-export class EstimationVm {
-    userPositionId: string = ''
-    userPositionIdent: string = ''
-    hours: number = 0
-}
 
 export class ProjectTaskUnitEstimationVm {
     id: string = ''

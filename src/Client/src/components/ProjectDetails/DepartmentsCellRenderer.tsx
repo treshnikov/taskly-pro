@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { ProjectTaskUnitEstimationVm } from "../../models/ProjectTaskUnitEstimationVm";
+import { ProjectTaskUnitEstimationVm } from "../../models/ProjectDetails/ProjectTaskUnitEstimationVm";
 
 export const DepartmentsCellRenderer = (props: any) => {
     const { showDetails, value } = props

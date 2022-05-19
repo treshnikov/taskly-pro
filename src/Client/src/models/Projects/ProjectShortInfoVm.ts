@@ -1,4 +1,4 @@
-import { dateAsShortStr } from "../common/dateFormatter"
+import { dateAsShortStr } from "../../common/dateFormatter"
 
 export class ProjectShortInfoVm {
     id: string = ''

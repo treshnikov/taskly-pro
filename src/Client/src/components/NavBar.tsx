@@ -11,7 +11,7 @@ import { useTranslation } from 'react-i18next'
 import { SidebarMenu } from './SidebarMenu';
 import { useNavigate } from 'react-router-dom';
 import { Divider } from '@mui/material';
-import { UserVm } from '../models/UserVm';
+import { UserVm } from '../models/Users/UserVm';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { Logout } from '@mui/icons-material';
 import TaskAltIcon from '@mui/icons-material/TaskAlt';

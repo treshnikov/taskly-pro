@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { UserVm } from "../models/UserVm";
 import { HotTable } from '@handsontable/react';
 import { registerAllModules } from 'handsontable/registry';
 import { useTranslation } from 'react-i18next';
 import { useHttp } from '../hooks/http.hook';
+import { UserVm } from '../models/Users/UserVm';
 registerAllModules();
 
 export const Users: React.FunctionComponent = () => {
