@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { dateAsShortStr } from "../../common/dateFormatter";
 import { ProjectTaskUnitEstimationVm } from "../../models/ProjectTaskUnitEstimationVm";
-import { useAppSelector, useAppDispatch } from '../../redux/hooks'
+import { useAppSelector } from '../../redux/hooks'
 
 export const GanttCellRenderer = (props: any) => {
     const { width, value, startDate } = props
@@ -51,7 +51,7 @@ export const GanttCellRenderer = (props: any) => {
         });
 
         setGanttDivHeight(totalHeight)
-    }, [estimations])
+    }, [estimations, ganttChartZoomLevel, startDt])
 
     return (
         <div style={{
