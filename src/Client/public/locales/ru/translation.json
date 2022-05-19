@@ -48,5 +48,8 @@
     "techniclaWriterHours": "Т",
     "hour": "ч",
     "comment": "Комментарий",
-    "estimationH": "Оценка, ч"
+    "estimationH": "Оценка, ч",
+    "add": "Добавить",
+    "statistics": "Статистика",
+    "show-details": "Показать детали"
 }   

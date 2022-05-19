@@ -48,5 +48,8 @@
     "techniclaWriterHours": "Tw",
     "hour": "h",
     "comment": "Comment",
-    "estimationH": "Est., h"
+    "estimationH": "Est., h",
+    "add": "Add",
+    "statistics": "Statistics",
+    "show-details": "Show details"
 }
