@@ -1,15 +1,18 @@
 import { useEffect, useRef, useState } from "react";
 import { dateAsShortStr } from "../../common/dateFormatter";
 import { ProjectTaskUnitEstimationVm } from "../../models/ProjectTaskUnitEstimationVm";
+import { ProjectTaskVm } from "../../models/ProjectTaskVm";
 import { useAppSelector } from '../../redux/hooks'
 
 export const GanttCellRenderer = (props: any) => {
-    const { width, value, startDate } = props
+    const { row, width, value, startDate, tasks } = props
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [ganttDivHeight, setGanttDivHeight] = useState<number>(0)
     const ganttChartZoomLevel = useAppSelector(state => state.projectDetailsReducer.ganttChartZoomLevel)
 
+    const rowIdx = row as number
     const estimations = value as ProjectTaskUnitEstimationVm[]
+    const projectTasks = tasks as ProjectTaskVm[]
     const startDt = startDate as Date
 
     const drawLine = (x1: number, y1: number, x2: number, y2: number, color: string, lineWidth: number) => {
@@ -38,20 +41,47 @@ export const GanttCellRenderer = (props: any) => {
 
         let totalHeight = 0
         let top = 5
-        estimationToDraw.forEach(e => {
-            const startX = ganttChartZoomLevel * (e.start.getTime() - startDt.getTime()) / (1000 * 3600 * 24)
-            const lineWidth = ganttChartZoomLevel * (e.end.getTime() - e.start.getTime()) / (1000 * 3600 * 24)
 
-            drawLine(
-                startX, top + e.lineHeight / 2,
-                startX + lineWidth, top + e.lineHeight / 2,
-                e.color, e.lineHeight)
-            top += e.lineHeight + 1
-            totalHeight += e.lineHeight + 1
-        });
+        // estimation is assigned wit departments
+        if (estimationToDraw.length > 0) {
+            estimationToDraw.forEach(e => {
+                const startX = ganttChartZoomLevel * (e.start.getTime() - startDt.getTime()) / (1000 * 3600 * 24)
+                const lineWidth = ganttChartZoomLevel * (e.end.getTime() - e.start.getTime()) / (1000 * 3600 * 24)
+
+                drawLine(
+                    startX, top + e.lineHeight / 2,
+                    startX + lineWidth, top + e.lineHeight / 2,
+                    e.color, e.lineHeight)
+                top += e.lineHeight + 1
+                totalHeight += e.lineHeight + 1
+            });
+        }
+        // no estimations, only start and end dates
+        else {
+            if (projectTasks.length > rowIdx) {
+
+                const noEstimationsLineHeight = 5
+                const noEstimationsLineColor = "#D0D0D0"
+                
+                const taskStart = projectTasks[rowIdx].start
+                const taskEnd = projectTasks[rowIdx].end
+
+                const startX = ganttChartZoomLevel * (taskStart.getTime() - startDt.getTime()) / (1000 * 3600 * 24)
+                const lineWidth = ganttChartZoomLevel * (taskEnd.getTime() - taskStart.getTime()) / (1000 * 3600 * 24)
+
+                drawLine(
+                    startX, top + noEstimationsLineHeight / 2,
+                    startX + lineWidth, top + noEstimationsLineHeight / 2,
+                    noEstimationsLineColor, noEstimationsLineHeight)
+            }
+        }
 
         setGanttDivHeight(totalHeight)
-    }, [estimations, ganttChartZoomLevel, startDt])
+    }, [estimations, ganttChartZoomLevel, startDt, projectTasks, rowIdx, row])
+
+    if (projectTasks.length === 0) {
+        return <></>
+    }
 
     return (
         <div style={{

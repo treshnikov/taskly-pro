@@ -85,7 +85,7 @@ export const ProjectDetails: React.FunctionComponent = () => {
           <HotColumn data={"startAsStr"} type={"text"} />
           <HotColumn data={"endAsStr"} type={"text"} />
           <HotColumn data={"unitEstimations"} key={"ganttColumn"} width={getGanttWidth(ganttChartZoomLevel, projectInfo)} readOnly>
-            <GanttCellRenderer width={getGanttWidth(ganttChartZoomLevel, projectInfo)} startDate={projectInfo.taskMinDate} hot-renderer></GanttCellRenderer>
+            <GanttCellRenderer width={getGanttWidth(ganttChartZoomLevel, projectInfo)} startDate={projectInfo.taskMinDate} tasks={projectInfo.tasks} hot-renderer></GanttCellRenderer>
           </HotColumn>
         </HotTable>
       </div>

@@ -1,4 +1,4 @@
-import { Button, Checkbox, Divider, FormControlLabel, Grid, Stack, Typography } from "@mui/material"
+import { Button, Checkbox, FormControlLabel, Grid, Stack, Typography } from "@mui/material"
 import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import ZoomInIcon from '@mui/icons-material/ZoomIn';
