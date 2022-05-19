@@ -68,9 +68,10 @@ namespace Taskly.Application.Users
                 var dbProject = dbProjects.FirstOrDefault(i => i.Id == t.ProjectId);
                 if (dbProject == null)
                 {
-                    Log.Logger.Warning($"Cannot import tasks for projectId={t.ProjectId}");
+                    //Log.Logger.Warning($"Cannot import tasks for projectId={t.ProjectId}");
                     continue;
                 }
+                dbProject.Type = t.ProjectType;
 
                 // task
                 var newTask = new ProjectTask
@@ -94,7 +95,7 @@ namespace Taskly.Application.Users
                     if (int.TryParse(UnitUserMap[idx], out depCode))
                     {
                         dbDep = dbDeps.First(i => i.Code == depCode);
-                        Console.WriteLine($">> " + dbDep.Name);
+                        //Console.WriteLine($">> " + dbDep.Name);
                         idx++;
                         continue;
                     }
@@ -103,11 +104,11 @@ namespace Taskly.Application.Users
                     var dbPosition = dbPositions.FirstOrDefault(p => p.Name == positionName);
                     if (dbPosition == null)
                     {
-                        Console.WriteLine($"{positionIdx}       >> Cannot find user position with the name = {UnitUserMap[idx]}");
+                        //Console.WriteLine($"{positionIdx}       >> Cannot find user position with the name = {UnitUserMap[idx]}");
                     }
                     else
                     {
-                        Console.WriteLine($"{positionIdx}       >> " + dbPosition.Name);
+                        //($"{positionIdx}       >> " + dbPosition.Name);
                         var unitEst = newTask.UnitEstimations.FirstOrDefault(i => i.Unit.Id == dbDep.Id);
                         if (unitEst == null)
                         {
@@ -143,6 +144,8 @@ namespace Taskly.Application.Users
                 newTask.UnitEstimations = newTask.UnitEstimations.Where(e => e.Estimations.Count > 0).ToList();
                 _dbContext.ProjectTasks.Add(newTask);
 
+
+
                 dbProject.Tasks.Add(newTask);
                 _dbContext.Projects.Update(dbProject);
             }
@@ -154,6 +157,7 @@ namespace Taskly.Application.Users
         internal class ProjectTaskInfoXlsx
         {
             public int ProjectId { get; set; }
+            public ProjectType ProjectType { get; set; }
             public string Description { get; set; }
             public string Comment { get; set; }
             public DateTime Start { get; set; }
@@ -178,7 +182,7 @@ namespace Taskly.Application.Users
                 projectIdAsStr = projectIdAsStr.Split(".")[0];
                 if (!int.TryParse(projectIdAsStr, out int projectId))
                 {
-                    Console.WriteLine($"Skip {projectIdAsStr}");
+                    //Console.WriteLine($"Skip {projectIdAsStr}");
                     continue;
                 }
 
@@ -188,6 +192,8 @@ namespace Taskly.Application.Users
                 {
                     break;
                 }
+                var projectTypeAsStr = worksheet.Cell(rowIdx, 2).GetValue<string>();
+                var projectType = GetProjectType(projectTypeAsStr);
 
                 var startStr = worksheet.Cell(rowIdx, 12).GetValue<string>();
                 var start = string.IsNullOrWhiteSpace(startStr)
@@ -214,11 +220,26 @@ namespace Taskly.Application.Users
                     Comment = comment,
                     Start = start,
                     End = end,
+                    ProjectType = projectType,
                     Estimations = est.ToArray()
                 });
             }
 
             return res.ToArray();
+        }
+
+        private static ProjectType GetProjectType(string projectTypeAsStr)
+        {
+            return projectTypeAsStr == "Внутр." ||
+                                    projectTypeAsStr == "Отпуск" ||
+                                    projectTypeAsStr == "Серт." ||
+                                    projectTypeAsStr == "Внутр.1" ||
+                                    projectTypeAsStr == "Обучение" ||
+                                    projectTypeAsStr == "Прочее" ||
+                                    projectTypeAsStr == "Промышленная Сеть" ||
+                                    projectTypeAsStr == "Пов.квалиф."
+                                    ? ProjectType.Internal
+                                    : ProjectType.External;
         }
 
         private async Task UpdateProjects(ProjectJson[] projects, CancellationToken cancellationToken)
@@ -233,7 +254,7 @@ namespace Taskly.Application.Users
             var newProjects = new List<Project>();
             foreach (var p in projects)
             {
-                Log.Logger.Debug($"Handle project ${JsonSerializer.Serialize(p)}");
+                //Log.Logger.Debug($"Handle project ${JsonSerializer.Serialize(p)}");
 
                 var dbProject = dbProjects.FirstOrDefault(i => i.Id == p.project_id);
                 var newProject = newProjects.FirstOrDefault(i => i.Id == p.project_id);
@@ -267,6 +288,7 @@ namespace Taskly.Application.Users
                         Company = company,
                         Start = start,
                         End = end,
+                        Type = ProjectType.External,
                         CloseDate = closeDate,
                         ProjectManager = pm,
                         ChiefEngineer = lead,
@@ -310,7 +332,7 @@ namespace Taskly.Application.Users
                     continue;
                 }
 
-                Log.Logger.Debug($"Handle {u.lastname}");
+                //Log.Logger.Debug($"Handle {u.lastname}");
                 var dbUser = dbUsers.First(i => i.Email == u.email);
                 var dbDep = dbDeps.First(i => i.Code == u.DepartmentId);
                 if (dbUser.UserUnits == null)
@@ -359,7 +381,7 @@ namespace Taskly.Application.Users
                 var newDep = newDeps.FirstOrDefault(i => i.Code == d.prj_company_ID);
                 if (dbDep == null && newDep == null)
                 {
-                    Log.Logger.Debug($"Handle {d.name} with parent = {d.parent}");
+                    //Log.Logger.Debug($"Handle {d.name} with parent = {d.parent}");
                     newDeps.Add(new Domain.Unit
                     {
                         Id = Guid.NewGuid(),
