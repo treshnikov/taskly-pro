@@ -1,4 +1,3 @@
-import { dateAsShortStr } from "../common/dateFormatter"
 import { ProjectTaskUnitEstimationVm } from "./ProjectTaskUnitEstimationVm"
 import { ProjectTaskVm } from "./ProjectTaskVm"
 
@@ -10,8 +9,8 @@ export class ProjectDetailedInfoVm {
     isOpened: boolean = false
     projectManager: string = ''
     chiefEngineer: string = ''
-    start: Date = new Date()
-    end: Date = new Date()
+    start: number = 0
+    end: number = 0
     closeDate: Date | null = new Date()
     customer: string = ''
     contract: string = ''
@@ -19,33 +18,24 @@ export class ProjectDetailedInfoVm {
 
     // calculated fields
     totalHours: number = 0
-    taskMaxDate: Date = new Date()
-    taskMinDate: Date = new Date()
+    taskMaxDate: number = 0
+    taskMinDate: number = 0
 
     public static init(arg: ProjectDetailedInfoVm) {
-        //todo
-        arg.start = new Date(arg.start)
-        arg.end = new Date(arg.end)
         arg.totalHours = 0
-        arg.taskMaxDate = new Date()
-        arg.taskMinDate = new Date()
+        arg.taskMaxDate = 0
+        arg.taskMinDate = Number.MAX_SAFE_INTEGER
 
         const maxLineHeight = 150
 
         arg.tasks?.forEach(task => {
-            task.totalHours = 0
-            task.start = new Date(task.start)
-            task.end = new Date(task.end)
-            
-            task.startAsStr = dateAsShortStr(task.start)
-            task.endAsStr = dateAsShortStr(task.end)
-            
+            ProjectTaskVm.init(task) 
+
             // calculate total project estimation
             task.unitEstimations?.forEach(e => {
                 const depEstimation = ProjectTaskUnitEstimationVm.getTotalHours(e)
                 task.totalHours += depEstimation
                 arg.totalHours += depEstimation
-
             })
 
             if (task.start <= arg.taskMinDate) {
@@ -60,8 +50,7 @@ export class ProjectDetailedInfoVm {
         arg.tasks?.forEach(task => {
             task.unitEstimations?.forEach(taskDepartmentEstimation => {
                 // copy start and end dates to each task ProjectTaskUnitEstimationVm instance to handle render easier
-                taskDepartmentEstimation.start = task.start
-                taskDepartmentEstimation.end = task.end
+                ProjectTaskUnitEstimationVm.init(taskDepartmentEstimation, task)
 
                 // get summ of all estimation for the current department
                 taskDepartmentEstimation.totalHours = ProjectTaskUnitEstimationVm.getTotalHours(taskDepartmentEstimation)

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { dateAsShortStr } from "../../common/dateFormatter";
+import { dateAsShortStrFromNumber } from "../../common/dateFormatter";
 import { ProjectTaskUnitEstimationVm } from "../../models/ProjectTaskUnitEstimationVm";
 import { ProjectTaskVm } from "../../models/ProjectTaskVm";
 import { useAppSelector } from '../../redux/hooks'
@@ -45,8 +45,8 @@ export const GanttCellRenderer = (props: any) => {
         // estimation is assigned wit departments
         if (estimationToDraw.length > 0) {
             estimationToDraw.forEach(e => {
-                const startX = ganttChartZoomLevel * (e.start.getTime() - startDt.getTime()) / (1000 * 3600 * 24)
-                const lineWidth = ganttChartZoomLevel * (e.end.getTime() - e.start.getTime()) / (1000 * 3600 * 24)
+                const startX = ganttChartZoomLevel * (new Date(e.start).getTime() - startDt.getTime()) / (1000 * 3600 * 24)
+                const lineWidth = ganttChartZoomLevel * (new Date(e.end).getTime() - new Date(e.start).getTime()) / (1000 * 3600 * 24)
 
                 drawLine(
                     startX, top + e.lineHeight / 2,
@@ -62,12 +62,12 @@ export const GanttCellRenderer = (props: any) => {
 
                 const noEstimationsLineHeight = 5
                 const noEstimationsLineColor = "#D0D0D0"
-                
+
                 const taskStart = projectTasks[rowIdx].start
                 const taskEnd = projectTasks[rowIdx].end
 
-                const startX = ganttChartZoomLevel * (taskStart.getTime() - startDt.getTime()) / (1000 * 3600 * 24)
-                const lineWidth = ganttChartZoomLevel * (taskEnd.getTime() - taskStart.getTime()) / (1000 * 3600 * 24)
+                const startX = ganttChartZoomLevel * (new Date(taskStart).getTime() - new Date(startDt).getTime()) / (1000 * 3600 * 24)
+                const lineWidth = ganttChartZoomLevel * (new Date(taskEnd).getTime() - new Date(taskStart).getTime()) / (1000 * 3600 * 24)
 
                 drawLine(
                     startX, top + noEstimationsLineHeight / 2,
@@ -98,5 +98,6 @@ const getCanvasTitle = (arg: ProjectTaskUnitEstimationVm[]): string => {
     if (!arg || arg.length === 0) {
         return ""
     }
-    return dateAsShortStr(arg[0].start) + " - " + dateAsShortStr(arg[0].end)
+
+    return dateAsShortStrFromNumber(arg[0].start) + " - " + dateAsShortStrFromNumber(arg[0].end)
 }

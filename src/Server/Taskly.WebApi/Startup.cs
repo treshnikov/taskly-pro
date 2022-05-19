@@ -36,8 +36,8 @@ public class Startup
         services.AddPersistence(Configuration);
         services.AddControllers().AddJsonOptions(opt =>
         {
-            //opt.JsonSerializerOptions.Converters.Add(new AppDateOnlyJsonConverter());
-            //opt.JsonSerializerOptions.Converters.Add(new AppDateTimeJsonConverter());
+            opt.JsonSerializerOptions.Converters.Add(new DateTimeToNumberJsonConverter());
+            opt.JsonSerializerOptions.Converters.Add(new DateTimeNullableToNumberJsonConverter());
         });
 
         services.AddCors(options =>

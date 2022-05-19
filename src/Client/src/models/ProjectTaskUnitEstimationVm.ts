@@ -1,3 +1,4 @@
+import { ProjectTaskVm } from "./ProjectTaskVm"
 
 export class EstimationVm {
     userPositionId: string = ''
@@ -15,8 +16,13 @@ export class ProjectTaskUnitEstimationVm {
     lineHeight: number = 5
     totalHours: number = 0
     color: string = ''
-    start: Date = new Date()
-    end: Date = new Date()
+    start: number = 0
+    end: number = 0
+
+    public static init(arg: ProjectTaskUnitEstimationVm, task: ProjectTaskVm){
+        arg.start = task.start
+        arg.end = task.end
+    }
 
     public static getTotalHours(arg: ProjectTaskUnitEstimationVm) {
         return arg.estimations?.map(i => i.hours).reduce((acc, i) => acc += i, 0);

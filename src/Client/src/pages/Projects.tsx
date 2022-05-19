@@ -46,9 +46,12 @@ export const Projects: React.FunctionComponent = () => {
 
   useEffect(() => {
     async function populateProjects() {
-      const json = await request<ProjectShortInfoVm[]>("/api/v1/projects")
-      setProjects(json)
-      setfilteredProjects(json)
+      let data = await request<ProjectShortInfoVm[]>("/api/v1/projects")
+      data.forEach(e => {
+        ProjectShortInfoVm.init(e)
+      });
+      setProjects(data)
+      setfilteredProjects(data)
     }
     populateProjects()
   }, [request])
@@ -88,9 +91,9 @@ export const Projects: React.FunctionComponent = () => {
         <HotColumn data={"isExternal"} editor={false} type={'checkbox'} className='htCenter' readOnly />
         <HotColumn data={"projectManager"} editor={false} type={"text"} />
         <HotColumn data={"chiefEngineer"} editor={false} type={"text"} />
-        <HotColumn data={"start"} editor={false} type={"text"} />
-        <HotColumn data={"end"} editor={false} type={"text"} />
-        <HotColumn data={"closeDate"} editor={false} type={"text"} />
+        <HotColumn data={"startAsStr"} editor={false} type={"text"} />
+        <HotColumn data={"endAsStr"} editor={false} type={"text"} />
+        <HotColumn data={"closeDateAsStr"} editor={false} type={"text"} />
         <HotColumn data={"contract"} editor={false} type={"text"} />
 
       </HotTable>

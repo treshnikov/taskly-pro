@@ -7,7 +7,7 @@ import { useParams } from 'react-router-dom';
 import { ProjectDetailedInfoVm } from "../models/ProjectDetailedInfoVm";
 import { DepartmentsCellRenderer } from "../components/ProjectDetails/DepartmentsCellRenderer"
 import { GanttCellRenderer } from '../components/ProjectDetails/GanttCellRenderer';
-import { dateAsShortStr } from '../common/dateFormatter';
+import { dateAsShortStrFromNumber } from '../common/dateFormatter';
 import { ProjectDetailsToolBar } from '../components/ProjectDetails/ProjectDetailsToolBar';
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { updateProjectData } from '../redux/projectDetailsSlice';
@@ -38,7 +38,7 @@ export const ProjectDetails: React.FunctionComponent = () => {
       ProjectDetailedInfoVm.init(data)
       dispatch(updateProjectData(data.shortName))
       setProjectInfo(data)
-      setHeaders([...staticHeaders, dateAsShortStr(data.taskMinDate) + " - " + dateAsShortStr(data.taskMaxDate)
+      setHeaders([...staticHeaders, dateAsShortStrFromNumber(data.taskMinDate) + " - " + dateAsShortStrFromNumber(data.taskMaxDate)
       ])
     }
     requestDetails()
@@ -85,7 +85,7 @@ export const ProjectDetails: React.FunctionComponent = () => {
           <HotColumn data={"startAsStr"} type={"text"} />
           <HotColumn data={"endAsStr"} type={"text"} />
           <HotColumn data={"unitEstimations"} key={"ganttColumn"} width={getGanttWidth(ganttChartZoomLevel, projectInfo)} readOnly>
-            <GanttCellRenderer width={getGanttWidth(ganttChartZoomLevel, projectInfo)} startDate={projectInfo.taskMinDate} tasks={projectInfo.tasks} hot-renderer></GanttCellRenderer>
+            <GanttCellRenderer width={getGanttWidth(ganttChartZoomLevel, projectInfo)} startDate={new Date(projectInfo.taskMinDate)} tasks={projectInfo.tasks} hot-renderer></GanttCellRenderer>
           </HotColumn>
         </HotTable>
       </div>
@@ -94,5 +94,5 @@ export const ProjectDetails: React.FunctionComponent = () => {
 }
 
 const getGanttWidth = (ganttChartZoomLevel: number, proj: ProjectDetailedInfoVm): number => {
-  return ganttChartZoomLevel * (proj.taskMaxDate.getTime() - proj.taskMinDate.getTime()) / (1000 * 3600 * 24)
+  return ganttChartZoomLevel * (new Date(proj.taskMaxDate).getTime() - new Date(proj.taskMinDate).getTime()) / (1000 * 3600 * 24)
 }

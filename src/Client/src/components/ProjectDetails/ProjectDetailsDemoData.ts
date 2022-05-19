@@ -7,8 +7,8 @@ export function populateDemoTasks(projectInfo: ProjectDetailedInfoVm) {
   
     const testTask = new ProjectTaskVm()
     testTask.description = "Монтажные и пусконаладочные работы схемы управления разъединителями ОРУ-110 кВ"
-    testTask.start = new Date(2022, 3, 5, 0, 0, 0, 0)
-    testTask.end = new Date(2022, 4, 8, 0, 0, 0, 0)
+    testTask.start = new Date(2022, 3, 5, 0, 0, 0, 0).getTime()
+    testTask.end = new Date(2022, 4, 8, 0, 0, 0, 0).getTime()
   
     const testEstimation1 = new ProjectTaskUnitEstimationVm()
     testEstimation1.id = "asdfasdfsdf"
