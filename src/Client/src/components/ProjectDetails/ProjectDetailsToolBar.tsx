@@ -9,10 +9,10 @@ import { useTranslation } from "react-i18next";
 import RemoveIcon from '@mui/icons-material/Remove';
 
 type ProjectDetailsToolBarProps = {
-    scrollToTheLastRowFunc: () => void
+    scrollToTheLastRowFunc: (rowIdx: number) => void
 }
 
-export const ProjectDetailsToolBar: React.FunctionComponent<ProjectDetailsToolBarProps> = ({ scrollToTheLastRowFunc }) => {
+export const ProjectDetailsToolBar: React.FunctionComponent<ProjectDetailsToolBarProps> = ({ scrollToTheLastRowFunc: scrollToRow }) => {
     const { t } = useTranslation();
     const dispatch = useAppDispatch()
     const showDetails = useAppSelector(state => state.projectDetailsReducer.showDetails)
@@ -27,7 +27,6 @@ export const ProjectDetailsToolBar: React.FunctionComponent<ProjectDetailsToolBa
                     <Button variant='contained' size='small'
                         onClick={e => {
                             dispatch(addTask())
-                            scrollToTheLastRowFunc()
                         }} startIcon={<PlaylistAddIcon />}>{t('add')}</Button>
                     <Button variant='contained' size='small' onClick={e => {dispatch(removeTask())}} disabled={selectedRowIdx < 0} startIcon={<RemoveIcon />}>{t('remove')}</Button>
                     <Button variant='contained' size='small' startIcon={<BarChartIcon />}>{t('statistics')}</Button>

@@ -22,11 +22,11 @@ export const ProjectDetails: React.FunctionComponent = () => {
   const dispatch = useAppDispatch()
   const hotTableRef = useRef<HotTable>(null);
 
-
   const projectInfo = useAppSelector(state => state.projectDetailsReducer.project)
   const ganttChartZoomLevel = useAppSelector(state => state.projectDetailsReducer.ganttChartZoomLevel)
   const showDetails = useAppSelector(state => state.projectDetailsReducer.showDetails)
   const hiddenColumns = useAppSelector(state => state.projectDetailsReducer.hiddenColumns)
+  const selectedRowIdx = useAppSelector(state => state.projectDetailsReducer.selectedRowIdx)
 
   const defaultColWidths = [5, 300, 150, 70, 310, 100, 100]
   const defaultHeaders = useMemo(() => ['', t('task'), t('comment'), t('estimationH'), t('units'), t('start'), t('end')], [t])
@@ -48,18 +48,16 @@ export const ProjectDetails: React.FunctionComponent = () => {
     setTableHeight(window.innerHeight - 145)
   }, [])
 
-  const scrollToTheLastRow = useCallback(() => {
+  const scrollToRow = useCallback((rowIdx: number) => {
     if (hotTableRef && hotTableRef.current && hotTableRef.current.hotInstance) {
-      hotTableRef.current.hotInstance.scrollViewportTo(0)
+      hotTableRef.current.hotInstance.selectCell(rowIdx, 1)
+      hotTableRef.current.hotInstance.scrollViewportTo(rowIdx)
     }
-
   }, [hotTableRef])
 
   return (
-    <div className='page-container' onClick={e => {
-      dispatch(onRowSelected(-1))
-    }}>
-      <ProjectDetailsToolBar scrollToTheLastRowFunc={scrollToTheLastRow}></ProjectDetailsToolBar>
+    <div className='page-container' onClick={e => {dispatch(onRowSelected(-1))}}>
+      <ProjectDetailsToolBar scrollToTheLastRowFunc={scrollToRow}></ProjectDetailsToolBar>
       <div style={{ overflowX: 'auto', height: tableHeight }} onClickCapture={e => { e.stopPropagation() }}>
         <HotTable
           id="projectDetailsTable"
@@ -88,9 +86,7 @@ export const ProjectDetails: React.FunctionComponent = () => {
           }}
           beforeRowMove={(movedRows: number[], finalIndex: number, dropIndex: number | undefined, movePossible: boolean) => {
             dispatch(onTasksMoved({ movedRows, finalIndex }))
-            if (hotTableRef && hotTableRef.current && hotTableRef.current.hotInstance) {
-              hotTableRef.current.hotInstance.selectCell(finalIndex, 1)
-            }
+            scrollToRow(finalIndex)
             return false
           }}
           afterSelectionEnd={(row: number, column: number, row2: number, column2: number, selectionLayerLevel: number) => {

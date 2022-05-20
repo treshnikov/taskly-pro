@@ -83,7 +83,7 @@ export const projectDetailsSlice = createSlice({
             testTask.end = state.project.end
             testTask.unitEstimations = []
 
-            state.project.tasks = [{ ...testTask }, ...state.project.tasks]
+            state.project.tasks = [...state.project.tasks, { ...testTask }]
             ProjectDetailedInfoVmHelper.init(state.project)
         },
 
