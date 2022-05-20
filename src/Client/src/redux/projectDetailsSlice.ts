@@ -65,8 +65,7 @@ export const projectDetailsSlice = createSlice({
                 // hide id, estimations, and gantt chart
                 state.hiddenColumns.splice(0, state.hiddenColumns.length, ...[0, 4, 7])
             }
-            else
-            {
+            else {
                 // hide id column only
                 state.hiddenColumns.splice(0, state.hiddenColumns.length, ...[0])
             }
@@ -147,6 +146,10 @@ export const projectDetailsSlice = createSlice({
             }
 
             state.project.tasks = state.project.tasks.filter((i, idx) => idx !== state.selectedRowIdx)
+        },
+
+        orderTasks(state: ProjectDetailsStoreStateType) {
+            state.project.tasks = state.project.tasks.sort((a, b) => a.start > b.start ? 1 : -1)
         }
 
     }
@@ -154,6 +157,6 @@ export const projectDetailsSlice = createSlice({
 
 export const { zoomInGanttChart, zoomOutGanttChart, toggleShowDetails, toggleCompactMode,
     updateProjectDetailsInfo, addTask, onTaskAttributeChanged, onTasksMoved,
-    onRowSelected, removeTask } = projectDetailsSlice.actions
+    onRowSelected, removeTask, orderTasks } = projectDetailsSlice.actions
 export const selectDemo = (state: RootState) => state.projectDetailsReducer
 export default projectDetailsSlice.reducer

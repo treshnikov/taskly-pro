@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import HotTable, { HotColumn } from '@handsontable/react';
 import { registerAllModules } from 'handsontable/registry';
 import { useTranslation } from 'react-i18next';
@@ -26,27 +26,22 @@ export const ProjectDetails: React.FunctionComponent = () => {
   const ganttChartZoomLevel = useAppSelector(state => state.projectDetailsReducer.ganttChartZoomLevel)
   const showDetails = useAppSelector(state => state.projectDetailsReducer.showDetails)
   const hiddenColumns = useAppSelector(state => state.projectDetailsReducer.hiddenColumns)
-  const selectedRowIdx = useAppSelector(state => state.projectDetailsReducer.selectedRowIdx)
 
   const defaultColWidths = [5, 300, 150, 70, 310, 100, 100]
   const defaultHeaders = useMemo(() => ['', t('task'), t('comment'), t('estimationH'), t('units'), t('start'), t('end')], [t])
   const [headers, setHeaders] = useState<string[]>(defaultHeaders)
   const [tableHeight, setTableHeight] = useState<number>(3500)
-  
+
   useEffect(() => {
     async function requestDetails() {
       let data = await request<ProjectDetailedInfoVm>("/api/v1/projects/" + projectId)
-      //populateDemoTasks(data)
       ProjectDetailedInfoVmHelper.init(data)
       dispatch(updateProjectDetailsInfo(data))
       setHeaders([...defaultHeaders, dateAsShortStrFromNumber(data.taskMinDate) + " - " + dateAsShortStrFromNumber(data.taskMaxDate)])
     }
     requestDetails()
-  }, [request, projectId, defaultHeaders, dispatch])
 
-  useLayoutEffect(() => {
-    setTableHeight(window.innerHeight - 145)
-  }, [])
+  }, [request, projectId, defaultHeaders, dispatch])
 
   const scrollToRow = useCallback((rowIdx: number) => {
     if (hotTableRef && hotTableRef.current && hotTableRef.current.hotInstance) {
@@ -56,9 +51,9 @@ export const ProjectDetails: React.FunctionComponent = () => {
   }, [hotTableRef])
 
   return (
-    <div className='page-container' onClick={e => {dispatch(onRowSelected(-1))}}>
+    <div className='page-container' onClick={e => { dispatch(onRowSelected(-1)) }}>
       <ProjectDetailsToolBar scrollToTheLastRowFunc={scrollToRow}></ProjectDetailsToolBar>
-      <div style={{ overflowX: 'auto', height: tableHeight }} onClickCapture={e => { e.stopPropagation() }}>
+      <div id="hotContainer" style={{ overflowX: 'auto', height: tableHeight }} onClickCapture={e => { e.stopPropagation() }}>
         <HotTable
           id="projectDetailsTable"
           ref={hotTableRef}
@@ -77,6 +72,7 @@ export const ProjectDetails: React.FunctionComponent = () => {
           hiddenColumns={{
             columns: hiddenColumns
           }}
+
           afterSelection={(row: number, column: number, row2: number, column2: number, preventScrolling: { value: boolean }, selectionLayerLevel: number) => {
             preventScrolling.value = true
           }}
@@ -91,6 +87,12 @@ export const ProjectDetails: React.FunctionComponent = () => {
           }}
           afterSelectionEnd={(row: number, column: number, row2: number, column2: number, selectionLayerLevel: number) => {
             dispatch(onRowSelected(row))
+          }}
+          afterRender={(isForced: boolean) => {
+            setTimeout(() => {
+              const tableHeight = document.querySelector<HTMLElement>(".htCore")?.offsetHeight
+              setTableHeight(50 + (tableHeight as number))
+            }, 500);
           }}
           licenseKey='non-commercial-and-evaluation'
         >

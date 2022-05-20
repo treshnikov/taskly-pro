@@ -54,5 +54,6 @@
     "show-details": "Показать детали",
     "external": "Внешний",
     "remove": "Удалить",
-    "compact-mode": "Компактный режим"
+    "compact-mode": "Компактный режим",
+    "order-tasks": "Упорядочить"
 }   

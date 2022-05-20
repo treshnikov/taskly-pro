@@ -54,5 +54,6 @@
     "show-details": "Show details",
     "external": "External",
     "remove": "Remove",
-    "compact-mode": "Compact mode"
+    "compact-mode": "Compact mode",
+    "order-tasks": "Order"
 }
