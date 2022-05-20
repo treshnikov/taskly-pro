@@ -10,7 +10,7 @@ import { GanttCellRenderer } from '../components/ProjectDetails/GanttCellRendere
 import { dateAsShortStrFromNumber } from '../common/dateFormatter';
 import { ProjectDetailsToolBar } from '../components/ProjectDetails/ProjectDetailsToolBar';
 import { useAppDispatch, useAppSelector } from "../hooks/redux.hook";
-import { onChangeTaskAttribute, updateProjectDetailsInfo } from '../redux/projectDetailsSlice';
+import { onTaskAttributeChanged, onTasksMoved, updateProjectDetailsInfo } from '../redux/projectDetailsSlice';
 import { CellChange, ChangeSource } from 'handsontable/common';
 
 registerAllModules();
@@ -60,7 +60,7 @@ export const ProjectDetails: React.FunctionComponent = () => {
         <HotTable
           id="projectDetailsTable"
           ref={hotTableRef}
-          columnSorting={true}
+          columnSorting={false}
           rowHeaders={true}
           renderAllRows={true}
           manualRowMove={true}
@@ -78,11 +78,14 @@ export const ProjectDetails: React.FunctionComponent = () => {
           afterSelection={(row: number, column: number, row2: number, column2: number, preventScrolling: { value: boolean }, selectionLayerLevel: number) => {
             preventScrolling.value = true
           }}
-          beforeChange = {(changes: CellChange[], source: ChangeSource) => {
-            dispatch(onChangeTaskAttribute(changes))
+          beforeChange={(changes: CellChange[], source: ChangeSource) => {
+            dispatch(onTaskAttributeChanged(changes))
             return false
           }}
-
+          beforeRowMove={(movedRows: number[], finalIndex: number, dropIndex: number | undefined, movePossible: boolean) => {
+            dispatch(onTasksMoved({movedRows, finalIndex}))
+            return false
+          }}
           licenseKey='non-commercial-and-evaluation'
         >
           <HotColumn hiddenColumns data={"id"} editor={false} type={"text"} />

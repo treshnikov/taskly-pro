@@ -1,9 +1,7 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit"
+import { createSlice, current, PayloadAction } from "@reduxjs/toolkit"
 import { CellChange } from "handsontable/common"
-import { convertToplainObj } from "../common/convertToplainObj"
 import { strToDate } from "../common/dateFormatter"
-import { IProjectDetailedInfoVm, ProjectDetailedInfoVm, ProjectDetailedInfoVmHelper } from "../models/ProjectDetails/ProjectDetailedInfoVm"
-import { ProjectTaskUnitEstimationVm } from "../models/ProjectDetails/ProjectTaskUnitEstimationVm"
+import { IProjectDetailedInfoVm, ProjectDetailedInfoVmHelper } from "../models/ProjectDetails/ProjectDetailedInfoVm"
 import { ProjectTaskVm } from "../models/ProjectDetails/ProjectTaskVm"
 import { RootState } from "./store"
 
@@ -43,11 +41,11 @@ export const projectDetailsSlice = createSlice({
     name: "projectDetailsSlice",
     initialState: initialDemoState,
     reducers: {
-        ganttZoomIn(state: ProjectDetailsStoreStateType) {
+        zoomInGanttChart(state: ProjectDetailsStoreStateType) {
             state.ganttChartZoomLevel = state.ganttChartZoomLevel * 1.2
         },
 
-        ganttZoomOut(state: ProjectDetailsStoreStateType) {
+        zoomOutGanttChart(state: ProjectDetailsStoreStateType) {
             state.ganttChartZoomLevel = state.ganttChartZoomLevel / 1.2
         },
 
@@ -66,11 +64,11 @@ export const projectDetailsSlice = createSlice({
             testTask.end = state.project.end
             testTask.unitEstimations = []
 
-            state.project.tasks = [convertToplainObj(testTask), ...state.project.tasks]
+            state.project.tasks = [{ ...testTask }, ...state.project.tasks]
             ProjectDetailedInfoVmHelper.init(state.project)
         },
 
-        onChangeTaskAttribute(state: ProjectDetailsStoreStateType, action: PayloadAction<CellChange[]>) {
+        onTaskAttributeChanged(state: ProjectDetailsStoreStateType, action: PayloadAction<CellChange[]>) {
             action.payload.forEach(ch => {
                 const taskIdx = ch[0]
                 const taskAttribute = ch[1]
@@ -84,10 +82,16 @@ export const projectDetailsSlice = createSlice({
                         state.project.tasks[taskIdx].comment = newValue
                         break;
                     case "startAsStr":
-                        state.project.tasks[taskIdx].start = strToDate(newValue as string).getTime()
+                        const dtStart = strToDate(newValue as string)
+                        if (!isNaN(dtStart.getTime()) && dtStart.getTime() <= state.project.end) {
+                            state.project.tasks[taskIdx].start = dtStart.getTime()
+                        }
                         break;
                     case "endAsStr":
-                        state.project.tasks[taskIdx].end = strToDate(newValue as string).getTime()
+                        const dtEnd = strToDate(newValue as string)
+                        if (!isNaN(dtEnd.getTime()) && dtEnd.getTime() >= state.project.start) {
+                            state.project.tasks[taskIdx].end = dtEnd.getTime()
+                        }
                         break;
                     default:
                         console.warn("Unknown property to change", taskAttribute)
@@ -96,10 +100,28 @@ export const projectDetailsSlice = createSlice({
 
                 ProjectDetailedInfoVmHelper.init(state.project)
             });
+        },
+
+        onTasksMoved(state: ProjectDetailsStoreStateType, action: PayloadAction<{ movedRows: number[], finalIndex: number }>) {
+            const movedRowIdxs = action.payload.movedRows
+            const finalIndex = action.payload.finalIndex
+            if (!movedRowIdxs || movedRowIdxs.length === 0) {
+                return
+            }
+
+            if (movedRowIdxs[0] === finalIndex) {
+                return
+            }
+
+            const tasks = [...current(state).project.tasks]
+            const tasksToMove = tasks.splice(movedRowIdxs[0], movedRowIdxs.length)
+            tasks.splice(finalIndex, 0, ...tasksToMove)
+            state.project.tasks.splice(0, state.project.tasks.length, ...tasks)
         }
     }
 })
 
-export const { ganttZoomIn, ganttZoomOut, toggleShowDetails, updateProjectDetailsInfo, addTask, onChangeTaskAttribute } = projectDetailsSlice.actions
+export const { zoomInGanttChart, zoomOutGanttChart, toggleShowDetails,
+    updateProjectDetailsInfo, addTask, onTaskAttributeChanged, onTasksMoved } = projectDetailsSlice.actions
 export const selectDemo = (state: RootState) => state.projectDetailsReducer
 export default projectDetailsSlice.reducer

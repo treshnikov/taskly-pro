@@ -4,7 +4,7 @@ import BarChartIcon from '@mui/icons-material/BarChart';
 import ZoomInIcon from '@mui/icons-material/ZoomIn';
 import ZoomOutIcon from '@mui/icons-material/ZoomOut';
 import { useAppDispatch, useAppSelector } from "../../hooks/redux.hook";
-import { ganttZoomIn, ganttZoomOut, toggleShowDetails, addTask } from '../../redux/projectDetailsSlice';
+import { zoomInGanttChart, zoomOutGanttChart, toggleShowDetails, addTask } from '../../redux/projectDetailsSlice';
 import { useTranslation } from "react-i18next";
 
 type ProjectDetailsToolBarProps = {
@@ -32,8 +32,8 @@ export const ProjectDetailsToolBar: React.FunctionComponent<ProjectDetailsToolBa
             </Grid>
             <Grid item xs={6} style={{ textAlign: "right" }} paddingTop={1} paddingBottom={1}>
                 <Stack direction="row" paddingTop={1} paddingBottom={1} justifyContent="flex-end" >
-                    <Button variant='text' size='small' startIcon={<ZoomInIcon />} onClick={e => { dispatch(ganttZoomIn()) }} ></Button>
-                    <Button variant='text' size='small' startIcon={<ZoomOutIcon />} onClick={e => { dispatch(ganttZoomOut()) }} ></Button>
+                    <Button variant='text' size='small' startIcon={<ZoomInIcon />} onClick={e => { dispatch(zoomInGanttChart()) }} ></Button>
+                    <Button variant='text' size='small' startIcon={<ZoomOutIcon />} onClick={e => { dispatch(zoomOutGanttChart()) }} ></Button>
                     <Typography variant='h5'>{projectShortName}</Typography>
                 </Stack>
             </Grid>
