@@ -1,10 +1,10 @@
-import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import HotTable, { HotColumn } from '@handsontable/react';
 import { registerAllModules } from 'handsontable/registry';
 import { useTranslation } from 'react-i18next';
 import { useHttp } from '../hooks/http.hook';
 import { useParams } from 'react-router-dom';
-import { ProjectDetailedInfoVm } from "../models/ProjectDetails/ProjectDetailedInfoVm";
+import { ProjectDetailedInfoVm, ProjectDetailedInfoVmHelper } from "../models/ProjectDetails/ProjectDetailedInfoVm";
 import { DepartmentsCellRenderer } from "../components/ProjectDetails/DepartmentsCellRenderer"
 import { GanttCellRenderer } from '../components/ProjectDetails/GanttCellRenderer';
 import { dateAsShortStrFromNumber } from '../common/dateFormatter';
@@ -19,6 +19,7 @@ export const ProjectDetails: React.FunctionComponent = () => {
   const { request } = useHttp()
   const { t } = useTranslation();
   const dispatch = useAppDispatch()
+  const hotTableRef = useRef<HotTable>(null);
 
   const projectInfo = useAppSelector(state => state.projectDetailsReducer.project)
   const ganttChartZoomLevel = useAppSelector(state => state.projectDetailsReducer.ganttChartZoomLevel)
@@ -33,10 +34,9 @@ export const ProjectDetails: React.FunctionComponent = () => {
     async function requestDetails() {
       let data = await request<ProjectDetailedInfoVm>("/api/v1/projects/" + projectId)
       //populateDemoTasks(data)
-      ProjectDetailedInfoVm.init(data)
+      ProjectDetailedInfoVmHelper.init(data)
       dispatch(updateProjectDetailsInfo(data))
-      setHeaders([...defaultHeaders, dateAsShortStrFromNumber(data.taskMinDate) + " - " + dateAsShortStrFromNumber(data.taskMaxDate)
-      ])
+      setHeaders([...defaultHeaders, dateAsShortStrFromNumber(data.taskMinDate) + " - " + dateAsShortStrFromNumber(data.taskMaxDate)])
     }
     requestDetails()
   }, [request, projectId, defaultHeaders, dispatch])
@@ -45,11 +45,21 @@ export const ProjectDetails: React.FunctionComponent = () => {
     setTableHeight(window.innerHeight - 145)
   }, [])
 
+  const scrollToTheLastRow = useCallback(() => {
+    if (hotTableRef && hotTableRef.current && hotTableRef.current.hotInstance) {
+      const rowsCount = hotTableRef.current.hotInstance.countRows()
+      hotTableRef.current.hotInstance.scrollViewportTo(rowsCount - 1)
+    }
+
+  }, [hotTableRef])
+
   return (
     <div className='page-container'>
-      <ProjectDetailsToolBar></ProjectDetailsToolBar>
+      <ProjectDetailsToolBar scrollToTheLastRowFunc={scrollToTheLastRow}></ProjectDetailsToolBar>
       <div style={{ overflowX: 'auto', height: tableHeight }} onClickCapture={e => { e.stopPropagation() }}>
         <HotTable
+          id="projectDetailsTable"
+          ref={hotTableRef}
           columnSorting={true}
           rowHeaders={true}
           renderAllRows={true}

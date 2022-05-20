@@ -27,7 +27,9 @@ export class ProjectTaskUnitEstimationVm implements IProjectTaskUnitEstimationVm
     color: string = ''
     start: number = 0
     end: number = 0
+}
 
+export class ProjectTaskUnitEstimationVmHelper{
     public static init(arg: IProjectTaskUnitEstimationVm, task: IProjectTaskVm){
         arg.start = task.start
         arg.end = task.end
@@ -62,7 +64,7 @@ export class ProjectTaskUnitEstimationVm implements IProjectTaskUnitEstimationVm
             "#955251", "#DAF7A6", "#FFC300", "#FF5733",
             //"#900C3F", "#581845"
         ]
-        const idx = Math.abs(ProjectTaskUnitEstimationVm.getHash(arg) % colors.length - 1)
+        const idx = Math.abs(ProjectTaskUnitEstimationVmHelper.getHash(arg) % colors.length - 1)
         return colors[idx]
     }
 }

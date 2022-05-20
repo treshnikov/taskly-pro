@@ -27,7 +27,9 @@ export class ProjectTaskVm implements IProjectTaskVm{
     startAsStr: string = ''
     endAsStr: string = ''
     totalHours: number = 0
+}
 
+export class ProjectTaskVmHelper{
     public static init(arg: IProjectTaskVm) {
         arg.totalHours = 0
         arg.startAsStr = dateAsShortStr(new Date(arg.start))
