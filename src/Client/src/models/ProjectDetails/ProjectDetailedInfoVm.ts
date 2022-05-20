@@ -1,27 +1,50 @@
 import { ProjectTaskUnitEstimationVm } from "./ProjectTaskUnitEstimationVm"
-import { ProjectTaskVm } from "./ProjectTaskVm"
+import { IProjectTaskVm, ProjectTaskVm } from "./ProjectTaskVm"
 
-export class ProjectDetailedInfoVm {
+export interface IProjectDetailedInfoVm{
+    id: number
+    name: string
+    shortName: string
+    company: string
+    isOpened: boolean
+    isExternal: boolean
+    projectManager: string
+    chiefEngineer: string
+    start: number
+    end: number
+    closeDate: number | null
+    customer: string
+    contract: string
+    tasks: IProjectTaskVm[]
+
+    // calculated fields
+    totalHours: number
+    taskMaxDate: number
+    taskMinDate: number
+} 
+
+export class ProjectDetailedInfoVm implements IProjectDetailedInfoVm {
     id: number = 0
     name: string = ''
     shortName: string = ''
     company: string = ''
     isOpened: boolean = false
+    isExternal: boolean = false
     projectManager: string = ''
     chiefEngineer: string = ''
     start: number = 0
     end: number = 0
-    closeDate: Date | null = new Date()
+    closeDate: number | null = 0
     customer: string = ''
     contract: string = ''
-    tasks: ProjectTaskVm[] = []
+    tasks: IProjectTaskVm[] = []
 
     // calculated fields
     totalHours: number = 0
     taskMaxDate: number = 0
     taskMinDate: number = 0
 
-    public static init(arg: ProjectDetailedInfoVm) {
+    public static init(arg: IProjectDetailedInfoVm) {
         arg.totalHours = 0
         arg.taskMaxDate = 0
         arg.taskMinDate = Number.MAX_SAFE_INTEGER

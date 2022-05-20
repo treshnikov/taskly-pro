@@ -1,11 +1,25 @@
-import { EstimationVm } from "./EstimationVm"
-import { ProjectTaskVm } from "./ProjectTaskVm"
+import { IEstimationVm } from "./EstimationVm"
+import { IProjectTaskVm } from "./ProjectTaskVm"
 
-export class ProjectTaskUnitEstimationVm {
+export interface IProjectTaskUnitEstimationVm{
+    id: string
+    unitId: string
+    unitName: string
+    estimations: IEstimationVm[]
+
+    // these fields are supposed to be calculated on the client after get fetched
+    lineHeight: number
+    totalHours: number
+    color: string
+    start: number
+    end: number
+}
+
+export class ProjectTaskUnitEstimationVm implements IProjectTaskUnitEstimationVm {
     id: string = ''
     unitId: string = ''
     unitName: string = ''
-    estimations: EstimationVm[] = []
+    estimations: IEstimationVm[] = []
 
     // these fields are supposed to be calculated on the client after get fetched
     lineHeight: number = 5
@@ -14,7 +28,7 @@ export class ProjectTaskUnitEstimationVm {
     start: number = 0
     end: number = 0
 
-    public static init(arg: ProjectTaskUnitEstimationVm, task: ProjectTaskVm){
+    public static init(arg: IProjectTaskUnitEstimationVm, task: IProjectTaskVm){
         arg.start = task.start
         arg.end = task.end
     }

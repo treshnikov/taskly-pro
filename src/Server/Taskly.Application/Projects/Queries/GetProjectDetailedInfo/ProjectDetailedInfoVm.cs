@@ -28,7 +28,7 @@ namespace Taskly.Application.Projects
         }
     }
 
-public class ProjectTaskVm
+    public class ProjectTaskVm
     {
         public Guid Id { get; set; }
         public DateTime Start { get; set; }
@@ -57,6 +57,7 @@ public class ProjectTaskVm
         public string? ShortName { get; set; }
         public string Company { get; set; }
         public bool IsOpened { get; set; }
+        public bool IsExternal { get; set; }
         public string ProjectManager { get; set; }
         public string ChiefEngineer { get; set; }
         public DateTime Start { get; set; }
@@ -78,6 +79,7 @@ public class ProjectTaskVm
                 Customer = p.Customer.Name,
                 End = p.End,
                 IsOpened = p.IsOpened,
+                IsExternal = p.Type == ProjectType.External,
                 Name = p.Name,
                 ProjectManager = p.ProjectManager?.Name,
                 ShortName = p.ShortName,

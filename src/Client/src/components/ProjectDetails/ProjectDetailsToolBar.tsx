@@ -11,7 +11,7 @@ export const ProjectDetailsToolBar: React.FunctionComponent = () => {
     const { t } = useTranslation();
     const dispatch = useAppDispatch()
     const showDetails = useAppSelector(state => state.projectDetailsReducer.showDetails)
-    const projectShortName = useAppSelector(state => state.projectDetailsReducer.projectShortName)
+    const projectShortName = useAppSelector(state => state.projectDetailsReducer.project.shortName)
 
     return (
         <Grid container  >

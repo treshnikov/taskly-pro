@@ -10,7 +10,7 @@ import { GanttCellRenderer } from '../components/ProjectDetails/GanttCellRendere
 import { dateAsShortStrFromNumber } from '../common/dateFormatter';
 import { ProjectDetailsToolBar } from '../components/ProjectDetails/ProjectDetailsToolBar';
 import { useAppDispatch, useAppSelector } from "../hooks/redux.hook";
-import { updateProjectData } from '../redux/projectDetailsSlice';
+import { updateProjectDetailsInfo } from '../redux/projectDetailsSlice';
 
 registerAllModules();
 
@@ -18,31 +18,28 @@ export const ProjectDetails: React.FunctionComponent = () => {
   const projectId = useParams<{ id?: string }>()!.id
   const { request } = useHttp()
   const { t } = useTranslation();
+  const dispatch = useAppDispatch()
 
-  const staticHeaders = useMemo(() => ['', t('task'), t('comment'), t('estimationH'), t('units'), t('start'), t('end')], [t])
-  const [tableHeight, setTableHeight] = useState<number>(3500)
-
-  const [projectInfo, setProjectInfo] = useState<ProjectDetailedInfoVm>(new ProjectDetailedInfoVm())
-  const [headers, setHeaders] = useState<string[]>(staticHeaders)
-  const [colWidths] = useState<number[]>([5, 300, 150, 70, 310, 100, 100])
-
+  const projectInfo = useAppSelector(state => state.projectDetailsReducer.project)
   const ganttChartZoomLevel = useAppSelector(state => state.projectDetailsReducer.ganttChartZoomLevel)
   const showDetails = useAppSelector(state => state.projectDetailsReducer.showDetails)
 
-  const dispatch = useAppDispatch()
+  const defaultColWidths = [5, 300, 150, 70, 310, 100, 100]
+  const defaultHeaders = useMemo(() => ['', t('task'), t('comment'), t('estimationH'), t('units'), t('start'), t('end')], [t])
+  const [headers, setHeaders] = useState<string[]>(defaultHeaders)
+  const [tableHeight, setTableHeight] = useState<number>(3500)
 
   useEffect(() => {
     async function requestDetails() {
       let data = await request<ProjectDetailedInfoVm>("/api/v1/projects/" + projectId)
       //populateDemoTasks(data)
       ProjectDetailedInfoVm.init(data)
-      dispatch(updateProjectData(data.shortName))
-      setProjectInfo(data)
-      setHeaders([...staticHeaders, dateAsShortStrFromNumber(data.taskMinDate) + " - " + dateAsShortStrFromNumber(data.taskMaxDate)
+      dispatch(updateProjectDetailsInfo(data))
+      setHeaders([...defaultHeaders, dateAsShortStrFromNumber(data.taskMinDate) + " - " + dateAsShortStrFromNumber(data.taskMaxDate)
       ])
     }
     requestDetails()
-  }, [request, projectId, staticHeaders, dispatch])
+  }, [request, projectId, defaultHeaders, dispatch])
 
   useLayoutEffect(() => {
     setTableHeight(window.innerHeight - 145)
@@ -58,9 +55,9 @@ export const ProjectDetails: React.FunctionComponent = () => {
           renderAllRows={true}
           manualRowMove={true}
           viewportColumnRenderingOffset={headers.length}
-          fixedColumnsLeft={staticHeaders.length - 2}
+          fixedColumnsLeft={defaultHeaders.length - 2}
           data={projectInfo.tasks}
-          colWidths={colWidths}
+          colWidths={defaultColWidths}
           colHeaders={headers}
           wordWrap={true}
           fillHandle={false}
