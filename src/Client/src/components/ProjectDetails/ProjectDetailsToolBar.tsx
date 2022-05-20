@@ -4,7 +4,7 @@ import BarChartIcon from '@mui/icons-material/BarChart';
 import ZoomInIcon from '@mui/icons-material/ZoomIn';
 import ZoomOutIcon from '@mui/icons-material/ZoomOut';
 import { useAppDispatch, useAppSelector } from "../../hooks/redux.hook";
-import { zoomInGanttChart, zoomOutGanttChart, toggleShowDetails, addTask, removeTask } from '../../redux/projectDetailsSlice';
+import { zoomInGanttChart, zoomOutGanttChart, toggleShowDetails, addTask, removeTask, toggleCompactMode } from '../../redux/projectDetailsSlice';
 import { useTranslation } from "react-i18next";
 import RemoveIcon from '@mui/icons-material/Remove';
 
@@ -16,6 +16,7 @@ export const ProjectDetailsToolBar: React.FunctionComponent<ProjectDetailsToolBa
     const { t } = useTranslation();
     const dispatch = useAppDispatch()
     const showDetails = useAppSelector(state => state.projectDetailsReducer.showDetails)
+    const compactMode = useAppSelector(state => state.projectDetailsReducer.compactMode)
     const projectShortName = useAppSelector(state => state.projectDetailsReducer.project.shortName)
     const selectedRowIdx = useAppSelector(state => state.projectDetailsReducer.selectedRowIdx)
 
@@ -30,7 +31,8 @@ export const ProjectDetailsToolBar: React.FunctionComponent<ProjectDetailsToolBa
                         }} startIcon={<PlaylistAddIcon />}>{t('add')}</Button>
                     <Button variant='contained' size='small' onClick={e => {dispatch(removeTask())}} disabled={selectedRowIdx < 0} startIcon={<RemoveIcon />}>{t('remove')}</Button>
                     <Button variant='contained' size='small' startIcon={<BarChartIcon />}>{t('statistics')}</Button>
-                    <FormControlLabel label={t('show-details')} control={<Checkbox checked={showDetails} onChange={e => { dispatch(toggleShowDetails()) }} size='small' />} />
+                    <FormControlLabel label={t('compact-mode')} control={<Checkbox checked={compactMode} onChange={e => { dispatch(toggleCompactMode()) }} size='small' />} />
+                    <FormControlLabel label={t('show-details')} disabled={compactMode} control={<Checkbox checked={showDetails} onChange={e => { dispatch(toggleShowDetails()) }} size='small' />} />
                 </Stack>
             </Grid>
             <Grid item xs={6} style={{ textAlign: "right" }} paddingTop={1} paddingBottom={1}>

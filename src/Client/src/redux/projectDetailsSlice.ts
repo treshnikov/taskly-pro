@@ -7,15 +7,19 @@ import { RootState } from "./store"
 
 type ProjectDetailsStoreStateType = {
     ganttChartZoomLevel: number
+    compactMode: boolean
     showDetails: boolean
     selectedRowIdx: number
+    hiddenColumns: number[]
     project: IProjectDetailedInfoVm
 }
 
 const initialDemoState = {
     ganttChartZoomLevel: 0.3,
+    compactMode: false,
     showDetails: false,
-    selectedRowIdx: 0,
+    selectedRowIdx: -1,
+    hiddenColumns: [0],
     project: {
         id: 0,
         name: '',
@@ -53,6 +57,19 @@ export const projectDetailsSlice = createSlice({
 
         toggleShowDetails(state: ProjectDetailsStoreStateType) {
             state.showDetails = !state.showDetails
+        },
+
+        toggleCompactMode(state: ProjectDetailsStoreStateType) {
+            state.compactMode = !state.compactMode
+            if (state.compactMode) {
+                // hide id, estimations, and gantt chart
+                state.hiddenColumns.splice(0, state.hiddenColumns.length, ...[0, 4, 7])
+            }
+            else
+            {
+                // hide id column only
+                state.hiddenColumns.splice(0, state.hiddenColumns.length, ...[0])
+            }
         },
 
         updateProjectDetailsInfo(state: ProjectDetailsStoreStateType, action: PayloadAction<IProjectDetailedInfoVm>) {
@@ -125,17 +142,17 @@ export const projectDetailsSlice = createSlice({
         },
 
         removeTask(state: ProjectDetailsStoreStateType) {
-            if (state.selectedRowIdx < 0){
+            if (state.selectedRowIdx < 0) {
                 return
             }
 
-            state.project.tasks = state.project.tasks.filter( (i, idx) => idx !== state.selectedRowIdx) 
+            state.project.tasks = state.project.tasks.filter((i, idx) => idx !== state.selectedRowIdx)
         }
 
     }
 })
 
-export const { zoomInGanttChart, zoomOutGanttChart, toggleShowDetails,
+export const { zoomInGanttChart, zoomOutGanttChart, toggleShowDetails, toggleCompactMode,
     updateProjectDetailsInfo, addTask, onTaskAttributeChanged, onTasksMoved,
     onRowSelected, removeTask } = projectDetailsSlice.actions
 export const selectDemo = (state: RootState) => state.projectDetailsReducer

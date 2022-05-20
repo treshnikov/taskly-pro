@@ -22,15 +22,17 @@ export const ProjectDetails: React.FunctionComponent = () => {
   const dispatch = useAppDispatch()
   const hotTableRef = useRef<HotTable>(null);
 
+
   const projectInfo = useAppSelector(state => state.projectDetailsReducer.project)
   const ganttChartZoomLevel = useAppSelector(state => state.projectDetailsReducer.ganttChartZoomLevel)
   const showDetails = useAppSelector(state => state.projectDetailsReducer.showDetails)
+  const hiddenColumns = useAppSelector(state => state.projectDetailsReducer.hiddenColumns)
 
   const defaultColWidths = [5, 300, 150, 70, 310, 100, 100]
   const defaultHeaders = useMemo(() => ['', t('task'), t('comment'), t('estimationH'), t('units'), t('start'), t('end')], [t])
   const [headers, setHeaders] = useState<string[]>(defaultHeaders)
   const [tableHeight, setTableHeight] = useState<number>(3500)
-
+  
   useEffect(() => {
     async function requestDetails() {
       let data = await request<ProjectDetailedInfoVm>("/api/v1/projects/" + projectId)
@@ -75,7 +77,7 @@ export const ProjectDetails: React.FunctionComponent = () => {
           fillHandle={false}
           manualColumnResize={true}
           hiddenColumns={{
-            columns: [0]
+            columns: hiddenColumns
           }}
           afterSelection={(row: number, column: number, row2: number, column2: number, preventScrolling: { value: boolean }, selectionLayerLevel: number) => {
             preventScrolling.value = true
@@ -96,10 +98,9 @@ export const ProjectDetails: React.FunctionComponent = () => {
           }}
           licenseKey='non-commercial-and-evaluation'
         >
-          <HotColumn hiddenColumns data={"id"} editor={false} type={"text"} />
+          <HotColumn data={"id"} editor={false} type={"text"} />
           <HotColumn data={"description"} wordWrap={false} type={"text"} className="ellipsis-text" />
           <HotColumn data={"comment"} wordWrap={false} className="ellipsis-text" type={"text"} />
-
           <HotColumn data={"totalHours"} type={"text"} className='htCenter' readOnly={true} />
           <HotColumn data={"unitEstimations"} readOnly >
             <DepartmentsCellRenderer showDetails={showDetails} hot-renderer></DepartmentsCellRenderer>

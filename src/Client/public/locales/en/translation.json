@@ -53,5 +53,6 @@
     "statistics": "Statistics",
     "show-details": "Show details",
     "external": "External",
-    "remove": "Remove"
+    "remove": "Remove",
+    "compact-mode": "Compact mode"
 }
