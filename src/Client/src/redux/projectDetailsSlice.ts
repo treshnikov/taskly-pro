@@ -1,8 +1,8 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { convertToplainObj } from "../common/convertToplainObj"
-import { IProjectDetailedInfoVm, ProjectDetailedInfoVm, ProjectDetailedInfoVmHelper } from "../models/ProjectDetails/ProjectDetailedInfoVm"
+import { IProjectDetailedInfoVm, ProjectDetailedInfoVmHelper } from "../models/ProjectDetails/ProjectDetailedInfoVm"
 import { ProjectTaskUnitEstimationVm } from "../models/ProjectDetails/ProjectTaskUnitEstimationVm"
-import { IProjectTaskVm, ProjectTaskVm } from "../models/ProjectDetails/ProjectTaskVm"
+import { ProjectTaskVm } from "../models/ProjectDetails/ProjectTaskVm"
 import { RootState } from "./store"
 
 type ProjectDetailsStoreStateType = {

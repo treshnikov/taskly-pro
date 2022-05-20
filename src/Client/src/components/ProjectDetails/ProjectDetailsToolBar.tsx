@@ -7,7 +7,11 @@ import { useAppDispatch, useAppSelector } from "../../hooks/redux.hook";
 import { ganttZoomIn, ganttZoomOut, toggleShowDetails, addTask } from '../../redux/projectDetailsSlice';
 import { useTranslation } from "react-i18next";
 
-export const ProjectDetailsToolBar: React.FunctionComponent = () => {
+type ProjectDetailsToolBarProps = {
+    scrollToTheLastRowFunc: () => void
+}
+
+export const ProjectDetailsToolBar: React.FunctionComponent<ProjectDetailsToolBarProps> = ({ scrollToTheLastRowFunc }) => {
     const { t } = useTranslation();
     const dispatch = useAppDispatch()
     const showDetails = useAppSelector(state => state.projectDetailsReducer.showDetails)
@@ -20,6 +24,7 @@ export const ProjectDetailsToolBar: React.FunctionComponent = () => {
                     <Button variant='contained' size='small'
                         onClick={e => {
                             dispatch(addTask())
+                            scrollToTheLastRowFunc()
                         }} startIcon={<PlaylistAddIcon />}>{t('add')}</Button>
                     <Button variant='contained' size='small' startIcon={<BarChartIcon />}>{t('statistics')}</Button>
                     <FormControlLabel label={t('show-details')} control={<Checkbox checked={showDetails} onChange={e => { dispatch(toggleShowDetails()) }} size='small' />} />

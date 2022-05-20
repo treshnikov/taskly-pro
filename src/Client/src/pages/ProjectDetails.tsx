@@ -45,9 +45,16 @@ export const ProjectDetails: React.FunctionComponent = () => {
     setTableHeight(window.innerHeight - 145)
   }, [])
 
+  const scrollToTheLastRow = useCallback(() => {
+    if (hotTableRef && hotTableRef.current && hotTableRef.current.hotInstance) {
+      hotTableRef.current.hotInstance.scrollViewportTo(0)
+    }
+
+  }, [hotTableRef])
+
   return (
     <div className='page-container'>
-      <ProjectDetailsToolBar></ProjectDetailsToolBar>
+      <ProjectDetailsToolBar scrollToTheLastRowFunc={scrollToTheLastRow}></ProjectDetailsToolBar>
       <div style={{ overflowX: 'auto', height: tableHeight }} onClickCapture={e => { e.stopPropagation() }}>
         <HotTable
           id="projectDetailsTable"
