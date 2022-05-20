@@ -66,8 +66,8 @@ export const GanttCellRenderer = (props: any) => {
                 const taskStart = projectTasks[rowIdx].start
                 const taskEnd = projectTasks[rowIdx].end
 
-                const startX = ganttChartZoomLevel * (new Date(taskStart).getTime() - new Date(startDt).getTime()) / (1000 * 3600 * 24)
-                const lineWidth = ganttChartZoomLevel * (new Date(taskEnd).getTime() - new Date(taskStart).getTime()) / (1000 * 3600 * 24)
+                const startX = ganttChartZoomLevel * (new Date(taskStart).getTime() - new Date(startDt).getTime()) / (1000 * 3600 * 24) - 2
+                const lineWidth = ganttChartZoomLevel * (new Date(taskEnd).getTime() - new Date(taskStart).getTime()) / (1000 * 3600 * 24) + 2
 
                 drawLine(
                     startX, top + noEstimationsLineHeight / 2,

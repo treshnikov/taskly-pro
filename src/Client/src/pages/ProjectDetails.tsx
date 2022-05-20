@@ -10,7 +10,8 @@ import { GanttCellRenderer } from '../components/ProjectDetails/GanttCellRendere
 import { dateAsShortStrFromNumber } from '../common/dateFormatter';
 import { ProjectDetailsToolBar } from '../components/ProjectDetails/ProjectDetailsToolBar';
 import { useAppDispatch, useAppSelector } from "../hooks/redux.hook";
-import { updateProjectDetailsInfo } from '../redux/projectDetailsSlice';
+import { onChangeTaskAttribute, updateProjectDetailsInfo } from '../redux/projectDetailsSlice';
+import { CellChange, ChangeSource } from 'handsontable/common';
 
 registerAllModules();
 
@@ -77,6 +78,10 @@ export const ProjectDetails: React.FunctionComponent = () => {
           afterSelection={(row: number, column: number, row2: number, column2: number, preventScrolling: { value: boolean }, selectionLayerLevel: number) => {
             preventScrolling.value = true
           }}
+          beforeChange = {(changes: CellChange[], source: ChangeSource) => {
+            dispatch(onChangeTaskAttribute(changes))
+            return false
+          }}
 
           licenseKey='non-commercial-and-evaluation'
         >
@@ -84,7 +89,7 @@ export const ProjectDetails: React.FunctionComponent = () => {
           <HotColumn data={"description"} wordWrap={false} type={"text"} className="ellipsis-text" />
           <HotColumn data={"comment"} wordWrap={false} className="ellipsis-text" type={"text"} />
 
-          <HotColumn data={"totalHours"} type={"text"} className='htCenter' />
+          <HotColumn data={"totalHours"} type={"text"} className='htCenter' readOnly={true} />
           <HotColumn data={"unitEstimations"} readOnly >
             <DepartmentsCellRenderer showDetails={showDetails} hot-renderer></DepartmentsCellRenderer>
           </HotColumn>

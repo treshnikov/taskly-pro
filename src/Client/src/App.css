@@ -30,6 +30,10 @@
     color: rgb(33, 43, 54);
 }
 
+.handsontable .htDimmed {
+    color: rgb(55, 55, 55);
+  }
+
 .ellipsis-text {
     text-overflow: ellipsis;
 }
