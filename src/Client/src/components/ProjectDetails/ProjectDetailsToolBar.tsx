@@ -13,7 +13,7 @@ type ProjectDetailsToolBarProps = {
     scrollToTheLastRowFunc: (rowIdx: number) => void
 }
 
-export const ProjectDetailsToolBar: React.FunctionComponent<ProjectDetailsToolBarProps> = ({ scrollToTheLastRowFunc: scrollToRow }) => {
+export const ProjectDetailsToolBar: React.FunctionComponent<ProjectDetailsToolBarProps> = ({ scrollToTheLastRowFunc }) => {
     const { t } = useTranslation();
     const dispatch = useAppDispatch()
     const showDetails = useAppSelector(state => state.projectDetailsReducer.showDetails)
@@ -28,6 +28,7 @@ export const ProjectDetailsToolBar: React.FunctionComponent<ProjectDetailsToolBa
                     <Button variant='contained' size='small'
                         onClick={e => {
                             dispatch(addTask())
+                            window.scrollTo(0, document.body.scrollHeight)
                         }} startIcon={<PlaylistAddIcon />}>{t('add')}</Button>
                     <Button variant='contained' size='small' onClick={e => {dispatch(removeTask())}} disabled={selectedRowIdx < 0} startIcon={<RemoveIcon />}>{t('remove')}</Button>
                     <Button variant='contained' size='small' onClick={e => {dispatch(orderTasks())}} startIcon={<SortIcon />}>{t('order-tasks')}</Button>
@@ -40,7 +41,7 @@ export const ProjectDetailsToolBar: React.FunctionComponent<ProjectDetailsToolBa
                 <Stack direction="row" paddingTop={1} paddingBottom={1} justifyContent="flex-end" >
                     <Button variant='text' size='small' startIcon={<ZoomInIcon />} onClick={e => { dispatch(zoomInGanttChart()) }} ></Button>
                     <Button variant='text' size='small' startIcon={<ZoomOutIcon />} onClick={e => { dispatch(zoomOutGanttChart()) }} ></Button>
-                    <Typography variant='h5'>{projectShortName}</Typography>
+                    <Typography variant='h5' style={{whiteSpace: "nowrap"}}>{projectShortName}</Typography>
                 </Stack>
             </Grid>
         </Grid>
