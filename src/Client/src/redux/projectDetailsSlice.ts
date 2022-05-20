@@ -8,12 +8,14 @@ import { RootState } from "./store"
 type ProjectDetailsStoreStateType = {
     ganttChartZoomLevel: number
     showDetails: boolean
+    selectedRowIdx: number
     project: IProjectDetailedInfoVm
 }
 
 const initialDemoState = {
     ganttChartZoomLevel: 0.3,
     showDetails: false,
+    selectedRowIdx: 0,
     project: {
         id: 0,
         name: '',
@@ -73,7 +75,6 @@ export const projectDetailsSlice = createSlice({
                 const taskIdx = ch[0]
                 const taskAttribute = ch[1]
                 const newValue = ch[3]
-                //console.log({taskIdx, taskAttribute, newValue})
                 switch (taskAttribute) {
                     case "description":
                         state.project.tasks[taskIdx].description = newValue
@@ -117,11 +118,25 @@ export const projectDetailsSlice = createSlice({
             const tasksToMove = tasks.splice(movedRowIdxs[0], movedRowIdxs.length)
             tasks.splice(finalIndex, 0, ...tasksToMove)
             state.project.tasks.splice(0, state.project.tasks.length, ...tasks)
+        },
+
+        onRowSelected(state: ProjectDetailsStoreStateType, action: PayloadAction<number>) {
+            state.selectedRowIdx = action.payload
+        },
+
+        removeTask(state: ProjectDetailsStoreStateType) {
+            if (state.selectedRowIdx < 0){
+                return
+            }
+
+            state.project.tasks = state.project.tasks.filter( (i, idx) => idx !== state.selectedRowIdx) 
         }
+
     }
 })
 
 export const { zoomInGanttChart, zoomOutGanttChart, toggleShowDetails,
-    updateProjectDetailsInfo, addTask, onTaskAttributeChanged, onTasksMoved } = projectDetailsSlice.actions
+    updateProjectDetailsInfo, addTask, onTaskAttributeChanged, onTasksMoved,
+    onRowSelected, removeTask } = projectDetailsSlice.actions
 export const selectDemo = (state: RootState) => state.projectDetailsReducer
 export default projectDetailsSlice.reducer

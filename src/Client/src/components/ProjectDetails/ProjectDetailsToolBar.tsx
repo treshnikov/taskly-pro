@@ -4,8 +4,9 @@ import BarChartIcon from '@mui/icons-material/BarChart';
 import ZoomInIcon from '@mui/icons-material/ZoomIn';
 import ZoomOutIcon from '@mui/icons-material/ZoomOut';
 import { useAppDispatch, useAppSelector } from "../../hooks/redux.hook";
-import { zoomInGanttChart, zoomOutGanttChart, toggleShowDetails, addTask } from '../../redux/projectDetailsSlice';
+import { zoomInGanttChart, zoomOutGanttChart, toggleShowDetails, addTask, removeTask } from '../../redux/projectDetailsSlice';
 import { useTranslation } from "react-i18next";
+import RemoveIcon from '@mui/icons-material/Remove';
 
 type ProjectDetailsToolBarProps = {
     scrollToTheLastRowFunc: () => void
@@ -16,6 +17,7 @@ export const ProjectDetailsToolBar: React.FunctionComponent<ProjectDetailsToolBa
     const dispatch = useAppDispatch()
     const showDetails = useAppSelector(state => state.projectDetailsReducer.showDetails)
     const projectShortName = useAppSelector(state => state.projectDetailsReducer.project.shortName)
+    const selectedRowIdx = useAppSelector(state => state.projectDetailsReducer.selectedRowIdx)
 
     return (
         <Grid container  >
@@ -26,6 +28,7 @@ export const ProjectDetailsToolBar: React.FunctionComponent<ProjectDetailsToolBa
                             dispatch(addTask())
                             scrollToTheLastRowFunc()
                         }} startIcon={<PlaylistAddIcon />}>{t('add')}</Button>
+                    <Button variant='contained' size='small' onClick={e => {dispatch(removeTask())}} disabled={selectedRowIdx < 0} startIcon={<RemoveIcon />}>{t('remove')}</Button>
                     <Button variant='contained' size='small' startIcon={<BarChartIcon />}>{t('statistics')}</Button>
                     <FormControlLabel label={t('show-details')} control={<Checkbox checked={showDetails} onChange={e => { dispatch(toggleShowDetails()) }} size='small' />} />
                 </Stack>

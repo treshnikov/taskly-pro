@@ -52,5 +52,6 @@
     "add": "Добавить",
     "statistics": "Статистика",
     "show-details": "Показать детали",
-    "external": "Внешний"
+    "external": "Внешний",
+    "remove": "Удалить"
 }   

@@ -52,5 +52,6 @@
     "add": "Add",
     "statistics": "Statistics",
     "show-details": "Show details",
-    "external": "External"
+    "external": "External",
+    "remove": "Remove"
 }

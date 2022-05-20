@@ -10,7 +10,7 @@ import { GanttCellRenderer } from '../components/ProjectDetails/GanttCellRendere
 import { dateAsShortStrFromNumber } from '../common/dateFormatter';
 import { ProjectDetailsToolBar } from '../components/ProjectDetails/ProjectDetailsToolBar';
 import { useAppDispatch, useAppSelector } from "../hooks/redux.hook";
-import { onTaskAttributeChanged, onTasksMoved, updateProjectDetailsInfo } from '../redux/projectDetailsSlice';
+import { onRowSelected, onTaskAttributeChanged, onTasksMoved, updateProjectDetailsInfo } from '../redux/projectDetailsSlice';
 import { CellChange, ChangeSource } from 'handsontable/common';
 
 registerAllModules();
@@ -54,7 +54,9 @@ export const ProjectDetails: React.FunctionComponent = () => {
   }, [hotTableRef])
 
   return (
-    <div className='page-container'>
+    <div className='page-container' onClick={e => {
+      dispatch(onRowSelected(-1))
+    }}>
       <ProjectDetailsToolBar scrollToTheLastRowFunc={scrollToTheLastRow}></ProjectDetailsToolBar>
       <div style={{ overflowX: 'auto', height: tableHeight }} onClickCapture={e => { e.stopPropagation() }}>
         <HotTable
@@ -83,8 +85,14 @@ export const ProjectDetails: React.FunctionComponent = () => {
             return false
           }}
           beforeRowMove={(movedRows: number[], finalIndex: number, dropIndex: number | undefined, movePossible: boolean) => {
-            dispatch(onTasksMoved({movedRows, finalIndex}))
+            dispatch(onTasksMoved({ movedRows, finalIndex }))
+            if (hotTableRef && hotTableRef.current && hotTableRef.current.hotInstance) {
+              hotTableRef.current.hotInstance.selectCell(finalIndex, 1)
+            }
             return false
+          }}
+          afterSelectionEnd={(row: number, column: number, row2: number, column2: number, selectionLayerLevel: number) => {
+            dispatch(onRowSelected(row))
           }}
           licenseKey='non-commercial-and-evaluation'
         >

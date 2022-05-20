@@ -49,11 +49,11 @@ export const NavBar: React.FunctionComponent = () => {
     <Box sx={{ flexGrow: 1 }}>
       <FormGroup>
       </FormGroup>
-      <AppBar position="static" style={{backgroundColor: "#3178c6"}}>
+      <AppBar position="static" style={{ backgroundColor: "#3178c6" }}>
         <Toolbar>
           <SidebarMenu />
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            <p className='logo' onClick={e => { navigate("/") }} ><TaskAltIcon/>&nbsp;Taskly</p>
+            <p style={{ width: "100px" }} className='logo' onClick={e => { navigate("/") }} ><TaskAltIcon />&nbsp;Taskly</p>
           </Typography>
 
           <div>
@@ -64,7 +64,7 @@ export const NavBar: React.FunctionComponent = () => {
               onClick={handleMenu}
               color="inherit"
             >
-              <AccountCircleIcon/>
+              <AccountCircleIcon />
             </IconButton>
             <Menu
               id="menu-appbar"
@@ -81,7 +81,7 @@ export const NavBar: React.FunctionComponent = () => {
               open={Boolean(anchorEl)}
               onClose={handleClose}
             >
-              <div style={{paddingLeft: 10, paddingRight: 10, cursor: 'default', textAlign: 'center' }}>
+              <div style={{ paddingLeft: 10, paddingRight: 10, cursor: 'default', textAlign: 'center' }}>
                 {user.name}
               </div>
               <Divider />
