@@ -8,11 +8,12 @@ import { Backdrop, CircularProgress, createTheme, CssBaseline, ThemeProvider } f
 import { useAppRoutes } from './components/Routes';
 import { AppContext } from './context/AppContext';
 import { useAppSelector } from './hooks/redux.hook';
+import { useEffect, useState } from 'react';
 
 function App() {
   const { setEnLang, setRuLang } = useApp()
   const routes = useAppRoutes({})
-  const showLoadingScreen = useAppSelector(state => state.appReducer.showLoadingScreen)
+  const requestsInProgress = useAppSelector(state => state.appReducer.requestsInProgress)
 
   return (
     <div className="App">
@@ -28,6 +29,7 @@ function App() {
           </Router>
         </AppContext.Provider>
       </ThemeProvider>
+
       <ToastContainer
         position="top-right"
         autoClose={5000}
@@ -40,9 +42,10 @@ function App() {
         pauseOnHover />
 
       <Backdrop sx={{ color: 'rgb(248, 248, 249)', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        open={showLoadingScreen}>
+        open={requestsInProgress !== 0}>
         <CircularProgress color="inherit" />
       </Backdrop>
+
     </div>
   );
 

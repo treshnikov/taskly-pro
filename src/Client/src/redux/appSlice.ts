@@ -2,26 +2,26 @@ import { createSlice } from "@reduxjs/toolkit"
 import { RootState } from "./store";
 
 export type AppState = {
-    showLoadingScreen: boolean
+    requestsInProgress: number
 };
 
 export const appSlice = createSlice({
     name: "app",
-    initialState: {showLoadingScreen : false},
+    initialState: {requestsInProgress : 0},
     reducers: {
-        showLoadingScreen(state: AppState)
+        onRequestStarted(state: AppState)
         {
-            state.showLoadingScreen = true
+            state.requestsInProgress += 1
         },
 
-        hideLoadingScreen(state: AppState)
+        onRequestCompleted(state: AppState)
         {
-            state.showLoadingScreen = false
+            state.requestsInProgress -= 1
         }
 
     }
 });
 
-export const { showLoadingScreen, hideLoadingScreen } = appSlice.actions;
+export const { onRequestStarted, onRequestCompleted } = appSlice.actions;
 export const selectApp = (state: RootState) => state.appReducer;
 export default appSlice.reducer

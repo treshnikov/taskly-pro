@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux"
 import { onSignin, onSignout  } from "../redux/authSlice"
 import { useCallback } from 'react'
 import { useAppSelector } from './redux.hook'
-import { hideLoadingScreen, showLoadingScreen } from '../redux/appSlice'
+import { onRequestCompleted, onRequestStarted } from '../redux/appSlice'
 
 export const useHttp = () => {
     const dispatch = useDispatch();
@@ -31,16 +31,17 @@ export const useHttp = () => {
 
         let response
         try {
-            dispatch(showLoadingScreen())
+            dispatch(onRequestStarted())
             response = await fetch(input, init)
-            dispatch(hideLoadingScreen())
         } catch (ex) {
-            dispatch(hideLoadingScreen())
             const err = ex as Error;
             if (err) {
                 toast.error(err.message);
             }
             throw (ex)
+        }
+        finally{
+            dispatch(onRequestCompleted())
         }
 
         if (response.status === 401 || response.status === 403) {
