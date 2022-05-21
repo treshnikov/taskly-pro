@@ -44,12 +44,16 @@ export const NavBar: React.FunctionComponent = () => {
     fetchUser()
   }, [request])
 
-
   return (
     <Box sx={{ flexGrow: 1 }}>
       <FormGroup>
       </FormGroup>
-      <AppBar position="static" style={{ backgroundColor: "#3178c6" }}>
+      <AppBar position="static" style={{
+        backgroundColor: "rgb(243, 244, 245)",
+        boxShadow: "#eeeeee 0px 0px 20px 0px",
+        color: "rgb(44, 44, 44)",
+        height: "60px"
+      }}>
         <Toolbar>
           <SidebarMenu />
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>

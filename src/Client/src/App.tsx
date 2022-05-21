@@ -4,13 +4,15 @@ import 'react-toastify/dist/ReactToastify.css';
 import { BrowserRouter as Router } from "react-router-dom";
 import { useApp } from './hooks/app.hook';
 import { ToastContainer } from 'react-toastify';
-import { createTheme, CssBaseline, ThemeProvider } from '@mui/material';
+import { Backdrop, CircularProgress, createTheme, CssBaseline, ThemeProvider } from '@mui/material';
 import { useAppRoutes } from './components/Routes';
 import { AppContext } from './context/AppContext';
+import { useAppSelector } from './hooks/redux.hook';
 
 function App() {
   const { setEnLang, setRuLang } = useApp()
   const routes = useAppRoutes({})
+  const showLoadingScreen = useAppSelector(state => state.appReducer.showLoadingScreen)
 
   return (
     <div className="App">
@@ -36,6 +38,11 @@ function App() {
         pauseOnFocusLoss
         draggable
         pauseOnHover />
+
+      <Backdrop sx={{ color: 'rgb(248, 248, 249)', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={showLoadingScreen}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </div>
   );
 

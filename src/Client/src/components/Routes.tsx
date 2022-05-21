@@ -1,8 +1,5 @@
 import React from 'react'
-import {
-  Routes,
-  Route
-} from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { NavBar } from './NavBar';
 import { Home } from '../pages/Home';
 import { Login } from '../pages/Login'
@@ -10,17 +7,14 @@ import { Register } from '../pages/Register'
 import { Users } from '../pages/Users';
 import { Settings } from '../pages/Settings';
 import Units from '../pages/Units';
-import { useSelector, TypedUseSelectorHook } from "react-redux"
-import { selectAuth } from '../redux/authSlice';
-import { RootState } from '../redux/store';
 import { Projects } from '../pages/Projects';
 import { ProjectDetails } from '../pages/ProjectDetails';
+import { useAppSelector } from '../hooks/redux.hook';
 
 export const useAppRoutes: React.FunctionComponent = () => {
-  const useAuthSelector: TypedUseSelectorHook<RootState> = useSelector;
-  const auth = useAuthSelector(selectAuth)
+  const isAuthenticated = useAppSelector(state => state.authReducer.isAuthenticated)
 
-  if (auth.isAuthenticated) {
+  if (isAuthenticated) {
     return (
       <div>
         <NavBar />

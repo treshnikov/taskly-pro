@@ -1,13 +1,13 @@
 import { toast } from 'react-toastify'
-import { useSelector, useDispatch, TypedUseSelectorHook } from "react-redux"
-import { onSignin, onSignout, selectAuth } from "../redux/authSlice"
-import { RootState } from '../redux/store'
+import { useDispatch } from "react-redux"
+import { onSignin, onSignout  } from "../redux/authSlice"
 import { useCallback } from 'react'
+import { useAppSelector } from './redux.hook'
+import { hideLoadingScreen, showLoadingScreen } from '../redux/appSlice'
 
 export const useHttp = () => {
     const dispatch = useDispatch();
-    const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
-    const auth = useAppSelector(selectAuth)
+    const jwt = useAppSelector(state => state.authReducer.jwt)
     
     const login = async (data: FormData) => {
         const json = await request<{jwt: string}>("/api/v1/auth/token",
@@ -27,12 +27,15 @@ export const useHttp = () => {
         if (!init) {
             init = {}
         }
-        init.headers = { Authorization: `Bearer ${auth.jwt}` }
+        init.headers = { Authorization: `Bearer ${jwt}` }
 
         let response
         try {
+            dispatch(showLoadingScreen())
             response = await fetch(input, init)
+            dispatch(hideLoadingScreen())
         } catch (ex) {
+            dispatch(hideLoadingScreen())
             const err = ex as Error;
             if (err) {
                 toast.error(err.message);
@@ -66,7 +69,7 @@ export const useHttp = () => {
         toast.error(errorText);
 
         throw new Error(errorText)
-    }, [auth, dispatch])
+    }, [dispatch, jwt])
 
     return { login, logout, request }
 }
