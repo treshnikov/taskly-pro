@@ -1,8 +1,11 @@
 import { useTranslation } from 'react-i18next';
-import { ProjectTaskUnitEstimationVm } from "../../models/ProjectDetails/ProjectTaskUnitEstimationVm";
+import { useAppDispatch } from '../../../hooks/redux.hook';
+import { ProjectTaskUnitEstimationVm } from "../../../models/ProjectDetails/ProjectTaskUnitEstimationVm";
+import { toggleShowDepartmentsPlan } from '../../../redux/projectDetailsSlice';
 
 export const DepartmentsCellRenderer = (props: any) => {
     const { showDetails, value } = props
+    const dispatch = useAppDispatch()
     const estimations = value as ProjectTaskUnitEstimationVm[]
     const { t } = useTranslation();
     const showDetailsAsBool = showDetails as boolean
@@ -12,7 +15,7 @@ export const DepartmentsCellRenderer = (props: any) => {
             {
                 estimations?.filter(i => i.totalHours > 0).sort((a, b) => (a.totalHours < b.totalHours ? 1 : -1)).map((i, idx) => {
                     return (
-                        <div key={"dep_" + i.id.toString()} style={
+                        <div onDoubleClick={e => {dispatch(toggleShowDepartmentsPlan())}} key={"dep_" + i.id.toString()} style={
                             (estimations?.filter(i => i.totalHours > 0).length - 1 === idx) ?
                                 {
                                     width: "100%",

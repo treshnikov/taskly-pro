@@ -5,14 +5,15 @@ import { useTranslation } from 'react-i18next';
 import { useHttp } from '../hooks/http.hook';
 import { useParams } from 'react-router-dom';
 import { ProjectDetailedInfoVm, ProjectDetailedInfoVmHelper } from "../models/ProjectDetails/ProjectDetailedInfoVm";
-import { DepartmentsCellRenderer } from "../components/ProjectDetails/DepartmentsCellRenderer"
-import { GanttCellRenderer } from '../components/ProjectDetails/GanttCellRenderer';
+import { DepartmentsCellRenderer } from "../components/ProjectDetails/Renderers/DepartmentsCellRenderer"
+import { GanttCellRenderer } from '../components/ProjectDetails/Renderers/GanttCellRenderer';
 import { dateAsShortStrFromNumber } from '../common/dateFormatter';
 import { ProjectDetailsToolBar } from '../components/ProjectDetails/ProjectDetailsToolBar';
 import { useAppDispatch, useAppSelector } from "../hooks/redux.hook";
 import { onRowSelected, onTaskAttributeChanged, onTasksMoved, updateProjectDetailsInfo } from '../redux/projectDetailsSlice';
 import { CellChange, ChangeSource } from 'handsontable/common';
-import { ProjectStatistics } from '../components/ProjectDetails/ProjectStatistics';
+import { ProjectDetailsStatistics } from '../components/ProjectDetails/ProjectDetailsStatistics';
+import { ProjectDetailsDepartemntsPlan } from '../components/ProjectDetails/ProjectDetailsDepartemntsPlan';
 
 registerAllModules();
 
@@ -52,9 +53,10 @@ export const ProjectDetails: React.FunctionComponent = () => {
   }, [hotTableRef])
 
   return (
-    <div className='page-container' onClick={e => { dispatch(onRowSelected(-1)) }}>
+    <div className='page-container'>
       <ProjectDetailsToolBar scrollToTheLastRowFunc={scrollToRow}></ProjectDetailsToolBar>
-      <ProjectStatistics/>
+      <ProjectDetailsStatistics/>
+      <ProjectDetailsDepartemntsPlan/>
       <div id="hotContainer" style={{ overflowX: 'auto', height: tableHeight }} onClickCapture={e => { e.stopPropagation() }}>
         <HotTable
           id="projectDetailsTable"
@@ -90,12 +92,14 @@ export const ProjectDetails: React.FunctionComponent = () => {
           afterSelectionEnd={(row: number, column: number, row2: number, column2: number, selectionLayerLevel: number) => {
             dispatch(onRowSelected(row))
           }}
+          afterDeselect={() => dispatch(onRowSelected(-1))}
           afterRender={(isForced: boolean) => {
             setTimeout(() => {
               const tableHeight = document.querySelector<HTMLElement>(".htCore")?.offsetHeight
               setTableHeight(50 + (tableHeight as number))
             }, 500);
           }}
+          outsideClickDeselects={true}
           licenseKey='non-commercial-and-evaluation'
         >
           <HotColumn data={"id"} editor={false} type={"text"} />

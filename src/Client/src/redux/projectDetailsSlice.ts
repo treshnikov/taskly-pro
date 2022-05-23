@@ -2,7 +2,7 @@ import { createSlice, current, PayloadAction } from "@reduxjs/toolkit"
 import { CellChange } from "handsontable/common"
 import { strToDate } from "../common/dateFormatter"
 import { IProjectDetailedInfoVm, ProjectDetailedInfoVmHelper } from "../models/ProjectDetails/ProjectDetailedInfoVm"
-import { ProjectTaskVm } from "../models/ProjectDetails/ProjectTaskVm"
+import { IProjectTaskVm, ProjectTaskVm } from "../models/ProjectDetails/ProjectTaskVm"
 import { RootState } from "./store"
 
 type ProjectDetailsStoreStateType = {
@@ -10,6 +10,7 @@ type ProjectDetailsStoreStateType = {
     compactMode: boolean
     showDetails: boolean
     showStatistics: boolean
+    showDepartmentsPlan: boolean
     selectedRowIdx: number
     hiddenColumns: number[]
     project: IProjectDetailedInfoVm
@@ -20,6 +21,7 @@ const initialDemoState = {
     compactMode: false,
     showDetails: false,
     showStatistics: false,
+    showDepartmentsPlan: false,
     selectedRowIdx: -1,
     hiddenColumns: [0],
     project: {
@@ -36,7 +38,19 @@ const initialDemoState = {
         closeDate: 0,
         customer: '',
         contract: '',
-        tasks: [],
+        tasks: [{
+            id: '',
+            start: 0,
+            end: 0,
+            description: '',
+            comment: '',
+            unitEstimations: [],
+        
+            // calculated
+            startAsStr: '',
+            endAsStr: '', 
+            totalHours: 0
+        }],
 
         // calculated fields
         totalHours: 0,
@@ -63,6 +77,10 @@ export const projectDetailsSlice = createSlice({
 
         toggleShowStatistics(state: ProjectDetailsStoreStateType) {
             state.showStatistics = !state.showStatistics
+        },
+
+        toggleShowDepartmentsPlan(state: ProjectDetailsStoreStateType) {
+            state.showDepartmentsPlan = !state.showDepartmentsPlan
         },
 
         toggleCompactMode(state: ProjectDetailsStoreStateType) {
@@ -163,6 +181,6 @@ export const projectDetailsSlice = createSlice({
 
 export const { zoomInGanttChart, zoomOutGanttChart, toggleShowDetails, toggleCompactMode,
     updateProjectDetailsInfo, addTask, onTaskAttributeChanged, onTasksMoved, toggleShowStatistics,
-    onRowSelected, removeTask, orderTasks } = projectDetailsSlice.actions
+    onRowSelected, removeTask, orderTasks, toggleShowDepartmentsPlan } = projectDetailsSlice.actions
 export const selectDemo = (state: RootState) => state.projectDetailsReducer
 export default projectDetailsSlice.reducer

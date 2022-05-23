@@ -20,7 +20,7 @@ class ChartData {
     hoverOffset: number = 4
 }
 
-export const ProjectStatistics: React.FunctionComponent = () => {
+export const ProjectDetailsStatistics: React.FunctionComponent = () => {
     const { t } = useTranslation();
     const dispatch = useAppDispatch()
     const showStatistics = useAppSelector(state => state.projectDetailsReducer.showStatistics)
@@ -60,8 +60,6 @@ export const ProjectStatistics: React.FunctionComponent = () => {
             const depName = p
             const hours = plan.records.get(depName) as number
 
-            console.log(depName, hours)
-
             newChartData.labels.push(depName)
             newChartData.datasets[0].data.push(hours)
             newChartData.datasets[0].backgroundColor.push(ProjectTaskUnitEstimationVmHelper.getColor(depName))
@@ -84,7 +82,7 @@ export const ProjectStatistics: React.FunctionComponent = () => {
                 <Divider></Divider>
                 <DialogContent>
                     <Grid container>
-                        <Grid item xs={6}>
+                        <Grid item xs={7}>
                             {t('total-planned-hours')}: {project.totalHours}{t('hour')}
                             <ul>
                                 {
@@ -115,7 +113,7 @@ export const ProjectStatistics: React.FunctionComponent = () => {
                                 }
                             </ul>
                         </Grid>
-                        <Grid item xs={6}>
+                        <Grid item xs={5}>
                             <Doughnut
                                 data={chartData} options={options}
                             />

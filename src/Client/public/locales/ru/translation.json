@@ -51,10 +51,10 @@
     "estimationH": "Оценка, ч",
     "add": "Добавить",
     "statistics": "Статистика",
-    "show-details": "Показать детали",
+    "show-details": "Детали",
     "external": "Внешний",
     "remove": "Удалить",
-    "compact-mode": "Компактный режим",
+    "compact-mode": "Компактный вид",
     "order-tasks": "Упорядочить",
     "total-planned-hours": "Всего запланировано часов",
     "close": "Закрыть"

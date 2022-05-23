@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { dateAsShortStrFromNumber } from "../../common/dateFormatter";
-import { ProjectTaskUnitEstimationVm } from "../../models/ProjectDetails/ProjectTaskUnitEstimationVm";
-import { ProjectTaskVm } from "../../models/ProjectDetails/ProjectTaskVm";
-import { useAppSelector } from '../../hooks/redux.hook'
+import { dateAsShortStrFromNumber } from "../../../common/dateFormatter";
+import { ProjectTaskUnitEstimationVm } from "../../../models/ProjectDetails/ProjectTaskUnitEstimationVm";
+import { ProjectTaskVm } from "../../../models/ProjectDetails/ProjectTaskVm";
+import { useAppSelector } from '../../../hooks/redux.hook'
 
 export const GanttCellRenderer = (props: any) => {
     const { row, width, value, startDate, tasks } = props
