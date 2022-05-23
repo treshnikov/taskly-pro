@@ -90,7 +90,7 @@ export const ProjectDetailsStatistics: React.FunctionComponent = () => {
                                         const hours = plan.records.get(i) as number
 
                                         if (hours === 0) { 
-                                            return <></>
+                                            return (<div key={project.id + i}></div>)
                                         }
 
                                         const percent = (100 * hours / project.totalHours).toFixed(2)
