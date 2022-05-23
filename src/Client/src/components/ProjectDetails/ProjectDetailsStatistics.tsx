@@ -27,7 +27,7 @@ export const ProjectDetailsStatistics: React.FunctionComponent = () => {
     const project = useAppSelector(state => state.projectDetailsReducer.project)
     const [plan, setPlan] = useState<DepartmentsPlan>(new DepartmentsPlan())
     const [chartData, setChartData] = useState<ChartData>(new ChartData())
-    
+
     const options = {
         cutoutPercentage: 80,
         layout: { padding: 0 },
@@ -87,9 +87,14 @@ export const ProjectDetailsStatistics: React.FunctionComponent = () => {
                             <ul>
                                 {
                                     Array.from(plan.records.keys()).sort(sortFunc).map(i => {
-                                        const color = ProjectTaskUnitEstimationVmHelper.getColor(i)
                                         const hours = plan.records.get(i) as number
-                                        const percent =  (100 * hours / project.totalHours).toFixed(2)
+
+                                        if (hours === 0) { 
+                                            return <></>
+                                        }
+
+                                        const percent = (100 * hours / project.totalHours).toFixed(2)
+                                        const color = ProjectTaskUnitEstimationVmHelper.getColor(i)
                                         return (
                                             <li key={project.id + i}>
                                                 <Stack direction="row">
@@ -103,8 +108,8 @@ export const ProjectDetailsStatistics: React.FunctionComponent = () => {
                                                         marginRight: "2px"
                                                     }}>
                                                     </span>
-                                                    <div style={{display: "inline"}}>
-                                                        {i}: {hours}{t('hour')} <p style={{display: "inline", color: "silver"}}>{percent}%</p>
+                                                    <div style={{ display: "inline" }}>
+                                                        {i}: {hours}{t('hour')} <p style={{ display: "inline", color: "silver" }}>{percent}%</p>
                                                     </div>
                                                 </Stack>
                                             </li>
