@@ -5,6 +5,7 @@ export interface IProjectTaskUnitEstimationVm{
     id: string
     unitId: string
     unitName: string
+    unitShortName: string
     estimations: IEstimationVm[]
 
     // these fields are supposed to be calculated on the client after get fetched
@@ -19,6 +20,7 @@ export class ProjectTaskUnitEstimationVm implements IProjectTaskUnitEstimationVm
     id: string = ''
     unitId: string = ''
     unitName: string = ''
+    unitShortName: string = ''    
     estimations: IEstimationVm[] = []
 
     // these fields are supposed to be calculated on the client after get fetched

@@ -40,36 +40,30 @@ export const ProjectDetailsDepartemntsPlan: React.FunctionComponent = () => {
                 </DialogTitle>
                 <Divider></Divider>
                 <DialogContent>
-                <Accordion>
-                        <AccordionSummary
-                            expandIcon={<ExpandMoreIcon />}
-                            aria-controls="panel1a-content"
-                            id="panel1a-header"
-                        >
-                            <Typography>Accordion 1</Typography>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                            <Typography>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-                                malesuada lacus ex, sit amet blandit leo lobortis eget.
-                            </Typography>
-                        </AccordionDetails>
-                    </Accordion>
-                    <Accordion>
-                        <AccordionSummary
-                            expandIcon={<ExpandMoreIcon />}
-                            aria-controls="panel2a-content"
-                            id="panel2a-header"
-                        >
-                            <Typography>Accordion 2</Typography>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                            <Typography>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-                                malesuada lacus ex, sit amet blandit leo lobortis eget.
-                            </Typography>
-                        </AccordionDetails>
-                    </Accordion>
+                    {
+                        task.unitEstimations.map((i, idx) => {
+                            return (
+                                <Accordion key={task.id + "est" + idx}>
+                                    <AccordionSummary
+                                        expandIcon={<ExpandMoreIcon />}
+                                        aria-controls={"panel-content" + idx} 
+                                        id={"panelheader-content" + idx}
+                                    >
+                                        <Typography>{i.unitShortName === '' ? i.unitName : i.unitShortName}: {i.totalHours}{t('hour')}</Typography>
+                                    </AccordionSummary>
+                                    <AccordionDetails>
+                                        <Typography>
+                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
+                                            malesuada lacus ex, sit amet blandit leo lobortis eget.
+                                        </Typography>
+                                    </AccordionDetails>
+                                </Accordion>
+
+                            )
+                        })
+                    }
+
+
                 </DialogContent>
                 <DialogActions>
                     <Button variant="contained" onClick={e => dispatch(toggleShowDepartmentsPlan())}>

@@ -7,6 +7,7 @@ namespace Taskly.Application.Projects
         public Guid Id { get; set; }
         public Guid UnitId { get; set; }
         public string UnitName { get; set; }
+        public string UnitShortName { get; set; }
 
         public EstimationVm[] Estimations { get; set; }
 
@@ -17,6 +18,7 @@ namespace Taskly.Application.Projects
                 Id = arg.Id,
                 UnitId = arg.Unit.Id,
                 UnitName = arg.Unit.Name,
+                UnitShortName = arg.Unit.ShortName,
                 Estimations = arg.Estimations.OrderBy(i => i.UserPosition?.Ident).Select(i => new EstimationVm
                 {
                     Hours = i.Hours,
