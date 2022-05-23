@@ -86,7 +86,7 @@ export class ProjectDetailedInfoVmHelper{
                         Math.trunc(maxLineHeight * (taskDepartmentEstimation.totalHours / arg.totalHours)))
 
                 // prepare color for gant chart
-                taskDepartmentEstimation.color = ProjectTaskUnitEstimationVmHelper.getColor(taskDepartmentEstimation)
+                taskDepartmentEstimation.color = ProjectTaskUnitEstimationVmHelper.getColor(taskDepartmentEstimation.unitName)
 
             })
         })

@@ -8,7 +8,6 @@ import { Backdrop, CircularProgress, createTheme, CssBaseline, ThemeProvider } f
 import { useAppRoutes } from './components/Routes';
 import { AppContext } from './context/AppContext';
 import { useAppSelector } from './hooks/redux.hook';
-import { useEffect, useState } from 'react';
 
 function App() {
   const { setEnLang, setRuLang } = useApp()
