@@ -55,5 +55,7 @@
     "external": "Внешний",
     "remove": "Удалить",
     "compact-mode": "Компактный режим",
-    "order-tasks": "Упорядочить"
+    "order-tasks": "Упорядочить",
+    "total-planned-hours": "Всего запланировано часов",
+    "close": "Закрыть"
 }   

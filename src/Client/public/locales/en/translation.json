@@ -55,5 +55,7 @@
     "external": "External",
     "remove": "Remove",
     "compact-mode": "Compact mode",
-    "order-tasks": "Order"
+    "order-tasks": "Order",
+    "total-planned-hours": "Total hours planned",
+    "close": "Close"
 }

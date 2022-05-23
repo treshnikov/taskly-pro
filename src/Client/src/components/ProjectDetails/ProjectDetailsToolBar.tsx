@@ -4,7 +4,7 @@ import BarChartIcon from '@mui/icons-material/BarChart';
 import ZoomInIcon from '@mui/icons-material/ZoomIn';
 import ZoomOutIcon from '@mui/icons-material/ZoomOut';
 import { useAppDispatch, useAppSelector } from "../../hooks/redux.hook";
-import { zoomInGanttChart, zoomOutGanttChart, toggleShowDetails, addTask, removeTask, toggleCompactMode, orderTasks } from '../../redux/projectDetailsSlice';
+import { zoomInGanttChart, zoomOutGanttChart, toggleShowDetails, addTask, removeTask, toggleCompactMode, orderTasks, toggleShowStatistics } from '../../redux/projectDetailsSlice';
 import { useTranslation } from "react-i18next";
 import RemoveIcon from '@mui/icons-material/Remove';
 import SortIcon from '@mui/icons-material/Sort';
@@ -32,7 +32,7 @@ export const ProjectDetailsToolBar: React.FunctionComponent<ProjectDetailsToolBa
                         }} startIcon={<PlaylistAddIcon />}>{t('add')}</Button>
                     <Button variant='contained' size='small' onClick={e => {dispatch(removeTask())}} disabled={selectedRowIdx < 0} startIcon={<RemoveIcon />}>{t('remove')}</Button>
                     <Button variant='contained' size='small' onClick={e => {dispatch(orderTasks())}} startIcon={<SortIcon />}>{t('order-tasks')}</Button>
-                    <Button variant='contained' size='small' startIcon={<BarChartIcon />}>{t('statistics')}</Button>
+                    <Button variant='contained' size='small' onClick={e => {dispatch(toggleShowStatistics())}} startIcon={<BarChartIcon />}>{t('statistics')}</Button>
                     <FormControlLabel label={t('compact-mode')} control={<Checkbox checked={compactMode} onChange={e => { dispatch(toggleCompactMode()) }} size='small' />} />
                     <FormControlLabel label={t('show-details')} disabled={compactMode} control={<Checkbox checked={showDetails} onChange={e => { dispatch(toggleShowDetails()) }} size='small' />} />
                 </Stack>

@@ -12,6 +12,7 @@ import { ProjectDetailsToolBar } from '../components/ProjectDetails/ProjectDetai
 import { useAppDispatch, useAppSelector } from "../hooks/redux.hook";
 import { onRowSelected, onTaskAttributeChanged, onTasksMoved, updateProjectDetailsInfo } from '../redux/projectDetailsSlice';
 import { CellChange, ChangeSource } from 'handsontable/common';
+import { ProjectStatistics } from '../components/ProjectDetails/ProjectStatistics';
 
 registerAllModules();
 
@@ -53,6 +54,7 @@ export const ProjectDetails: React.FunctionComponent = () => {
   return (
     <div className='page-container' onClick={e => { dispatch(onRowSelected(-1)) }}>
       <ProjectDetailsToolBar scrollToTheLastRowFunc={scrollToRow}></ProjectDetailsToolBar>
+      <ProjectStatistics/>
       <div id="hotContainer" style={{ overflowX: 'auto', height: tableHeight }} onClickCapture={e => { e.stopPropagation() }}>
         <HotTable
           id="projectDetailsTable"
