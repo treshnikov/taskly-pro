@@ -121,7 +121,7 @@ export const ProjectDetailsStatistics: React.FunctionComponent = () => {
                     </Grid>
                 </DialogContent>
                 <DialogActions>
-                    <Button variant="contained" onClick={e => dispatch(toggleShowStatistics())} autoFocus>
+                    <Button variant="contained" onClick={e => dispatch(toggleShowStatistics())}>
                         {t('close')}
                     </Button>
                 </DialogActions>

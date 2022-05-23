@@ -10,12 +10,17 @@ export const DepartmentsCellRenderer = (props: any) => {
     const { t } = useTranslation();
     const showDetailsAsBool = showDetails as boolean
 
+    if (estimations?.length === 0) {
+        return (
+        <div onDoubleClick={e => {dispatch(toggleShowDepartmentsPlan())}} style={{width: "100%", height: "20px"}}></div>
+        )
+    }
     return (
         <>
             {
                 estimations?.filter(i => i.totalHours > 0).sort((a, b) => (a.totalHours < b.totalHours ? 1 : -1)).map((i, idx) => {
                     return (
-                        <div onDoubleClick={e => {dispatch(toggleShowDepartmentsPlan())}} key={"dep_" + i.id.toString()} style={
+                        <div onDoubleClick={e => { dispatch(toggleShowDepartmentsPlan()) }} key={"dep_" + i.id.toString()} style={
                             (estimations?.filter(i => i.totalHours > 0).length - 1 === idx) ?
                                 {
                                     width: "100%",
@@ -54,11 +59,11 @@ export const DepartmentsCellRenderer = (props: any) => {
                                             )
 
                                         return (
-                                            <div key={i.id + p.userPositionId} 
-                                            style={{ 
-                                                display: "inline", 
-                                                marginRight: "5px"
-                                             }}>{p.userPositionIdent}: {p.hours + t('hour')}</div>
+                                            <div key={i.id + p.userPositionId}
+                                                style={{
+                                                    display: "inline",
+                                                    marginRight: "5px"
+                                                }}>{p.userPositionIdent}: {p.hours + t('hour')}</div>
                                         )
                                     }
                                     )

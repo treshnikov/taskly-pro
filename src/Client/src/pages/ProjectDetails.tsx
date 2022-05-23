@@ -55,8 +55,8 @@ export const ProjectDetails: React.FunctionComponent = () => {
   return (
     <div className='page-container'>
       <ProjectDetailsToolBar scrollToTheLastRowFunc={scrollToRow}></ProjectDetailsToolBar>
-      <ProjectDetailsStatistics/>
-      <ProjectDetailsDepartemntsPlan/>
+      <ProjectDetailsStatistics />
+      <ProjectDetailsDepartemntsPlan />
       <div id="hotContainer" style={{ overflowX: 'auto', height: tableHeight }} onClickCapture={e => { e.stopPropagation() }}>
         <HotTable
           id="projectDetailsTable"
@@ -92,7 +92,12 @@ export const ProjectDetails: React.FunctionComponent = () => {
           afterSelectionEnd={(row: number, column: number, row2: number, column2: number, selectionLayerLevel: number) => {
             dispatch(onRowSelected(row))
           }}
-          afterDeselect={() => dispatch(onRowSelected(-1))}
+          afterDeselect={() => {
+            // to allow capturing selectedRowIdx for dialog windows
+            setTimeout(() => {
+              dispatch(onRowSelected(-1))
+            }, 200);
+          }}
           afterRender={(isForced: boolean) => {
             setTimeout(() => {
               const tableHeight = document.querySelector<HTMLElement>(".htCore")?.offsetHeight

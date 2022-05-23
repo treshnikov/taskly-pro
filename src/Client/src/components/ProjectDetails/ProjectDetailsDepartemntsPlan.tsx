@@ -1,8 +1,10 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Grid, Stack } from "@mui/material"
+import { Accordion, AccordionDetails, AccordionSummary, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Grid, Stack, Typography } from "@mui/material"
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux.hook";
+import { IProjectTaskVm, ProjectTaskVm } from "../../models/ProjectDetails/ProjectTaskVm";
 import { toggleShowDepartmentsPlan } from "../../redux/projectDetailsSlice";
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 export const ProjectDetailsDepartemntsPlan: React.FunctionComponent = () => {
     const { t } = useTranslation();
@@ -10,19 +12,23 @@ export const ProjectDetailsDepartemntsPlan: React.FunctionComponent = () => {
     const selectedRowIdx = useAppSelector(state => state.projectDetailsReducer.selectedRowIdx)
     const showDepartmentsPlan = useAppSelector(state => state.projectDetailsReducer.showDepartmentsPlan)
     const project = useAppSelector(state => state.projectDetailsReducer.project)
-    const [taskName, setTaskName] = useState<string>('') 
+    const [task, setTask] = useState<IProjectTaskVm>(new ProjectTaskVm())
 
     useEffect(() => {
         if (selectedRowIdx < 0) {
             return
         }
 
-        setTaskName((selectedRowIdx >= 0 && project.tasks.length > selectedRowIdx ? project.tasks[selectedRowIdx].description : ''))
+        if (selectedRowIdx >= 0 && project.tasks.length > selectedRowIdx) {
+            setTask(project.tasks[selectedRowIdx])
+        }
+
     }, [selectedRowIdx])
 
     return (
         <div>
             <Dialog
+                scroll="paper"
                 fullWidth={true}
                 maxWidth="md"
                 open={showDepartmentsPlan}
@@ -30,16 +36,43 @@ export const ProjectDetailsDepartemntsPlan: React.FunctionComponent = () => {
                 aria-labelledby="_showDepartmentsPlan"
             >
                 <DialogTitle id="_showDepartmentsPlan">
-                    {taskName}
+                    {task.description}
                 </DialogTitle>
                 <Divider></Divider>
                 <DialogContent>
-                    <Grid container>
-
-                    </Grid>
+                <Accordion>
+                        <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                            aria-controls="panel1a-content"
+                            id="panel1a-header"
+                        >
+                            <Typography>Accordion 1</Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <Typography>
+                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
+                                malesuada lacus ex, sit amet blandit leo lobortis eget.
+                            </Typography>
+                        </AccordionDetails>
+                    </Accordion>
+                    <Accordion>
+                        <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                            aria-controls="panel2a-content"
+                            id="panel2a-header"
+                        >
+                            <Typography>Accordion 2</Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <Typography>
+                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
+                                malesuada lacus ex, sit amet blandit leo lobortis eget.
+                            </Typography>
+                        </AccordionDetails>
+                    </Accordion>
                 </DialogContent>
                 <DialogActions>
-                    <Button variant="contained" onClick={e => dispatch(toggleShowDepartmentsPlan())} autoFocus>
+                    <Button variant="contained" onClick={e => dispatch(toggleShowDepartmentsPlan())}>
                         {t('close')}
                     </Button>
                 </DialogActions>
