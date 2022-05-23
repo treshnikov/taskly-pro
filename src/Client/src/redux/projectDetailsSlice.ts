@@ -45,10 +45,10 @@ const initialDemoState = {
             description: '',
             comment: '',
             unitEstimations: [],
-        
+
             // calculated
             startAsStr: '',
-            endAsStr: '', 
+            endAsStr: '',
             totalHours: 0
         }],
 
@@ -174,6 +174,33 @@ export const projectDetailsSlice = createSlice({
 
         orderTasks(state: ProjectDetailsStoreStateType) {
             state.project.tasks = state.project.tasks.sort((a, b) => a.start > b.start ? 1 : -1)
+        },
+
+        changeEstimation(state: ProjectDetailsStoreStateType, action: PayloadAction<{ taskId: string, unitId: string, userPositionId: string, hours: number }>) {
+            // state.project.tasks?.forEach(task => {
+            //     task.unitEstimations.forEach(u => {
+            //         u.estimations.forEach(e => {
+            //             if (task.id === action.payload.taskId &&
+            //                 u.unitId === action.payload.unitId) {
+            //                     u.estimations = u.estimations.map(
+            //                         el =>  el.userPositionId === action.payload.userPositionId 
+            //                             ? {...el, hours: action.payload.hours}
+            //                             : el)                                
+            //             }
+            //         });
+            //     });
+            // });
+
+            const record = state.project.tasks
+                ?.find(t => t.id === action.payload.taskId)
+                ?.unitEstimations.find(e => e.unitId === action.payload.unitId)
+                ?.estimations.find(e => e.userPositionId === action.payload.userPositionId)
+
+            if (record) {
+                record.hours = action.payload.hours
+            }
+
+            ProjectDetailedInfoVmHelper.init(state.project)
         }
 
     }
@@ -181,6 +208,6 @@ export const projectDetailsSlice = createSlice({
 
 export const { zoomInGanttChart, zoomOutGanttChart, toggleShowDetails, toggleCompactMode,
     updateProjectDetailsInfo, addTask, onTaskAttributeChanged, onTasksMoved, toggleShowStatistics,
-    onRowSelected, removeTask, orderTasks, toggleShowDepartmentsPlan } = projectDetailsSlice.actions
+    onRowSelected, removeTask, orderTasks, toggleShowDepartmentsPlan, changeEstimation } = projectDetailsSlice.actions
 export const selectDemo = (state: RootState) => state.projectDetailsReducer
 export default projectDetailsSlice.reducer
