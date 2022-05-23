@@ -1,9 +1,9 @@
 {
+    "app-name": "Система планирования работ",
     "signin": "Войти",
     "register": "Регистрация",
     "name": "Имя",
     "password": "Пароль",
-    "welcome": "TasklyPro",
     "email": "Email",
     "logout": "Выйти",
     "user_has_been_registered_successfully": "Пользователь успешно зарегистрирован",

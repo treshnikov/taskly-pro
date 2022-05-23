@@ -121,7 +121,7 @@ public class Startup
         });
         app.UseCustomExceptionHandler();
         app.UseRouting();
-        app.UseHttpsRedirection();
+        //app.UseHttpsRedirection();
         app.UseCors("AllowAll");
 
         app.UseAuthentication();

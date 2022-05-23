@@ -14,7 +14,6 @@ import { Divider } from '@mui/material';
 import { UserVm } from '../models/Users/UserVm';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { Logout } from '@mui/icons-material';
-import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import { useHttp } from '../hooks/http.hook';
 
 export const NavBar: React.FunctionComponent = () => {
@@ -57,7 +56,7 @@ export const NavBar: React.FunctionComponent = () => {
         <Toolbar>
           <SidebarMenu />
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            <p style={{ width: "100px" }} className='logo' onClick={e => { navigate("/") }} ><TaskAltIcon />&nbsp;Taskly</p>
+            <p className='logo' onClick={e => { navigate("/") }} >{t('app-name')}</p>
           </Typography>
 
           <div>

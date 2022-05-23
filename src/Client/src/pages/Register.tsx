@@ -42,8 +42,8 @@ export const Register: React.FunctionComponent = () => {
           alignItems: 'center',
         }}
       >
-        <Typography variant="h3">
-          {t("welcome")}
+        <Typography variant="h4">
+          {t("app-name")}
         </Typography>
         <Box component="form" onSubmit={registerHandler} noValidate sx={{ mt: 1 }}>
           <TextField

@@ -1,9 +1,9 @@
 {
+    "app-name": "TasklyPro",
     "signin": "Sign in",
     "register": "Sign on",
     "name": "Name",
     "password": "Password",
-    "welcome": "TasklyPro",
     "email": "Email",
     "logout": "Log out",
     "user_has_been_registered_successfully": "User has been registered successfully",
