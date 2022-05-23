@@ -1,4 +1,4 @@
-import { Accordion, AccordionDetails, AccordionSummary, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Grid, Stack, TextField, Typography } from "@mui/material"
+import { Accordion, AccordionDetails, AccordionSummary, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Stack, TextField, Typography } from "@mui/material"
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux.hook";
@@ -23,7 +23,7 @@ export const ProjectDetailsDepartemntsPlan: React.FunctionComponent = () => {
             setTask(project.tasks[selectedRowIdx])
         }
 
-    }, [selectedRowIdx])
+    }, [selectedRowIdx, project.tasks])
 
     return (
         <div>

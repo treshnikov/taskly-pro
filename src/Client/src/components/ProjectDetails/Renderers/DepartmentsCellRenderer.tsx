@@ -15,13 +15,26 @@ export const DepartmentsCellRenderer = (props: any) => {
             <div onDoubleClick={e => { dispatch(toggleShowDepartmentsPlan()) }} style={{ width: "100%", height: "20px" }}></div>
         )
     }
+
+    const estimationsToRender = estimations?.filter(i => i.totalHours > 0)
+
+    if (estimationsToRender.length === 0) {
+        return (
+            <div
+                onDoubleClick={e => { dispatch(toggleShowDepartmentsPlan()) }}
+                style={{ width: "100%", height: "20px" }}>
+            </div>
+        )
+
+    }
+
     return (
         <>
             {
-                estimations?.filter(i => i.totalHours > 0).sort((a, b) => (a.totalHours < b.totalHours ? 1 : -1)).map((i, idx) => {
-                    //console.log("dep_" + i.id.toString())
+                estimationsToRender.sort((a, b) => (a.totalHours < b.totalHours ? 1 : -1)).map((i, idx) => {
                     return (
-                        <div onDoubleClick={e => { dispatch(toggleShowDepartmentsPlan()) }}
+                        <div
+                            onDoubleClick={e => { dispatch(toggleShowDepartmentsPlan()) }}
                             key={"dep_" + i.id.toString()}
                             style={
                                 (estimations?.filter(i => i.totalHours > 0).length - 1 === idx) ?
