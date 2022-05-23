@@ -1,4 +1,4 @@
-import { Accordion, AccordionDetails, AccordionSummary, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Grid, Stack, Typography } from "@mui/material"
+import { Accordion, AccordionDetails, AccordionSummary, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Grid, Stack, TextField, Typography } from "@mui/material"
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux.hook";
@@ -30,13 +30,13 @@ export const ProjectDetailsDepartemntsPlan: React.FunctionComponent = () => {
             <Dialog
                 scroll="paper"
                 fullWidth={true}
-                maxWidth="md"
+                maxWidth="lg"
                 open={showDepartmentsPlan}
                 onClose={e => dispatch(toggleShowDepartmentsPlan())}
                 aria-labelledby="_showDepartmentsPlan"
             >
                 <DialogTitle id="_showDepartmentsPlan">
-                    {task.description}
+                    {task.description} {task.totalHours}{t('hour')}
                 </DialogTitle>
                 <Divider></Divider>
                 <DialogContent>
@@ -46,16 +46,24 @@ export const ProjectDetailsDepartemntsPlan: React.FunctionComponent = () => {
                                 <Accordion key={task.id + "est" + idx}>
                                     <AccordionSummary
                                         expandIcon={<ExpandMoreIcon />}
-                                        aria-controls={"panel-content" + idx} 
+                                        aria-controls={"panel-content" + idx}
                                         id={"panelheader-content" + idx}
                                     >
                                         <Typography>{i.unitShortName === '' ? i.unitName : i.unitShortName}: {i.totalHours}{t('hour')}</Typography>
                                     </AccordionSummary>
                                     <AccordionDetails>
-                                        <Typography>
-                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-                                            malesuada lacus ex, sit amet blandit leo lobortis eget.
-                                        </Typography>
+                                        <Stack direction="row" spacing={2}>
+                                            {
+                                                i.estimations.map((e, eidx) => {
+                                                    return (
+                                                        <span style={{maxWidth: "300px"}} key={i.id + e.userPositionId}>
+                                                            <div style={{height: "48px"}}>{e.userPositionName}:</div>
+                                                            <TextField variant="standard" value={e.hours} />
+                                                        </span>
+                                                    )
+                                                })
+                                            }
+                                        </Stack>
                                     </AccordionDetails>
                                 </Accordion>
 

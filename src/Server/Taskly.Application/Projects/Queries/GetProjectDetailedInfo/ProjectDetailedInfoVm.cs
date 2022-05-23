@@ -21,8 +21,10 @@ namespace Taskly.Application.Projects
                 UnitShortName = arg.Unit.ShortName,
                 Estimations = arg.Estimations.OrderBy(i => i.UserPosition?.Ident).Select(i => new EstimationVm
                 {
+                    Id = i.Id,
                     Hours = i.Hours,
                     UserPositionIdent = i.UserPosition?.Ident,
+                    UserPositionName = i.UserPosition.Name,
                     UserPositionId = i.UserPosition.Id
 
                 }).OrderBy(i => i.UserPositionIdent).ToArray()
