@@ -56,9 +56,9 @@ export const ProjectDetailsDepartemntsPlan: React.FunctionComponent = () => {
                                             {
                                                 i.estimations.map((e, eidx) => {
                                                     return (
-                                                        <span style={{maxWidth: "300px"}} key={i.id + e.userPositionId}>
-                                                            <div style={{height: "48px"}}>{e.userPositionName}:</div>
-                                                            <TextField variant="standard" value={e.hours} />
+                                                        <span style={{ maxWidth: "300px" }} key={i.id + e.userPositionId}>
+                                                            <div style={{ height: "48px", fontSize: "14px" }}>{e.userPositionName}:</div>
+                                                            <TextField style={{ fontSize: "14px" }} variant="standard" value={e.hours} />
                                                         </span>
                                                     )
                                                 })
