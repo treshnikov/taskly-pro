@@ -1,8 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Serilog;
+﻿using Microsoft.AspNetCore.Mvc;
 using Taskly.Application.Projects;
-using Taskly.Application.Users;
+using Taskly.Application.Projects.Queries;
 
 namespace Taskly.WebApi.Controllers
 {
@@ -29,5 +27,15 @@ namespace Taskly.WebApi.Controllers
             });
             return Ok(res);
         }
+
+        [HttpGet("defaultEstimations")]        
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult> GetDefaultTaskEstimations()
+        {            
+            var res = await Mediator.Send(new GetDefaultTaskEstimationsRequest());
+            return Ok(res);
+        }
+
     }
 }
