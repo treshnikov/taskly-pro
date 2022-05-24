@@ -2,8 +2,8 @@ import { Accordion, AccordionDetails, AccordionSummary, Button, Dialog, DialogAc
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux.hook";
-import { IProjectTaskVm, ProjectTaskVm } from "../../models/ProjectDetails/ProjectTaskVm";
-import { changeEstimation, toggleShowDepartmentsPlan } from "../../redux/projectDetailsSlice";
+import { IProjectTaskVm, ProjectTaskVm, ProjectTaskVmHelper } from "../../models/ProjectDetails/ProjectTaskVm";
+import { changeTask, toggleShowDepartmentsPlan } from "../../redux/projectDetailsSlice";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 export const ProjectDetailsDepartemntsPlan: React.FunctionComponent = () => {
@@ -14,8 +14,6 @@ export const ProjectDetailsDepartemntsPlan: React.FunctionComponent = () => {
     const project = useAppSelector(state => state.projectDetailsReducer.project)
 
     const [task, setTask] = useState<IProjectTaskVm>(new ProjectTaskVm())
-    const [rowIdx, setRowIdx] = useState<number>(-1)
-
 
     useEffect(() => {
         if (selectedRowIdx < 0) {
@@ -23,22 +21,42 @@ export const ProjectDetailsDepartemntsPlan: React.FunctionComponent = () => {
         }
 
         if (selectedRowIdx >= 0 && project.tasks.length > selectedRowIdx) {
-            // capture selectedRowIdx to rowIdx because selectedRowIdx will be lost after loosing selection form the cell of the table  
-            setRowIdx(selectedRowIdx)
-            setTask(project.tasks[selectedRowIdx])
+            // copy task and publish changes only after form close to prevent unnecessary re renders
+            setTask({ ...project.tasks[selectedRowIdx] })
         }
 
     }, [selectedRowIdx, project.tasks])
 
-    useEffect(() => {
-        if (rowIdx < 0) {
+    const updateLocalTask = (unitId: string, userPositionId: string, hoursAsStr: string) => {
+        const hours = Number(hoursAsStr)
+        if (isNaN(hours)){
+            return
+        }
+        
+        // todo
+        const taskClone = JSON.parse(JSON.stringify(task)) as IProjectTaskVm
+
+        const estIdx = taskClone.unitEstimations.findIndex(e => e.unitId === unitId)
+        if (estIdx === -1) {
             return
         }
 
-        // watch tasks changes and update captured task
-        setTask(project.tasks[rowIdx])
+        const recordIdx = taskClone.unitEstimations[estIdx]
+            ?.estimations.findIndex(e => e.userPositionId === userPositionId)
+        if (recordIdx === -1) {
+            return
+        }
 
-    }, project.tasks)
+        taskClone.unitEstimations[estIdx].estimations[recordIdx].hours = hours
+        ProjectTaskVmHelper.recalcTotalHours(taskClone)
+        setTask(taskClone)
+
+    }
+
+    const onClose = () => {
+        dispatch(toggleShowDepartmentsPlan())
+        dispatch(changeTask({task: task}))
+    }
 
     return (
         <div>
@@ -47,7 +65,7 @@ export const ProjectDetailsDepartemntsPlan: React.FunctionComponent = () => {
                 fullWidth={true}
                 maxWidth="lg"
                 open={showDepartmentsPlan}
-                onClose={e => dispatch(toggleShowDepartmentsPlan())}
+                onClose={e => onClose()}
                 aria-labelledby="_showDepartmentsPlan"
             >
                 <DialogTitle id="_showDepartmentsPlan">
@@ -75,7 +93,7 @@ export const ProjectDetailsDepartemntsPlan: React.FunctionComponent = () => {
                                                             <div style={{ height: "48px", fontSize: "14px" }}>{e.userPositionName}:</div>
                                                             <TextField style={{ fontSize: "14px" }} variant="standard" value={e.hours}
                                                                 onChange={ev => {
-                                                                    dispatch(changeEstimation({ taskId: task.id, unitId: i.unitId, userPositionId: e.userPositionId, hours: parseInt(ev.target.value) }))
+                                                                    updateLocalTask(i.unitId, e.userPositionId, ev.target.value)
                                                                 }} />
                                                         </span>
                                                     )
@@ -92,7 +110,7 @@ export const ProjectDetailsDepartemntsPlan: React.FunctionComponent = () => {
 
                 </DialogContent>
                 <DialogActions>
-                    <Button variant="contained" onClick={e => dispatch(toggleShowDepartmentsPlan())}>
+                    <Button variant="contained" onClick={e => onClose()}>
                         {t('close')}
                     </Button>
                 </DialogActions>

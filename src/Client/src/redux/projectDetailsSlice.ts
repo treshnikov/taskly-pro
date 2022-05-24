@@ -2,7 +2,7 @@ import { createSlice, current, PayloadAction } from "@reduxjs/toolkit"
 import { CellChange } from "handsontable/common"
 import { strToDate } from "../common/dateFormatter"
 import { IProjectDetailedInfoVm, ProjectDetailedInfoVmHelper } from "../models/ProjectDetails/ProjectDetailedInfoVm"
-import { ProjectTaskVm } from "../models/ProjectDetails/ProjectTaskVm"
+import { IProjectTaskVm, ProjectTaskVm } from "../models/ProjectDetails/ProjectTaskVm"
 import { RootState } from "./store"
 
 type ProjectDetailsStoreStateType = {
@@ -177,20 +177,6 @@ export const projectDetailsSlice = createSlice({
         },
 
         changeEstimation(state: ProjectDetailsStoreStateType, action: PayloadAction<{ taskId: string, unitId: string, userPositionId: string, hours: number }>) {
-            // state.project.tasks?.forEach(task => {
-            //     task.unitEstimations.forEach(u => {
-            //         u.estimations.forEach(e => {
-            //             if (task.id === action.payload.taskId &&
-            //                 u.unitId === action.payload.unitId) {
-            //                     u.estimations = u.estimations.map(
-            //                         el =>  el.userPositionId === action.payload.userPositionId 
-            //                             ? {...el, hours: action.payload.hours}
-            //                             : el)                                
-            //             }
-            //         });
-            //     });
-            // });
-
             const record = state.project.tasks
                 ?.find(t => t.id === action.payload.taskId)
                 ?.unitEstimations.find(e => e.unitId === action.payload.unitId)
@@ -201,6 +187,17 @@ export const projectDetailsSlice = createSlice({
             }
 
             ProjectDetailedInfoVmHelper.init(state.project)
+        },
+
+        changeTask(state: ProjectDetailsStoreStateType, action: PayloadAction<{ task: IProjectTaskVm }>) {
+            const taskIdx = state.project.tasks.findIndex(t => t.id === action.payload.task.id)
+            if (taskIdx === -1) {
+                return
+            }
+
+            state.project.tasks[taskIdx] = action.payload.task
+
+            ProjectDetailedInfoVmHelper.init(state.project)
         }
 
     }
@@ -208,6 +205,6 @@ export const projectDetailsSlice = createSlice({
 
 export const { zoomInGanttChart, zoomOutGanttChart, toggleShowDetails, toggleCompactMode,
     updateProjectDetailsInfo, addTask, onTaskAttributeChanged, onTasksMoved, toggleShowStatistics,
-    onRowSelected, removeTask, orderTasks, toggleShowDepartmentsPlan, changeEstimation } = projectDetailsSlice.actions
+    onRowSelected, removeTask, orderTasks, toggleShowDepartmentsPlan, changeEstimation, changeTask } = projectDetailsSlice.actions
 export const selectDemo = (state: RootState) => state.projectDetailsReducer
 export default projectDetailsSlice.reducer
