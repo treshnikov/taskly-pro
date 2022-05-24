@@ -31,9 +31,9 @@ export const ProjectDetailsToolBar: React.FunctionComponent<ProjectDetailsToolBa
         async function getData() {
             let defaultTaskEstimations = await request<IProjectTaskUnitEstimationVm[]>("/api/v1/projects/defaultEstimations")
             dispatch(addTask({defaultEstimations: defaultTaskEstimations}))
-            window.scrollTo(0, document.body.scrollHeight)
         }
         getData()
+        window.scrollTo(0, document.body.scrollHeight)
     }
 
     return (

@@ -47,8 +47,11 @@ export const ProjectDetailsStatistics: React.FunctionComponent = () => {
 
     useEffect(() => {
         if (project.tasks?.length === 0) {
+            setPlan(new DepartmentsPlan())
+            setChartData(new ChartData())
             return
         }
+        
         const newPlan = new DepartmentsPlan()
         DepartmentsPlan.init(newPlan, project)
         setPlan(newPlan)
@@ -67,13 +70,17 @@ export const ProjectDetailsStatistics: React.FunctionComponent = () => {
         setChartData(newChartData)
     }, [plan, sortFunc])
 
+    const onClose = () => {
+        dispatch(toggleShowStatistics())
+    }
+
     return (
         <div>
             <Dialog
                 fullWidth={true}
                 maxWidth="md"
                 open={showStatistics}
-                onClose={e => dispatch(toggleShowStatistics())}
+                onClose={e => onClose()}
                 aria-labelledby="responsive-dialog-title"
             >
                 <DialogTitle id="responsive-dialog-title">
@@ -89,7 +96,7 @@ export const ProjectDetailsStatistics: React.FunctionComponent = () => {
                                     Array.from(plan.records.keys()).sort(sortFunc).map(i => {
                                         const hours = plan.records.get(i) as number
 
-                                        if (hours === 0) { 
+                                        if (hours === 0) {
                                             return (<div key={project.id + i}></div>)
                                         }
 
@@ -126,7 +133,7 @@ export const ProjectDetailsStatistics: React.FunctionComponent = () => {
                     </Grid>
                 </DialogContent>
                 <DialogActions>
-                    <Button variant="contained" onClick={e => dispatch(toggleShowStatistics())}>
+                    <Button variant="contained" onClick={e => onClose()}>
                         {t('close')}
                     </Button>
                 </DialogActions>
