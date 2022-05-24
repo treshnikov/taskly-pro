@@ -2,6 +2,7 @@ import { createSlice, current, PayloadAction } from "@reduxjs/toolkit"
 import { CellChange } from "handsontable/common"
 import { strToDate } from "../common/dateFormatter"
 import { IProjectDetailedInfoVm, ProjectDetailedInfoVmHelper } from "../models/ProjectDetails/ProjectDetailedInfoVm"
+import { IProjectTaskUnitEstimationVm } from "../models/ProjectDetails/ProjectTaskUnitEstimationVm"
 import { IProjectTaskVm, ProjectTaskVm } from "../models/ProjectDetails/ProjectTaskVm"
 import { RootState } from "./store"
 
@@ -101,12 +102,12 @@ export const projectDetailsSlice = createSlice({
             state.project = action.payload
         },
 
-        addTask(state: ProjectDetailsStoreStateType) {
+        addTask(state: ProjectDetailsStoreStateType, action: PayloadAction<{defaultEstimations: IProjectTaskUnitEstimationVm[]}>) {
             const testTask = new ProjectTaskVm()
             testTask.description = "..."
             testTask.start = state.project.start
             testTask.end = state.project.end
-            testTask.unitEstimations = []
+            testTask.unitEstimations = [...action.payload.defaultEstimations]
 
             state.project.tasks = [...state.project.tasks, { ...testTask }]
             ProjectDetailedInfoVmHelper.init(state.project)

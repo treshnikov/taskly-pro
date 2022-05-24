@@ -10,6 +10,8 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import SortIcon from '@mui/icons-material/Sort';
 import { ProjectDetailsDepartemntsPlan } from "./ProjectDetailsDepartemntsPlan";
 import { ProjectDetailsStatistics } from "./ProjectDetailsStatistics";
+import { useHttp } from "../../hooks/http.hook";
+import { IProjectTaskUnitEstimationVm } from "../../models/ProjectDetails/ProjectTaskUnitEstimationVm";
 
 type ProjectDetailsToolBarProps = {
     scrollToTheLastRowFunc: (rowIdx: number) => void
@@ -23,17 +25,23 @@ export const ProjectDetailsToolBar: React.FunctionComponent<ProjectDetailsToolBa
     const projectShortName = useAppSelector(state => state.projectDetailsReducer.project.shortName)
     const selectedRowIdx = useAppSelector(state => state.projectDetailsReducer.selectedRowIdx)
     const lastSelectedRowIdx = useAppSelector(state => state.projectDetailsReducer.lastSelectedRowIdx)
+    const { request } = useHttp()
+
+    const onAddNewTask = () => {
+        async function getData() {
+            let defaultTaskEstimations = await request<IProjectTaskUnitEstimationVm[]>("/api/v1/projects/defaultEstimations")
+            dispatch(addTask({defaultEstimations: defaultTaskEstimations}))
+            window.scrollTo(0, document.body.scrollHeight)
+        }
+        getData()
+    }
 
     return (
         <>
             <Grid container  >
                 <Grid item xs={8} >
                     <Stack direction="row" spacing={1} paddingTop={1} paddingBottom={1}>
-                        <Button variant='contained' size='small'
-                            onClick={e => {
-                                dispatch(addTask())
-                                window.scrollTo(0, document.body.scrollHeight)
-                            }} startIcon={<PlaylistAddIcon />}>{t('add')}</Button>
+                        <Button variant='contained' size='small' onClick={e => { onAddNewTask() }} startIcon={<PlaylistAddIcon />}>{t('add')}</Button>
                         <Button variant='contained' size='small' onClick={e => { dispatch(removeTask()) }} disabled={selectedRowIdx < 0} startIcon={<RemoveIcon />}>{t('remove')}</Button>
                         <Button variant='contained' size='small' onClick={e => { dispatch(orderTasks()) }} startIcon={<SortIcon />}>{t('order-tasks')}</Button>
                         <Button variant='contained' size='small' onClick={e => { dispatch(toggleShowDepartmentsPlan()) }} disabled={selectedRowIdx < 0} startIcon={<BarChartIcon />}>{t('units')}</Button>
