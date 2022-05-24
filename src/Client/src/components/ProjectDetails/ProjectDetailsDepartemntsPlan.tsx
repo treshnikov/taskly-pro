@@ -6,13 +6,17 @@ import { IProjectTaskVm, ProjectTaskVm, ProjectTaskVmHelper } from "../../models
 import { changeTask, toggleShowDepartmentsPlan } from "../../redux/projectDetailsSlice";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
-export const ProjectDetailsDepartemntsPlan: React.FunctionComponent = () => {
+type ProjectDetailsDepartemntsPlanProps = {
+    afterClose: () => void
+}
+
+export const ProjectDetailsDepartemntsPlan: React.FunctionComponent<ProjectDetailsDepartemntsPlanProps> = ({afterClose: afterClose}) => {
     const { t } = useTranslation();
     const dispatch = useAppDispatch()
     const selectedRowIdx = useAppSelector(state => state.projectDetailsReducer.selectedRowIdx)
     const showDepartmentsPlan = useAppSelector(state => state.projectDetailsReducer.showDepartmentsPlan)
     const project = useAppSelector(state => state.projectDetailsReducer.project)
-
+    const [changed, setChanged] = useState<boolean>(false)
     const [task, setTask] = useState<IProjectTaskVm>(new ProjectTaskVm())
 
     useEffect(() => {
@@ -29,10 +33,10 @@ export const ProjectDetailsDepartemntsPlan: React.FunctionComponent = () => {
 
     const updateLocalTask = (unitId: string, userPositionId: string, hoursAsStr: string) => {
         const hours = Number(hoursAsStr)
-        if (isNaN(hours)){
+        if (isNaN(hours)) {
             return
         }
-        
+
         // todo
         const taskClone = JSON.parse(JSON.stringify(task)) as IProjectTaskVm
 
@@ -50,12 +54,17 @@ export const ProjectDetailsDepartemntsPlan: React.FunctionComponent = () => {
         taskClone.unitEstimations[estIdx].estimations[recordIdx].hours = hours
         ProjectTaskVmHelper.recalcTotalHours(taskClone)
         setTask(taskClone)
-
+        setChanged(true)
     }
 
     const onClose = () => {
+        if (changed) {
+            dispatch(changeTask({ task: task }))
+        }
         dispatch(toggleShowDepartmentsPlan())
-        dispatch(changeTask({task: task}))
+        setChanged(false)
+        setTask(new ProjectTaskVm())
+        afterClose()
     }
 
     return (
