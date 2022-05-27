@@ -1,15 +1,13 @@
 import { getColor } from "../../common/getColor";
 import { IProjectDetailedInfoVm } from "./ProjectDetailedInfoVm";
 
-export class ProjectStatisticsChartDatasets {
-    data: number[] = []
-    backgroundColor: string[] = []
-}
-
 export class ProjectStatisticsChartData {
     labels: string[] = []
-    datasets: ProjectStatisticsChartDatasets[] = [new ProjectStatisticsChartDatasets()]
     hoverOffset: number = 4
+    datasets: {
+        data: number[]
+        backgroundColor: string[]
+    }[] = [{ data: [], backgroundColor: [] }]
 }
 
 export type ProjectStatisticsRecord = {
@@ -121,7 +119,7 @@ export class DepartmentsPlan {
 
             const hours = arg.get(i) as number
             const percent = (100 * hours / projectTotalHours).toFixed(2)
-            const rec = { name: i, hours: hours, percent: percent, color:  getColor(i)} 
+            const rec = { name: i, hours: hours, percent: percent, color: getColor(i) }
             return rec
         })
 
