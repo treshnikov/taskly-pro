@@ -10,7 +10,7 @@ type ProjectDetailsDepartemntsPlanProps = {
     afterClose: () => void
 }
 
-export const ProjectDetailsDepartemntsPlan: React.FunctionComponent<ProjectDetailsDepartemntsPlanProps> = ({afterClose: afterClose}) => {
+export const ProjectDetailsDepartemntsPlan: React.FunctionComponent<ProjectDetailsDepartemntsPlanProps> = ({afterClose}) => {
     const { t } = useTranslation();
     const dispatch = useAppDispatch()
     const selectedRowIdx = useAppSelector(state => state.projectDetailsReducer.selectedRowIdx)

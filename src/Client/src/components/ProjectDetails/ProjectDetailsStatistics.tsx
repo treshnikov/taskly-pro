@@ -1,24 +1,12 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Grid, Stack } from "@mui/material"
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux.hook";
 import { DepartmentsPlan } from "../../models/ProjectDetails/DepartmentsPlan";
 import { toggleShowStatistics } from "../../redux/projectDetailsSlice";
 import { Doughnut } from 'react-chartjs-2';
 import { Chart, ArcElement } from 'chart.js'
-import { ProjectTaskUnitEstimationVmHelper } from "../../models/ProjectDetails/ProjectTaskUnitEstimationVm";
 Chart.register(ArcElement);
-
-class Datasets {
-    data: number[] = []
-    backgroundColor: string[] = []
-}
-
-class ChartData {
-    labels: string[] = []
-    datasets: Datasets[] = [new Datasets()]
-    hoverOffset: number = 4
-}
 
 export const ProjectDetailsStatistics: React.FunctionComponent = () => {
     const { t } = useTranslation();
@@ -26,7 +14,6 @@ export const ProjectDetailsStatistics: React.FunctionComponent = () => {
     const showStatistics = useAppSelector(state => state.projectDetailsReducer.showStatistics)
     const project = useAppSelector(state => state.projectDetailsReducer.project)
     const [plan, setPlan] = useState<DepartmentsPlan>(new DepartmentsPlan())
-    const [chartData, setChartData] = useState<ChartData>(new ChartData())
 
     const options = {
         cutoutPercentage: 80,
@@ -38,17 +25,9 @@ export const ProjectDetailsStatistics: React.FunctionComponent = () => {
         responsive: true,
     };
 
-    const sortFunc = useCallback((a: string, b: string) => {
-        const h1 = plan.records.get(a) as number
-        const h2 = plan.records.get(b) as number
-
-        return (h1 && h2 && h1 > h2 ? -1 : 1);
-    }, [plan.records])
-
     useEffect(() => {
         if (project.tasks?.length === 0) {
             setPlan(new DepartmentsPlan())
-            setChartData(new ChartData())
             return
         }
         
@@ -56,19 +35,6 @@ export const ProjectDetailsStatistics: React.FunctionComponent = () => {
         DepartmentsPlan.init(newPlan, project)
         setPlan(newPlan)
     }, [project])
-
-    useEffect(() => {
-        const newChartData = new ChartData()
-        Array.from(plan.records.keys()).sort(sortFunc).forEach(p => {
-            const depName = p
-            const hours = plan.records.get(depName) as number
-
-            newChartData.labels.push(depName)
-            newChartData.datasets[0].data.push(hours)
-            newChartData.datasets[0].backgroundColor.push(ProjectTaskUnitEstimationVmHelper.getColor(depName))
-        });
-        setChartData(newChartData)
-    }, [plan, sortFunc])
 
     const onClose = () => {
         dispatch(toggleShowStatistics())
@@ -93,17 +59,17 @@ export const ProjectDetailsStatistics: React.FunctionComponent = () => {
                             {t('total-planned-hours')}: {project.totalHours}{t('hour')}
                             <ul>
                                 {
-                                    Array.from(plan.records.keys()).sort(sortFunc).map(i => {
-                                        const hours = plan.records.get(i) as number
+                                    plan.depRecords.map(i => {
+                                        const hours = i.hours
 
                                         if (hours === 0) {
-                                            return (<div key={project.id + i}></div>)
+                                            return (<div key={project.id + i.name}></div>)
                                         }
 
-                                        const percent = (100 * hours / project.totalHours).toFixed(2)
-                                        const color = ProjectTaskUnitEstimationVmHelper.getColor(i)
+                                        const percent = i.percent
+                                        const color = i.color
                                         return (
-                                            <li key={project.id + i}>
+                                            <li key={project.id + i.name}>
                                                 <Stack direction="row">
                                                     <span style={{
                                                         backgroundColor: color,
@@ -116,7 +82,7 @@ export const ProjectDetailsStatistics: React.FunctionComponent = () => {
                                                     }}>
                                                     </span>
                                                     <div style={{ display: "inline" }}>
-                                                        {i}: {hours}{t('hour')} <p style={{ display: "inline", color: "silver" }}>{percent}%</p>
+                                                        {i.name}: {hours}{t('hour')} <p style={{ display: "inline", color: "silver" }}>{percent}%</p>
                                                     </div>
                                                 </Stack>
                                             </li>
@@ -127,7 +93,7 @@ export const ProjectDetailsStatistics: React.FunctionComponent = () => {
                         </Grid>
                         <Grid item xs={5}>
                             <Doughnut
-                                data={chartData} options={options}
+                                data={plan.chartData} options={options}
                             />
                         </Grid>
                     </Grid>
