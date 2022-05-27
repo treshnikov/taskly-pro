@@ -16,8 +16,8 @@ export const ProjectDetailsStatistics: React.FunctionComponent = () => {
     const [plan, setPlan] = useState<DepartmentsPlan>(new DepartmentsPlan())
 
     const options = {
-        cutoutPercentage: 80,
-        layout: { padding: 0 },
+        cutoutPercentage: 70,
+        layout: { padding: 25 },
         legend: {
             display: true
         },
@@ -30,7 +30,7 @@ export const ProjectDetailsStatistics: React.FunctionComponent = () => {
             setPlan(new DepartmentsPlan())
             return
         }
-        
+
         const newPlan = new DepartmentsPlan()
         DepartmentsPlan.init(newPlan, project)
         setPlan(newPlan)
@@ -59,7 +59,7 @@ export const ProjectDetailsStatistics: React.FunctionComponent = () => {
                             {t('total-planned-hours')}: {project.totalHours}{t('hour')}
                             <ul>
                                 {
-                                    plan.depRecords.map(i => {
+                                    plan.depsToHoursRecords.map(i => {
                                         const hours = i.hours
 
                                         if (hours === 0) {
@@ -93,7 +93,51 @@ export const ProjectDetailsStatistics: React.FunctionComponent = () => {
                         </Grid>
                         <Grid item xs={5}>
                             <Doughnut
-                                data={plan.chartData} options={options}
+                                data={plan.depsToHoursChartData} options={options}
+                            />
+                        </Grid>
+                    </Grid>
+                    <Divider></Divider>
+                    <Grid container>
+                        <Grid item xs={7}>
+                            <ul>
+                                {
+                                    plan.userPositionsToHoursRecords.map(i => {
+                                        const hours = i.hours
+
+                                        if (hours === 0) {
+                                            return (<div key={project.id + i.name}></div>)
+                                        }
+
+                                        const percent = i.percent
+                                        const color = i.color 
+                                        return (
+                                            <li key={project.id + i.name}>
+                                                <Stack direction="row">
+                                                    <span style={{
+                                                        backgroundColor: color,
+                                                        verticalAlign: "top",
+                                                        height: "10px",
+                                                        width: "20px",
+                                                        marginLeft: "-2px",
+                                                        marginTop: "5px",
+                                                        marginRight: "2px"
+                                                    }}>
+                                                    </span>
+
+                                                    <div style={{ display: "inline" }}>
+                                                        {i.name}: {hours}{t('hour')} <p style={{ display: "inline", color: "silver" }}>{percent}%</p>
+                                                    </div>
+                                                </Stack>
+                                            </li>
+                                        )
+                                    })
+                                }
+                            </ul>
+                        </Grid>
+                        <Grid item xs={5}>
+                            <Doughnut
+                                data={plan.userPositionsToHoursChartData} options={options}
                             />
                         </Grid>
                     </Grid>

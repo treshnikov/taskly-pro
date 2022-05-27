@@ -1,3 +1,4 @@
+import { getColor } from "../../common/getColor"
 import { ProjectTaskUnitEstimationVmHelper } from "./ProjectTaskUnitEstimationVm"
 import { IProjectTaskVm, ProjectTaskVmHelper } from "./ProjectTaskVm"
 
@@ -86,7 +87,7 @@ export class ProjectDetailedInfoVmHelper{
                         Math.trunc(maxLineHeight * (taskDepartmentEstimation.totalHours / arg.totalHours)))
 
                 // prepare color for gant chart
-                taskDepartmentEstimation.color = ProjectTaskUnitEstimationVmHelper.getColor(taskDepartmentEstimation.unitName)
+                taskDepartmentEstimation.color = getColor(taskDepartmentEstimation.unitName)
 
             })
         })

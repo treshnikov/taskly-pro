@@ -1,5 +1,5 @@
+import { getColor } from "../../common/getColor";
 import { IProjectDetailedInfoVm } from "./ProjectDetailedInfoVm";
-import { ProjectTaskUnitEstimationVmHelper } from "./ProjectTaskUnitEstimationVm";
 
 export class ProjectStatisticsChartDatasets {
     data: number[] = []
@@ -13,38 +13,64 @@ export class ProjectStatisticsChartData {
 }
 
 export type ProjectStatisticsDepartmentRecord = {
-    name: string, 
-    color: string, 
-    hours: number, 
+    name: string,
+    color: string,
+    hours: number,
     percent: string
 }
 
-export class DepartmentsPlan {
+export type ProjectStatisticsUserPositionRecord = {
+    name: string,
+    hours: number,
+    percent: string,
+    color: string
+}
 
-    chartData: ProjectStatisticsChartData = new ProjectStatisticsChartData()
-    depRecords: ProjectStatisticsDepartmentRecord[] = []
+export class DepartmentsPlan {
+    depsToHoursChartData: ProjectStatisticsChartData = new ProjectStatisticsChartData()
+    depsToHoursRecords: ProjectStatisticsDepartmentRecord[] = []
+
+    userPositionsToHoursChartData: ProjectStatisticsChartData = new ProjectStatisticsChartData()
+    userPositionsToHoursRecords: ProjectStatisticsUserPositionRecord[] = []
 
     public static init(arg: DepartmentsPlan, project: IProjectDetailedInfoVm) {
-        const departmnetToHoursMap: Map<string, number> = new Map()
-        departmnetToHoursMap.clear();
+        const depsToHoursMap: Map<string, number> = new Map()
+        const userPositionToHoursMap: Map<string, number> = new Map()
+        depsToHoursMap.clear();
 
         project.tasks?.forEach(task => {
             task.unitEstimations?.forEach(e => {
                 const depName = e.unitName
                 const hours = e.totalHours
 
-                if (!departmnetToHoursMap.has(depName)) {
-                    departmnetToHoursMap.set(depName, hours)
+                if (!depsToHoursMap.has(depName)) {
+                    depsToHoursMap.set(depName, hours)
                 }
                 else {
-                    const depHours = departmnetToHoursMap.get(depName) as number
-                    departmnetToHoursMap.set(depName, depHours + hours)
+                    const depHours = depsToHoursMap.get(depName) as number
+                    depsToHoursMap.set(depName, depHours + hours)
                 }
+
+                e.estimations.forEach(p => {
+                    const positionName = p.userPositionName
+                    const hours = p.hours
+
+                    if (!userPositionToHoursMap.has(positionName)) {
+                        userPositionToHoursMap.set(positionName, hours)
+                    }
+                    else {
+                        const positionHours = userPositionToHoursMap.get(positionName) as number
+                        userPositionToHoursMap.set(positionName, positionHours + hours)
+                    }
+                });
             });
         });
 
-        arg.depRecords = DepartmentsPlan.getDepartmentListOrderedByHours(departmnetToHoursMap, project.totalHours)
-        arg.chartData = DepartmentsPlan.getDataForDepartmentsHoursChart(departmnetToHoursMap)
+        arg.depsToHoursRecords = DepartmentsPlan.getDepartmentListOrderedByHours(depsToHoursMap, project.totalHours)
+        arg.depsToHoursChartData = DepartmentsPlan.getDataForDepartmentsHoursChart(depsToHoursMap)
+
+        arg.userPositionsToHoursChartData = DepartmentsPlan.getDataForDepartmentsHoursChart(userPositionToHoursMap)
+        arg.userPositionsToHoursRecords = DepartmentsPlan.getUserPositionsListOrderedByHours(userPositionToHoursMap, project.totalHours)
     }
 
     private static getDataForDepartmentsHoursChart(arg: Map<string, number>): ProjectStatisticsChartData {
@@ -62,7 +88,7 @@ export class DepartmentsPlan {
 
             res.labels.push(depName)
             res.datasets[0].data.push(hours)
-            res.datasets[0].backgroundColor.push(ProjectTaskUnitEstimationVmHelper.getColor(depName))
+            res.datasets[0].backgroundColor.push(getColor(depName))
         });
 
         return res
@@ -79,11 +105,34 @@ export class DepartmentsPlan {
 
             const hours = arg.get(i) as number
             const percent = (100 * hours / projectTotalHours).toFixed(2)
-            const color = ProjectTaskUnitEstimationVmHelper.getColor(i)
+            const color = getColor(i)
 
             return { name: i, color: color, hours: hours, percent: percent }
         })
 
         return arr
     }
+
+    private static getUserPositionsListOrderedByHours(arg: Map<string, number>, projectTotalHours: number): ProjectStatisticsUserPositionRecord[] {
+        const sortFunc = (a: string, b: string) => {
+            const h1 = arg.get(a) as number
+            const h2 = arg.get(b) as number
+            return (h1 && h2 && h1 > h2 ? -1 : 1);
+        }
+
+        console.log(arg)
+        const sortedArr = Array.from(arg.keys()).filter(i => arg.get(i) as number > 0).sort(sortFunc)
+        console.log(sortedArr)
+
+        const arr = sortedArr.map(i => {
+
+            const hours = arg.get(i) as number
+            const percent = (100 * hours / projectTotalHours).toFixed(2)
+            const rec = { name: i, hours: hours, percent: percent, color:  getColor(i)} 
+            return rec
+        })
+
+        return arr
+    }
+
 }
