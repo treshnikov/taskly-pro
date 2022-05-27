@@ -12,26 +12,19 @@ export class ProjectStatisticsChartData {
     hoverOffset: number = 4
 }
 
-export type ProjectStatisticsDepartmentRecord = {
+export type ProjectStatisticsRecord = {
     name: string,
     color: string,
     hours: number,
     percent: string
 }
 
-export type ProjectStatisticsUserPositionRecord = {
-    name: string,
-    hours: number,
-    percent: string,
-    color: string
-}
-
 export class DepartmentsPlan {
     depsToHoursChartData: ProjectStatisticsChartData = new ProjectStatisticsChartData()
-    depsToHoursRecords: ProjectStatisticsDepartmentRecord[] = []
+    depsToHoursRecords: ProjectStatisticsRecord[] = []
 
     userPositionsToHoursChartData: ProjectStatisticsChartData = new ProjectStatisticsChartData()
-    userPositionsToHoursRecords: ProjectStatisticsUserPositionRecord[] = []
+    userPositionsToHoursRecords: ProjectStatisticsRecord[] = []
 
     public static init(arg: DepartmentsPlan, project: IProjectDetailedInfoVm) {
         const depsToHoursMap: Map<string, number> = new Map()
@@ -94,7 +87,7 @@ export class DepartmentsPlan {
         return res
     }
 
-    private static getDepartmentListOrderedByHours(arg: Map<string, number>, projectTotalHours: number): ProjectStatisticsDepartmentRecord[] {
+    private static getDepartmentListOrderedByHours(arg: Map<string, number>, projectTotalHours: number): ProjectStatisticsRecord[] {
         const sortFunc = (a: string, b: string) => {
             const h1 = arg.get(a) as number
             const h2 = arg.get(b) as number
@@ -113,7 +106,7 @@ export class DepartmentsPlan {
         return arr
     }
 
-    private static getUserPositionsListOrderedByHours(arg: Map<string, number>, projectTotalHours: number): ProjectStatisticsUserPositionRecord[] {
+    private static getUserPositionsListOrderedByHours(arg: Map<string, number>, projectTotalHours: number): ProjectStatisticsRecord[] {
         const sortFunc = (a: string, b: string) => {
             const h1 = arg.get(a) as number
             const h2 = arg.get(b) as number
