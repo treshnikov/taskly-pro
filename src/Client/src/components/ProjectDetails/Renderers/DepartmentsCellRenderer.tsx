@@ -1,12 +1,12 @@
 import { useTranslation } from 'react-i18next';
 import { useAppDispatch } from '../../../hooks/redux.hook';
-import { ProjectTaskUnitEstimationVm } from "../../../models/ProjectDetails/ProjectTaskUnitEstimationVm";
+import { ProjectTaskDepartmentEstimationVm } from "../../../models/ProjectDetails/ProjectTaskDepartmentEstimationVm";
 import { toggleShowDepartmentsPlan } from '../../../redux/projectDetailsSlice';
 
 export const DepartmentsCellRenderer = (props: any) => {
     const { showDetails, value } = props
     const dispatch = useAppDispatch()
-    const estimations = value as ProjectTaskUnitEstimationVm[]
+    const estimations = value as ProjectTaskDepartmentEstimationVm[]
     const { t } = useTranslation();
     const showDetailsAsBool = showDetails as boolean
 
@@ -64,7 +64,7 @@ export const DepartmentsCellRenderer = (props: any) => {
                                 maxWidth: "220px",
                                 whiteSpace: "pre-wrap",
                                 display: "inline-block"
-                            }}>{i.unitName + " " + i.totalHours + t('hour')}</span>
+                            }}>{i.departmentName + " " + i.totalHours + t('hour')}</span>
                             <span style={{ display: showDetailsAsBool ? "block" : "none", fontSize: "10px", color: "dimgray" }}>
                                 <div style={{ width: "20px", display: "inline-block" }}></div>
                                 {

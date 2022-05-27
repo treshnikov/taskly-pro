@@ -3,5 +3,5 @@ export class UserVm {
     name: string = '';
     email: string = '';
     position: string = '';
-    unit: string = '';
+    department: string = '';
 }

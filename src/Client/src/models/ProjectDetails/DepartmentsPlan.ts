@@ -30,8 +30,8 @@ export class DepartmentsPlan {
         depsToHoursMap.clear();
 
         project.tasks?.forEach(task => {
-            task.unitEstimations?.forEach(e => {
-                const depName = e.unitName
+            task.departmentEstimations?.forEach(e => {
+                const depName = e.departmentName
                 const hours = e.totalHours
 
                 if (!depsToHoursMap.has(depName)) {
@@ -111,10 +111,7 @@ export class DepartmentsPlan {
             return (h1 && h2 && h1 > h2 ? -1 : 1);
         }
 
-        console.log(arg)
         const sortedArr = Array.from(arg.keys()).filter(i => arg.get(i) as number > 0).sort(sortFunc)
-        console.log(sortedArr)
-
         const arr = sortedArr.map(i => {
 
             const hours = arg.get(i) as number

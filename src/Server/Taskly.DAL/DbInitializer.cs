@@ -17,7 +17,7 @@ namespace Taskly.DAL
 
         private static void PopulateDefaultRecords(TasklyDbContext context)
         {
-            var unit = new Unit
+            var dep = new Department
             {
                 Id = Guid.NewGuid(),
                 Name = "Main department",
@@ -34,10 +34,10 @@ namespace Taskly.DAL
             {
                 Name = "admin",
                 Email = "admin@admin.com",
-                UserUnits = new List<UserUnit>{
-                    new UserUnit {
+                UserDepartments = new List<UserDepartment>{
+                    new UserDepartment {
                         Rate = 1,
-                        Unit = unit,
+                        Department = dep,
                         Comment="admin",
                         UserPosition= userPosition
                     }
@@ -62,7 +62,7 @@ namespace Taskly.DAL
                 Id = 1,
                 ChiefEngineer = admin,
                 ProjectManager = admin,
-                Company = unit,
+                Company = dep,
                 Customer = customer,
                 IsOpened = true,
                 Contract = "Demo contract",
@@ -76,14 +76,14 @@ namespace Taskly.DAL
                         Description = "Task #1",
                         Start = new DateTime(DateTime.Today.Year, 01, 01),
                         End = new DateTime(DateTime.Today.Year, 12, 31),
-                        UnitEstimations = new List<ProjectTaskUnitEstimation>
+                        DepartmentEstimations = new List<ProjectTaskDepartmentEstimation>
                         {
-                            new ProjectTaskUnitEstimation
+                            new ProjectTaskDepartmentEstimation
                             {
-                                Unit = unit,
-                                Estimations = new List<ProjectTaskUnitEstimationToUserPosition>
+                                Department = dep,
+                                Estimations = new List<ProjectTaskDepartmentEstimationToUserPosition>
                                 {
-                                    new ProjectTaskUnitEstimationToUserPosition{
+                                    new ProjectTaskDepartmentEstimationToUserPosition{
                                         Hours = 360,
                                         UserPosition = userPosition
                                     }
@@ -97,14 +97,14 @@ namespace Taskly.DAL
                         Description = "Task #2",
                         Start = new DateTime(DateTime.Today.Year, 01, 01),
                         End = new DateTime(DateTime.Today.Year, 06, 30),
-                        UnitEstimations = new List<ProjectTaskUnitEstimation>
+                        DepartmentEstimations = new List<ProjectTaskDepartmentEstimation>
                         {
-                            new ProjectTaskUnitEstimation
+                            new ProjectTaskDepartmentEstimation
                             {
-                                Unit = unit,
-                                Estimations = new List<ProjectTaskUnitEstimationToUserPosition>
+                                Department = dep,
+                                Estimations = new List<ProjectTaskDepartmentEstimationToUserPosition>
                                 {
-                                    new ProjectTaskUnitEstimationToUserPosition{
+                                    new ProjectTaskDepartmentEstimationToUserPosition{
                                         Hours = 80,
                                         UserPosition = userPosition
                                     }
@@ -117,14 +117,14 @@ namespace Taskly.DAL
                         Description = "Task #3",
                         Start = new DateTime(DateTime.Today.Year, 05, 01),
                         End = new DateTime(DateTime.Today.Year, 10, 30),
-                        UnitEstimations = new List<ProjectTaskUnitEstimation>
+                        DepartmentEstimations = new List<ProjectTaskDepartmentEstimation>
                         {
-                            new ProjectTaskUnitEstimation
+                            new ProjectTaskDepartmentEstimation
                             {
-                                Unit = unit,
-                                Estimations = new List<ProjectTaskUnitEstimationToUserPosition>
+                                Department = dep,
+                                Estimations = new List<ProjectTaskDepartmentEstimationToUserPosition>
                                 {
-                                    new ProjectTaskUnitEstimationToUserPosition{
+                                    new ProjectTaskDepartmentEstimationToUserPosition{
                                         Hours = 280,
                                         UserPosition = userPosition
                                     }
@@ -137,7 +137,7 @@ namespace Taskly.DAL
 
             context.Projects.Add(project);
             context.Customers.Add(customer);
-            context.Units.Add(unit);
+            context.Departments.Add(dep);
             context.Users.Add(admin);
             context.SaveChanges();
         }

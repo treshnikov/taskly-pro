@@ -19,8 +19,8 @@ namespace Taskly.Application.Users
         {
             var user = await _dbContext
                 .Users
-                .Include(u => u.UserUnits).ThenInclude(u => u.Unit)
-                .Include(u => u.UserUnits).ThenInclude(u => u.UserPosition)
+                .Include(u => u.UserDepartments).ThenInclude(u => u.Department)
+                .Include(u => u.UserDepartments).ThenInclude(u => u.UserPosition)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(u => u.Id == request.UserId, cancellationToken);
             

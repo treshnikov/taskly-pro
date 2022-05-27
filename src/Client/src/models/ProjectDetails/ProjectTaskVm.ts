@@ -1,5 +1,5 @@
 import { dateAsShortStr } from "../../common/dateFormatter"
-import { IProjectTaskUnitEstimationVm } from "./ProjectTaskUnitEstimationVm"
+import { IProjectTaskDepartmentEstimationVm } from "./ProjectTaskDepartmentEstimationVm"
 
 export interface IProjectTaskVm {
     id: string
@@ -7,7 +7,7 @@ export interface IProjectTaskVm {
     end: number
     description: string
     comment: string
-    unitEstimations: IProjectTaskUnitEstimationVm[]
+    departmentEstimations: IProjectTaskDepartmentEstimationVm[]
 
     // calculated
     startAsStr: string
@@ -21,7 +21,7 @@ export class ProjectTaskVm implements IProjectTaskVm {
     end: number = 0
     description: string = ''
     comment: string = ''
-    unitEstimations: IProjectTaskUnitEstimationVm[] = []
+    departmentEstimations: IProjectTaskDepartmentEstimationVm[] = []
 
     // calculated
     startAsStr: string = ''
@@ -39,13 +39,13 @@ export class ProjectTaskVmHelper {
 
     public static recalcTotalHours(arg: IProjectTaskVm) {
         let totalHours = 0
-        arg.unitEstimations.forEach(u => {
-            let unitHours = 0
+        arg.departmentEstimations.forEach(u => {
+            let depHours = 0
             u.estimations.forEach(e => {
-                unitHours += e.hours
+                depHours += e.hours
             })
-            u.totalHours = unitHours
-            totalHours += unitHours
+            u.totalHours = depHours
+            totalHours += depHours
         })
 
         arg.totalHours = totalHours

@@ -2,23 +2,23 @@ using Taskly.Domain;
 
 namespace Taskly.Application.Projects
 {
-    public class ProjectTaskUnitEstimationVm
+    public class ProjectTaskDepartmentEstimationVm
     {
         public Guid Id { get; set; }
-        public Guid UnitId { get; set; }
-        public string UnitName { get; set; }
-        public string UnitShortName { get; set; }
+        public Guid DepartmentId { get; set; }
+        public string DepartmentName { get; set; }
+        public string DepartmentShortName { get; set; }
 
         public EstimationVm[] Estimations { get; set; }
 
-        public static ProjectTaskUnitEstimationVm From(ProjectTaskUnitEstimation arg)
+        public static ProjectTaskDepartmentEstimationVm From(ProjectTaskDepartmentEstimation arg)
         {
-            return new ProjectTaskUnitEstimationVm
+            return new ProjectTaskDepartmentEstimationVm
             {
                 Id = arg.Id,
-                UnitId = arg.Unit.Id,
-                UnitName = arg.Unit.Name,
-                UnitShortName = arg.Unit.ShortName,
+                DepartmentId = arg.Department.Id,
+                DepartmentName = arg.Department.Name,
+                DepartmentShortName = arg.Department.ShortName,
                 Estimations = arg.Estimations.OrderBy(i => i.UserPosition?.Ident).Select(i => new EstimationVm
                 {
                     Id = i.Id,
@@ -39,7 +39,7 @@ namespace Taskly.Application.Projects
         public DateTime End { get; set; }
         public string Description { get; set; }
         public string Comment { get; set; }
-        public ProjectTaskUnitEstimationVm[] UnitEstimations { get; set; }
+        public ProjectTaskDepartmentEstimationVm[] DepartmentEstimations { get; set; }
 
         public static ProjectTaskVm From(ProjectTask arg)
         {
@@ -50,7 +50,7 @@ namespace Taskly.Application.Projects
                 Comment = arg.Comment,
                 Start = arg.Start,
                 End = arg.End,
-                UnitEstimations = arg.UnitEstimations.Select(i => ProjectTaskUnitEstimationVm.From(i)).ToArray()
+                DepartmentEstimations = arg.DepartmentEstimations.Select(i => ProjectTaskDepartmentEstimationVm.From(i)).ToArray()
             };
         }
     }

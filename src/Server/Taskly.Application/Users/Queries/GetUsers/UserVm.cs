@@ -9,7 +9,7 @@ namespace Taskly.Application.Users
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string? Email { get; set; }
-        public string Unit { get; set; }
+        public string Department { get; set; }
         public string Position { get; set; }
 
         public static UserVm FromUser(User user)
@@ -21,22 +21,22 @@ namespace Taskly.Application.Users
                 Name = user.Name
             };
 
-            var units = string.Empty;
+            var deps = string.Empty;
             var positions = string.Empty;
-            if (user.UserUnits != null)
+            if (user.UserDepartments != null)
             {
-                for (int i = 0; i < user.UserUnits.Count; i++)
+                for (int i = 0; i < user.UserDepartments.Count; i++)
                 {
-                    units += user.UserUnits.ElementAt(i).Unit?.Name;
-                    positions += user.UserUnits.ElementAt(i).UserPosition.Name;
-                    if (i != user.UserUnits.Count - 1)
+                    deps += user.UserDepartments.ElementAt(i).Department?.Name;
+                    positions += user.UserDepartments.ElementAt(i).UserPosition.Name;
+                    if (i != user.UserDepartments.Count - 1)
                     {
-                        units += ", ";
+                        deps += ", ";
                         positions += ", ";
                     }
                 }
             }
-            res.Unit = units;
+            res.Department = deps;
             res.Position = positions;
 
             return res;

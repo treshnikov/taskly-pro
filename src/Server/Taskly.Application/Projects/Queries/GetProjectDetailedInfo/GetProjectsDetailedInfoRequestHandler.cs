@@ -29,15 +29,15 @@ namespace Taskly.Application.Projects
                     .Include(p => p.ChiefEngineer)
                     .Include(p => p.Company)
                     .Include(p => p.Tasks)
-                        .ThenInclude(p => p.UnitEstimations).ThenInclude(i => i.Estimations).ThenInclude(i => i.UserPosition)
+                        .ThenInclude(p => p.DepartmentEstimations).ThenInclude(i => i.Estimations).ThenInclude(i => i.UserPosition)
                     .Include(p => p.Tasks)
-                        .ThenInclude(p => p.UnitEstimations).ThenInclude(p => p.Unit)
+                        .ThenInclude(p => p.DepartmentEstimations).ThenInclude(p => p.Department)
                 .FirstAsync(i => i.Id == request.ProjectId, cancellationToken: cancellationToken);
 
-            var units = await _dbContext.Units.AsNoTracking().Include(u => u.UserUnits).ThenInclude(u => u.UserPosition).ToListAsync(cancellationToken);
+            var deps = await _dbContext.Departments.AsNoTracking().Include(u => u.UserDepartments).ThenInclude(u => u.UserPosition).ToListAsync(cancellationToken);
 
-            ProjectHelper.AddDefaultUnits(project, units, _defaultDepartmentCodes);
-            await ProjectHelper.AddDefaultUnitPositionsToEstimationsVms(project, units, cancellationToken);
+            ProjectHelper.AddDefaultDepartments(project, deps, _defaultDepartmentCodes);
+            await ProjectHelper.AddDefaultDepartmentPositionsToEstimationsVms(project, deps, cancellationToken);
             project.Tasks = project.Tasks.OrderBy(i => i.Start).ToArray();
 
             return ProjectDetailedInfoVm.From(project);

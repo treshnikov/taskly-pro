@@ -6,7 +6,7 @@ using Taskly.Domain;
 
 namespace Taskly.Application.Projects.Queries
 {
-    public class GetDefaultTaskEstimationsRequestHandler : IRequestHandler<GetDefaultTaskEstimationsRequest, ProjectTaskUnitEstimationVm[]>
+    public class GetDefaultTaskEstimationsRequestHandler : IRequestHandler<GetDefaultTaskEstimationsRequest, ProjectTaskDepartmentEstimationVm[]>
     {
         private readonly ITasklyDbContext _dbContext;
         private int[] _defaultDepartmentCodes;
@@ -18,24 +18,24 @@ namespace Taskly.Application.Projects.Queries
             _defaultDepartmentCodes = defaultDepartmentCodesStr.Trim().Split(",").Select(i => int.Parse(i)).ToArray();
         }
 
-        public async Task<ProjectTaskUnitEstimationVm[]> Handle(GetDefaultTaskEstimationsRequest request, CancellationToken cancellationToken)
+        public async Task<ProjectTaskDepartmentEstimationVm[]> Handle(GetDefaultTaskEstimationsRequest request, CancellationToken cancellationToken)
         {
             var project = new Project
             {
                 Tasks = new List<ProjectTask>{
                     new ProjectTask{
-                        UnitEstimations = new List<ProjectTaskUnitEstimation>()
+                        DepartmentEstimations = new List<ProjectTaskDepartmentEstimation>()
                     }
                 }
             };
 
-            var units = await _dbContext.Units.AsNoTracking().Include(u => u.UserUnits).ThenInclude(u => u.UserPosition).ToListAsync(cancellationToken);
+            var deps = await _dbContext.Departments.AsNoTracking().Include(u => u.UserDepartments).ThenInclude(u => u.UserPosition).ToListAsync(cancellationToken);
 
-            ProjectHelper.AddDefaultUnits(project, units, _defaultDepartmentCodes);
-            await ProjectHelper.AddDefaultUnitPositionsToEstimationsVms(project, units, cancellationToken);
+            ProjectHelper.AddDefaultDepartments(project, deps, _defaultDepartmentCodes);
+            await ProjectHelper.AddDefaultDepartmentPositionsToEstimationsVms(project, deps, cancellationToken);
 
             var vm = ProjectTaskVm.From(project.Tasks.ElementAt(0));
-            return vm.UnitEstimations;
+            return vm.DepartmentEstimations;
         }
     }
 

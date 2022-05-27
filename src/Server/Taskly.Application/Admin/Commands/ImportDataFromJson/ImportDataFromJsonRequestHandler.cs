@@ -20,7 +20,7 @@ namespace Taskly.Application.Users
             _dbContext = dbContext;
         }
 
-        public async Task<MediatR.Unit> Handle(ImportDataFromJsonRequest request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(ImportDataFromJsonRequest request, CancellationToken cancellationToken)
         {
             try
             {
@@ -29,11 +29,11 @@ namespace Taskly.Application.Users
                 await UpdateUsers(users, cancellationToken);
                 await UpdateUserPositions(users, cancellationToken);
                 await UpdateDepartments(deps, cancellationToken);
-                await UpdateUserUnitLinks(users, deps, cancellationToken);
+                await UpdateUserDepartmentLinks(users, deps, cancellationToken);
                 await UpdateProjects(projects, cancellationToken);
                 await UpdateProjectTasks(request, cancellationToken);
 
-                return MediatR.Unit.Value;
+                return Unit.Value;
             }
             catch (Exception e)
             {
@@ -54,7 +54,7 @@ namespace Taskly.Application.Users
                 .Include(p => p.Tasks)
                 .ToList();
             var dbPositions = await _dbContext.UserePositions.ToListAsync(cancellationToken);
-            var dbDeps = await _dbContext.Units.ToListAsync(cancellationToken);
+            var dbDeps = await _dbContext.Departments.ToListAsync(cancellationToken);
 
             foreach (var p in dbProjects)
             {
@@ -84,17 +84,17 @@ namespace Taskly.Application.Users
                     Comment = t.Comment,
                     Start = t.Start,
                     End = t.End,
-                    UnitEstimations = new List<ProjectTaskUnitEstimation>(),
+                    DepartmentEstimations = new List<ProjectTaskDepartmentEstimation>(),
                 };
 
                 // estimations by departments
                 var idx = 0;
                 var positionIdx = 1;
                 var depCode = 0;
-                Domain.Unit dbDep = null;
-                while (idx < UnitUserMap.Length)
+                Domain.Department dbDep = null;
+                while (idx < DepartmentUserMap.Length)
                 {
-                    if (int.TryParse(UnitUserMap[idx], out depCode))
+                    if (int.TryParse(DepartmentUserMap[idx], out depCode))
                     {
                         dbDep = dbDeps.First(i => i.Code == depCode);
                         //Console.WriteLine($">> " + dbDep.Name);
@@ -102,37 +102,37 @@ namespace Taskly.Application.Users
                         continue;
                     }
 
-                    var positionName = UnitUserMap[idx];
+                    var positionName = DepartmentUserMap[idx];
                     var dbPosition = dbPositions.FirstOrDefault(p => p.Name == positionName);
                     if (dbPosition == null)
                     {
-                        //Console.WriteLine($"{positionIdx}       >> Cannot find user position with the name = {UnitUserMap[idx]}");
+                        //Console.WriteLine($"{positionIdx}       >> Cannot find user position with the name = {DepartmentUserMap[idx]}");
                     }
                     else
                     {
                         //($"{positionIdx}       >> " + dbPosition.Name);
-                        var unitEst = newTask.UnitEstimations.FirstOrDefault(i => i.Unit.Id == dbDep.Id);
-                        if (unitEst == null)
+                        var depEst = newTask.DepartmentEstimations.FirstOrDefault(i => i.Department.Id == dbDep.Id);
+                        if (depEst == null)
                         {
-                            unitEst = new ProjectTaskUnitEstimation
+                            depEst = new ProjectTaskDepartmentEstimation
                             {
                                 Id = Guid.NewGuid(),
-                                Estimations = new List<ProjectTaskUnitEstimationToUserPosition>(),
+                                Estimations = new List<ProjectTaskDepartmentEstimationToUserPosition>(),
                                 ProjectTask = newTask,
                                 ProjectTaskId = newTask.Id,
-                                Unit = dbDep
+                                Department = dbDep
                             };
-                            newTask.UnitEstimations.Add(unitEst);
+                            newTask.DepartmentEstimations.Add(depEst);
                         }
 
                         if (int.TryParse(t.Estimations[positionIdx - 1], out int hours))
                         {
-                            unitEst.Estimations.Add(new ProjectTaskUnitEstimationToUserPosition
+                            depEst.Estimations.Add(new ProjectTaskDepartmentEstimationToUserPosition
                             {
                                 Id = Guid.NewGuid(),
                                 Hours = hours,
-                                ProjectTaskUnitEstimation = unitEst,
-                                ProjectTaskUnitEstimationId = unitEst.Id,
+                                ProjectTaskDepartmentEstimation = depEst,
+                                ProjectTaskDepartmentEstimationId = depEst.Id,
                                 UserPosition = dbPosition
                             });
                         }
@@ -143,7 +143,7 @@ namespace Taskly.Application.Users
                 }
 
                 // remove records with zero estimation
-                newTask.UnitEstimations = newTask.UnitEstimations.Where(e => e.Estimations.Count > 0).ToList();
+                newTask.DepartmentEstimations = newTask.DepartmentEstimations.Where(e => e.Estimations.Count > 0).ToList();
                 _dbContext.ProjectTasks.Add(newTask);
 
 
@@ -251,7 +251,7 @@ namespace Taskly.Application.Users
             var dbProjects = _dbContext.Projects.ToList();
             var dbUsers = _dbContext.Users.ToList();
             var dbCustomers = _dbContext.Customers.ToList();
-            var dbUnits = _dbContext.Units.ToList();
+            var dbDeps = _dbContext.Departments.ToList();
 
             var newProjects = new List<Project>();
             foreach (var p in projects)
@@ -261,7 +261,7 @@ namespace Taskly.Application.Users
                 var dbProject = dbProjects.FirstOrDefault(i => i.Id == p.project_id);
                 var newProject = newProjects.FirstOrDefault(i => i.Id == p.project_id);
 
-                var company = dbUnits.FirstOrDefault(i => i.Name == p.company);
+                var company = dbDeps.FirstOrDefault(i => i.Name == p.company);
                 var start = DateTime.ParseExact(p.start_stop_dates.Split(" ")[0], "dd.MM.yyyy", CultureInfo.InvariantCulture);
                 var end = DateTime.ParseExact(p.start_stop_dates.Split(" ")[2], "dd.MM.yyyy", CultureInfo.InvariantCulture);
                 DateTime? closeDate = string.IsNullOrWhiteSpace(p.close_date) ? null : DateTime.ParseExact(p.close_date, "dd.MM.yyyy", CultureInfo.InvariantCulture);
@@ -325,12 +325,12 @@ namespace Taskly.Application.Users
             transaction.Commit();
         }
 
-        private async Task UpdateUserUnitLinks(UserJson[] users, DepartmentJson[] deps, CancellationToken cancellationToken)
+        private async Task UpdateUserDepartmentLinks(UserJson[] users, DepartmentJson[] deps, CancellationToken cancellationToken)
         {
             using var transaction = _dbContext.Database.BeginTransaction();
 
-            var dbDeps = await _dbContext.Units.Include(u => u.UserUnits).ToListAsync(cancellationToken: cancellationToken);
-            var dbUsers = await _dbContext.Users.Include(u => u.UserUnits).ThenInclude(u => u.UserPosition).ToListAsync(cancellationToken: cancellationToken);
+            var dbDeps = await _dbContext.Departments.Include(u => u.UserDepartments).ToListAsync(cancellationToken: cancellationToken);
+            var dbUsers = await _dbContext.Users.Include(u => u.UserDepartments).ThenInclude(u => u.UserPosition).ToListAsync(cancellationToken: cancellationToken);
             var dpUserPositions = await _dbContext.UserePositions.ToListAsync(cancellationToken);
             foreach (var u in users)
             {
@@ -342,32 +342,32 @@ namespace Taskly.Application.Users
                 //Log.Logger.Debug($"Handle {u.lastname}");
                 var dbUser = dbUsers.First(i => i.Email == u.email);
                 var dbDep = dbDeps.First(i => i.Code == u.DepartmentId);
-                if (dbUser.UserUnits == null)
+                if (dbUser.UserDepartments == null)
                 {
-                    dbUser.UserUnits = new List<UserUnit>();
+                    dbUser.UserDepartments = new List<UserDepartment>();
                 }
 
-                var dbUserUnit = dbUser.UserUnits.FirstOrDefault(i => i.User == dbUser && i.Unit == dbDep);
-                if (dbUserUnit == null)
+                var dbUserDep = dbUser.UserDepartments.FirstOrDefault(i => i.User == dbUser && i.Department == dbDep);
+                if (dbUserDep == null)
                 {
-                    dbUserUnit = new UserUnit
+                    dbUserDep = new UserDepartment
                     {
                         Id = Guid.NewGuid(),
                         Rate = 1,
-                        Unit = dbDep,
+                        Department = dbDep,
                         User = dbUser,
                         UserPosition = dpUserPositions.First(i => i.Name == u.title),
                         Comment = u.TypeName
                     };
 
-                    _dbContext.UserUnits.Add(dbUserUnit);
-                    dbUser.UserUnits.Add(dbUserUnit);
+                    _dbContext.UserDepartments.Add(dbUserDep);
+                    dbUser.UserDepartments.Add(dbUserDep);
                 }
                 else
                 {
-                    dbUserUnit.Rate = 1;
-                    dbUserUnit.UserPosition = dpUserPositions.First(i => i.Name == u.title);
-                    dbUserUnit.Comment = u.TypeName;
+                    dbUserDep.Rate = 1;
+                    dbUserDep.UserPosition = dpUserPositions.First(i => i.Name == u.title);
+                    dbUserDep.Comment = u.TypeName;
                 }
 
                 _dbContext.Users.Update(dbUser);
@@ -380,8 +380,8 @@ namespace Taskly.Application.Users
         {
             using var transaction = _dbContext.Database.BeginTransaction();
 
-            var dbDeps = _dbContext.Units.ToList();
-            var newDeps = new List<Domain.Unit>();
+            var dbDeps = _dbContext.Departments.ToList();
+            var newDeps = new List<Domain.Department>();
             foreach (var d in deps)
             {
                 var dbDep = dbDeps.FirstOrDefault(i => i.Code == d.prj_company_ID);
@@ -389,7 +389,7 @@ namespace Taskly.Application.Users
                 if (dbDep == null && newDep == null)
                 {
                     //Log.Logger.Debug($"Handle {d.name} with parent = {d.parent}");
-                    newDeps.Add(new Domain.Unit
+                    newDeps.Add(new Domain.Department
                     {
                         Id = Guid.NewGuid(),
                         Code = d.prj_company_ID,
@@ -404,15 +404,15 @@ namespace Taskly.Application.Users
                     {
                         dbDep.ShortName = d.short_name;
                         dbDep.OrderNumber = d.order_number;
-                        _dbContext.Units.Update(dbDep);
+                        _dbContext.Departments.Update(dbDep);
                     }
                 }
             }
-            _dbContext.Units.AddRange(newDeps);
+            _dbContext.Departments.AddRange(newDeps);
             await _dbContext.SaveChangesAsync(cancellationToken);
 
             // update parent departments
-            dbDeps = await _dbContext.Units.ToListAsync(cancellationToken);
+            dbDeps = await _dbContext.Departments.ToListAsync(cancellationToken);
             foreach (var d in deps)
             {
                 if (!d.parent.HasValue)
@@ -421,8 +421,8 @@ namespace Taskly.Application.Users
                 }
 
                 var dpDep = dbDeps.First(i => i.Code == d.prj_company_ID);
-                dpDep.ParentUnit = dbDeps.First(i => i.Code == d.parent);
-                _dbContext.Units.Update(dpDep);
+                dpDep.ParentDepartment = dbDeps.First(i => i.Code == d.parent);
+                _dbContext.Departments.Update(dpDep);
             }
             await _dbContext.SaveChangesAsync(cancellationToken);
 
@@ -605,7 +605,7 @@ namespace Taskly.Application.Users
         /// Map for parsing project_tasks.xlsx
         /// </summary>
         /// <value></value>
-        private string[] UnitUserMap = new string[]{
+        private string[] DepartmentUserMap = new string[]{
             "141",
                 "Технический директор",
             "244",

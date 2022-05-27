@@ -4,21 +4,21 @@ namespace Taskly.Application.Projects
 {
     public static class ProjectHelper
     {
-        public static void AddDefaultUnits(Project project, List<Domain.Unit> units, int[] departmentCodes)
+        public static void AddDefaultDepartments(Project project, List<Domain.Department> deps, int[] departmentCodes)
         {
-            var defaultUnits = units.Where(u => u.Code.HasValue && departmentCodes.Contains(u.Code.Value)).ToList();
+            var defaultDepartments = deps.Where(u => u.Code.HasValue && departmentCodes.Contains(u.Code.Value)).ToList();
 
             foreach (var t in project.Tasks)
             {
-                var unitsToAdd = defaultUnits.Where(i => !t.UnitEstimations.Any(j => j.Unit.Code == i.Code));
-                foreach (var u in unitsToAdd)
+                var depsToAdd = defaultDepartments.Where(i => !t.DepartmentEstimations.Any(j => j.Department.Code == i.Code));
+                foreach (var u in depsToAdd)
                 {
-                    t.UnitEstimations.Add(new ProjectTaskUnitEstimation
+                    t.DepartmentEstimations.Add(new ProjectTaskDepartmentEstimation
                     {
                         // todo - this record does not exist in the DB, only in view model
                         Id = Guid.NewGuid(),
-                        Estimations = new List<ProjectTaskUnitEstimationToUserPosition>(),
-                        Unit = u,
+                        Estimations = new List<ProjectTaskDepartmentEstimationToUserPosition>(),
+                        Department = u,
                         ProjectTask = t,
                         ProjectTaskId = t.Id
                     });
@@ -26,24 +26,24 @@ namespace Taskly.Application.Projects
             }
         }
 
-        public static async Task AddDefaultUnitPositionsToEstimationsVms(Project project, List<Domain.Unit> units, CancellationToken cancellationToken)
+        public static async Task AddDefaultDepartmentPositionsToEstimationsVms(Project project, List<Domain.Department> deps, CancellationToken cancellationToken)
         {
-            var depToUserPositions = GetExistingDepartmentPositions(units);
+            var depToUserPositions = GetExistingDepartmentPositions(deps);
 
             foreach (var t in project.Tasks)
             {
-                foreach (var ue in t.UnitEstimations)
+                foreach (var ue in t.DepartmentEstimations)
                 {
                     // add zero-estimation records for missed user positions 
-                    var zeroEstimationPositionsToAdd = depToUserPositions[ue.Unit.Id]
+                    var zeroEstimationPositionsToAdd = depToUserPositions[ue.Department.Id]
                         .Where(dict => !ue.Estimations.Any(j => j.UserPosition.Id == dict.Id));
                     foreach (var i in zeroEstimationPositionsToAdd)
                     {
-                        ue.Estimations.Add(new ProjectTaskUnitEstimationToUserPosition()
+                        ue.Estimations.Add(new ProjectTaskDepartmentEstimationToUserPosition()
                         {
                             // todo - this record does not exist in the DB, only in view model 
                             Id = Guid.NewGuid(),
-                            ProjectTaskUnitEstimationId = Guid.NewGuid(),
+                            ProjectTaskDepartmentEstimationId = Guid.NewGuid(),
                             Hours = 0,
                             UserPosition = i,
                         });
@@ -52,26 +52,26 @@ namespace Taskly.Application.Projects
                     ue.Estimations = ue.Estimations.OrderBy(i => i.UserPosition.Name).ToList();
                 }
 
-                t.UnitEstimations = t.UnitEstimations.OrderBy(i => i.Unit.Name).ToList();
+                t.DepartmentEstimations = t.DepartmentEstimations.OrderBy(i => i.Department.Name).ToList();
             }
         }
 
-        public static Dictionary<Guid, HashSet<UserPosition>> GetExistingDepartmentPositions(List<Domain.Unit> units)
+        public static Dictionary<Guid, HashSet<UserPosition>> GetExistingDepartmentPositions(List<Domain.Department> deps)
         {
-            Dictionary<Guid, HashSet<UserPosition>> uniquePositionsInUnit = new();
-            foreach (var u in units)
+            Dictionary<Guid, HashSet<UserPosition>> uniquePositionsInDep = new();
+            foreach (var u in deps)
             {
-                uniquePositionsInUnit[u.Id] = new();
-                foreach (var uu in u.UserUnits)
+                uniquePositionsInDep[u.Id] = new();
+                foreach (var uu in u.UserDepartments)
                 {
-                    if (!uniquePositionsInUnit[u.Id].Contains(uu.UserPosition))
+                    if (!uniquePositionsInDep[u.Id].Contains(uu.UserPosition))
                     {
-                        uniquePositionsInUnit[u.Id].Add(uu.UserPosition);
+                        uniquePositionsInDep[u.Id].Add(uu.UserPosition);
                     }
                 }
             }
 
-            return uniquePositionsInUnit;
+            return uniquePositionsInDep;
         }
             
     }

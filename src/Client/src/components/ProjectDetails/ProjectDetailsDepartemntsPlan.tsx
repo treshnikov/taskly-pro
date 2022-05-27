@@ -31,7 +31,7 @@ export const ProjectDetailsDepartemntsPlan: React.FunctionComponent<ProjectDetai
 
     }, [selectedRowIdx, project.tasks])
 
-    const updateLocalTask = (unitId: string, userPositionId: string, hoursAsStr: string) => {
+    const updateLocalTask = (depId: string, userPositionId: string, hoursAsStr: string) => {
         const hours = Number(hoursAsStr)
         if (isNaN(hours)) {
             return
@@ -40,18 +40,18 @@ export const ProjectDetailsDepartemntsPlan: React.FunctionComponent<ProjectDetai
         // todo
         const taskClone = JSON.parse(JSON.stringify(task)) as IProjectTaskVm
 
-        const estIdx = taskClone.unitEstimations.findIndex(e => e.unitId === unitId)
+        const estIdx = taskClone.departmentEstimations.findIndex(e => e.departmentId === depId)
         if (estIdx === -1) {
             return
         }
 
-        const recordIdx = taskClone.unitEstimations[estIdx]
+        const recordIdx = taskClone.departmentEstimations[estIdx]
             ?.estimations.findIndex(e => e.userPositionId === userPositionId)
         if (recordIdx === -1) {
             return
         }
 
-        taskClone.unitEstimations[estIdx].estimations[recordIdx].hours = hours
+        taskClone.departmentEstimations[estIdx].estimations[recordIdx].hours = hours
         ProjectTaskVmHelper.recalcTotalHours(taskClone)
         setTask(taskClone)
         setChanged(true)
@@ -83,7 +83,7 @@ export const ProjectDetailsDepartemntsPlan: React.FunctionComponent<ProjectDetai
                 <Divider></Divider>
                 <DialogContent>
                     {
-                        task.unitEstimations.map((i, idx) => {
+                        task.departmentEstimations.map((i, idx) => {
                             return (
                                 <Accordion key={task.id + "est" + idx}>
                                     <AccordionSummary
@@ -91,7 +91,7 @@ export const ProjectDetailsDepartemntsPlan: React.FunctionComponent<ProjectDetai
                                         aria-controls={"panel-content" + idx}
                                         id={"panelheader-content" + idx}
                                     >
-                                        <Typography>{i.unitShortName === '' ? i.unitName : i.unitShortName}: {i.totalHours}{t('hour')}</Typography>
+                                        <Typography>{i.departmentShortName === '' ? i.departmentName : i.departmentShortName}: {i.totalHours}{t('hour')}</Typography>
                                     </AccordionSummary>
                                     <AccordionDetails>
                                         <Stack direction="row" spacing={2}>
@@ -102,7 +102,7 @@ export const ProjectDetailsDepartemntsPlan: React.FunctionComponent<ProjectDetai
                                                             <div style={{ height: "48px", fontSize: "14px" }}>{e.userPositionName}:</div>
                                                             <TextField style={{ fontSize: "14px" }} variant="standard" value={e.hours}
                                                                 onChange={ev => {
-                                                                    updateLocalTask(i.unitId, e.userPositionId, ev.target.value)
+                                                                    updateLocalTask(i.departmentId, e.userPositionId, ev.target.value)
                                                                 }} />
                                                         </span>
                                                     )

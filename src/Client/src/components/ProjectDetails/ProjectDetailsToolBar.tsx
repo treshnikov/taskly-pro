@@ -11,7 +11,7 @@ import SortIcon from '@mui/icons-material/Sort';
 import { ProjectDetailsDepartemntsPlan } from "./ProjectDetailsDepartemntsPlan";
 import { ProjectDetailsStatistics } from "./ProjectDetailsStatistics";
 import { useHttp } from "../../hooks/http.hook";
-import { IProjectTaskUnitEstimationVm } from "../../models/ProjectDetails/ProjectTaskUnitEstimationVm";
+import { IProjectTaskDepartmentEstimationVm } from "../../models/ProjectDetails/ProjectTaskDepartmentEstimationVm";
 
 type ProjectDetailsToolBarProps = {
     scrollToTheLastRowFunc: (rowIdx: number) => void
@@ -29,7 +29,7 @@ export const ProjectDetailsToolBar: React.FunctionComponent<ProjectDetailsToolBa
 
     const onAddNewTask = () => {
         async function getData() {
-            let defaultTaskEstimations = await request<IProjectTaskUnitEstimationVm[]>("/api/v1/projects/defaultEstimations")
+            let defaultTaskEstimations = await request<IProjectTaskDepartmentEstimationVm[]>("/api/v1/projects/defaultEstimations")
             dispatch(addTask({defaultEstimations: defaultTaskEstimations}))
         }
         getData()
@@ -44,7 +44,7 @@ export const ProjectDetailsToolBar: React.FunctionComponent<ProjectDetailsToolBa
                         <Button variant='contained' size='small' onClick={e => { onAddNewTask() }} startIcon={<PlaylistAddIcon />}>{t('add')}</Button>
                         <Button variant='contained' size='small' onClick={e => { dispatch(removeTask()) }} disabled={selectedRowIdx < 0} startIcon={<RemoveIcon />}>{t('remove')}</Button>
                         <Button variant='contained' size='small' onClick={e => { dispatch(orderTasks()) }} startIcon={<SortIcon />}>{t('order-tasks')}</Button>
-                        <Button variant='contained' size='small' onClick={e => { dispatch(toggleShowDepartmentsPlan()) }} disabled={selectedRowIdx < 0} startIcon={<BarChartIcon />}>{t('units')}</Button>
+                        <Button variant='contained' size='small' onClick={e => { dispatch(toggleShowDepartmentsPlan()) }} disabled={selectedRowIdx < 0} startIcon={<BarChartIcon />}>{t('departments')}</Button>
                         <Button variant='contained' size='small' onClick={e => { dispatch(toggleShowStatistics()) }} startIcon={<BarChartIcon />}>{t('statistics')}</Button>
                         <FormControlLabel label={t('compact-mode')} control={<Checkbox checked={compactMode} onChange={e => { dispatch(toggleCompactMode()) }} size='small' />} />
                         <FormControlLabel label={t('show-details')} disabled={compactMode} control={<Checkbox checked={showDetails} onChange={e => { dispatch(toggleShowDetails()) }} size='small' />} />

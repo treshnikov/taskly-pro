@@ -5,7 +5,7 @@ namespace Taskly.Domain
         public int Id { get; set; }
         public string Name { get; set; }
         public string? ShortName { get; set; }
-        public virtual Unit? Company { get; set; }
+        public virtual Department? Company { get; set; }
         public bool IsOpened { get; set; }
         public ProjectType Type { get; set; }
         public virtual User? ProjectManager { get; set; }

@@ -39,7 +39,7 @@ export const Settings: React.FunctionComponent = () => {
           <Card className='settings-card'>
             <CardHeader title={t('import')} />
             <CardContent>
-              {t('import-users-and-units-records')}
+              {t('import-users-and-departments-records')}
             </CardContent>
             <CardActions>
               <Button variant='contained' onClick={async e => {

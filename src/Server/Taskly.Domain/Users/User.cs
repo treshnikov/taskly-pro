@@ -7,6 +7,6 @@
         public string Password { get; set; }
         public string? Email { get; set; }
         public ICollection<Role> Roles { get; set; }
-        public ICollection<UserUnit> UserUnits { get; set; }
+        public ICollection<UserDepartment> UserDepartments { get; set; }
     }
 }

@@ -1,10 +1,10 @@
 namespace Taskly.Domain
 {
-    public class ProjectTaskUnitEstimation
+    public class ProjectTaskDepartmentEstimation
     {
         public Guid Id { get; set; }
-        public Unit Unit { get; set; }
-        public ICollection<ProjectTaskUnitEstimationToUserPosition> Estimations { get; set; }
+        public Department Department { get; set; }
+        public ICollection<ProjectTaskDepartmentEstimationToUserPosition> Estimations { get; set; }
 
         // navigation
         public Guid ProjectTaskId { get; set; }

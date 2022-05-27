@@ -54,14 +54,14 @@ export const Home: React.FunctionComponent = () => {
           <Card className="home-card">
             <CardContent>
               <Typography variant="h5" component="div">
-                <AccountTreeIcon />&nbsp;{t('units') as string}
+                <AccountTreeIcon />&nbsp;{t('departments') as string}
               </Typography>
               <Typography variant="body2">
-                <>{t('units-welcome')}</><br />&nbsp;
+                <>{t('departments-welcome')}</><br />&nbsp;
               </Typography>
             </CardContent>
             <CardActions>
-              <Button variant='contained' onClick={e => { navigate("/units") }}>{t('units') as string}</Button>
+              <Button variant='contained' onClick={e => { navigate("/departments") }}>{t('departments') as string}</Button>
             </CardActions>
           </Card>
         </Grid>

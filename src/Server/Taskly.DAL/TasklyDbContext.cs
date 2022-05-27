@@ -10,13 +10,13 @@ namespace Taskly.DAL
         public DbSet<Note> Notes { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
-        public DbSet<Unit> Units { get; set; }
-        public DbSet<UserUnit> UserUnits { get; set; }
+        public DbSet<Department> Departments { get; set; }
+        public DbSet<UserDepartment> UserDepartments { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Project> Projects { get; set; }
         public DbSet<ProjectTask> ProjectTasks { get; set; }
         public DbSet<UserPosition> UserePositions { get; set; }
-        public DbSet<ProjectTaskUnitEstimationToUserPosition> ProjectTaskUnitEstimationToUserPosition { get; set; }
+        public DbSet<ProjectTaskDepartmentEstimationToUserPosition> ProjectTaskDepartmentEstimationToUserPosition { get; set; }
 
         public TasklyDbContext(DbContextOptions<TasklyDbContext> options) : base(options)
         {
@@ -27,14 +27,14 @@ namespace Taskly.DAL
             builder.ApplyConfiguration(new NoteConfiguration());
             builder.ApplyConfiguration(new UserConfiguration());
             builder.ApplyConfiguration(new RoleConfiguration());
-            builder.ApplyConfiguration(new UnitConfiguration());
-            builder.ApplyConfiguration(new UserUnitConfiguration());
+            builder.ApplyConfiguration(new DepartmentConfiguration());
+            builder.ApplyConfiguration(new UserDepartmentConfiguration());
             builder.ApplyConfiguration(new ProjectConfiguration());
             builder.ApplyConfiguration(new CustomerConfiguration());
             builder.ApplyConfiguration(new ProjectTaskConfiguration());
-            builder.ApplyConfiguration(new ProjectTaskUnitEstimationConfiguration());
+            builder.ApplyConfiguration(new ProjectTaskDepartmentEstimationConfiguration());
             builder.ApplyConfiguration(new UserPositionConfiguration());
-            builder.ApplyConfiguration(new ProjectTaskUnitEstimationToUserPositionConfiguration());
+            builder.ApplyConfiguration(new ProjectTaskDepartmentEstimationToUserPositionConfiguration());
             base.OnModelCreating(builder);
         }
 

@@ -19,7 +19,7 @@ export const Users: React.FunctionComponent = () => {
     populateUsers()
   }, [request])
 
-  const headers = ['ID', t('name'), t('email'), t('position'), t('unit')]
+  const headers = ['ID', t('name'), t('email'), t('position'), t('department')]
   const hiddenColumns = { columns: [0] }
   const columns = [
     { data: "id", editor: false },
@@ -27,7 +27,7 @@ export const Users: React.FunctionComponent = () => {
     { data: "email", editor: false },
     { data: "position", editor: false },
     {
-      data: 'unit',
+      data: 'department',
       type: 'dropdown',
       strict: true,
       editor: false,

@@ -1,5 +1,5 @@
 import { getColor } from "../../common/getColor"
-import { ProjectTaskUnitEstimationVmHelper } from "./ProjectTaskUnitEstimationVm"
+import { ProjectTaskDepartmentEstimationVmHelper } from "./ProjectTaskDepartmentEstimationVm"
 import { IProjectTaskVm, ProjectTaskVmHelper } from "./ProjectTaskVm"
 
 export interface IProjectDetailedInfoVm{
@@ -58,8 +58,8 @@ export class ProjectDetailedInfoVmHelper{
             ProjectTaskVmHelper.init(task) 
 
             // calculate total project estimation
-            task.unitEstimations?.forEach(e => {
-                const depEstimation = ProjectTaskUnitEstimationVmHelper.getTotalHours(e)
+            task.departmentEstimations?.forEach(e => {
+                const depEstimation = ProjectTaskDepartmentEstimationVmHelper.getTotalHours(e)
                 task.totalHours += depEstimation
                 arg.totalHours += depEstimation
             })
@@ -74,20 +74,20 @@ export class ProjectDetailedInfoVmHelper{
         })
 
         arg.tasks?.forEach(task => {
-            task.unitEstimations?.forEach(taskDepartmentEstimation => {
-                // copy start and end dates to each task ProjectTaskUnitEstimationVm instance to handle render easier
-                ProjectTaskUnitEstimationVmHelper.init(taskDepartmentEstimation, task)
+            task.departmentEstimations?.forEach(taskDepartmentEstimation => {
+                // copy start and end dates to each task ProjectTaskDepartmentEstimationVm instance to handle render easier
+                ProjectTaskDepartmentEstimationVmHelper.init(taskDepartmentEstimation, task)
 
                 // get summ of all estimation for the current department
-                taskDepartmentEstimation.totalHours = ProjectTaskUnitEstimationVmHelper.getTotalHours(taskDepartmentEstimation)
+                taskDepartmentEstimation.totalHours = ProjectTaskDepartmentEstimationVmHelper.getTotalHours(taskDepartmentEstimation)
 
-                // calculate the height of the each ProjectTaskUnitEstimationVm depending on total estimation
+                // calculate the height of the each ProjectTaskDepartmentEstimationVm depending on total estimation
                 taskDepartmentEstimation.lineHeight = Math.max(
                         3, 
                         Math.trunc(maxLineHeight * (taskDepartmentEstimation.totalHours / arg.totalHours)))
 
                 // prepare color for gant chart
-                taskDepartmentEstimation.color = getColor(taskDepartmentEstimation.unitName)
+                taskDepartmentEstimation.color = getColor(taskDepartmentEstimation.departmentName)
 
             })
         })

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { dateAsShortStrFromNumber } from "../../../common/dateFormatter";
-import { ProjectTaskUnitEstimationVm } from "../../../models/ProjectDetails/ProjectTaskUnitEstimationVm";
+import { ProjectTaskDepartmentEstimationVm } from "../../../models/ProjectDetails/ProjectTaskDepartmentEstimationVm";
 import { ProjectTaskVm } from "../../../models/ProjectDetails/ProjectTaskVm";
 import { useAppSelector } from '../../../hooks/redux.hook'
 
@@ -11,7 +11,7 @@ export const GanttCellRenderer = (props: any) => {
     const ganttChartZoomLevel = useAppSelector(state => state.projectDetailsReducer.ganttChartZoomLevel)
 
     const rowIdx = row as number
-    const estimations = value as ProjectTaskUnitEstimationVm[]
+    const estimations = value as ProjectTaskDepartmentEstimationVm[]
     const projectTasks = tasks as ProjectTaskVm[]
     const startDt = startDate as Date
 
@@ -94,7 +94,7 @@ export const GanttCellRenderer = (props: any) => {
         </div>)
 }
 
-const getCanvasTitle = (arg: ProjectTaskUnitEstimationVm[]): string => {
+const getCanvasTitle = (arg: ProjectTaskDepartmentEstimationVm[]): string => {
     if (!arg || arg.length === 0) {
         return ""
     }

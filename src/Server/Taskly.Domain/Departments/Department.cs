@@ -1,15 +1,15 @@
 namespace Taskly.Domain
 {
-    public class Unit
+    public class Department
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string ShortName { get; set; }     
         public int OrderNumber { get; set; }
         public int? Code { get; set; }   
-        public Guid? ParentUnitId { get; set; }
-        public virtual Unit? ParentUnit { get; set; }
-        public ICollection<UserUnit> UserUnits { get; set; }
+        public Guid? ParentDepartmentId { get; set; }
+        public virtual Department? ParentDepartment { get; set; }
+        public ICollection<UserDepartment> UserDepartments { get; set; }
    }
 
 }

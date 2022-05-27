@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Taskly.DAL.EntityTypeConfigurations
 {
-    public class ProjectTaskUnitEstimationConfiguration : IEntityTypeConfiguration<ProjectTaskUnitEstimation>
+    public class ProjectTaskDepartmentEstimationConfiguration : IEntityTypeConfiguration<ProjectTaskDepartmentEstimation>
     {
-        public void Configure(EntityTypeBuilder<ProjectTaskUnitEstimation> builder)
+        public void Configure(EntityTypeBuilder<ProjectTaskDepartmentEstimation> builder)
         {
-            builder.ToTable("ProjectUnitEstimations");
+            builder.ToTable("ProjectDepartmentEstimations");
             builder.HasIndex(u => u.Id).IsUnique();
             //builder.HasMany(p => p.Estimations).WithOne().OnDelete(DeleteBehavior.Cascade);
         }

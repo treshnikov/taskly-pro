@@ -2,7 +2,7 @@ using MediatR;
 
 namespace Taskly.Application.Projects.Queries
 {
-    public class GetDefaultTaskEstimationsRequest : IRequest<ProjectTaskUnitEstimationVm[]>
+    public class GetDefaultTaskEstimationsRequest : IRequest<ProjectTaskDepartmentEstimationVm[]>
     {
 
     }

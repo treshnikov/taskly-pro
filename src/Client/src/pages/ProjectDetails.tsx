@@ -29,7 +29,7 @@ export const ProjectDetails: React.FunctionComponent = () => {
   const hiddenColumns = useAppSelector(state => state.projectDetailsReducer.hiddenColumns)
 
   const defaultColWidths = [5, 300, 150, 70, 310, 100, 100]
-  const defaultHeaders = useMemo(() => ['', t('task'), t('comment'), t('estimationH'), t('units'), t('start'), t('end')], [t])
+  const defaultHeaders = useMemo(() => ['', t('task'), t('comment'), t('estimationH'), t('departments'), t('start'), t('end')], [t])
   const [headers, setHeaders] = useState<string[]>(defaultHeaders)
   const [tableHeight, setTableHeight] = useState<number>(3500)
 
@@ -109,12 +109,12 @@ export const ProjectDetails: React.FunctionComponent = () => {
           <HotColumn data={"description"} wordWrap={false} type={"text"} className="ellipsis-text" />
           <HotColumn data={"comment"} wordWrap={false} className="ellipsis-text" type={"text"} />
           <HotColumn data={"totalHours"} type={"text"} className='htCenter' readOnly={true} />
-          <HotColumn data={"unitEstimations"} readOnly >
+          <HotColumn data={"departmentEstimations"} readOnly >
             <DepartmentsCellRenderer showDetails={showDetails} hot-renderer></DepartmentsCellRenderer>
           </HotColumn>
           <HotColumn data={"startAsStr"} type={"text"} />
           <HotColumn data={"endAsStr"} type={"text"} />
-          <HotColumn data={"unitEstimations"} key={"ganttColumn"} width={getGanttWidth(ganttChartZoomLevel, projectInfo)} readOnly>
+          <HotColumn data={"departmentEstimations"} key={"ganttColumn"} width={getGanttWidth(ganttChartZoomLevel, projectInfo)} readOnly>
             <GanttCellRenderer width={getGanttWidth(ganttChartZoomLevel, projectInfo)} startDate={new Date(projectInfo.taskMinDate)} tasks={projectInfo.tasks} hot-renderer></GanttCellRenderer>
           </HotColumn>
         </HotTable>
