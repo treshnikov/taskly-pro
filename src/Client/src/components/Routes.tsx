@@ -6,10 +6,10 @@ import { Login } from '../pages/Login'
 import { Register } from '../pages/Register'
 import { Users } from '../pages/Users';
 import { Settings } from '../pages/Settings';
-import Units from '../pages/Units';
 import { Projects } from '../pages/Projects';
 import { ProjectDetails } from '../pages/ProjectDetails';
 import { useAppSelector } from '../hooks/redux.hook';
+import { Units } from '../pages/Units';
 
 export const useAppRoutes: React.FunctionComponent = () => {
   const isAuthenticated = useAppSelector(state => state.authReducer.isAuthenticated)
@@ -23,7 +23,8 @@ export const useAppRoutes: React.FunctionComponent = () => {
           <Route path="/projects" element={<Projects />} />
           <Route path="/projects/:id" element={<ProjectDetails />} />
           <Route path="/users" element={<Users />} />
-          <Route path="/units" element={<Units />} />
+          <Route path="/units" element={<Units showUnitEnabledFlag={false} />} />
+          <Route path="/unitsSettings" element={<Units showUnitEnabledFlag={true} />} />
           <Route path="/settings" element={<Settings />} />
         </Routes>
       </div>
