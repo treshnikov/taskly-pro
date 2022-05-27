@@ -22,7 +22,7 @@
     "collapse-all": "Collapse all",
     "position": "Position",
     "language": "Language",
-    "import-users-and-department-records": "Import lis of users and departments from files users.json, departments.json, and projects.json.",
+    "import-users-and-departments-records": "Import lis of users and departments from files users.json, departments.json, and projects.json.",
     "import": "Import",
     "projects": "Projects",
     "projects-welcome": "List of projects.",
@@ -57,5 +57,6 @@
     "compact-mode": "Compact mode",
     "order-tasks": "Order",
     "total-planned-hours": "Total hours planned",
-    "close": "Close"
+    "close": "Close",
+    "select-departments-for-work-planning": "Select departments that should be included in the work planning process."
 }

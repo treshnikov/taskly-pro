@@ -3,12 +3,14 @@ import React, { useContext } from 'react'
 import { AppContext } from '../context/AppContext';
 import { useTranslation } from 'react-i18next';
 import { useHttp } from '../hooks/http.hook';
+import { useNavigate } from 'react-router-dom';
 
 export const Settings: React.FunctionComponent = () => {
   // it's important to use useTranslation hook to re-render the current component when lang changing  
   const { t } = useTranslation()
   const { setEnLang, setRuLang } = useContext(AppContext)
   const { request } = useHttp()
+  const navigate = useNavigate()
 
   return (
 
@@ -30,6 +32,19 @@ export const Settings: React.FunctionComponent = () => {
             <CardActions>
               <Button variant='contained' onClick={e => { setEnLang() }}>EN</Button>
               <Button variant='contained' onClick={e => { setRuLang() }}>RU</Button>
+            </CardActions>
+          </Card>
+
+        </Grid>
+
+        <Grid item xs={4}>
+          <Card className='settings-card'>
+            <CardHeader title={t('departments') as string} />
+            <CardContent>
+              {t('select-departments-for-work-planning')}
+            </CardContent>
+            <CardActions>
+              <Button variant='contained' onClick={e => { navigate("/departmentsSettings") }}>{t('open')}</Button>
             </CardActions>
           </Card>
 

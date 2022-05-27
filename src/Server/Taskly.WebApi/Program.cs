@@ -17,7 +17,7 @@ namespace Taskly.WebApi
             var logFileName = Path.Combine(logDirectory, "log-.log");
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
-                .MinimumLevel.Override("Microsoft", LogEventLevel.Debug)
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                 .WriteTo.File(logFileName, rollingInterval: RollingInterval.Day)
                 .WriteTo.Console(theme: SystemConsoleTheme.Literate)
                 .CreateLogger();

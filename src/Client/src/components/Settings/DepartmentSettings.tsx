@@ -1,21 +1,16 @@
 import TreeView from '@mui/lab/TreeView';
 import TreeItem from '@mui/lab/TreeItem';
-import { Button, Stack, Typography } from '@mui/material';
+import { Button, Checkbox, Stack, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import React, { useEffect, useState } from 'react';
-import { DepartmentUserVm } from '../models/Users/DepartmentUserVm';
-import { useHttp } from '../hooks/http.hook';
+import { DepartmentUserVm } from '../../models/Users/DepartmentUserVm';
+import { useHttp } from '../../hooks/http.hook';
 
-export const Departments: React.FunctionComponent = () => {
+export const DepartmentSettings: React.FunctionComponent = () => {
     const { request } = useHttp()
-    const [department, setDepartments] = useState<DepartmentUserVm>({
-        id: 'root',
-        name: '...',
-        type: 0,
-        enabledForPlanning: false
-    })
+    const [department, setDepartments] = useState<DepartmentUserVm>(new DepartmentUserVm())
     const [expanded, setExpanded] = useState<string[]>([])
     const { t } = useTranslation();
 
@@ -34,13 +29,31 @@ export const Departments: React.FunctionComponent = () => {
 
     const renderTree = (node: DepartmentUserVm) => (
         <TreeItem key={node.id} nodeId={node.id} label={
-            <Typography sx={node.type === 0 ? { fontWeight: "bold" } : { m: 0 }}>{node.name}</Typography>
+            node.type === 0
+                ? (<>
+                    <Typography>
+                        <Checkbox
+                            checked={node.enabledForPlanning}
+                            onClick={e => {
+                                node.enabledForPlanning = !node.enabledForPlanning                                
+                                // to force rerender
+                                setDepartments({...department})
+                                console.log(node.name, node.enabledForPlanning)
+                                e.stopPropagation()
+                            }}
+                        /> {node.name}
+                    </Typography>
+                </>)
+                : (<></>)
         }>
-            {Array.isArray(node.children)
-                ? node.children.map((node) => renderTree(node))
-                : null}
-        </TreeItem>
+            {
+                Array.isArray(node.children) && node.children.some(i => i.type === 0)
+                    ? node.children.map((node) => renderTree(node))
+                    : null
+            }
+        </TreeItem >
     );
+
     const handleToggle = (event: React.SyntheticEvent, nodeIds: string[]) => {
         setExpanded(nodeIds);
     };
