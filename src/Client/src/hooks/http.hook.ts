@@ -27,7 +27,10 @@ export const useHttp = () => {
         if (!init) {
             init = {}
         }
-        init.headers = { Authorization: `Bearer ${jwt}` }
+        init.headers = { 
+            Authorization: `Bearer ${jwt}`,
+            'Content-Type': 'application/json;charset=utf-8'
+         }
 
         let response
         try {

@@ -2,8 +2,9 @@ namespace Taskly.Application.Departments.Queries
 {
     public enum DepartmentUserType
     {
-        Department,
-        User
+        Root = 1000,
+        Department = 0,
+        User = 1
     }
 
     public class DepartmentUserVm

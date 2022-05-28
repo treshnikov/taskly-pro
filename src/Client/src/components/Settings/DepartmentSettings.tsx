@@ -27,10 +27,14 @@ export const DepartmentSettings: React.FunctionComponent = () => {
         setExpanded([department.id])
     }, [department])
 
-    const setDepartmentEnabledForPlanning = async (id: string, val: boolean)  => {
-        await request("/api/v1/departments/updateEnableForPlanning",  {
-            method: 'post',
-            body: {id: id, value: val},
+    const setDepartmentEnabledForPlanning = async (id: string, val: boolean) => {
+        console.log(JSON.stringify({ id: id, value: val }))
+        await request("/api/v1/departments/updateEnableForPlanning", {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            method: 'put',
+            body: JSON.stringify({ id: id, value: val })
         })
     }
 
@@ -42,16 +46,21 @@ export const DepartmentSettings: React.FunctionComponent = () => {
                         <Checkbox
                             checked={node.enabledForPlanning}
                             onClick={e => {
-                                node.enabledForPlanning = !node.enabledForPlanning                                
+                                node.enabledForPlanning = !node.enabledForPlanning
                                 // to force rerender
-                                setDepartments({...department})
+                                setDepartments({ ...department })
                                 setDepartmentEnabledForPlanning(node.id, node.enabledForPlanning)
                                 e.stopPropagation()
                             }}
                         /> {node.name}
                     </Typography>
                 </>)
-                : (<></>)
+                : (<>
+                    <Typography padding={1}>
+                        {node.name}
+                    </Typography>
+
+                </>)
         }>
             {
                 Array.isArray(node.children) && node.children.some(i => i.type === 0)

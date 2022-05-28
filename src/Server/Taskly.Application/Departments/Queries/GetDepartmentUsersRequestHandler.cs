@@ -18,6 +18,7 @@ namespace Taskly.Application.Departments.Queries
             {
                 Id = Guid.NewGuid(),
                 Name = "Departments",
+                Type = DepartmentUserType.Root,
                 Children = new List<DepartmentUserVm>()
             };
 

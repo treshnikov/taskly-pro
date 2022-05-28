@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Taskly.Application.Departments.Queries;
 using Taskly.Application.Departments.UpdateDepartment;
+using Taskly.WebApi.Models;
 
 namespace Taskly.WebApi.Controllers
 {
@@ -29,9 +30,11 @@ namespace Taskly.WebApi.Controllers
         [HttpPut("updateEnableForPlanning")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult> UpdateEnableForPlanning(Guid id, bool value)
+        public async Task<ActionResult> UpdateEnableForPlanning([FromBody]DepartmentUpdateEnableForPlanningVm arg)
         {
-            var res = await Mediator.Send(new UpdateDepartmnetEnableForPlanningRequest { Id = id, EnabledForPlanning = value });
+            Console.WriteLine(arg.Id);
+            Console.WriteLine(arg.Value);
+            var res = await Mediator.Send(new UpdateDepartmnetEnableForPlanningRequest { Id = arg.Id, EnabledForPlanning = arg.Value });
             return Ok(res);
         }
     }
