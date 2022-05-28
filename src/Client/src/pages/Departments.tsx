@@ -34,7 +34,7 @@ export const Departments: React.FunctionComponent = () => {
 
     const renderTree = (node: DepartmentUserVm) => (
         <TreeItem key={node.id} nodeId={node.id} label={
-            <Typography sx={node.type === 0 ? { fontWeight: "bold" } : { m: 0 }}>{node.name}</Typography>
+            <Typography padding={0.5} sx={node.type !== 1 ? { fontWeight: "bold" } : { m: 0 }}>{node.name}</Typography>
         }>
             {Array.isArray(node.children)
                 ? node.children.map((node) => renderTree(node))
