@@ -58,5 +58,5 @@
     "order-tasks": "Order",
     "total-planned-hours": "Total hours planned",
     "close": "Close",
-    "select-departments-for-work-planning": "Select departments that should be included in the work planning process."
+    "select-departments-for-work-planning": "Select departments for work planning. Selected departments will be shown in the project planning form in the column departments."
 }

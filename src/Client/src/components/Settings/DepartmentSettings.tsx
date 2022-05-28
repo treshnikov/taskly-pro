@@ -28,7 +28,6 @@ export const DepartmentSettings: React.FunctionComponent = () => {
     }, [department])
 
     const setDepartmentEnabledForPlanning = async (id: string, val: boolean) => {
-        console.log(JSON.stringify({ id: id, value: val }))
         await request("/api/v1/departments/updateEnableForPlanning", {
             headers: {
                 'Content-Type': 'application/json',

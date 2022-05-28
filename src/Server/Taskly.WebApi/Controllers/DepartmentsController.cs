@@ -32,8 +32,6 @@ namespace Taskly.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult> UpdateEnableForPlanning([FromBody]DepartmentUpdateEnableForPlanningVm arg)
         {
-            Console.WriteLine(arg.Id);
-            Console.WriteLine(arg.Value);
             var res = await Mediator.Send(new UpdateDepartmnetEnableForPlanningRequest { Id = arg.Id, EnabledForPlanning = arg.Value });
             return Ok(res);
         }

@@ -27,6 +27,8 @@ export const useHttp = () => {
         if (!init) {
             init = {}
         }
+
+        //todo merge headets with init?.headers
         init.headers = { 
             Authorization: `Bearer ${jwt}`,
             'Content-Type': 'application/json;charset=utf-8'

@@ -26,7 +26,7 @@ export const Settings: React.FunctionComponent = () => {
           <Card className='settings-card'>
             <CardHeader title={t('language') as string} />
             <CardContent>
-              {t('change-lang')}<br/>&nbsp;
+              {t('change-lang')}<br/>&nbsp;<br/>&nbsp;
             </CardContent>
             <CardActions>
               <Button variant='contained' onClick={e => { setEnLang() }}>EN</Button>
@@ -53,7 +53,7 @@ export const Settings: React.FunctionComponent = () => {
           <Card className='settings-card'>
             <CardHeader title={t('import')} />
             <CardContent>
-              {t('import-users-and-departments-records')}
+              {t('import-users-and-departments-records')}<br/>&nbsp;
             </CardContent>
             <CardActions>
               <Button variant='contained' onClick={async e => {
