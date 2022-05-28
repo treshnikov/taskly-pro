@@ -71,7 +71,7 @@ namespace Taskly.Application.Users
                     //Log.Logger.Warning($"Cannot import tasks for projectId={t.ProjectId}");
                     continue;
                 }
-                dbProject.Type = t.ProjectType == ProjectType.External && !dbProject.ShortName!.Contains("Внутр.") 
+                dbProject.Type = t.ProjectType == ProjectType.External && !dbProject.ShortName!.Contains("Внутр.")
                     ? ProjectType.External
                     : ProjectType.Internal;
 
@@ -378,6 +378,7 @@ namespace Taskly.Application.Users
 
         private async Task UpdateDepartments(DepartmentJson[] deps, CancellationToken cancellationToken)
         {
+            var depsForPlanning = new int[] { 141, 244, 245, 234, 176, 232, 233, 242, 243, 177, 198, 199, 178, 179, 239 };
             using var transaction = _dbContext.Database.BeginTransaction();
 
             var dbDeps = _dbContext.Departments.ToList();
@@ -396,6 +397,7 @@ namespace Taskly.Application.Users
                         Name = d.name,
                         OrderNumber = d.order_number,
                         ShortName = d.short_name,
+                        IncludeInWorkPlan = depsForPlanning.Contains(d.prj_company_ID)
                     });
                 }
                 else
@@ -404,6 +406,8 @@ namespace Taskly.Application.Users
                     {
                         dbDep.ShortName = d.short_name;
                         dbDep.OrderNumber = d.order_number;
+                        dbDep.IncludeInWorkPlan = depsForPlanning.Contains(d.prj_company_ID);
+
                         _dbContext.Departments.Update(dbDep);
                     }
                 }

@@ -99,7 +99,7 @@ export const ProjectDetailsDepartemntsPlan: React.FunctionComponent<ProjectDetai
                                                 i.estimations.map((e, eidx) => {
                                                     return (
                                                         <span style={{ maxWidth: "300px" }} key={i.id + e.userPositionId}>
-                                                            <div style={{ height: "48px", fontSize: "14px" }}>{e.userPositionName}:</div>
+                                                            <div style={{ maxHeight: "60px", fontSize: "14px" }}>{e.userPositionName}:</div>
                                                             <TextField style={{ fontSize: "14px" }} variant="standard" value={e.hours}
                                                                 onChange={ev => {
                                                                     updateLocalTask(i.departmentId, e.userPositionId, ev.target.value)
