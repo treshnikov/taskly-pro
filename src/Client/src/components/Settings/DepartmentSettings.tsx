@@ -42,7 +42,7 @@ export const DepartmentSettings: React.FunctionComponent = () => {
                             onClick={e => {
                                 node.includeInWorkPlan = !node.includeInWorkPlan
                                 // to force rerender
-                                setDepartments({ ...department })
+                                //setDepartments({ ...department })
                                 setDepartmentIncludeInWorkPlan(node.id, node.includeInWorkPlan)
                                 e.stopPropagation()
                             }}
