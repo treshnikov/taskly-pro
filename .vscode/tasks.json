@@ -21,6 +21,26 @@
             "problemMatcher": "$msCompile"
         },
         {
+            "label": "run server [debug]",
+            
+            "command": "dotnet",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceFolder}/src/Server/Taskly.WebApi"
+            },
+            "args": [
+                "watch",
+                "run",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "group": "build",
+            "presentation": {
+                "reveal": "silent"
+            },
+            "problemMatcher": "$msCompile"
+        },
+        {
             "label": "build server [release]",
             
             "command": "dotnet",

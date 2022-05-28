@@ -16,7 +16,7 @@ export const DepartmentSettings: React.FunctionComponent = () => {
 
     useEffect(() => {
         async function fetchDepartments() {
-            const departments = await request<DepartmentUserVm>("/api/v1/departments")
+            const departments = await request<DepartmentUserVm>("/api/v1/departments/withNoUsers")
             setDepartments(departments)
         }
 
@@ -26,6 +26,13 @@ export const DepartmentSettings: React.FunctionComponent = () => {
     useEffect(() => {
         setExpanded([department.id])
     }, [department])
+
+    const setDepartmentEnabledForPlanning = async (id: string, val: boolean)  => {
+        await request("/api/v1/departments/updateEnableForPlanning",  {
+            method: 'post',
+            body: {id: id, value: val},
+        })
+    }
 
     const renderTree = (node: DepartmentUserVm) => (
         <TreeItem key={node.id} nodeId={node.id} label={
@@ -38,7 +45,7 @@ export const DepartmentSettings: React.FunctionComponent = () => {
                                 node.enabledForPlanning = !node.enabledForPlanning                                
                                 // to force rerender
                                 setDepartments({...department})
-                                console.log(node.name, node.enabledForPlanning)
+                                setDepartmentEnabledForPlanning(node.id, node.enabledForPlanning)
                                 e.stopPropagation()
                             }}
                         /> {node.name}

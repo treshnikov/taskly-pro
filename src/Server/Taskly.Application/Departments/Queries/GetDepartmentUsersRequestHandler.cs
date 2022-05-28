@@ -22,9 +22,12 @@ namespace Taskly.Application.Departments.Queries
             };
 
             var deps = await _dbContext.Departments.OrderBy(i => i.ParentDepartmentId).Include(u => u.ParentDepartment).AsNoTracking().ToListAsync(cancellationToken: cancellationToken);
-            var users = await _dbContext.Users.Include(u => u.UserDepartments).ThenInclude(u => u.UserPosition).AsNoTracking().ToListAsync(cancellationToken: cancellationToken);
-
-            HandleDepartment(null, root, deps, users);        
+            List<Domain.User> users = new List<Domain.User>();
+            if (request.IncludeUsers)
+            {
+                users = await _dbContext.Users.Include(u => u.UserDepartments).ThenInclude(u => u.UserPosition).AsNoTracking().ToListAsync(cancellationToken: cancellationToken);
+            }
+            HandleDepartment(null, root, deps, users);
 
             return await Task.FromResult(root);
         }

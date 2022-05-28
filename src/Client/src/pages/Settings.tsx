@@ -22,7 +22,6 @@ export const Settings: React.FunctionComponent = () => {
         direction="row"
         alignItems="flex-start">
 
-
         <Grid item xs={3}>
           <Card className='settings-card'>
             <CardHeader title={t('language') as string} />
