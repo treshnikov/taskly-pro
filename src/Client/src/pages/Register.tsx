@@ -23,11 +23,7 @@ export const Register: React.FunctionComponent = () => {
     data.append("Email", email);
     data.append("Password", password);
 
-    await request<string>("/api/v1/auth/register",
-      {
-        method: 'post',
-        body: data
-      });
+    await request<string>("/api/v1/auth/register", "POST", data);
     toast.success(t('user_has_been_registered_successfully'))
     navigate('/login')
   }

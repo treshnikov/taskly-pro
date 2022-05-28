@@ -44,7 +44,7 @@ namespace Taskly.Application.Departments.Queries
                     Name = $"{c.Name}",
                     Children = new List<DepartmentUserVm>(),
                     Type = DepartmentUserType.Department,
-                    EnabledForPlanning = c.EnabledForPlanning
+                    IncludeInWorkPlan = c.IncludeInWorkPlan
                 };
 
                 parentVm.Children!.Add(newDepVm);

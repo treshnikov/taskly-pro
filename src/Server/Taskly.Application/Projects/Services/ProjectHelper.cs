@@ -4,9 +4,9 @@ namespace Taskly.Application.Projects
 {
     public static class ProjectHelper
     {
-        public static void AddDefaultDepartments(Project project, List<Domain.Department> deps, int[] departmentCodes)
+        public static void AddDefaultDepartments(Project project, List<Domain.Department> deps)
         {
-            var defaultDepartments = deps.Where(u => u.Code.HasValue && departmentCodes.Contains(u.Code.Value)).ToList();
+            var defaultDepartments = deps.Where(dep => dep.IncludeInWorkPlan == true).ToList();
 
             foreach (var t in project.Tasks)
             {

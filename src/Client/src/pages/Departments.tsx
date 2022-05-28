@@ -14,7 +14,7 @@ export const Departments: React.FunctionComponent = () => {
         id: 'root',
         name: '...',
         type: 0,
-        enabledForPlanning: false
+        includeInWorkPlan: false
     })
     const [expanded, setExpanded] = useState<string[]>([])
     const { t } = useTranslation();

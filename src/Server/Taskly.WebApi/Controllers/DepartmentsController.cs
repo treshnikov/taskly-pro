@@ -32,7 +32,7 @@ namespace Taskly.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult> UpdateEnableForPlanning([FromBody]DepartmentUpdateEnableForPlanningVm arg)
         {
-            var res = await Mediator.Send(new UpdateDepartmnetEnableForPlanningRequest { Id = arg.Id, EnabledForPlanning = arg.Value });
+            var res = await Mediator.Send(new UpdateDepartmnetIncludeInWorkPlanRequest { Id = arg.Id, IncludeInWorkPlan = arg.Value });
             return Ok(res);
         }
     }

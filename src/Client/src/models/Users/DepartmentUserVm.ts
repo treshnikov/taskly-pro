@@ -3,5 +3,5 @@ export class DepartmentUserVm {
     name: string = ''
     type: number = 0 // 0 - dep, 1 - user
     children?: DepartmentUserVm[] = []
-    enabledForPlanning: boolean = false 
+    includeInWorkPlan: boolean = false 
 }

@@ -14,8 +14,6 @@ namespace Taskly.Application.Projects.Queries
         public GetDefaultTaskEstimationsRequestHandler(ITasklyDbContext dbContext, IConfiguration configuration)
         {
             _dbContext = dbContext;
-            var defaultDepartmentCodesStr = configuration["App:CodesOfDefaultDepartmentsForPlanning"] ?? "141, 244, 245, 234, 176, 232, 233, 242, 243, 177, 198, 199, 178, 179, 239";
-            _defaultDepartmentCodes = defaultDepartmentCodesStr.Trim().Split(",").Select(i => int.Parse(i)).ToArray();
         }
 
         public async Task<ProjectTaskDepartmentEstimationVm[]> Handle(GetDefaultTaskEstimationsRequest request, CancellationToken cancellationToken)
@@ -31,7 +29,7 @@ namespace Taskly.Application.Projects.Queries
 
             var deps = await _dbContext.Departments.AsNoTracking().Include(u => u.UserDepartments).ThenInclude(u => u.UserPosition).ToListAsync(cancellationToken);
 
-            ProjectHelper.AddDefaultDepartments(project, deps, _defaultDepartmentCodes);
+            ProjectHelper.AddDefaultDepartments(project, deps);
             await ProjectHelper.AddDefaultDepartmentPositionsToEstimationsVms(project, deps, cancellationToken);
 
             var vm = ProjectTaskVm.From(project.Tasks.ElementAt(0));

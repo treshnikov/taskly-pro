@@ -1,6 +1,6 @@
 import { toast } from 'react-toastify'
 import { useDispatch } from "react-redux"
-import { onSignin, onSignout  } from "../redux/authSlice"
+import { onSignin, onSignout } from "../redux/authSlice"
 import { useCallback } from 'react'
 import { useAppSelector } from './redux.hook'
 import { onRequestCompleted, onRequestStarted } from '../redux/appSlice'
@@ -8,14 +8,9 @@ import { onRequestCompleted, onRequestStarted } from '../redux/appSlice'
 export const useHttp = () => {
     const dispatch = useDispatch();
     const jwt = useAppSelector(state => state.authReducer.jwt)
-    
-    const login = async (data: FormData) => {
-        const json = await request<{jwt: string}>("/api/v1/auth/token",
-            {
-                method: 'post',
-                body: data,
-            });
 
+    const login = async (data: FormData) => {
+        const json = await request<{ jwt: string }>("/api/v1/auth/token", 'POST', data, []);
         dispatch(onSignin(json.jwt))
     }
 
@@ -23,21 +18,29 @@ export const useHttp = () => {
         dispatch(onSignout())
     }
 
-    const request = useCallback(async<T> (input: RequestInfo, init?: RequestInit) => {
-        if (!init) {
-            init = {}
-        }
+    const request = useCallback(async<T>(address: string,
+        method: "GET" | "POST" | "PUT" | "PATCH" = "GET",
+        body: any = null,
+        headers: { name: string, value: string }[] = []) => {
 
-        //todo merge headets with init?.headers
-        init.headers = { 
-            Authorization: `Bearer ${jwt}`,
-            'Content-Type': 'application/json;charset=utf-8'
-         }
+        const preparedHeaders = new Headers()
+        preparedHeaders.append("Authorization", `Bearer ${jwt}`)
+        headers?.forEach(e => {
+            preparedHeaders.append(e.name, e.value)
+        });
 
         let response
         try {
             dispatch(onRequestStarted())
-            response = await fetch(input, init)
+            
+            const preparedBody = body instanceof FormData 
+                ? body
+                : JSON.stringify(body) 
+            
+            response = method === "GET"
+                ? await fetch(address, { method: method, headers: preparedHeaders })
+                : await fetch(address, { method: method, headers: preparedHeaders, body: preparedBody })
+
         } catch (ex) {
             const err = ex as Error;
             if (err) {
@@ -45,7 +48,7 @@ export const useHttp = () => {
             }
             throw (ex)
         }
-        finally{
+        finally {
             dispatch(onRequestCompleted())
         }
 
@@ -55,10 +58,9 @@ export const useHttp = () => {
             dispatch(onSignout())
         }
 
-        if (response.status === 404)
-        {
+        if (response.status === 404) {
             toast.error(response.statusText);
-            throw new Error(response.statusText)    
+            throw new Error(response.statusText)
         }
 
         const json = await response.json()

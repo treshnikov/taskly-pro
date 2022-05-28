@@ -5,14 +5,14 @@ using Taskly.Application.Interfaces;
 
 namespace Taskly.Application.Departments.UpdateDepartment
 {
-    public class UpdateDepartmnetEnableForPlanningRequestHandler : IRequestHandler<UpdateDepartmnetEnableForPlanningRequest, Unit>
+    public class UpdateDepartmnetIncludeInWorkPlanRequestHandler : IRequestHandler<UpdateDepartmnetIncludeInWorkPlanRequest, Unit>
     {
         private readonly ITasklyDbContext _dbContext;
-        public UpdateDepartmnetEnableForPlanningRequestHandler(ITasklyDbContext dbContext)
+        public UpdateDepartmnetIncludeInWorkPlanRequestHandler(ITasklyDbContext dbContext)
         {
             _dbContext = dbContext;
         }
-        public async Task<Unit> Handle(UpdateDepartmnetEnableForPlanningRequest request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(UpdateDepartmnetIncludeInWorkPlanRequest request, CancellationToken cancellationToken)
         {
             var dep = await _dbContext.Departments.FirstOrDefaultAsync(i => i.Id == request.Id, cancellationToken);
             if (dep == null)
@@ -20,7 +20,7 @@ namespace Taskly.Application.Departments.UpdateDepartment
                 throw new NotFoundException($"Department with Id={request.Id} is not found.");
             }
 
-            dep.EnabledForPlanning = request.EnabledForPlanning;
+            dep.IncludeInWorkPlan = request.IncludeInWorkPlan;
             await _dbContext.SaveChangesAsync(cancellationToken);
 
             return Unit.Value;

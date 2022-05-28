@@ -27,14 +27,9 @@ export const DepartmentSettings: React.FunctionComponent = () => {
         setExpanded([department.id])
     }, [department])
 
-    const setDepartmentEnabledForPlanning = async (id: string, val: boolean) => {
-        await request("/api/v1/departments/updateEnableForPlanning", {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            method: 'put',
-            body: JSON.stringify({ id: id, value: val })
-        })
+    const setDepartmentIncludeInWorkPlan = async (id: string, val: boolean) => {
+        await request("/api/v1/departments/updateEnableForPlanning", "PUT",
+            { id: id, value: val }, [{ name: 'Content-Type', value: 'application/json' }])
     }
 
     const renderTree = (node: DepartmentUserVm) => (
@@ -43,12 +38,12 @@ export const DepartmentSettings: React.FunctionComponent = () => {
                 ? (<>
                     <Typography>
                         <Checkbox
-                            checked={node.enabledForPlanning}
+                            checked={node.includeInWorkPlan}
                             onClick={e => {
-                                node.enabledForPlanning = !node.enabledForPlanning
+                                node.includeInWorkPlan = !node.includeInWorkPlan
                                 // to force rerender
                                 setDepartments({ ...department })
-                                setDepartmentEnabledForPlanning(node.id, node.enabledForPlanning)
+                                setDepartmentIncludeInWorkPlan(node.id, node.includeInWorkPlan)
                                 e.stopPropagation()
                             }}
                         /> {node.name}
