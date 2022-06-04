@@ -1,8 +1,9 @@
-import { Avatar, Button, IconButton, List, ListItem, ListItemAvatar, ListItemText } from "@mui/material";
+import { Button, List, ListItem, ListItemAvatar, ListItemText } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHttp } from "../hooks/http.hook";
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
+import { useNavigate } from "react-router-dom";
 
 type DepartmentShortInfoVm = {
     id: string,
@@ -13,6 +14,7 @@ type DepartmentShortInfoVm = {
 export const DepartmentPlans: React.FunctionComponent = () => {
     const { request } = useHttp()
     const { t } = useTranslation();
+    const navigate = useNavigate()
     const [departments, setDepartments] = useState<DepartmentShortInfoVm[]>([])
 
     useEffect(() => {
@@ -35,7 +37,7 @@ export const DepartmentPlans: React.FunctionComponent = () => {
                     departments.map(d =>
                         <ListItem
                             secondaryAction={
-                                <Button>
+                                <Button onClick={e => navigate("/departmentPlans/"+ d.id)}>
                                     {t('open')}
                                 </Button>
                             }
