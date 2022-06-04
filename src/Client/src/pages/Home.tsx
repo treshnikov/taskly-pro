@@ -5,6 +5,7 @@ import { t } from 'i18next';
 import PeopleIcon from '@mui/icons-material/People';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import SettingsIcon from '@mui/icons-material/Settings';
+import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
 
 export const Home: React.FunctionComponent = () => {
   const navigate = useNavigate()
@@ -22,7 +23,7 @@ export const Home: React.FunctionComponent = () => {
           <Card className="home-card">
             <CardContent>
               <Typography variant="h5" component="div">
-                <PeopleIcon />&nbsp;{t('projects') as string}
+                <ArticleOutlinedIcon />&nbsp;{t('projects') as string}
               </Typography>
               <Typography variant="body2">
                 <>{t('projects-welcome')}</><br />&nbsp;
@@ -33,6 +34,32 @@ export const Home: React.FunctionComponent = () => {
             </CardActions>
           </Card>
         </Grid>
+
+        <Grid item xs={3}>
+          <Card className="home-card">
+            <CardContent>
+              <Typography variant="h5" component="div">
+                <AccountTreeIcon />&nbsp;{t('department-plans') as string}
+              </Typography>
+              <Typography variant="body2">
+                <>{t('department-plans-welcome')}</><br />&nbsp;
+              </Typography>
+            </CardContent>
+            <CardActions>
+              <Button variant='contained' onClick={e => { navigate("/departmentPlans") }}>{t('plans') as string}</Button>
+            </CardActions>
+          </Card>
+        </Grid>
+
+      </Grid>
+
+      <Grid
+        container
+        spacing={2}
+        padding={2}
+        direction="row"
+        alignItems="flex-start"
+      >
 
         <Grid item xs={3}>
           <Card className="home-card">

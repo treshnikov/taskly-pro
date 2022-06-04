@@ -17,7 +17,7 @@
     "change-lang": "Изменить язык приложения.",
     "department": "Отдел",
     "departments": "Отделы",
-    "department-welcome": "Список отделов.",
+    "departments-welcome": "Список отделов.",
     "expand-all": "Развернуть всё",
     "collapse-all": "Свернуть всё",
     "position": "Должность",
@@ -58,5 +58,8 @@
     "order-tasks": "Упорядочить",
     "total-planned-hours": "Всего запланировано часов",
     "close": "Закрыть",
-    "select-departments-for-work-planning": "Выберите отделы для планирования работ. Выбранные отделы будут показаны на форме планирования проекта в колонке отделы."
+    "select-departments-for-work-planning": "Выберите отделы для планирования работ. Выбранные отделы будут показаны на форме планирования проекта в колонке отделы.",
+    "department-plans": "Планы отделов",
+    "department-plans-welcome": "Управление планами отделов.",
+    "plans": "Планы"
 }   

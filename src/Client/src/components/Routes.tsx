@@ -11,6 +11,7 @@ import { ProjectDetails } from '../pages/ProjectDetails';
 import { useAppSelector } from '../hooks/redux.hook';
 import { Departments } from '../pages/Departments';
 import { DepartmentSettings } from './Settings/DepartmentSettings';
+import { DepartmentPlans } from '../pages/DepartmentPlans';
 
 export const useAppRoutes: React.FunctionComponent = () => {
   const isAuthenticated = useAppSelector(state => state.authReducer.isAuthenticated)
@@ -25,6 +26,7 @@ export const useAppRoutes: React.FunctionComponent = () => {
           <Route path="/projects/:id" element={<ProjectDetails />} />
           <Route path="/users" element={<Users />} />
           <Route path="/departments" element={<Departments />} />
+          <Route path="/departmentPlans" element={<DepartmentPlans />} />
           <Route path="/departmentsSettings" element={<DepartmentSettings />} />
           <Route path="/settings" element={<Settings />} />
         </Routes>

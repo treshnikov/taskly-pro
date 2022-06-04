@@ -17,7 +17,7 @@
     "change-lang": "Change the app language.",
     "department": "Department",
     "departments": "Departments",
-    "department-welcome": "List of departments of enterprise.",
+    "departments-welcome": "List of departments of enterprise.",
     "expand-all": "Exapnd all",
     "collapse-all": "Collapse all",
     "position": "Position",
@@ -58,5 +58,8 @@
     "order-tasks": "Order",
     "total-planned-hours": "Total hours planned",
     "close": "Close",
-    "select-departments-for-work-planning": "Select departments for work planning. Selected departments will be shown in the project planning form in the column departments."
+    "select-departments-for-work-planning": "Select departments for work planning. Selected departments will be shown in the project planning form in the column departments.",
+    "department-plans": "Department plans",
+    "department-plans-welcome": "Manage working plans of departments.",
+    "plans": "Plans"
 }
