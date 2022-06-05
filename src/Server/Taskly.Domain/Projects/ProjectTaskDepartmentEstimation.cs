@@ -8,6 +8,6 @@ namespace Taskly.Domain
 
         // navigation
         public Guid ProjectTaskId { get; set; }
-        public ProjectTask ProjectTask { get; set; }    
+        public ProjectTask ProjectTask { get; set; }
     }
 }

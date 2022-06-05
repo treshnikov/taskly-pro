@@ -12,10 +12,11 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentPlan
 
     public class UserProjectPlanVm
     {
-        public Guid ProjectId { get; set; }
+        public int ProjectId { get; set; }
         public string ProjectName { get; set; }
         public string ProjectShortName { get; set; }
-        public int ProjectCode { get; set; }
+        public DateTime ProjectStart { get; internal set; }
+        public DateTime ProjectEnd { get; internal set; }
         public List<UserProjectWeekPlanVm> Plans { get; set; }
     }
 
@@ -23,6 +24,5 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentPlan
     {
         public DateTime WeekStart { get; set; }
         public int PlannedHours { get; set; }
-
     }
 }
