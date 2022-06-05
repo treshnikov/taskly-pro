@@ -61,5 +61,6 @@
     "select-departments-for-work-planning": "Select departments for work planning. Selected departments will be shown in the project planning form in the column departments.",
     "department-plans": "Department plans",
     "department-plans-welcome": "Manage working plans of departments.",
-    "plans": "Plans"
+    "plans": "Plans",
+    "hide-empty": "Hide empty"
 }

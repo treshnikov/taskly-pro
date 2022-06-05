@@ -1,4 +1,4 @@
-import { Accordion, AccordionDetails, AccordionSummary, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Stack, TextField, Typography } from "@mui/material"
+import { Accordion, AccordionDetails, AccordionSummary, Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, Divider, FormControlLabel, FormGroup, Stack, TextField, Typography } from "@mui/material"
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux.hook";
@@ -10,7 +10,7 @@ type ProjectDetailsDepartemntsPlanProps = {
     afterClose: () => void
 }
 
-export const ProjectDetailsDepartemntsPlan: React.FunctionComponent<ProjectDetailsDepartemntsPlanProps> = ({afterClose}) => {
+export const ProjectDetailsDepartemntsPlan: React.FunctionComponent<ProjectDetailsDepartemntsPlanProps> = ({ afterClose }) => {
     const { t } = useTranslation();
     const dispatch = useAppDispatch()
     const selectedRowIdx = useAppSelector(state => state.projectDetailsReducer.selectedRowIdx)
@@ -18,6 +18,7 @@ export const ProjectDetailsDepartemntsPlan: React.FunctionComponent<ProjectDetai
     const project = useAppSelector(state => state.projectDetailsReducer.project)
     const [changed, setChanged] = useState<boolean>(false)
     const [task, setTask] = useState<IProjectTaskVm>(new ProjectTaskVm())
+    const [hideEmpty, setHideEmpty] = useState<boolean>(false)
 
     useEffect(() => {
         if (selectedRowIdx < 0) {
@@ -63,6 +64,7 @@ export const ProjectDetailsDepartemntsPlan: React.FunctionComponent<ProjectDetai
         }
         dispatch(toggleShowDepartmentsPlan())
         setChanged(false)
+        setHideEmpty(false)
         setTask(new ProjectTaskVm())
         afterClose()
     }
@@ -82,8 +84,13 @@ export const ProjectDetailsDepartemntsPlan: React.FunctionComponent<ProjectDetai
                 </DialogTitle>
                 <Divider></Divider>
                 <DialogContent>
-                    {
-                        task.departmentEstimations.map((i, idx) => {
+                    <FormGroup>
+                        <FormControlLabel control={<Checkbox 
+                            value={hideEmpty}
+                            onChange={e => setHideEmpty(e.target.checked)}
+                        />} label={t('hide-empty')} />
+                    </FormGroup>                    {
+                        task.departmentEstimations.filter(e => hideEmpty && e.totalHours === 0 ? false : true).map((i, idx) => {
                             return (
                                 <Accordion key={task.id + "est" + idx}>
                                     <AccordionSummary
