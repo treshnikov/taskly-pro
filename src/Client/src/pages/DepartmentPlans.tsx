@@ -36,6 +36,7 @@ export const DepartmentPlans: React.FunctionComponent = () => {
                 {
                     departments.map(d =>
                         <ListItem
+                            key={d.id}
                             secondaryAction={
                                 <Button onClick={e => navigate("/departmentPlans/"+ d.id)}>
                                     {t('open')}

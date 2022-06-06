@@ -54,7 +54,7 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentPlan
                 {
                     UserId = user.Id,
                     UserName = user.User.Name,
-                    UserPosition = user.UserPosition.Name,
+                    UserPosition = string.IsNullOrWhiteSpace(user.UserPosition.Ident) ? user.UserPosition.Name : user.UserPosition.Ident,
                     Projects = new List<UserProjectPlanVm>()
                 };
 
@@ -70,10 +70,12 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentPlan
                         Plans = new List<UserProjectWeekPlanVm>()
                     };
 
+                    var weekIdx = 1;
                     foreach (var week in weeks)
                     {
                         var weekPlan = new UserProjectWeekPlanVm
                         {
+                            WeekNumber = weekIdx, 
                             WeekStart = week
                         };
 
@@ -83,8 +85,11 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentPlan
 
                         weekPlan.PlannedHours = hours;
                         projectPlan.Plans.Add(weekPlan);
+
+                        weekIdx++;
                     }
 
+                    //projectPlan.Plans = projectPlan.Plans.Where(p => p.PlannedHours > 0).ToList();
                     vm.Projects.Add(projectPlan);
                 }
 
