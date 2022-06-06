@@ -3,27 +3,28 @@ import { CellChange, ChangeSource } from "handsontable/common";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
+import { dateAsShortStrWithShortYear } from "../common/dateFormatter";
+import { ProjectNameRenderer } from "../components/DepartmentPlan/Renderers/ProjectNameRenderer";
 import { useHttp } from "../hooks/http.hook";
 import { DepartmentPlanFlatUserRecordVm, DepartmentPlanFlatRecordVmHelper, DepartmentPlanUserRecordVm } from "../models/DepartmentPlan/DepartmentPlanClasses";
+
+const initData: DepartmentPlanFlatUserRecordVm[] = [{
+    userName: '',
+    userPosition: null,
+    project: null,
+    __children: [
+        { userPosition: '', project: '' }
+    ],
+}]
 
 export const DepartmentDetailedPlan: React.FunctionComponent = () => {
     const departmentId = useParams<{ id?: string }>()!.id
     const { request } = useHttp()
     const { t } = useTranslation();
 
-    const initData: DepartmentPlanFlatUserRecordVm[] = [{
-        userName: '',
-        userPosition: null,
-        project: null,
-        __children: [
-            { userPosition: '', project: '' }
-        ],
-    }]
-
     const [flatPlan, setFlatPlan] = useState<DepartmentPlanFlatUserRecordVm[]>(initData)
     const [headers, setHeaders] = useState<string[]>([])
     const hotTableRef = useRef<HotTable>(null);
-
 
     useEffect(() => {
         //todo pass start and end date
@@ -33,13 +34,17 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
             const weekCount = (plan.length > 0 && plan[0].projects.length > 0)
                 ? plan[0].projects[0].plans.length
                 : 0
-            headers = headers.concat(Array.from(Array(weekCount).keys()).map(i => new Date(plan[0].projects[0].plans[i].weekStart).toLocaleDateString()))
+            headers = headers.concat(Array.from(Array(weekCount).keys()).map(i => {
+                const dt = new Date(plan[0].projects[0].plans[i].weekStart)
+                return dateAsShortStrWithShortYear(dt)
+            }
+            ))
+
             setHeaders(headers)
 
             // build flat plan
             const flatPlan = DepartmentPlanFlatRecordVmHelper.buildFlatPlan(plan)
             setFlatPlan(flatPlan)
-
         })
     }, [])
 
@@ -59,13 +64,22 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
                 id="projectDetailsTable"
                 ref={hotTableRef}
                 data={flatPlan}
-                colHeaders={headers}
+                colHeaders={(idx: number) => {
+                    if (idx < 3) {
+                        return headers[idx]
+                    }
+
+                    return "<div style='font-size:10px;'>" + headers[idx] + "</div>"
+                }}
+
+                colWidths={[280, 50, 330]}
+                viewportColumnRenderingOffset={headers.length}
                 fixedColumnsLeft={3}
+                renderAllRows={true}
                 columnSorting={false}
                 rowHeaders={true}
                 nestedRows={true}
                 contextMenu={true}
-                renderAllRows={true}
                 manualRowMove={true}
                 wordWrap={true}
                 fillHandle={false}
@@ -108,18 +122,18 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
             >
                 <HotColumn data={"userName"} wordWrap={false} type={"text"} />
                 <HotColumn data={"userPosition"} wordWrap={false} type={"text"} />
-                <HotColumn data={"project"} readOnly />
-
+                <HotColumn data={"project"} readOnly >
+                    <ProjectNameRenderer hot-renderer></ProjectNameRenderer>
+                </HotColumn>
                 {
                     headers.slice(3).map((header, idx) => {
-                        return (<HotColumn key={"depPlanWeek" + idx} data={"week" + (idx + 1).toString()} type={"text"} />)
+                        return (
+                            <HotColumn key={"depPlanWeek" + idx} data={"week" + (idx + 1).toString()} type={"text"} >
+                            </HotColumn>)
                     })
                 }
 
 
             </HotTable>
-            {/* <pre>
-                {JSON.stringify(plan, null, 2)}
-            </pre> */}
         </div>)
 }
