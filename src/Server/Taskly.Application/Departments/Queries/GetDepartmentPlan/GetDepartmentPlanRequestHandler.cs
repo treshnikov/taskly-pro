@@ -95,8 +95,7 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentPlan
 
                 res.Add(vm);
             }
-
-            return res.ToArray();
+            return res.OrderBy(i => i.UserPosition).ToArray();
         }
 
         private DateTime[] BuildWeeks(DateTime start, DateTime end)

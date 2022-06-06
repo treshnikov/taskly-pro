@@ -11,5 +11,4 @@ export const ProjectNameRenderer = (props: any) => {
     return (
         <div>{rowIdx}</div>
     )
-
 }

@@ -40,19 +40,19 @@ export class DepartmentPlanFlatRecordVmHelper {
         arg.forEach(user => {
             const userRecord: DepartmentPlanFlatUserRecordVm = {
                 userName: user.userName,
-                userPosition: null,
+                userPosition: user.userPosition,
                 project: null,
                 __children: []
             };
 
             user.projects.forEach(project => {
                 const projectRecord: DepartmentPlanFlatProjectRecordVm = {
-                    userPosition: user.userPosition,
+                    userPosition: '',
                     project: project.projectId + ": " + project.projectShortName
                 }
 
                 project.plans.forEach(plan => {
-                    projectRecord["week" + plan.weekNumber.toString()] = plan.plannedHours.toString();
+                    projectRecord["week" + plan.weekNumber.toString()] = plan.plannedHours === 0 ? '' : plan.plannedHours.toString();
                 });
 
                 userRecord.__children.push(projectRecord);

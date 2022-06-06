@@ -3,7 +3,6 @@ import { CellChange, ChangeSource } from "handsontable/common";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
-import { ProjectNameRenderer } from "../components/DepartmentPlan/Renderers/ProjectNameRenderer";
 import { useHttp } from "../hooks/http.hook";
 import { DepartmentPlanFlatUserRecordVm, DepartmentPlanFlatRecordVmHelper, DepartmentPlanUserRecordVm } from "../models/DepartmentPlan/DepartmentPlanClasses";
 
@@ -28,7 +27,7 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
 
     useEffect(() => {
         //todo pass start and end date
-        const depPlan = request<DepartmentPlanUserRecordVm[]>(`/api/v1/departments/${departmentId}/2022-01-01/2022-12-31/plan`, 'GET').then(plan => {
+        request<DepartmentPlanUserRecordVm[]>(`/api/v1/departments/${departmentId}/2022-01-01/2022-12-31/plan`, 'GET').then(plan => {
             // build headers
             let headers: string[] = ["User", "Position", "Project"]
             const weekCount = (plan.length > 0 && plan[0].projects.length > 0)
@@ -44,11 +43,11 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
         })
     }, [])
 
-
     useEffect(() => {
         if (flatPlan && flatPlan.length > 0 && hotTableRef && hotTableRef.current && hotTableRef.current.hotInstance) {
-            console.log("update", flatPlan)
             hotTableRef.current.hotInstance.loadData(flatPlan)
+            const plugin = hotTableRef.current.hotInstance.getPlugin('nestedRows') as any
+            plugin.collapsingUI.collapseAll()
         }
     }, [flatPlan])
 
@@ -61,6 +60,7 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
                 ref={hotTableRef}
                 data={flatPlan}
                 colHeaders={headers}
+                fixedColumnsLeft={3}
                 columnSorting={false}
                 rowHeaders={true}
                 nestedRows={true}
