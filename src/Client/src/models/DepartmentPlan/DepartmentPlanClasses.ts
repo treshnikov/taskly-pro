@@ -20,31 +20,45 @@ export type DepartmentPlanUserProjectWeekPlanVm = {
     plannedHours: number
 }
 
-export type DepartmentPlanFlatRecordVm = {
+export type DepartmentPlanFlatUserRecordVm = {
     userName: string
+    userPosition: string | null
+    project?: string | null
+    __children: DepartmentPlanFlatProjectRecordVm[]
+}
+
+export type DepartmentPlanFlatProjectRecordVm = {
     userPosition: string
     project: string
     [weekNumber: string]: string
 }
 
 export class DepartmentPlanFlatRecordVmHelper {
-    public static buildFlatPlan(arg: DepartmentPlanUserRecordVm[]): DepartmentPlanFlatRecordVm[] {
-        const result: DepartmentPlanFlatRecordVm[] = [];
+    public static buildFlatPlan(arg: DepartmentPlanUserRecordVm[]): DepartmentPlanFlatUserRecordVm[] {
+        const result: DepartmentPlanFlatUserRecordVm[] = [];
 
         arg.forEach(user => {
+            const userRecord: DepartmentPlanFlatUserRecordVm = {
+                userName: user.userName,
+                userPosition: null,
+                project: null,
+                __children: []
+            };
+
             user.projects.forEach(project => {
-                const flatRecord: DepartmentPlanFlatRecordVm = {
-                    userName: user.userName,
+                const projectRecord: DepartmentPlanFlatProjectRecordVm = {
                     userPosition: user.userPosition,
-                    project: project.projectShortName,
-                };
+                    project: project.projectId + ": " + project.projectShortName
+                }
 
                 project.plans.forEach(plan => {
-                    flatRecord["week" + plan.weekNumber.toString()] = plan.plannedHours.toString();
+                    projectRecord["week" + plan.weekNumber.toString()] = plan.plannedHours.toString();
                 });
 
-                result.push(flatRecord);
+                userRecord.__children.push(projectRecord);
+
             });
+            result.push(userRecord);
         });
 
         return result;

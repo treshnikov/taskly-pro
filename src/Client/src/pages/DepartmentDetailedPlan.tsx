@@ -1,44 +1,56 @@
 import HotTable, { HotColumn } from "@handsontable/react";
 import { CellChange, ChangeSource } from "handsontable/common";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { ProjectNameRenderer } from "../components/DepartmentPlan/Renderers/ProjectNameRenderer";
 import { useHttp } from "../hooks/http.hook";
-import { DepartmentPlanFlatRecordVm, DepartmentPlanFlatRecordVmHelper, DepartmentPlanUserRecordVm } from "../models/DepartmentPlan/DepartmentPlanClasses";
+import { DepartmentPlanFlatUserRecordVm, DepartmentPlanFlatRecordVmHelper, DepartmentPlanUserRecordVm } from "../models/DepartmentPlan/DepartmentPlanClasses";
 
 export const DepartmentDetailedPlan: React.FunctionComponent = () => {
     const departmentId = useParams<{ id?: string }>()!.id
     const { request } = useHttp()
     const { t } = useTranslation();
-    const [plan, setPlan] = useState<DepartmentPlanUserRecordVm[]>([])
-    const [flatPlan, setFlatPlan] = useState<DepartmentPlanFlatRecordVm[]>([])
+
+    const initData: DepartmentPlanFlatUserRecordVm[] = [{
+        userName: '',
+        userPosition: null,
+        project: null,
+        __children: [
+            { userPosition: '', project: '' }
+        ],
+    }]
+
+    const [flatPlan, setFlatPlan] = useState<DepartmentPlanFlatUserRecordVm[]>(initData)
     const [headers, setHeaders] = useState<string[]>([])
+    const hotTableRef = useRef<HotTable>(null);
+
 
     useEffect(() => {
-        async function fetchData() {
-            //todo pass start and end date
-            const depPlan = await request<DepartmentPlanUserRecordVm[]>(`/api/v1/departments/${departmentId}/2022-01-01/2022-12-31/plan`, 'GET')
-            setPlan(depPlan)
-        }
-        fetchData()
+        //todo pass start and end date
+        const depPlan = request<DepartmentPlanUserRecordVm[]>(`/api/v1/departments/${departmentId}/2022-01-01/2022-12-31/plan`, 'GET').then(plan => {
+            // build headers
+            let headers: string[] = ["User", "Position", "Project"]
+            const weekCount = (plan.length > 0 && plan[0].projects.length > 0)
+                ? plan[0].projects[0].plans.length
+                : 0
+            headers = headers.concat(Array.from(Array(weekCount).keys()).map(i => new Date(plan[0].projects[0].plans[i].weekStart).toLocaleDateString()))
+            setHeaders(headers)
+
+            // build flat plan
+            const flatPlan = DepartmentPlanFlatRecordVmHelper.buildFlatPlan(plan)
+            setFlatPlan(flatPlan)
+
+        })
     }, [])
 
+
     useEffect(() => {
-        // build headers
-        let headers: string[] = ["User", "Position", "Project"]
-        const weekCount = (plan.length > 0 && plan[0].projects.length > 0)
-            ? plan[0].projects[0].plans.length
-            : 0
-        headers = headers.concat(Array.from(Array(weekCount).keys()).map(i => new Date(plan[0].projects[0].plans[i].weekStart).toLocaleDateString()))
-        setHeaders(headers)
-
-        // build flat plan
-        const flatPlan = DepartmentPlanFlatRecordVmHelper.buildFlatPlan(plan)
-        setFlatPlan(flatPlan)
-        console.log(flatPlan)
-    }, [plan])
-
+        if (flatPlan && flatPlan.length > 0 && hotTableRef && hotTableRef.current && hotTableRef.current.hotInstance) {
+            console.log("update", flatPlan)
+            hotTableRef.current.hotInstance.loadData(flatPlan)
+        }
+    }, [flatPlan])
 
     return (
         <div className='page-container'>
@@ -46,11 +58,13 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
             <br />
             <HotTable
                 id="projectDetailsTable"
+                ref={hotTableRef}
                 data={flatPlan}
                 colHeaders={headers}
                 columnSorting={false}
                 rowHeaders={true}
                 nestedRows={true}
+                contextMenu={true}
                 renderAllRows={true}
                 manualRowMove={true}
                 wordWrap={true}
@@ -98,7 +112,7 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
 
                 {
                     headers.slice(3).map((header, idx) => {
-                        return (<HotColumn data={"week" + (idx + 1).toString()} type={"text"} />)
+                        return (<HotColumn key={"depPlanWeek" + idx} data={"week" + (idx + 1).toString()} type={"text"} />)
                     })
                 }
 
