@@ -38,7 +38,7 @@ export const DepartmentPlans: React.FunctionComponent = () => {
                         <ListItem
                             key={d.id}
                             secondaryAction={
-                                <Button onClick={e => navigate("/departmentPlans/"+ d.id)}>
+                                <Button onClick={e => navigate("/departmentPlans/"+ d.id + "/" + d.name)}>
                                     {t('open')}
                                 </Button>
                             }

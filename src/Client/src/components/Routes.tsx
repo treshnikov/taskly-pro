@@ -28,7 +28,7 @@ export const useAppRoutes: React.FunctionComponent = () => {
           <Route path="/users" element={<Users />} />
           <Route path="/departments" element={<Departments />} />
           <Route path="/departmentPlans" element={<DepartmentPlans />} />
-          <Route path="/departmentPlans/:id" element={<DepartmentDetailedPlan />} />
+          <Route path="/departmentPlans/:id/:name" element={<DepartmentDetailedPlan />} />
           <Route path="/departmentsSettings" element={<DepartmentSettings />} />
           <Route path="/settings" element={<Settings />} />
         </Routes>

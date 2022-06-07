@@ -44,7 +44,7 @@ export class DepartmentPlanFlatRecordVmHelper {
 
         arg.forEach(user => {
             const userRecord: DepartmentPlanFlatUserRecordVm = {
-                id: idx.toString(),
+                id: "u" + idx.toString(),
                 userName: user.userName,
                 userPosition: user.userPosition,
                 project: null,
@@ -56,7 +56,7 @@ export class DepartmentPlanFlatRecordVmHelper {
             let userHours = 0
             user.projects.forEach(project => {
                 const projectRecord: DepartmentPlanFlatProjectRecordVm = {
-                    id: idx.toString(),
+                    id: "p" + idx.toString(),
                     userPosition: '',
                     hours: '0',
                     project: project.projectId + ": " + project.projectShortName

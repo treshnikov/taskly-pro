@@ -20,7 +20,9 @@ const initData: DepartmentPlanFlatUserRecordVm[] = [{
 }]
 
 export const DepartmentDetailedPlan: React.FunctionComponent = () => {
-    const departmentId = useParams<{ id?: string }>()!.id
+    const departmentId = useParams<{ id?: string, name?: string }>()!.id
+    const departmentName = useParams<{ id?: string, name?: string }>()!.name
+
     const { request } = useHttp()
     const { t } = useTranslation();
 
@@ -62,8 +64,7 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
 
     return (
         <div className='page-container'>
-            DepartmentDetailedPlan {departmentId}
-            <br />
+            <h3>{departmentName}</h3>
             <HotTable
                 id="projectDetailsTable"
                 ref={hotTableRef}
@@ -81,7 +82,7 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
                 fixedColumnsLeft={3}
                 hiddenColumns={{
                     columns: [0]
-                  }}
+                }}
                 renderAllRows={true}
                 columnSorting={false}
                 rowHeaders={true}
@@ -97,9 +98,18 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
 
                 beforeChange={(changes: CellChange[], source: ChangeSource) => {
                     //dispatch(onTaskAttributeChanged(changes))
+
                     if (hotTableRef && hotTableRef.current && hotTableRef.current.hotInstance) {
-                        console.log("rowId", hotTableRef.current.hotInstance.getDataAtCell(changes[0][0], 0))
-                        console.log("weekId", changes[0][1])
+                        const rowId = hotTableRef.current.hotInstance.getDataAtCell(changes[0][0], 0)
+                        const weekId = changes[0][1]
+
+                        // prevent editing cells with summary info
+                        if (rowId[0] === 'u') {
+                            return false
+                        }
+
+                        console.log("rowId", rowId)
+                        console.log("weekId", weekId)
                     }
 
                     //return false
