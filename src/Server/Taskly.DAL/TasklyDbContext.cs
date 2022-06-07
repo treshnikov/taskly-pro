@@ -11,6 +11,7 @@ namespace Taskly.DAL
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<Department> Departments { get; set; }
+        public DbSet<DepartmentPlan> DepartmentPlans { get; set; }
         public DbSet<UserDepartment> UserDepartments { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Project> Projects { get; set; }

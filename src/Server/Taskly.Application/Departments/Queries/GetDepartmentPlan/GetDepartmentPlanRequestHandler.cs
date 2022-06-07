@@ -33,26 +33,34 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentPlan
                 .Where(
                     p => p.Tasks.Any(
                         t =>
-                            request.Start <= t.Start && request.End >= t.Start && 
+                            request.Start <= t.Start && request.End >= t.Start &&
                             t.DepartmentEstimations.Any(
                             de => de.Department.Id == request.DepartmentId && de.Estimations.Sum(des => des.Hours) > 0)))
                 .ToListAsync(cancellationToken);
 
-            // or projects that have been planned before for the given department
-            // todo
+            // laod plans for each employee for each week for each project
+            var plans = await _dbContext.DepartmentPlans
+                .Include(i => i.Project).Include(i => i.User)
+                .AsNoTracking()
+                .Where(i =>
+                    i.DepartmentId == request.DepartmentId &&
+                    i.WeekStart >= request.Start && i.WeekStart <= request.End)
+                .ToListAsync(cancellationToken);
+
+            // add projects that have already been planned before for the given department
+            var plannedProjects = plans.Select(i => i.Project).ToList();
+            projects.AddRange(plannedProjects);
+            projects = projects.DistinctBy(i => i.Id).OrderBy(i => i.Id).ToList();
 
             // build a list of weeks according to start and end dates            
             DateTime[] weeks = BuildWeeks(request.Start, request.End);
-
-            // laod plans for each employee for each week for each project
-            // todo
 
             // compose view model
             foreach (var user in users)
             {
                 var vm = new DepartmentPlanRecordVm
                 {
-                    UserId = user.Id,
+                    UserId = user.User.Id,
                     UserName = user.User.Name,
                     UserPosition = string.IsNullOrWhiteSpace(user.UserPosition.Ident) ? user.UserPosition.Name : user.UserPosition.Ident,
                     Projects = new List<UserProjectPlanVm>()
@@ -75,13 +83,15 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentPlan
                     {
                         var weekPlan = new UserProjectWeekPlanVm
                         {
-                            WeekNumber = weekIdx, 
+                            WeekNumber = weekIdx,
                             WeekStart = week
                         };
 
                         // get hours planned for the given user, project and week
-                        // todo
-                        var hours = 0;
+                        var hours = plans.FirstOrDefault(
+                            i => i.UserId == user.User.Id && 
+                            i.ProjectId == project.Id && 
+                            i.WeekStart == week)?.Hours ?? 0;
 
                         weekPlan.PlannedHours = hours;
                         projectPlan.Plans.Add(weekPlan);

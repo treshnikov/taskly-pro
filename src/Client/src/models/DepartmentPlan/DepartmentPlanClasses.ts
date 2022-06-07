@@ -20,17 +20,17 @@ export type DepartmentPlanUserProjectWeekPlanVm = {
     plannedHours: number
 }
 
-export type DepartmentPlanFlatUserRecordVm = {
+export type DepartmentUserPlan = {
     id: string
     userName: string
     userPosition: string
     project: string 
     hours: string
-    __children: DepartmentPlanFlatProjectRecordVm[]
-    [weekNumber: string]: string | DepartmentPlanFlatProjectRecordVm[]
+    __children: DepartmentProjectPlan[]
+    [weekNumber: string]: string | DepartmentProjectPlan[]
 }
 
-export type DepartmentPlanFlatProjectRecordVm = {
+export type DepartmentProjectPlan = {
     id: string
     userPosition: string
     project: string
@@ -40,7 +40,7 @@ export type DepartmentPlanFlatProjectRecordVm = {
 
 export class DepartmentPlanFlatRecordVmHelper {
 
-    public static recalcHours(arg: DepartmentPlanFlatUserRecordVm[]) {
+    public static recalcHours(arg: DepartmentUserPlan[]) {
         arg.forEach(user => {
             let userHours = 0
             let weekSumHours: {[key: string]: number} = {}
@@ -78,12 +78,12 @@ export class DepartmentPlanFlatRecordVmHelper {
         });
     }
 
-    public static buildFlatPlan(arg: DepartmentPlanUserRecordVm[]): DepartmentPlanFlatUserRecordVm[] {
-        const res: DepartmentPlanFlatUserRecordVm[] = [];
+    public static buildFlatPlan(arg: DepartmentPlanUserRecordVm[]): DepartmentUserPlan[] {
+        const res: DepartmentUserPlan[] = [];
         let idx = 1
 
         arg.forEach(user => {
-            const userRecord: DepartmentPlanFlatUserRecordVm = {
+            const userRecord: DepartmentUserPlan = {
                 id: "u" + idx.toString(),
                 userName: user.userName,
                 userPosition: user.userPosition,
@@ -94,11 +94,11 @@ export class DepartmentPlanFlatRecordVmHelper {
             idx++;
 
             user.projects.forEach(project => {
-                const projectRecord: DepartmentPlanFlatProjectRecordVm = {
+                const projectRecord: DepartmentProjectPlan = {
                     id: "p" + idx.toString(),
                     userPosition: '',
                     hours: '',
-                    project: project.projectId + ": " + project.projectShortName
+                    project: project.projectId + ": " + (project.projectShortName ? project.projectShortName : project.projectName)
                 }
                 idx++;
 

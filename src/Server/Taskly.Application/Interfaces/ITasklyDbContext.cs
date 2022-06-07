@@ -10,6 +10,7 @@ namespace Taskly.Application.Interfaces
         DbSet<User> Users { get; set; }
         DbSet<Role> Roles { get; set; }
         DbSet<Department> Departments { get; set; }
+        DbSet<DepartmentPlan> DepartmentPlans { get; set; }
         DbSet<UserDepartment> UserDepartments { get; set; }
         DbSet<UserPosition> UserePositions { get; set; }
         DatabaseFacade Database { get; }

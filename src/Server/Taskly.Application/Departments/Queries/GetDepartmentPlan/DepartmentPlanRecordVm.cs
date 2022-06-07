@@ -24,6 +24,6 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentPlan
     {
         public int WeekNumber { get; internal set; }
         public DateTime WeekStart { get; set; }
-        public int PlannedHours { get; set; }
+        public float PlannedHours { get; set; }
     }
 }

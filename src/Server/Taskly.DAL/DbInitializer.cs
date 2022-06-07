@@ -20,19 +20,21 @@ namespace Taskly.DAL
             var dep = new Department
             {
                 Id = Guid.NewGuid(),
-                Name = "Main department",
+                Name = "IT department",
                 OrderNumber = 0,
-                ShortName = "MD"
+                ShortName = "IT",
+                IncludeInWorkPlan = true
             };
 
-            var userPosition = new UserPosition{
-                Name = "Employee role",
+            var userPosition = new UserPosition
+            {
+                Name = "Senior developer",
                 Ident = "Dev"
             };
 
             var admin = new User
             {
-                Name = "admin",
+                Name = "John Doe",
                 Email = "admin@admin.com",
                 UserDepartments = new List<UserDepartment>{
                     new UserDepartment {
@@ -54,7 +56,7 @@ namespace Taskly.DAL
             var customer = new Customer
             {
                 Id = Guid.NewGuid(),
-                Name = "Demo customer"
+                Name = "MegaFood Gmbh"
             };
 
             var project = new Project
@@ -65,15 +67,15 @@ namespace Taskly.DAL
                 Company = dep,
                 Customer = customer,
                 IsOpened = true,
-                Contract = "Demo contract",
-                Name = "Demo project",
+                Contract = "Main contract 2022",
+                Name = "MegaFood storage automation system",
                 Start = new DateTime(DateTime.Today.Year, 01, 01),
                 End = new DateTime(DateTime.Today.Year, 12, 31),
                 Tasks = new List<ProjectTask>
                 {
                     new ProjectTask
                     {
-                        Description = "Task #1",
+                        Description = "Analyze storage system",
                         Start = new DateTime(DateTime.Today.Year, 01, 01),
                         End = new DateTime(DateTime.Today.Year, 12, 31),
                         DepartmentEstimations = new List<ProjectTaskDepartmentEstimation>
@@ -94,7 +96,7 @@ namespace Taskly.DAL
                     },
                     new ProjectTask
                     {
-                        Description = "Task #2",
+                        Description = "Prepare technical statements",
                         Start = new DateTime(DateTime.Today.Year, 01, 01),
                         End = new DateTime(DateTime.Today.Year, 06, 30),
                         DepartmentEstimations = new List<ProjectTaskDepartmentEstimation>
@@ -114,7 +116,7 @@ namespace Taskly.DAL
                     },
                     new ProjectTask
                     {
-                        Description = "Task #3",
+                        Description = "Develop software",
                         Start = new DateTime(DateTime.Today.Year, 05, 01),
                         End = new DateTime(DateTime.Today.Year, 10, 30),
                         DepartmentEstimations = new List<ProjectTaskDepartmentEstimation>
@@ -134,6 +136,25 @@ namespace Taskly.DAL
                     }
                 }
             };
+
+            var dt = new DateTime(2022, 01, 10);
+            for (int i = 0; i < 28; i++)
+            {
+                var plan = new DepartmentPlan
+                {
+                    Department = dep,
+                    DepartmentId = dep.Id,
+                    Hours = 40,
+                    Project = project,
+                    ProjectId = project.Id,
+                    User = admin,
+                    UserId = admin.Id,
+                    WeekStart = dt,
+                };
+                context.DepartmentPlans.Add(plan);
+
+                dt = dt.AddDays(7);
+            }
 
             context.Projects.Add(project);
             context.Customers.Add(customer);
