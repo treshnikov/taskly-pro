@@ -13,10 +13,8 @@ const initData: DepartmentPlanFlatUserRecordVm[] = [{
     userName: '',
     userPosition: '',
     project: '',
-    hours: '0',
-    __children: [
-        { id: '', userPosition: '', project: '', hours: '0' }
-    ],
+    hours: '',
+    __children: [],
 }]
 
 export const DepartmentDetailedPlan: React.FunctionComponent = () => {
@@ -79,7 +77,7 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
 
                 colWidths={columnWidths}
                 viewportColumnRenderingOffset={headers.length}
-                fixedColumnsLeft={3}
+                fixedColumnsLeft={staticHeaders.length}
                 hiddenColumns={{
                     columns: [0]
                 }}
