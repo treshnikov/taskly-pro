@@ -6,13 +6,13 @@ import { useParams } from "react-router-dom";
 import { dateAsShortStrWithShortYear } from "../common/dateFormatter";
 import { ProjectNameRenderer } from "../components/DepartmentPlan/Renderers/ProjectNameRenderer";
 import { useHttp } from "../hooks/http.hook";
-import { DepartmentPlanFlatUserRecordVm, DepartmentPlanFlatRecordVmHelper, DepartmentPlanUserRecordVm } from "../models/DepartmentPlan/DepartmentPlanClasses";
+import { DepartmentPlanFlatUserRecordVm, DepartmentPlanFlatRecordVmHelper, DepartmentPlanUserRecordVm, DepartmentPlanFlatProjectRecordVm } from "../models/DepartmentPlan/DepartmentPlanClasses";
 
 const initData: DepartmentPlanFlatUserRecordVm[] = [{
     id: '',
     userName: '',
-    userPosition: null,
-    project: null,
+    userPosition: '',
+    project: '',
     hours: '0',
     __children: [
         { id: '', userPosition: '', project: '', hours: '0' }
@@ -101,15 +101,27 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
 
                     if (hotTableRef && hotTableRef.current && hotTableRef.current.hotInstance) {
                         const rowId = hotTableRef.current.hotInstance.getDataAtCell(changes[0][0], 0)
-                        const weekId = changes[0][1]
-
                         // prevent editing cells with summary info
                         if (rowId[0] === 'u') {
                             return false
                         }
 
-                        console.log("rowId", rowId)
-                        console.log("weekId", weekId)
+                        const weekId = changes[0][1]
+                        const newValue = changes[0][3]
+
+                        // find and update changed record
+                        let record: DepartmentPlanFlatProjectRecordVm = { id: '', hours: '', project: '', userPosition: '', userName: '' }
+                        const found = flatPlan.some(u => u.__children.some(p => {
+                            record = p
+                            return p.id === rowId
+                        }))
+
+                        if (found) {
+                            record[weekId] = newValue
+
+                            // recalc hours and update view
+                            DepartmentPlanFlatRecordVmHelper.recalcHours(flatPlan)
+                        }
                     }
 
                     //return false

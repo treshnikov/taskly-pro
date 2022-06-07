@@ -23,10 +23,11 @@ export type DepartmentPlanUserProjectWeekPlanVm = {
 export type DepartmentPlanFlatUserRecordVm = {
     id: string
     userName: string
-    userPosition: string | null
-    project?: string | null
+    userPosition: string
+    project: string 
     hours: string
     __children: DepartmentPlanFlatProjectRecordVm[]
+    [weekNumber: string]: string | DepartmentPlanFlatProjectRecordVm[]
 }
 
 export type DepartmentPlanFlatProjectRecordVm = {
@@ -38,6 +39,45 @@ export type DepartmentPlanFlatProjectRecordVm = {
 }
 
 export class DepartmentPlanFlatRecordVmHelper {
+
+    public static recalcHours(arg: DepartmentPlanFlatUserRecordVm[]) {
+        arg.forEach(user => {
+            let userHours = 0
+            let weekSumHours: {[key: string]: number} = {}
+            
+        
+            user.__children.forEach(project => {
+                let projectHours = 0
+                let weekIdx = 1
+
+
+                while ((project as any).hasOwnProperty("week" + weekIdx.toString())) {
+                    const weekIdent = "week" + weekIdx.toString()
+                    
+                    const hoursAsString = project[weekIdent]
+                    if (hoursAsString !== "") {
+                        const weekHours = parseFloat(hoursAsString)
+                        projectHours += weekHours
+                        userHours += weekHours
+
+                        if (!(weekSumHours as any).hasOwnProperty(weekIdent)) {
+                            weekSumHours[weekIdent] = 0
+                        }
+        
+                        weekSumHours[weekIdent] += weekHours                     
+                    }
+                    weekIdx++
+                }
+                project.hours = projectHours > 0 ? projectHours.toString() : ''
+            });
+            user.hours = userHours > 0 ? userHours.toString() : ''
+            Object.keys(weekSumHours).forEach(weekIdent => {
+                user[weekIdent.toString()] = weekSumHours[weekIdent] > 0 ? weekSumHours[weekIdent].toString() : ''
+            })
+
+        });
+    }
+
     public static buildFlatPlan(arg: DepartmentPlanUserRecordVm[]): DepartmentPlanFlatUserRecordVm[] {
         const res: DepartmentPlanFlatUserRecordVm[] = [];
         let idx = 1
@@ -47,39 +87,34 @@ export class DepartmentPlanFlatRecordVmHelper {
                 id: "u" + idx.toString(),
                 userName: user.userName,
                 userPosition: user.userPosition,
-                project: null,
-                hours: '0',
+                project: '',
+                hours: '',
                 __children: []
             };
             idx++;
 
-            let userHours = 0
             user.projects.forEach(project => {
                 const projectRecord: DepartmentPlanFlatProjectRecordVm = {
                     id: "p" + idx.toString(),
                     userPosition: '',
-                    hours: '0',
+                    hours: '',
                     project: project.projectId + ": " + project.projectShortName
                 }
                 idx++;
 
                 // populate weekX attributes
-                let projectHours = 0
                 project.plans.forEach(week => {
-                    projectHours += week.plannedHours
-                    userHours += week.plannedHours
                     projectRecord["week" + week.weekNumber.toString()] = week.plannedHours === 0 ? '' : week.plannedHours.toString();
                 });
 
-                projectRecord.hours = projectHours.toString() 
                 userRecord.__children.push(projectRecord);
 
             });
 
-            userRecord.hours = userHours.toString()
             res.push(userRecord);
         });
 
+        DepartmentPlanFlatRecordVmHelper.recalcHours(res)
         return res;
     }
 }
