@@ -21,46 +21,65 @@ export type DepartmentPlanUserProjectWeekPlanVm = {
 }
 
 export type DepartmentPlanFlatUserRecordVm = {
+    id: string
     userName: string
     userPosition: string | null
     project?: string | null
+    hours: string
     __children: DepartmentPlanFlatProjectRecordVm[]
 }
 
 export type DepartmentPlanFlatProjectRecordVm = {
+    id: string
     userPosition: string
     project: string
+    hours: string
     [weekNumber: string]: string
 }
 
 export class DepartmentPlanFlatRecordVmHelper {
     public static buildFlatPlan(arg: DepartmentPlanUserRecordVm[]): DepartmentPlanFlatUserRecordVm[] {
-        const result: DepartmentPlanFlatUserRecordVm[] = [];
+        const res: DepartmentPlanFlatUserRecordVm[] = [];
+        let idx = 1
 
         arg.forEach(user => {
             const userRecord: DepartmentPlanFlatUserRecordVm = {
+                id: idx.toString(),
                 userName: user.userName,
                 userPosition: user.userPosition,
                 project: null,
+                hours: '0',
                 __children: []
             };
+            idx++;
 
+            let userHours = 0
             user.projects.forEach(project => {
                 const projectRecord: DepartmentPlanFlatProjectRecordVm = {
+                    id: idx.toString(),
                     userPosition: '',
+                    hours: '0',
                     project: project.projectId + ": " + project.projectShortName
                 }
+                idx++;
 
-                project.plans.forEach(plan => {
-                    projectRecord["week" + plan.weekNumber.toString()] = plan.plannedHours === 0 ? '' : plan.plannedHours.toString();
+                // populate weekX attributes
+                let projectHours = 0
+                project.plans.forEach(week => {
+                    projectHours += week.plannedHours
+                    userHours += week.plannedHours
+                    projectRecord["week" + week.weekNumber.toString()] = week.plannedHours === 0 ? '' : week.plannedHours.toString();
                 });
 
+                projectRecord.hours = projectHours.toString() 
                 userRecord.__children.push(projectRecord);
 
             });
-            result.push(userRecord);
+
+            userRecord.hours = userHours.toString()
+            res.push(userRecord);
         });
 
-        return result;
+        return res;
     }
 }

@@ -9,11 +9,13 @@ import { useHttp } from "../hooks/http.hook";
 import { DepartmentPlanFlatUserRecordVm, DepartmentPlanFlatRecordVmHelper, DepartmentPlanUserRecordVm } from "../models/DepartmentPlan/DepartmentPlanClasses";
 
 const initData: DepartmentPlanFlatUserRecordVm[] = [{
+    id: '',
     userName: '',
     userPosition: null,
     project: null,
+    hours: '0',
     __children: [
-        { userPosition: '', project: '' }
+        { id: '', userPosition: '', project: '', hours: '0' }
     ],
 }]
 
@@ -25,12 +27,14 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
     const [flatPlan, setFlatPlan] = useState<DepartmentPlanFlatUserRecordVm[]>(initData)
     const [headers, setHeaders] = useState<string[]>([])
     const hotTableRef = useRef<HotTable>(null);
+    const staticHeaders = ["Id", "User", "Position", "Hours", "Project"]
+    const columnWidths = [50, 280, 50, 50, 330]
 
     useEffect(() => {
         //todo pass start and end date
         request<DepartmentPlanUserRecordVm[]>(`/api/v1/departments/${departmentId}/2022-01-01/2022-12-31/plan`, 'GET').then(plan => {
             // build headers
-            let headers: string[] = ["User", "Position", "Project"]
+            let headers: string[] = [...staticHeaders]
             const weekCount = (plan.length > 0 && plan[0].projects.length > 0)
                 ? plan[0].projects[0].plans.length
                 : 0
@@ -65,21 +69,23 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
                 ref={hotTableRef}
                 data={flatPlan}
                 colHeaders={(idx: number) => {
-                    if (idx < 3) {
+                    if (idx < staticHeaders.length) {
                         return headers[idx]
                     }
 
                     return "<div style='font-size:10px;'>" + headers[idx] + "</div>"
                 }}
 
-                colWidths={[280, 50, 330]}
+                colWidths={columnWidths}
                 viewportColumnRenderingOffset={headers.length}
                 fixedColumnsLeft={3}
+                hiddenColumns={{
+                    columns: [0]
+                  }}
                 renderAllRows={true}
                 columnSorting={false}
                 rowHeaders={true}
                 nestedRows={true}
-                contextMenu={true}
                 manualRowMove={true}
                 wordWrap={true}
                 fillHandle={false}
@@ -91,7 +97,12 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
 
                 beforeChange={(changes: CellChange[], source: ChangeSource) => {
                     //dispatch(onTaskAttributeChanged(changes))
-                    return false
+                    if (hotTableRef && hotTableRef.current && hotTableRef.current.hotInstance) {
+                        console.log("rowId", hotTableRef.current.hotInstance.getDataAtCell(changes[0][0], 0))
+                        console.log("weekId", changes[0][1])
+                    }
+
+                    //return false
                 }}
 
                 beforeRowMove={(movedRows: number[], finalIndex: number, dropIndex: number | undefined, movePossible: boolean) => {
@@ -120,13 +131,15 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
                 outsideClickDeselects={true}
                 licenseKey='non-commercial-and-evaluation'
             >
-                <HotColumn data={"userName"} wordWrap={false} type={"text"} />
-                <HotColumn data={"userPosition"} wordWrap={false} type={"text"} />
-                <HotColumn data={"project"} readOnly >
-                    <ProjectNameRenderer hot-renderer></ProjectNameRenderer>
+                <HotColumn data={"id"} wordWrap={false} readOnly type={"text"} />
+                <HotColumn data={"userName"} wordWrap={false} readOnly type={"text"} />
+                <HotColumn data={"userPosition"} wordWrap={false} readOnly type={"text"} />
+                <HotColumn data={"hours"} type={"text"} readOnly />
+                <HotColumn data={"project"} type={"text"} readOnly >
+                    {/* <ProjectNameRenderer hot-renderer></ProjectNameRenderer> */}
                 </HotColumn>
                 {
-                    headers.slice(3).map((header, idx) => {
+                    headers.slice(staticHeaders.length).map((header, idx) => {
                         return (
                             <HotColumn key={"depPlanWeek" + idx} data={"week" + (idx + 1).toString()} type={"text"} >
                             </HotColumn>)
