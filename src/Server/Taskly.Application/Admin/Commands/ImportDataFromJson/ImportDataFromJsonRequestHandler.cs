@@ -33,6 +33,7 @@ namespace Taskly.Application.Users
                 // await UpdateProjects(projects, cancellationToken);
                 // await UpdateProjectTasks(request, cancellationToken);
                 await UpdateProjectPlan("import/ОП ДС.XLSX", 244, cancellationToken);
+                await UpdateProjectPlan("import/ОП_АС.xlsx", 245, cancellationToken);
 
                 return Unit.Value;
             }

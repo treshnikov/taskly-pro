@@ -25,17 +25,17 @@ export type DepartmentUserPlan = {
     userName: string
     userPosition: string
     project: string 
-    hours: string
+    hours: string | null
     __children: DepartmentProjectPlan[]
-    [weekNumber: string]: string | DepartmentProjectPlan[]
+    [weekNumber: string]: string | DepartmentProjectPlan[] | null
 }
 
 export type DepartmentProjectPlan = {
     id: string
     userPosition: string
     project: string
-    hours: string
-    [weekNumber: string]: string
+    hours: string | null
+    [weekNumber: string]: string | null
 }
 
 export class DepartmentPlanFlatRecordVmHelper {
@@ -55,7 +55,7 @@ export class DepartmentPlanFlatRecordVmHelper {
                     const weekIdent = "week" + weekIdx.toString()
                     
                     const hoursAsString = project[weekIdent]
-                    if (hoursAsString !== "") {
+                    if (hoursAsString && hoursAsString !== "") {
                         const weekHours = parseFloat(hoursAsString)
                         projectHours += weekHours
                         userHours += weekHours
@@ -68,11 +68,11 @@ export class DepartmentPlanFlatRecordVmHelper {
                     }
                     weekIdx++
                 }
-                project.hours = projectHours > 0 ? projectHours.toString() : ''
+                project.hours = projectHours > 0 ? projectHours.toString() : null
             });
-            user.hours = userHours > 0 ? userHours.toString() : ''
+            user.hours = userHours > 0 ? userHours.toString() : null
             Object.keys(weekSumHours).forEach(weekIdent => {
-                user[weekIdent.toString()] = weekSumHours[weekIdent] > 0 ? weekSumHours[weekIdent].toString() : ''
+                user[weekIdent.toString()] = weekSumHours[weekIdent] > 0 ? weekSumHours[weekIdent].toString() : null
             })
 
         });
@@ -88,7 +88,7 @@ export class DepartmentPlanFlatRecordVmHelper {
                 userName: user.userName,
                 userPosition: user.userPosition,
                 project: '',
-                hours: '',
+                hours: null,
                 __children: []
             };
             idx++;
@@ -97,7 +97,7 @@ export class DepartmentPlanFlatRecordVmHelper {
                 const projectRecord: DepartmentProjectPlan = {
                     id: "p" + idx.toString(),
                     userPosition: '',
-                    hours: '',
+                    hours: null,
                     project: project.projectId + ": " + (project.projectShortName ? project.projectShortName : project.projectName)
                 }
                 idx++;

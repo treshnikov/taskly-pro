@@ -51,9 +51,10 @@ export const NavBar: React.FunctionComponent = () => {
         backgroundColor: "rgb(243, 244, 245)",
         boxShadow: "#eeeeee 0px 0px 20px 0px",
         color: "rgb(44, 44, 44)",
-        height: "60px"
+        height: "60px",
+        position: "fixed"
       }}>
-        <Toolbar>
+        <Toolbar >
           <SidebarMenu />
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             <p className='logo' onClick={e => { navigate("/") }} >{t('app-name')}</p>

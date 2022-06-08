@@ -1,5 +1,5 @@
 import HotTable, { HotColumn } from "@handsontable/react";
-import { Button, Stack } from "@mui/material";
+import { Button, Checkbox, FormControlLabel, FormGroup, Stack } from "@mui/material";
 import { CellChange, CellValue, ChangeSource, RangeType } from "handsontable/common";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -32,6 +32,7 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
     const hotTableRef = useRef<HotTable>(null);
     const staticHeaders = ["Id", "User", "Position", "Hours", "Project"]
     const columnWidths = [50, 280, 50, 50, 330]
+    const [hiddenRows, setHiddenRows] = useState<number[]>([])
 
     useEffect(() => {
         //todo pass start and end date
@@ -56,8 +57,8 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
     useEffect(() => {
         if (plan && plan.length > 0 && hotTableRef && hotTableRef.current && hotTableRef.current.hotInstance) {
             hotTableRef.current.hotInstance.loadData(plan)
-            // const plugin = hotTableRef.current.hotInstance.getPlugin('nestedRows') as any
-            // plugin.collapsingUI.collapseAll()
+            const plugin = hotTableRef.current.hotInstance.getPlugin('nestedRows') as any
+            plugin.collapsingUI.collapseAll()
         }
     }, [plan])
 
@@ -66,6 +67,7 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
             <h3>{departmentName}</h3>
             <Stack direction={"row"}>
                 <Button
+                    size="small"
                     variant="contained"
                     onClick={e => {
                         if (hotTableRef && hotTableRef.current && hotTableRef.current.hotInstance) {
@@ -73,19 +75,47 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
                             plugin.collapsingUI.collapseAll()
                         }
 
-                    }}>Collapse all</Button>
-            </Stack>            
+                    }}>
+                    Collapse all
+                </Button>
+                <FormGroup>
+                    <FormControlLabel
+                        control={<Checkbox
+                            onChange={e => {
+                                if (!e.target.checked) {
+                                    setHiddenRows([])
+                                    return
+                                }
+
+                                let hiddenRows: number[] = []
+                                let idx = 0
+                                for (let i = 0; i < plan.length; i++) {
+                                    idx++;
+                                    for (let j = 0; j < plan[i].__children.length; j++) {
+                                        if (!plan[i].__children[j].hours) {
+                                            hiddenRows.push(idx)
+                                        }
+                                        idx++;
+                                    }
+                                }
+                                setHiddenRows(hiddenRows)
+                            }}
+                        />}
+                        label={t('hide-empty')} />
+                </FormGroup>
+            </Stack>
             <HotTable
                 id="projectDetailsTable"
                 ref={hotTableRef}
                 data={plan}
-                colHeaders={(idx: number) => {
-                    if (idx < staticHeaders.length) {
-                        return headers[idx]
-                    }
+                colHeaders={headers}
+                // colHeaders={(idx: number) => {
+                //     if (idx < staticHeaders.length) {
+                //         return headers[idx]
+                //     }
 
-                    return "<div style='font-size:10px;'>" + headers[idx] + "</div>"
-                }}
+                //     return "<div style='font-size:10px;'>" + headers[idx] + "</div>"
+                // }}
 
                 colWidths={columnWidths}
                 viewportColumnRenderingOffset={headers.length}
@@ -93,11 +123,15 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
                 hiddenColumns={{
                     columns: [0]
                 }}
+                hiddenRows={{
+                    rows: hiddenRows
+                }}
                 renderAllRows={true}
                 columnSorting={false}
                 rowHeaders={true}
                 nestedRows={true}
-                manualRowMove={true}
+                manualRowMove={false}
+                manualColumnMove={false}
                 wordWrap={true}
                 fillHandle={false}
                 manualColumnResize={true}
