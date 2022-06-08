@@ -26,12 +26,13 @@ namespace Taskly.Application.Users
             {
                 Extract(request, out DepartmentJson[] deps, out UserJson[] users, out ProjectJson[] projects);
 
-                await UpdateUsers(users, cancellationToken);
-                await UpdateUserPositions(users, cancellationToken);
-                await UpdateDepartments(deps, cancellationToken);
-                await UpdateUserDepartmentLinks(users, deps, cancellationToken);
-                await UpdateProjects(projects, cancellationToken);
-                await UpdateProjectTasks(request, cancellationToken);
+                // await UpdateUsers(users, cancellationToken);
+                // await UpdateUserPositions(users, cancellationToken);
+                // await UpdateDepartments(deps, cancellationToken);
+                // await UpdateUserDepartmentLinks(users, deps, cancellationToken);
+                // await UpdateProjects(projects, cancellationToken);
+                // await UpdateProjectTasks(request, cancellationToken);
+                await UpdateProjectPlan("import/ОП ДС.XLSX", 244, cancellationToken);
 
                 return Unit.Value;
             }
@@ -40,6 +41,156 @@ namespace Taskly.Application.Users
                 throw;
             }
 
+        }
+
+        private async Task UpdateProjectPlan(string fileName, int departmentCode, CancellationToken cancellationToken)
+        {
+            var path = Directory.GetParent(typeof(ImportDataFromJsonRequestHandler).Assembly.Location)!.FullName;
+            var filePath = Path.Combine(path, fileName);
+            if (!File.Exists(filePath))
+            {
+                Console.WriteLine($"Cannot find {filePath}");
+                return;
+            }
+
+            using var transaction = _dbContext.Database.BeginTransaction();
+            var dbDep = _dbContext.Departments.First(i => i.Code == departmentCode);
+
+            // remove old plans
+            var plan = _dbContext.DepartmentPlans.Include(i => i.Department).Where(i => i.Department.Code == departmentCode);
+            foreach (var item in plan)
+            {
+                _dbContext.DepartmentPlans.Remove(item);
+            }
+            await _dbContext.SaveChangesAsync(cancellationToken);
+
+            //extract plans from Excel
+            List<UserPlan> plans = ExtractPlans(filePath);
+
+            var dbUsers = await _dbContext.Users.AsNoTracking().ToListAsync(cancellationToken);
+            var dbProjects = await _dbContext.Projects.AsNoTracking().ToListAsync(cancellationToken);
+            foreach (var planItem in plans)
+            {
+                var user = dbUsers.FirstOrDefault(i => i.Name == planItem.UserName);
+                if (user == null)
+                {
+                    Log.Error($"Cannot find user with name {planItem.UserName}");
+                    continue;
+                }
+
+                foreach (var w in planItem.Weeks)
+                {
+                    foreach (var pr in w.Projects)
+                    {
+                        if (!pr.ProjectCode.HasValue)
+                        {
+                            //todo 
+                            continue;
+                        }
+
+                        var p = new DepartmentPlan
+                        {
+                            DepartmentId = dbDep.Id,
+                            UserId = user.Id,
+                            Hours = pr.Hours,
+                            WeekStart = w.WeekStart,
+                            ProjectId = dbProjects.First(i => i.Id == pr.ProjectCode.Value).Id
+                        };
+                        _dbContext.DepartmentPlans.Add(p);
+
+                    }
+                }
+            }
+
+            await _dbContext.SaveChangesAsync(cancellationToken);
+            transaction.Commit();
+        }
+
+        private List<UserPlan> ExtractPlans(string filePath)
+        {
+            var res = new List<UserPlan>();
+
+            using var workbook = new XLWorkbook(filePath);
+            var worksheet = workbook.Worksheets.First(i => i.Name == "План");
+
+            var userName = "";
+            var rowIdx = 2;
+            while (true)
+            {
+                userName = worksheet.Cell(rowIdx, 2).GetValue<string>().Trim();
+                if (string.IsNullOrWhiteSpace(userName))
+                {
+                    break;
+                }
+
+                var userPlan = new UserPlan
+                {
+                    UserName = userName,
+                    Weeks = new List<WeekPlan>()
+                };
+
+                var weekIdx = 5;
+                while (true)
+                {
+                    var weekStartStr = worksheet.Cell(1, weekIdx).GetValue<string>();
+                    if (!DateTime.TryParse(weekStartStr, out DateTime weekStartAsDt))
+                    {
+                        Log.Logger.Error($"Cannot conver {weekStartStr} to DateTime");
+                        break;
+                    }
+
+                    var planStr = worksheet.Cell(rowIdx, weekIdx).GetValue<string>();
+                    if (string.IsNullOrWhiteSpace(planStr))
+                    {
+                        weekIdx++;
+                        continue;
+                    }
+
+                    var weekPlan = new WeekPlan
+                    {
+                        WeekStart = weekStartAsDt,
+                        Projects = new List<ProjectPlan>()
+                    };
+
+                    foreach (var rec in planStr.Split("\n"))
+                    {
+                        if (string.IsNullOrWhiteSpace(rec) || !rec.Contains("="))
+                        {
+                            continue;
+                        }
+
+                        var projName = rec.Split("=")[0].Replace("#", string.Empty);
+                        if (!int.TryParse(projName, out int projCode))
+                        {
+                            // handle АДМ, Партнеры, Больичный, Отпуск, etc.
+                            Log.Logger.Error($"Cannot conver {projName} to int");
+                            projCode = -1;
+                        }
+
+                        var estAsStr = rec.Split("=")[1];
+                        if (!float.TryParse(estAsStr, out float est))
+                        {
+                            Log.Logger.Error($"Cannot conver {estAsStr} to float");
+                            continue;
+                        }
+                        weekPlan.Projects.Add(new ProjectPlan
+                        {
+                            //todo - add coefficent depending on user position
+                            Hours = est * 40,
+                            ProjectName = projName,
+                            ProjectCode = projCode > 0 ? projCode : null
+                        });
+                    }
+
+                    userPlan.Weeks.Add(weekPlan);
+                    weekIdx++;
+                }
+
+                res.Add(userPlan);
+                rowIdx++;
+            }
+
+            return res;
         }
 
         private async Task UpdateProjectTasks(ImportDataFromJsonRequest request, CancellationToken cancellationToken)
@@ -717,6 +868,24 @@ namespace Taskly.Application.Users
         public string? contract { get; set; }
     }
 
+    internal class UserPlan
+    {
+        public string UserName { get; set; }
+        public List<WeekPlan> Weeks { get; set; }
+    }
+
+    internal class WeekPlan
+    {
+        public DateTime WeekStart { get; set; }
+        public List<ProjectPlan> Projects { get; set; }
+    }
+
+    internal class ProjectPlan
+    {
+        public int? ProjectCode { get; set; }
+        public string ProjectName { get; set; }
+        public float Hours { get; set; }
+    }
 
 
 }

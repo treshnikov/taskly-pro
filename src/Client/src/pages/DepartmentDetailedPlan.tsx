@@ -1,4 +1,5 @@
 import HotTable, { HotColumn } from "@handsontable/react";
+import { Button, Stack } from "@mui/material";
 import { CellChange, CellValue, ChangeSource, RangeType } from "handsontable/common";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -63,6 +64,17 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
     return (
         <div className='page-container'>
             <h3>{departmentName}</h3>
+            <Stack direction={"row"}>
+                <Button
+                    variant="contained"
+                    onClick={e => {
+                        if (hotTableRef && hotTableRef.current && hotTableRef.current.hotInstance) {
+                            const plugin = hotTableRef.current.hotInstance.getPlugin('nestedRows') as any
+                            plugin.collapsingUI.collapseAll()
+                        }
+
+                    }}>Collapse all</Button>
+            </Stack>            
             <HotTable
                 id="projectDetailsTable"
                 ref={hotTableRef}
