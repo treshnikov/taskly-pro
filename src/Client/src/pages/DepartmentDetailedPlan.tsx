@@ -1,6 +1,8 @@
 import HotTable, { HotColumn } from "@handsontable/react";
 import { Button, Checkbox, FormControlLabel, FormGroup, Stack } from "@mui/material";
+import Handsontable from "handsontable";
 import { CellChange, ChangeSource } from "handsontable/common";
+import Core from "handsontable/core";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
@@ -75,6 +77,33 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
         }
 
         return true
+    }
+
+    const weekPlanCellRenderer = (instance: Handsontable.Core, td: HTMLTableCellElement, row: number, col: number, prop: string | number, value: any, cellProperties: Handsontable.CellProperties): void => {
+        Handsontable.renderers.TextRenderer.apply(this, [instance, td, row, col, prop, value, cellProperties]);
+
+        const rowId = instance.getDataAtCell(row, 0);
+
+        // rows with user name contain summary info that should not be editable
+        if (rowId[0] === 'u') {
+            cellProperties.readOnly = true;
+            td.style.fontStyle = 'italic';
+
+            const valueAsFloat = parseFloat(value)
+            if (!isNaN(valueAsFloat)) {
+                td.style.fontWeight = '500'
+                if (valueAsFloat === 40) {
+                    td.style.background = '-webkit-linear-gradient(bottom, #ecffeb 20%, white 20%)'
+                }
+                else{
+                    td.style.background = '-webkit-linear-gradient(bottom, #ffffe0 20%, white 20%)'
+                }
+            }
+            else{
+                td.style.background = '-webkit-linear-gradient(bottom, #f8f8f8 20%, white 20%)'
+            }
+
+        }
     }
 
     useEffect(() => {
@@ -181,7 +210,9 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
                 {
                     headers.slice(staticHeaders.length).map((header, idx) => {
                         return (
-                            <HotColumn key={"depPlanWeek" + idx} data={"week" + (idx + 1).toString()} type={"text"} >
+                            <HotColumn key={"depPlanWeek" + idx} data={"week" + (idx + 1).toString()} type={"text"}
+                                renderer={weekPlanCellRenderer}
+                            >
                             </HotColumn>)
                     })
                 }
