@@ -1,6 +1,6 @@
 import HotTable, { HotColumn } from "@handsontable/react";
 import { Button, Checkbox, FormControlLabel, FormGroup, Stack } from "@mui/material";
-import { CellChange, CellValue, ChangeSource, RangeType } from "handsontable/common";
+import { CellChange, ChangeSource } from "handsontable/common";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
@@ -25,14 +25,57 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
     const { request } = useHttp()
     const { t } = useTranslation();
 
-    // unfortunately, we must store the state locally because passing such amount of records to redux causes low performance
-    const [plan, setPlan] = useState<DepartmentUserPlan[]>(initData)
-
-    const [headers, setHeaders] = useState<string[]>([])
-    const hotTableRef = useRef<HotTable>(null);
     const staticHeaders = ["Id", "User", "Position", "Hours", "Project"]
     const columnWidths = [50, 280, 50, 50, 330]
+    const hotTableRef = useRef<HotTable>(null);
+
+    // unfortunately, we must store the state locally because passing such amount of records to redux causes low performance
+    const [plan, setPlan] = useState<DepartmentUserPlan[]>(initData)
+    const [headers, setHeaders] = useState<string[]>(['', '', '', '', ''])
     const [hiddenRows, setHiddenRows] = useState<number[]>([])
+
+    const getRowsWithEmtyPlans = (plan: DepartmentUserPlan[]): number[] => {
+        let hiddenRows: number[] = [];
+        let idx = 0;
+        for (let i = 0; i < plan.length; i++) {
+            idx++;
+            for (let j = 0; j < plan[i].__children.length; j++) {
+                if (!plan[i].__children[j].hours) {
+                    hiddenRows.push(idx);
+                }
+                idx++;
+            }
+        }
+        return hiddenRows;
+    }
+
+    const collapseAllRows = (): void => {
+        if (hotTableRef && hotTableRef.current && hotTableRef.current.hotInstance) {
+            const plugin = hotTableRef.current.hotInstance.getPlugin('nestedRows') as any
+            plugin.collapsingUI.collapseAll()
+        }
+    }
+
+    const onPlanChanged = (plan: DepartmentUserPlan[], projectId: string, weekId: string, hours: string): boolean => {
+        // prevent editing cells with summary info
+        if (projectId[0] === 'u') {
+            return false
+        }
+
+        // find and update changed record
+        let record: DepartmentProjectPlan = { id: '', hours: '', project: '', userPosition: '', userName: '' }
+        const found = plan.some(u => u.__children.some(p => {
+            record = p
+            return p.id === projectId
+        }))
+
+        if (found) {
+            record[weekId] = hours
+            DepartmentPlanFlatRecordVmHelper.recalcHours(plan)
+        }
+
+        return true
+    }
 
     useEffect(() => {
         //todo pass start and end date
@@ -50,6 +93,7 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
             setHeaders(headers)
 
             const flatPlan = DepartmentPlanFlatRecordVmHelper.buildFlatPlan(depPlan)
+            setHiddenRows(getRowsWithEmtyPlans(flatPlan))
             setPlan(flatPlan)
         })
     }, [])
@@ -69,37 +113,13 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
                 <Button
                     size="small"
                     variant="contained"
-                    onClick={e => {
-                        if (hotTableRef && hotTableRef.current && hotTableRef.current.hotInstance) {
-                            const plugin = hotTableRef.current.hotInstance.getPlugin('nestedRows') as any
-                            plugin.collapsingUI.collapseAll()
-                        }
-
-                    }}>
+                    onClick={e => { collapseAllRows() }}>
                     Collapse all
                 </Button>
                 <FormGroup>
                     <FormControlLabel
-                        control={<Checkbox
-                            onChange={e => {
-                                if (!e.target.checked) {
-                                    setHiddenRows([])
-                                    return
-                                }
-
-                                let hiddenRows: number[] = []
-                                let idx = 0
-                                for (let i = 0; i < plan.length; i++) {
-                                    idx++;
-                                    for (let j = 0; j < plan[i].__children.length; j++) {
-                                        if (!plan[i].__children[j].hours) {
-                                            hiddenRows.push(idx)
-                                        }
-                                        idx++;
-                                    }
-                                }
-                                setHiddenRows(hiddenRows)
-                            }}
+                        control={<Checkbox checked={hiddenRows.length > 0}
+                            onChange={e => { setHiddenRows(!e.target.checked ? [] : getRowsWithEmtyPlans(plan)) }}
                         />}
                         label={t('hide-empty')} />
                 </FormGroup>
@@ -120,12 +140,8 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
                 colWidths={columnWidths}
                 viewportColumnRenderingOffset={headers.length}
                 fixedColumnsLeft={staticHeaders.length}
-                hiddenColumns={{
-                    columns: [0]
-                }}
-                hiddenRows={{
-                    rows: hiddenRows
-                }}
+                hiddenColumns={{ columns: [0] }}
+                hiddenRows={{ rows: hiddenRows }}
                 renderAllRows={true}
                 columnSorting={false}
                 rowHeaders={true}
@@ -141,56 +157,17 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
                 }}
 
                 beforeChange={(changes: CellChange[], source: ChangeSource) => {
-                    //dispatch(onTaskAttributeChanged(changes))
-
-                    if (hotTableRef && hotTableRef.current && hotTableRef.current.hotInstance) {
-                        const rowId = hotTableRef.current.hotInstance.getDataAtCell(changes[0][0], 0)
-                        // prevent editing cells with summary info
-                        if (rowId[0] === 'u') {
-                            return false
-                        }
-
-                        // find and update changed record
-                        let record: DepartmentProjectPlan = { id: '', hours: '', project: '', userPosition: '', userName: '' }
-                        const found = plan.some(u => u.__children.some(p => {
-                            record = p
-                            return p.id === rowId
-                        }))
-
-                        if (found) {
-                            const weekId = changes[0][1]
-                            const newValue = changes[0][3]
-                            record[weekId] = newValue
-
-                            // recalc hours and update view
-                            DepartmentPlanFlatRecordVmHelper.recalcHours(plan)
-                        }
+                    if (!hotTableRef || !hotTableRef.current || !hotTableRef.current.hotInstance) {
+                        return
                     }
+
+                    const projectId = hotTableRef.current.hotInstance.getDataAtCell(changes[0][0], 0)
+                    const weekId = changes[0][1]
+                    const newValue = changes[0][3]
+
+                    return onPlanChanged(plan, projectId, weekId as string, newValue)
                 }}
 
-                beforeRowMove={(movedRows: number[], finalIndex: number, dropIndex: number | undefined, movePossible: boolean) => {
-                    // dispatch(onTasksMoved({ movedRows, finalIndex }))
-                    // scrollToRow(finalIndex)
-                    return false
-                }}
-
-                afterSelectionEnd={(row: number, column: number, row2: number, column2: number, selectionLayerLevel: number) => {
-                    //dispatch(onRowSelected(row))
-                }}
-
-                afterDeselect={() => {
-                    // to allow capturing selectedRowIdx for dialog windows
-                    // setTimeout(() => {
-                    //     dispatch(onRowSelected(-1))
-                    // }, 200);
-                }}
-
-                afterRender={(isForced: boolean) => {
-                    // setTimeout(() => {
-                    //     const tableHeight = document.querySelector<HTMLElement>(".htCore")?.offsetHeight
-                    //     setTableHeight(50 + (tableHeight as number))
-                    // }, 500);
-                }}
                 outsideClickDeselects={true}
                 licenseKey='non-commercial-and-evaluation'
             >
@@ -208,8 +185,6 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
                             </HotColumn>)
                     })
                 }
-
-
             </HotTable>
         </div>)
 }
