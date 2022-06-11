@@ -62,5 +62,8 @@
     "department-plans": "Планы отделов",
     "department-plans-welcome": "Управление планами отделов.",
     "plans": "Планы",
-    "hide-empty": "Скрыть пустые"
+    "hide-empty": "Скрыть пустые",
+    "collapse": "Свернуть",
+    "expand": "Развернуть",
+    "hide-project-with-no-estimation": "Скрыть проекты без оценки"
 }   

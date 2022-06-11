@@ -10,6 +10,8 @@ import { dateAsShortStrWithShortYear } from "../common/dateFormatter";
 import { ProjectNameRenderer } from "../components/DepartmentPlan/Renderers/ProjectNameRenderer";
 import { useHttp } from "../hooks/http.hook";
 import { DepartmentUserPlan as DepartmentUserPlan, DepartmentPlanFlatRecordVmHelper, DepartmentPlanUserRecordVm, DepartmentProjectPlan } from "../models/DepartmentPlan/DepartmentPlanClasses";
+import IndeterminateCheckBoxIcon from '@mui/icons-material/IndeterminateCheckBox';
+import AddBoxIcon from '@mui/icons-material/AddBox';
 
 const initData: DepartmentUserPlan[] = [{
     id: '',
@@ -57,6 +59,13 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
             plugin.collapsingUI.collapseAll()
         }
     }
+    
+    const expandAllRows = (): void => {
+        if (hotTableRef && hotTableRef.current && hotTableRef.current.hotInstance) {
+            const plugin = hotTableRef.current.hotInstance.getPlugin('nestedRows') as any
+            plugin.collapsingUI.expandAll()
+        }
+    }
 
     const onPlanChanged = (plan: DepartmentUserPlan[], projectId: string, weekId: string, hours: string): boolean => {
         // prevent editing cells with summary info
@@ -95,11 +104,11 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
                 if (valueAsFloat === 40) {
                     td.style.background = '-webkit-linear-gradient(bottom, #ecffeb 20%, white 20%)'
                 }
-                else{
+                else {
                     td.style.background = '-webkit-linear-gradient(bottom, #ffffe0 20%, white 20%)'
                 }
             }
-            else{
+            else {
                 td.style.background = '-webkit-linear-gradient(bottom, #f8f8f8 20%, white 20%)'
             }
 
@@ -138,19 +147,27 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
     return (
         <div className='page-container'>
             <h3>{departmentName}</h3>
-            <Stack direction={"row"}>
+            <Stack direction={"row"} spacing={1}>
                 <Button
                     size="small"
                     variant="contained"
+                    startIcon={<IndeterminateCheckBoxIcon />}
                     onClick={e => { collapseAllRows() }}>
-                    Collapse all
+                    {t('collapse')}
+                </Button>
+                <Button
+                    size="small"
+                    variant="contained"
+                    startIcon={<AddBoxIcon />}
+                    onClick={e => { expandAllRows() }}>
+                    {t('expand')}
                 </Button>
                 <FormGroup>
                     <FormControlLabel
                         control={<Checkbox checked={hiddenRows.length > 0}
                             onChange={e => { setHiddenRows(!e.target.checked ? [] : getRowsWithEmtyPlans(plan)) }}
                         />}
-                        label={t('hide-empty')} />
+                        label={t('hide-project-with-no-estimation')} />
                 </FormGroup>
             </Stack>
             <HotTable

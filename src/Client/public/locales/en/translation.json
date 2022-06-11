@@ -62,5 +62,8 @@
     "department-plans": "Department plans",
     "department-plans-welcome": "Manage working plans of departments.",
     "plans": "Plans",
-    "hide-empty": "Hide empty"
+    "hide-empty": "Hide empty",
+    "collapse": "Collapse",
+    "expand": "Expand",
+    "hide-project-with-no-estimation": "Hide project with no estimation"
 }
