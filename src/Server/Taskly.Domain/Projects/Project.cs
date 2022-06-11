@@ -13,7 +13,7 @@ namespace Taskly.Domain
         public DateTime Start { get; set; }
         public DateTime End { get; set; }
         public DateTime? CloseDate { get; set; }
-        public virtual Customer Customer { get; set; }
+        public virtual Customer? Customer { get; set; }
         public string Contract { get; set; }
         public ICollection<ProjectTask> Tasks { get; set; }
     }
