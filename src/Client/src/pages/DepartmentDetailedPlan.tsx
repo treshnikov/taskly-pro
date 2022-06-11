@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { dateAsShortStrWithShortYear } from "../common/dateFormatter";
+import { getColor } from "../common/getColor";
 import { ProjectNameRenderer } from "../components/DepartmentPlan/Renderers/ProjectNameRenderer";
 import { useHttp } from "../hooks/http.hook";
 import { DepartmentUserPlan as DepartmentUserPlan, DepartmentPlanFlatRecordVmHelper, DepartmentPlanUserRecordVm, DepartmentProjectPlan } from "../models/DepartmentPlan/DepartmentPlanClasses";
@@ -105,13 +106,30 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
                     td.style.background = '-webkit-linear-gradient(bottom, #ecffeb 20%, white 20%)'
                 }
                 else {
-                    td.style.background = '-webkit-linear-gradient(bottom, #ffffe0 20%, white 20%)'
+                    if (valueAsFloat > 40) {
+                        td.style.background = '-webkit-linear-gradient(bottom, #ffcccc 20%, white 20%)'
+                    }
+                    else {
+                        td.style.background = '-webkit-linear-gradient(bottom, #ffffe0 20%, white 20%)'
+                    }
                 }
             }
             else {
                 td.style.background = '-webkit-linear-gradient(bottom, #f8f8f8 20%, white 20%)'
             }
 
+        }
+    }
+
+    const projectCellRenderer = (instance: Handsontable.Core, td: HTMLTableCellElement, row: number, col: number, prop: string | number, value: any, cellProperties: Handsontable.CellProperties): void => {
+        Handsontable.renderers.TextRenderer.apply(this, [instance, td, row, col, prop, value, cellProperties]);
+
+        const rowId = instance.getDataAtCell(row, 0);
+
+        const color = getColor(value)
+        if (rowId[0] === 'p') {
+            td.style.background = '-webkit-linear-gradient(left, ' + color + '88 8px, white 8px)'
+            td.style.paddingLeft = '10px'
         }
     }
 
@@ -174,14 +192,13 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
                 id="projectDetailsTable"
                 ref={hotTableRef}
                 data={plan}
-                colHeaders={headers}
-                // colHeaders={(idx: number) => {
-                //     if (idx < staticHeaders.length) {
-                //         return headers[idx]
-                //     }
+                colHeaders={(idx: number) => {
+                    if (idx < staticHeaders.length) {
+                        return headers[idx]
+                    }
 
-                //     return "<div style='font-size:10px;'>" + headers[idx] + "</div>"
-                // }}
+                    return "<div style='font-size:10px;'>" + headers[idx] + "</div>"
+                }}
 
                 colWidths={columnWidths}
                 viewportColumnRenderingOffset={headers.length}

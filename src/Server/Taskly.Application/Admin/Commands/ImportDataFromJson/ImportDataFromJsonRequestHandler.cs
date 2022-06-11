@@ -26,14 +26,24 @@ namespace Taskly.Application.Users
             {
                 Extract(request, out DepartmentJson[] deps, out UserJson[] users, out ProjectJson[] projects);
 
-                // await UpdateUsers(users, cancellationToken);
-                // await UpdateUserPositions(users, cancellationToken);
-                // await UpdateDepartments(deps, cancellationToken);
-                // await UpdateUserDepartmentLinks(users, deps, cancellationToken);
-                // await UpdateProjects(projects, cancellationToken);
-                // await UpdateProjectTasks(request, cancellationToken);
+                await UpdateUsers(users, cancellationToken);
+                await UpdateUserPositions(users, cancellationToken);
+                await UpdateDepartments(deps, cancellationToken);
+                await UpdateUserDepartmentLinks(users, deps, cancellationToken);
+                await UpdateProjects(projects, cancellationToken);
+                await UpdateProjectTasks(request, cancellationToken);
+                
                 await UpdateProjectPlan("import/ОП ДС.XLSX", 244, cancellationToken);
                 await UpdateProjectPlan("import/ОП_АС.xlsx", 245, cancellationToken);
+
+                // await UpdateProjectPlan("import/АСУТПвН.xlsx", 243, cancellationToken);
+                // await UpdateProjectPlan("import/АСУТПвЭ.xlsx", 242, cancellationToken);
+                // await UpdateProjectPlan("import/ИБ_и_ОСР.XLSX", 233, cancellationToken);
+                // await UpdateProjectPlan("import/ПРСУ.XLSX", 176, cancellationToken);
+                // await UpdateProjectPlan("import/СУПП.xlsx", 234, cancellationToken);
+                // await UpdateProjectPlan("import/ЭМУ.xlsx", 179, cancellationToken);
+                // await UpdateProjectPlan("import/ЭТЛ.xlsx", 177, cancellationToken);
+                // await UpdateProjectPlan("import/ЭТО.xlsx", 178, cancellationToken);
 
                 return Unit.Value;
             }
@@ -85,20 +95,47 @@ namespace Taskly.Application.Users
                     {
                         if (!pr.ProjectCode.HasValue)
                         {
-                            //todo 
-                            continue;
+                            // create a new project
+                            var projectWithNoCode = await _dbContext.Projects.FirstOrDefaultAsync(i => i.Name == pr.ProjectName, cancellationToken);
+                            if (projectWithNoCode == null)
+                            {
+                                projectWithNoCode = new Project
+                                {
+                                    Name = pr.ProjectName,
+                                    ShortName = pr.ProjectName,
+                                    Type = ProjectType.Internal,
+                                    Start = new DateTime(2000, 01, 01),
+                                    End = new DateTime(3000, 01, 01),
+                                    IsOpened = true,
+                                    Contract = "",
+                                    Tasks = new List<ProjectTask>()
+                                };
+                                _dbContext.Projects.Add(projectWithNoCode);
+                                await _dbContext.SaveChangesAsync(cancellationToken);
+                            }
+
+                            var p = new DepartmentPlan
+                            {
+                                DepartmentId = dbDep.Id,
+                                UserId = user.Id,
+                                Hours = pr.Hours,
+                                WeekStart = w.WeekStart,
+                                Project = projectWithNoCode
+                            };
+                            _dbContext.DepartmentPlans.Add(p);
                         }
-
-                        var p = new DepartmentPlan
+                        else
                         {
-                            DepartmentId = dbDep.Id,
-                            UserId = user.Id,
-                            Hours = pr.Hours,
-                            WeekStart = w.WeekStart,
-                            ProjectId = dbProjects.First(i => i.Id == pr.ProjectCode.Value).Id
-                        };
-                        _dbContext.DepartmentPlans.Add(p);
-
+                            var p = new DepartmentPlan
+                            {
+                                DepartmentId = dbDep.Id,
+                                UserId = user.Id,
+                                Hours = pr.Hours,
+                                WeekStart = w.WeekStart,
+                                ProjectId = dbProjects.First(i => i.Id == pr.ProjectCode.Value).Id
+                            };
+                            _dbContext.DepartmentPlans.Add(p);
+                        }
                     }
                 }
             }

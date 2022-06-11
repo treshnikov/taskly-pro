@@ -27,7 +27,7 @@ namespace Taskly.Application.Projects
                 CloseDate = p.CloseDate,
                 Company = p.Company?.Name,
                 Contract = p.Contract,
-                Customer = p.Customer.Name,
+                Customer = p.Customer?.Name,
                 IsExternal = p.Type == ProjectType.External,
                 End = p.End,
                 IsOpened = p.IsOpened,

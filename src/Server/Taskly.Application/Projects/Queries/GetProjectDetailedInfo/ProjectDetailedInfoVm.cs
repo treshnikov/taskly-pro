@@ -80,7 +80,7 @@ namespace Taskly.Application.Projects
                 CloseDate = p.CloseDate,
                 Company = p.Company?.Name,
                 Contract = p.Contract,
-                Customer = p.Customer.Name,
+                Customer = p.Customer?.Name,
                 End = p.End,
                 IsOpened = p.IsOpened,
                 IsExternal = p.Type == ProjectType.External,

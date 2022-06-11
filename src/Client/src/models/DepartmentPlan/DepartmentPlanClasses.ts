@@ -104,7 +104,7 @@ export class DepartmentPlanFlatRecordVmHelper {
 
                 // populate weekX attributes
                 project.plans.forEach(week => {
-                    projectRecord["week" + week.weekNumber.toString()] = week.plannedHours === 0 ? '' : week.plannedHours.toString();
+                    projectRecord["week" + week.weekNumber.toString()] = week.plannedHours === 0 ? null : week.plannedHours.toString();
                 });
 
                 userRecord.__children.push(projectRecord);
