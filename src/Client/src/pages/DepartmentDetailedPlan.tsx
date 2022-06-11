@@ -1,5 +1,5 @@
 import HotTable, { HotColumn } from "@handsontable/react";
-import { Button, Checkbox, FormControlLabel, FormGroup, Stack } from "@mui/material";
+import { Button, Checkbox, FormControlLabel, FormGroup, Grid, Stack, Typography } from "@mui/material";
 import Handsontable from "handsontable";
 import { CellChange, ChangeSource } from "handsontable/common";
 import Core from "handsontable/core";
@@ -60,7 +60,7 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
             plugin.collapsingUI.collapseAll()
         }
     }
-    
+
     const expandAllRows = (): void => {
         if (hotTableRef && hotTableRef.current && hotTableRef.current.hotInstance) {
             const plugin = hotTableRef.current.hotInstance.getPlugin('nestedRows') as any
@@ -164,92 +164,98 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
 
     return (
         <div className='page-container'>
-            <h3>{departmentName}</h3>
-            <Stack direction={"row"} spacing={1}>
-                <Button
-                    size="small"
-                    variant="contained"
-                    startIcon={<IndeterminateCheckBoxIcon />}
-                    onClick={e => { collapseAllRows() }}>
-                    {t('collapse')}
-                </Button>
-                <Button
-                    size="small"
-                    variant="contained"
-                    startIcon={<AddBoxIcon />}
-                    onClick={e => { expandAllRows() }}>
-                    {t('expand')}
-                </Button>
-                <FormGroup>
-                    <FormControlLabel
-                        control={<Checkbox checked={hiddenRows.length > 0}
-                            onChange={e => { setHiddenRows(!e.target.checked ? [] : getRowsWithEmtyPlans(plan)) }}
-                        />}
-                        label={t('hide-project-with-no-estimation')} />
-                </FormGroup>
-            </Stack>
-            <HotTable
-                id="projectDetailsTable"
-                ref={hotTableRef}
-                data={plan}
-                colHeaders={(idx: number) => {
-                    if (idx < staticHeaders.length) {
-                        return headers[idx]
+            <div style={{ position: "fixed", left: "1em", top: "4em" }}>
+                <Grid container>
+                    <Grid item md={11}>
+                        <Stack direction={"row"} spacing={1}>
+                            <Button size="small" variant="contained" startIcon={<AddBoxIcon />}
+                                onClick={e => { expandAllRows() }}>
+                                {t('expand')}
+                            </Button>
+                            <Button size="small" variant="contained" startIcon={<IndeterminateCheckBoxIcon />}
+                                onClick={e => { collapseAllRows() }}>
+                                {t('collapse')}
+                            </Button>
+                            <FormGroup>
+                                <FormControlLabel
+                                    control={<Checkbox checked={hiddenRows.length > 0}
+                                        onChange={e => { setHiddenRows(!e.target.checked ? [] : getRowsWithEmtyPlans(plan)) }}
+                                    />}
+                                    label={t('hide-project-with-no-estimation')} />
+                            </FormGroup>
+                        </Stack>
+                    </Grid>
+                    <Grid item md={1} style={{ textAlign: "right" }} paddingTop={0} paddingBottom={1}>
+                        <Stack direction="row" paddingTop={1} paddingBottom={1} justifyContent="flex-end" >
+                            <Typography variant='h6' style={{ whiteSpace: "nowrap" }}>{departmentName}</Typography>
+                        </Stack>
+                    </Grid>
+                </Grid>
+            </div>
+            <div style={{ paddingTop: "3.5em" }}>
+                <HotTable
+                    id="projectDetailsTable"
+                    ref={hotTableRef}
+                    data={plan}
+                    colHeaders={(idx: number) => {
+                        if (idx < staticHeaders.length) {
+                            return headers[idx]
+                        }
+
+                        return "<div style='font-size:10px;'>" + headers[idx] + "</div>"
+                    }}
+
+                    colWidths={columnWidths}
+                    viewportColumnRenderingOffset={headers.length}
+                    fixedColumnsLeft={staticHeaders.length}
+                    hiddenColumns={{ columns: [0] }}
+                    hiddenRows={{ rows: hiddenRows }}
+                    renderAllRows={true}
+                    columnSorting={false}
+                    rowHeaders={true}
+                    nestedRows={true}
+                    manualRowMove={false}
+                    manualColumnMove={false}
+                    wordWrap={true}
+                    fillHandle={false}
+                    manualColumnResize={true}
+
+                    afterSelection={(row: number, column: number, row2: number, column2: number, preventScrolling: { value: boolean }, selectionLayerLevel: number) => {
+                        preventScrolling.value = true
+                    }}
+
+                    beforeChange={(changes: CellChange[], source: ChangeSource) => {
+                        if (!hotTableRef || !hotTableRef.current || !hotTableRef.current.hotInstance) {
+                            return
+                        }
+
+                        const projectId = hotTableRef.current.hotInstance.getDataAtCell(changes[0][0], 0)
+                        const weekId = changes[0][1]
+                        const newValue = changes[0][3]
+
+                        return onPlanChanged(plan, projectId, weekId as string, newValue)
+                    }}
+
+                    outsideClickDeselects={true}
+                    licenseKey='non-commercial-and-evaluation'
+                >
+                    <HotColumn data={"id"} wordWrap={false} readOnly type={"text"} />
+                    <HotColumn data={"userName"} wordWrap={false} readOnly type={"text"} />
+                    <HotColumn data={"userPosition"} wordWrap={false} readOnly type={"text"} />
+                    <HotColumn data={"hours"} type={"text"} readOnly />
+                    <HotColumn data={"project"} type={"text"} readOnly >
+                        {/* <ProjectNameRenderer hot-renderer></ProjectNameRenderer> */}
+                    </HotColumn>
+                    {
+                        headers.slice(staticHeaders.length).map((header, idx) => {
+                            return (
+                                <HotColumn key={"depPlanWeek" + idx} data={"week" + (idx + 1).toString()} type={"text"}
+                                    renderer={weekPlanCellRenderer}
+                                >
+                                </HotColumn>)
+                        })
                     }
-
-                    return "<div style='font-size:10px;'>" + headers[idx] + "</div>"
-                }}
-
-                colWidths={columnWidths}
-                viewportColumnRenderingOffset={headers.length}
-                fixedColumnsLeft={staticHeaders.length}
-                hiddenColumns={{ columns: [0] }}
-                hiddenRows={{ rows: hiddenRows }}
-                renderAllRows={true}
-                columnSorting={false}
-                rowHeaders={true}
-                nestedRows={true}
-                manualRowMove={false}
-                manualColumnMove={false}
-                wordWrap={true}
-                fillHandle={false}
-                manualColumnResize={true}
-
-                afterSelection={(row: number, column: number, row2: number, column2: number, preventScrolling: { value: boolean }, selectionLayerLevel: number) => {
-                    preventScrolling.value = true
-                }}
-
-                beforeChange={(changes: CellChange[], source: ChangeSource) => {
-                    if (!hotTableRef || !hotTableRef.current || !hotTableRef.current.hotInstance) {
-                        return
-                    }
-
-                    const projectId = hotTableRef.current.hotInstance.getDataAtCell(changes[0][0], 0)
-                    const weekId = changes[0][1]
-                    const newValue = changes[0][3]
-
-                    return onPlanChanged(plan, projectId, weekId as string, newValue)
-                }}
-
-                outsideClickDeselects={true}
-                licenseKey='non-commercial-and-evaluation'
-            >
-                <HotColumn data={"id"} wordWrap={false} readOnly type={"text"} />
-                <HotColumn data={"userName"} wordWrap={false} readOnly type={"text"} />
-                <HotColumn data={"userPosition"} wordWrap={false} readOnly type={"text"} />
-                <HotColumn data={"hours"} type={"text"} readOnly />
-                <HotColumn data={"project"} type={"text"} readOnly >
-                    {/* <ProjectNameRenderer hot-renderer></ProjectNameRenderer> */}
-                </HotColumn>
-                {
-                    headers.slice(staticHeaders.length).map((header, idx) => {
-                        return (
-                            <HotColumn key={"depPlanWeek" + idx} data={"week" + (idx + 1).toString()} type={"text"}
-                                renderer={weekPlanCellRenderer}
-                            >
-                            </HotColumn>)
-                    })
-                }
-            </HotTable>
+                </HotTable>
+            </div>
         </div>)
 }

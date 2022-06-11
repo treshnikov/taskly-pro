@@ -36,14 +36,14 @@ namespace Taskly.Application.Users
                 await UpdateProjectPlan("import/ОП ДС.XLSX", 244, cancellationToken);
                 await UpdateProjectPlan("import/ОП_АС.xlsx", 245, cancellationToken);
 
-                // await UpdateProjectPlan("import/АСУТПвН.xlsx", 243, cancellationToken);
-                // await UpdateProjectPlan("import/АСУТПвЭ.xlsx", 242, cancellationToken);
-                // await UpdateProjectPlan("import/ИБ_и_ОСР.XLSX", 233, cancellationToken);
-                // await UpdateProjectPlan("import/ПРСУ.XLSX", 176, cancellationToken);
-                // await UpdateProjectPlan("import/СУПП.xlsx", 234, cancellationToken);
-                // await UpdateProjectPlan("import/ЭМУ.xlsx", 179, cancellationToken);
-                // await UpdateProjectPlan("import/ЭТЛ.xlsx", 177, cancellationToken);
-                // await UpdateProjectPlan("import/ЭТО.xlsx", 178, cancellationToken);
+                await UpdateProjectPlan("import/АСУТПвН.xlsx", 243, cancellationToken);
+                await UpdateProjectPlan("import/АСУТПвЭ.xlsx", 242, cancellationToken);
+                await UpdateProjectPlan("import/ИБ_и_ОСР.XLSX", 233, cancellationToken);
+                await UpdateProjectPlan("import/ПРСУ.XLSX", 176, cancellationToken);
+                await UpdateProjectPlan("import/СУПП.xlsx", 234, cancellationToken);
+                await UpdateProjectPlan("import/ЭМУ.xlsx", 179, cancellationToken);
+                await UpdateProjectPlan("import/ЭТЛ.xlsx", 177, cancellationToken);
+                await UpdateProjectPlan("import/ЭТО.xlsx", 178, cancellationToken);
 
                 return Unit.Value;
             }
@@ -205,10 +205,10 @@ namespace Taskly.Application.Users
                             projCode = -1;
                         }
 
-                        var estAsStr = rec.Split("=")[1];
+                        var estAsStr = rec.Split("=")[1].Replace(",", ".");
                         if (!float.TryParse(estAsStr, out float est))
                         {
-                            Log.Logger.Error($"Cannot conver {estAsStr} to float");
+                            Log.Logger.Error($"Cannot convert {estAsStr} to float");
                             continue;
                         }
                         weekPlan.Projects.Add(new ProjectPlan
