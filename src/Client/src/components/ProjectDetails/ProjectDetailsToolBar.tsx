@@ -30,7 +30,7 @@ export const ProjectDetailsToolBar: React.FunctionComponent<ProjectDetailsToolBa
     const onAddNewTask = () => {
         async function getData() {
             let defaultTaskEstimations = await request<IProjectTaskDepartmentEstimationVm[]>("/api/v1/projects/defaultEstimations")
-            dispatch(addTask({defaultEstimations: defaultTaskEstimations}))
+            dispatch(addTask({ defaultEstimations: defaultTaskEstimations }))
         }
         getData()
         window.scrollTo(0, document.body.scrollHeight)
@@ -39,8 +39,9 @@ export const ProjectDetailsToolBar: React.FunctionComponent<ProjectDetailsToolBa
     return (
         <>
             <Grid container  >
-                <Grid item xs={8} >
+                <Grid item xs={12} >
                     <Stack direction="row" spacing={1} paddingTop={1} paddingBottom={1}>
+                        <Typography variant='h6' style={{ maxWidth: "200px", whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden" }}>{projectShortName}</Typography>
                         <Button variant='contained' size='small' onClick={e => { onAddNewTask() }} startIcon={<PlaylistAddIcon />}>{t('add')}</Button>
                         <Button variant='contained' size='small' onClick={e => { dispatch(removeTask()) }} disabled={selectedRowIdx < 0} startIcon={<RemoveIcon />}>{t('remove')}</Button>
                         <Button variant='contained' size='small' onClick={e => { dispatch(orderTasks()) }} startIcon={<SortIcon />}>{t('order-tasks')}</Button>
@@ -48,15 +49,11 @@ export const ProjectDetailsToolBar: React.FunctionComponent<ProjectDetailsToolBa
                         <Button variant='contained' size='small' onClick={e => { dispatch(toggleShowStatistics()) }} startIcon={<BarChartIcon />}>{t('statistics')}</Button>
                         <FormControlLabel label={t('compact-mode')} control={<Checkbox checked={compactMode} onChange={e => { dispatch(toggleCompactMode()) }} size='small' />} />
                         <FormControlLabel label={t('show-details')} disabled={compactMode} control={<Checkbox checked={showDetails} onChange={e => { dispatch(toggleShowDetails()) }} size='small' />} />
-                    </Stack>
-                </Grid>
-                <Grid item xs={4} style={{ textAlign: "right" }} paddingTop={0} paddingBottom={1}>
-                    <Stack direction="row" paddingTop={1} paddingBottom={1} justifyContent="flex-end" >
                         <Button variant='text' size='small' startIcon={<ZoomInIcon />} onClick={e => { dispatch(zoomInGanttChart()) }} ></Button>
                         <Button variant='text' size='small' startIcon={<ZoomOutIcon />} onClick={e => { dispatch(zoomOutGanttChart()) }} ></Button>
-                        <Typography variant='h5' style={{ whiteSpace: "nowrap" }}>{projectShortName}</Typography>
                     </Stack>
                 </Grid>
+
             </Grid>
             <ProjectDetailsStatistics />
             <ProjectDetailsDepartemntsPlan afterClose={() => {

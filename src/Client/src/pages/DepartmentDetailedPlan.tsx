@@ -152,7 +152,7 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
 
             const flatPlan = DepartmentPlanFlatRecordVmHelper.buildFlatPlan(depPlan)
             setHiddenRows(getRowsWithEmtyPlans(flatPlan))
-            setPlan(flatPlan)    
+            setPlan(flatPlan)
         })
     }, [startDate, endDate])
 
@@ -166,18 +166,12 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
 
     return (
         <div className='page-container'>
-            <div>
+            <div style={{ position: "fixed", top: "5em", left: "1em" }}>
                 <Grid container>
-                    <Grid item xs={11}>
+                    <Grid item xs={12}>
                         <Stack direction={"row"} spacing={1} alignItems={"center"}>
-                            <Button variant="contained" startIcon={<AddBoxIcon />}
-                                onClick={e => { expandAllRows() }}>
-                                {t('expand')}
-                            </Button>
-                            <Button variant="contained" startIcon={<IndeterminateCheckBoxIcon />}
-                                onClick={e => { collapseAllRows() }}>
-                                {t('collapse')}
-                            </Button>
+                            <Typography variant='h6' style={{ maxWidth: "200px", whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden" }}>{departmentName}</Typography>
+
                             <DatePicker
                                 views={['day']}
                                 label={t('start')}
@@ -194,6 +188,15 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
                                 onChange={(newValue) => { if (newValue) { setEndDate(newValue) } }}
                                 renderInput={(params) => <TextField size="small" {...params} />}
                             />
+                            <Button variant="contained" startIcon={<AddBoxIcon />}
+                                onClick={e => { expandAllRows() }}>
+                                {t('expand')}
+                            </Button>
+                            <Button variant="contained" startIcon={<IndeterminateCheckBoxIcon />}
+                                onClick={e => { collapseAllRows() }}>
+                                {t('collapse')}
+                            </Button>
+
                             <FormGroup>
                                 <FormControlLabel
                                     control={<Checkbox checked={hiddenRows.length > 0}
@@ -203,14 +206,9 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
                             </FormGroup>
                         </Stack>
                     </Grid>
-                    <Grid item xs={1} style={{ textAlign: "right" }} paddingTop={0} paddingBottom={1}>
-                        <Stack direction="row" paddingTop={1} paddingBottom={1} justifyContent="flex-end" >
-                            <Typography variant='h6' style={{ whiteSpace: "nowrap" }}>{departmentName}</Typography>
-                        </Stack>
-                    </Grid>
                 </Grid>
             </div>
-            <div>
+            <div style={{ marginTop: "8em" }}>
                 <HotTable
                     id="projectDetailsTable"
                     ref={hotTableRef}
@@ -228,6 +226,7 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
                     fixedColumnsLeft={staticHeaders.length}
                     hiddenColumns={{ columns: [0] }}
                     hiddenRows={{ rows: hiddenRows }}
+                    maxCols={headers.length}
                     renderAllRows={true}
                     columnSorting={false}
                     rowHeaders={true}
