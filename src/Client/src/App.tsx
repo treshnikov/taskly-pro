@@ -8,6 +8,8 @@ import { Backdrop, CircularProgress, createTheme, CssBaseline, ThemeProvider } f
 import { useAppRoutes } from './components/Routes';
 import { AppContext } from './context/AppContext';
 import { useAppSelector } from './hooks/redux.hook';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import { LocalizationProvider } from '@mui/lab';
 
 function App() {
   const { setEnLang, setRuLang } = useApp()
@@ -24,7 +26,9 @@ function App() {
         <CssBaseline />
         <AppContext.Provider value={{ setEnLang, setRuLang }}>
           <Router>
-            {routes}
+            <LocalizationProvider dateAdapter={AdapterMoment} >
+              {routes}
+            </LocalizationProvider>
           </Router>
         </AppContext.Provider>
       </ThemeProvider>

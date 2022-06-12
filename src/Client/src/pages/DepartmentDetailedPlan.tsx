@@ -1,18 +1,18 @@
 import HotTable, { HotColumn } from "@handsontable/react";
-import { Button, Checkbox, FormControlLabel, FormGroup, Grid, Stack, Typography } from "@mui/material";
+import { Button, Checkbox, FormControlLabel, FormGroup, Grid, Stack, TextField, Typography } from "@mui/material";
 import Handsontable from "handsontable";
 import { CellChange, ChangeSource } from "handsontable/common";
-import Core from "handsontable/core";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { dateAsShortStrWithShortYear } from "../common/dateFormatter";
 import { getColor } from "../common/getColor";
-import { ProjectNameRenderer } from "../components/DepartmentPlan/Renderers/ProjectNameRenderer";
 import { useHttp } from "../hooks/http.hook";
 import { DepartmentUserPlan as DepartmentUserPlan, DepartmentPlanFlatRecordVmHelper, DepartmentPlanUserRecordVm, DepartmentProjectPlan } from "../models/DepartmentPlan/DepartmentPlanClasses";
 import IndeterminateCheckBoxIcon from '@mui/icons-material/IndeterminateCheckBox';
 import AddBoxIcon from '@mui/icons-material/AddBox';
+import { DatePicker } from "@mui/lab";
+import moment from "moment";
 
 const initData: DepartmentUserPlan[] = [{
     id: '',
@@ -38,6 +38,8 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
     const [plan, setPlan] = useState<DepartmentUserPlan[]>(initData)
     const [headers, setHeaders] = useState<string[]>(['', '', '', '', ''])
     const [hiddenRows, setHiddenRows] = useState<number[]>([])
+    const [startDate, setStartDate] = useState<Date>(new Date(new Date().getFullYear(), 0, 1))
+    const [endDate, setEndDate] = useState<Date>(new Date(new Date().getFullYear(), 11, 31))
 
     const getRowsWithEmtyPlans = (plan: DepartmentUserPlan[]): number[] => {
         let hiddenRows: number[] = [];
@@ -135,7 +137,7 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
 
     useEffect(() => {
         //todo pass start and end date
-        request<DepartmentPlanUserRecordVm[]>(`/api/v1/departments/${departmentId}/2022-01-01/2022-12-31/plan`, 'GET').then(depPlan => {
+        request<DepartmentPlanUserRecordVm[]>(`/api/v1/departments/${departmentId}/${moment(startDate).format("YYYY-MM-DD")}/${moment(endDate).format("YYYY-MM-DD")}/plan`, 'GET').then(depPlan => {
             let headers: string[] = [...staticHeaders]
             const weekCount = (depPlan.length > 0 && depPlan[0].projects.length > 0)
                 ? depPlan[0].projects[0].plans.length
@@ -150,9 +152,9 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
 
             const flatPlan = DepartmentPlanFlatRecordVmHelper.buildFlatPlan(depPlan)
             setHiddenRows(getRowsWithEmtyPlans(flatPlan))
-            setPlan(flatPlan)
+            setPlan(flatPlan)    
         })
-    }, [])
+    }, [startDate, endDate])
 
     useEffect(() => {
         if (plan && plan.length > 0 && hotTableRef && hotTableRef.current && hotTableRef.current.hotInstance) {
@@ -164,18 +166,34 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
 
     return (
         <div className='page-container'>
-            <div style={{ position: "fixed", left: "1em", top: "4em" }}>
+            <div>
                 <Grid container>
-                    <Grid item md={11}>
-                        <Stack direction={"row"} spacing={1}>
-                            <Button size="small" variant="contained" startIcon={<AddBoxIcon />}
+                    <Grid item xs={11}>
+                        <Stack direction={"row"} spacing={1} alignItems={"center"}>
+                            <Button variant="contained" startIcon={<AddBoxIcon />}
                                 onClick={e => { expandAllRows() }}>
                                 {t('expand')}
                             </Button>
-                            <Button size="small" variant="contained" startIcon={<IndeterminateCheckBoxIcon />}
+                            <Button variant="contained" startIcon={<IndeterminateCheckBoxIcon />}
                                 onClick={e => { collapseAllRows() }}>
                                 {t('collapse')}
                             </Button>
+                            <DatePicker
+                                views={['day']}
+                                label={t('start')}
+                                inputFormat="yyyy-MM-DD"
+                                value={startDate}
+                                onChange={(newValue) => { if (newValue) { setStartDate(newValue) } }}
+                                renderInput={(params) => <TextField size="small" {...params} />}
+                            />
+                            <DatePicker
+                                views={['day']}
+                                label={t('end')}
+                                inputFormat="yyyy-MM-DD"
+                                value={endDate}
+                                onChange={(newValue) => { if (newValue) { setEndDate(newValue) } }}
+                                renderInput={(params) => <TextField size="small" {...params} />}
+                            />
                             <FormGroup>
                                 <FormControlLabel
                                     control={<Checkbox checked={hiddenRows.length > 0}
@@ -185,14 +203,14 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
                             </FormGroup>
                         </Stack>
                     </Grid>
-                    <Grid item md={1} style={{ textAlign: "right" }} paddingTop={0} paddingBottom={1}>
+                    <Grid item xs={1} style={{ textAlign: "right" }} paddingTop={0} paddingBottom={1}>
                         <Stack direction="row" paddingTop={1} paddingBottom={1} justifyContent="flex-end" >
                             <Typography variant='h6' style={{ whiteSpace: "nowrap" }}>{departmentName}</Typography>
                         </Stack>
                     </Grid>
                 </Grid>
             </div>
-            <div style={{ paddingTop: "3.5em" }}>
+            <div>
                 <HotTable
                     id="projectDetailsTable"
                     ref={hotTableRef}

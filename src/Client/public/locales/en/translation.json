@@ -65,5 +65,7 @@
     "hide-empty": "Hide empty",
     "collapse": "Collapse",
     "expand": "Expand",
-    "hide-project-with-no-estimation": "Hide project with no estimation"
+    "hide-project-with-no-estimation": "Hide project with no estimation",
+    "start": "Start",
+    "end": "End"
 }

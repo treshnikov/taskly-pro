@@ -65,5 +65,7 @@
     "hide-empty": "Скрыть пустые",
     "collapse": "Свернуть",
     "expand": "Развернуть",
-    "hide-project-with-no-estimation": "Скрыть проекты без оценки"
+    "hide-project-with-no-estimation": "Скрыть проекты без оценки",
+    "start": "Начало",
+    "end": "Окончание"
 }   
