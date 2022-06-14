@@ -18,7 +18,7 @@ namespace Taskly.Application.Projects
                 .Projects
                 .Include(p => p.Customer).Include(p => p.ProjectManager).Include(p => p.ChiefEngineer).Include(p => p.Company)
                 .AsNoTracking()
-                .OrderByDescending(p => p.IsOpened).ThenByDescending(p => p.Id)
+                .OrderByDescending(p => p.Start).ThenByDescending(p => p.IsOpened)
                 .Select(p => ProjectShortInfoVm.FromProject(p))
                 .ToListAsync(cancellationToken: cancellationToken);
             

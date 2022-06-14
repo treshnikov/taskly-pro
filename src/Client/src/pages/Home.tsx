@@ -2,7 +2,6 @@ import { Card, Button, CardActions, CardContent, Grid, Typography } from '@mui/m
 import { useNavigate } from 'react-router-dom';
 import React from 'react'
 import { t } from 'i18next';
-import PeopleIcon from '@mui/icons-material/People';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import SettingsIcon from '@mui/icons-material/Settings';
 import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
@@ -60,38 +59,6 @@ export const Home: React.FunctionComponent = () => {
         direction="row"
         alignItems="flex-start"
       >
-
-        <Grid item xs={3}>
-          <Card className="home-card">
-            <CardContent>
-              <Typography variant="h5" component="div">
-                <PeopleIcon />&nbsp;{t('users') as string}
-              </Typography>
-              <Typography variant="body2">
-                <>{t('users-welcome')}</><br />&nbsp;
-              </Typography>
-            </CardContent>
-            <CardActions>
-              <Button variant='contained' onClick={e => { navigate("/users") }}>{t('users') as string}</Button>
-            </CardActions>
-          </Card>
-        </Grid>
-
-        <Grid item xs={3}>
-          <Card className="home-card">
-            <CardContent>
-              <Typography variant="h5" component="div">
-                <AccountTreeIcon />&nbsp;{t('departments') as string}
-              </Typography>
-              <Typography variant="body2">
-                <>{t('departments-welcome')}</><br />&nbsp;
-              </Typography>
-            </CardContent>
-            <CardActions>
-              <Button variant='contained' onClick={e => { navigate("/departments") }}>{t('departments') as string}</Button>
-            </CardActions>
-          </Card>
-        </Grid>
 
       </Grid>
 

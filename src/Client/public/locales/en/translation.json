@@ -67,5 +67,6 @@
     "expand": "Expand",
     "hide-project-with-no-estimation": "Hide project with no estimation",
     "start": "Start",
-    "end": "End"
+    "end": "End",
+    "departments-to-plan": "Departments available for work planning"
 }

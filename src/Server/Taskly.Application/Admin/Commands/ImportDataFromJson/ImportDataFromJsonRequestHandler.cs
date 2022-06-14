@@ -32,7 +32,7 @@ namespace Taskly.Application.Users
                 await UpdateUserDepartmentLinks(users, deps, cancellationToken);
                 await UpdateProjects(projects, cancellationToken);
                 await UpdateProjectTasks(request, cancellationToken);
-                
+
                 await UpdateProjectPlan("import/ОП ДС.XLSX", 244, cancellationToken);
                 await UpdateProjectPlan("import/ОП_АС.xlsx", 245, cancellationToken);
 
@@ -197,16 +197,31 @@ namespace Taskly.Application.Users
                             continue;
                         }
 
-                        var projName = rec.Split("=")[0].Replace("#", string.Empty);
-                        if (!int.TryParse(projName, out int projCode))
+                        var projCodeAsStr = rec.Split("=")[0].Replace("#", string.Empty).Replace("№", string.Empty);
+
+                        // special cases when code of the project contains extra symbols after the dot char, for instance, 923.2  
+                        if (projCodeAsStr.Contains('.'))
+                        {
+                            var first = projCodeAsStr.Split('.')[0];
+                            if (int.TryParse(first, out int firstAsInt))
+                            {
+                                projCodeAsStr = first;
+                            }
+                        }
+                        
+                        if (!int.TryParse(projCodeAsStr, out int projCode))
                         {
                             // handle АДМ, Партнеры, Больичный, Отпуск, etc.
-                            Log.Logger.Error($"Cannot conver {projName} to int");
+                            Log.Logger.Error($"Cannot conver {projCodeAsStr} to int");
                             projCode = -1;
                         }
 
                         var estAsStr = rec.Split("=")[1].Replace(",", ".");
-                        if (!float.TryParse(estAsStr, out float est))
+
+                        var ci = (CultureInfo)CultureInfo.CurrentCulture.Clone();
+                        ci.NumberFormat.CurrencyDecimalSeparator = ".";
+
+                        if (!float.TryParse(estAsStr, NumberStyles.Any, ci, out float est))
                         {
                             Log.Logger.Error($"Cannot convert {estAsStr} to float");
                             continue;
@@ -215,7 +230,7 @@ namespace Taskly.Application.Users
                         {
                             //todo - add coefficent depending on user position
                             Hours = est * 40,
-                            ProjectName = projName,
+                            ProjectName = projCodeAsStr,
                             ProjectCode = projCode > 0 ? projCode : null
                         });
                     }
