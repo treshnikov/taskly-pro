@@ -34,8 +34,10 @@ export type DepartmentProjectPlan = {
     id: string
     userPosition: string
     project: string
+    userId: string
+    projectId: number
     hours: string | null
-    [weekNumber: string]: string | null
+    [weekNumber: string]: string | null | number
 }
 
 export class DepartmentPlanFlatRecordVmHelper {
@@ -56,7 +58,7 @@ export class DepartmentPlanFlatRecordVmHelper {
                     
                     const hoursAsString = project[weekIdent]
                     if (hoursAsString && hoursAsString !== "") {
-                        const weekHours = parseFloat(hoursAsString)
+                        const weekHours = parseFloat(hoursAsString as string)
                         projectHours += weekHours
                         userHours += weekHours
 
@@ -98,6 +100,8 @@ export class DepartmentPlanFlatRecordVmHelper {
                     id: "p" + idx.toString(),
                     userPosition: '',
                     hours: null,
+                    userId: user.userId,
+                    projectId: project.projectId, 
                     project: project.projectId + ": " + (project.projectShortName ? project.projectShortName : project.projectName)
                 }
                 idx++;

@@ -5,7 +5,7 @@ import { CellChange, ChangeSource } from "handsontable/common";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
-import { dateAsShortStrWithShortYear } from "../common/dateFormatter";
+import { dateAsShortStrWithShortYear, dateTorequestStr } from "../common/dateFormatter";
 import { getColor } from "../common/getColor";
 import { useHttp } from "../hooks/http.hook";
 import { DepartmentUserPlan as DepartmentUserPlan, DepartmentPlanFlatRecordVmHelper, DepartmentPlanUserRecordVm, DepartmentProjectPlan } from "../models/DepartmentPlan/DepartmentPlanClasses";
@@ -30,7 +30,7 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
     const { request } = useHttp()
     const { t } = useTranslation();
 
-    const staticHeaders = ["Id", "User", "Position", "Hours", "Project"]
+    const staticHeaders = ["Id", t('name'), t('position'), t('hours'), t('project')]
     const columnWidths = [50, 280, 50, 50, 330]
     const hotTableRef = useRef<HotTable>(null);
 
@@ -77,18 +77,35 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
         }
 
         // find and update changed record
-        let record: DepartmentProjectPlan = { id: '', hours: '', project: '', userPosition: '', userName: '' }
+        let record: DepartmentProjectPlan = { id: '', hours: '', project: '', userPosition: '', userName: '', userId: '', projectId: 0 }
         const found = plan.some(u => u.__children.some(p => {
             record = p
             return p.id === projectId
         }))
 
         if (found) {
-            record[weekId] = hours
-            DepartmentPlanFlatRecordVmHelper.recalcHours(plan)
+            // send changes to the server
+
+            // extract week start
+            const weekIdx = parseInt(weekId.replace("week", ""))
+            let dt = startDate
+            while (dt.getDay() !== 1) {
+                dt = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate() - 1)
+            }
+            dt.setDate(dt.getDate() + 7 * (weekIdx - 1))
+            const dtAsStr = dateTorequestStr(dt)
+
+            request("/api/v1/departments/plan/" + departmentId + "/" + record.projectId + "/" + record.userId + "/" + dtAsStr + "/" + hours, "POST", {}).then(_ => {
+                record[weekId] = hours
+                DepartmentPlanFlatRecordVmHelper.recalcHours(plan)
+
+                return true
+            }).catch(ex => {
+                return false
+            })
         }
 
-        return true
+        return false
     }
 
     const weekPlanCellRenderer = (instance: Handsontable.Core, td: HTMLTableCellElement, row: number, col: number, prop: string | number, value: any, cellProperties: Handsontable.CellProperties): void => {
@@ -105,19 +122,19 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
             if (!isNaN(valueAsFloat)) {
                 td.style.fontWeight = '500'
                 if (valueAsFloat === 40) {
-                    td.style.background = '-webkit-linear-gradient(bottom, #ecffeb 20%, white 20%)'
+                    td.style.background = '-webkit-linear-gradient(bottom, #ecffebaa 100%, white 100%)'
                 }
                 else {
                     if (valueAsFloat > 40) {
-                        td.style.background = '-webkit-linear-gradient(bottom, #ffcccc 20%, white 20%)'
+                        td.style.background = '-webkit-linear-gradient(bottom, #ffcccc88 100%, white 100%)'
                     }
                     else {
-                        td.style.background = '-webkit-linear-gradient(bottom, #ffffe0 20%, white 20%)'
+                        td.style.background = '-webkit-linear-gradient(bottom, #ffffe0aa 100%, white 100%)'
                     }
                 }
             }
             else {
-                td.style.background = '-webkit-linear-gradient(bottom, #f8f8f8 20%, white 20%)'
+                td.style.background = '-webkit-linear-gradient(bottom, #f8f8f8 100%, white 100%)'
             }
 
         }

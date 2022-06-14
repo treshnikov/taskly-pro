@@ -68,5 +68,7 @@
     "hide-project-with-no-estimation": "Скрыть проекты без оценки",
     "start": "Начало",
     "end": "Окончание",
-    "departments-to-plan": "Отделы доступные для планирования работ"    
+    "departments-to-plan": "Отделы доступные для планирования работ",
+    "hours": "Часы",
+    "project": "Проект"    
 }   

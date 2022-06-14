@@ -68,5 +68,7 @@
     "hide-project-with-no-estimation": "Hide project with no estimation",
     "start": "Start",
     "end": "End",
-    "departments-to-plan": "Departments available for work planning"
+    "departments-to-plan": "Departments available for work planning",
+    "hours": "Hours",
+    "project": "Project"
 }
