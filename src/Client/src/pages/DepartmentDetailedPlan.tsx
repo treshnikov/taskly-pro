@@ -1,5 +1,4 @@
 import HotTable, { HotColumn } from "@handsontable/react";
-import { Button, Checkbox, FormControlLabel, FormGroup, Grid, Menu, MenuItem, Stack, TextField, Typography } from "@mui/material";
 import Handsontable from "handsontable";
 import { CellChange, CellValue, ChangeSource, RangeType } from "handsontable/common";
 import { useEffect, useRef, useState } from "react";
@@ -9,11 +8,10 @@ import { dateAsShortStrWithShortYear, dateTorequestStr } from "../common/dateFor
 import { getColor } from "../common/getColor";
 import { useHttp } from "../hooks/http.hook";
 import { DepartmentUserPlan as DepartmentUserPlan, DepartmentPlanFlatRecordVmHelper, DepartmentPlanUserRecordVm, DepartmentProjectPlan } from "../models/DepartmentPlan/DepartmentPlanClasses";
-import IndeterminateCheckBoxIcon from '@mui/icons-material/IndeterminateCheckBox';
-import AddBoxIcon from '@mui/icons-material/AddBox';
-import { DatePicker } from "@mui/lab";
 import moment from "moment";
-import SaveAltIcon from '@mui/icons-material/SaveAlt';
+import { DepartmentPlanToolbar } from "../components/DepartmentPlan/DepartmentPlanToolbar";
+import { useAppDispatch, useAppSelector } from "../hooks/redux.hook";
+import { setHiddenRows } from "../redux/departmentPlanSlice";
 
 const initData: DepartmentUserPlan[] = [{
     id: '',
@@ -38,9 +36,11 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
     // unfortunately, we must store the state locally because passing such amount of records to redux causes low performance
     const [plan, setPlan] = useState<DepartmentUserPlan[]>(initData)
     const [headers, setHeaders] = useState<string[]>(['', '', '', '', ''])
-    const [hiddenRows, setHiddenRows] = useState<number[]>([])
-    const [startDate, setStartDate] = useState<Date>(new Date(new Date().getFullYear(), 0, 1))
-    const [endDate, setEndDate] = useState<Date>(new Date(new Date().getFullYear(), 11, 31))
+
+    const dispatch = useAppDispatch()
+    const startDate = useAppSelector(state => state.departmentPlanReducer.startDate)
+    const endDate = useAppSelector(state => state.departmentPlanReducer.endDate)
+    const hiddenRows = useAppSelector(state => state.departmentPlanReducer.hiddenRows)
 
     // const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
     // const open = Boolean(anchorEl)
@@ -66,20 +66,6 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
         return hiddenRows;
     }
 
-    const collapseAllRows = (): void => {
-        if (hotTableRef && hotTableRef.current && hotTableRef.current.hotInstance) {
-            const plugin = hotTableRef.current.hotInstance.getPlugin('nestedRows') as any
-            plugin.collapsingUI.collapseAll()
-        }
-    }
-
-    const expandAllRows = (): void => {
-        if (hotTableRef && hotTableRef.current && hotTableRef.current.hotInstance) {
-            const plugin = hotTableRef.current.hotInstance.getPlugin('nestedRows') as any
-            plugin.collapsingUI.expandAll()
-        }
-    }
-
     const onPlanChanged = (plan: DepartmentUserPlan[], projectId: string, weekId: string, hours: string): boolean => {
         // prevent editing cells with summary info
         if (projectId[0] === 'u') {
@@ -98,7 +84,7 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
 
             // extract week start
             const weekIdx = parseInt(weekId.replace("week", ""))
-            let dt = startDate
+            let dt = new Date(startDate)
             while (dt.getDay() !== 1) {
                 dt = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate() - 1)
             }
@@ -176,7 +162,7 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
             setHeaders(headers)
 
             const flatPlan = DepartmentPlanFlatRecordVmHelper.buildFlatPlan(depPlan)
-            setHiddenRows(getRowsWithEmtyPlans(flatPlan))
+            dispatch(setHiddenRows(getRowsWithEmtyPlans(flatPlan)))
             setPlan(flatPlan)
         })
     }, [startDate, endDate])
@@ -191,74 +177,7 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
 
     return (
         <div className='page-container'>
-            <div style={{ position: "fixed", top: "5em", left: "1em" }}>
-                <Grid container>
-                    <Grid item xs={12}>
-                        <Stack direction={"row"} spacing={1} alignItems={"center"}>
-                            <Typography variant='h6' style={{ maxWidth: "200px", whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden" }}>{departmentName}</Typography>
-
-                            <DatePicker
-                                views={['day']}
-                                label={t('start')}
-                                inputFormat="yyyy-MM-DD"
-                                value={startDate}
-                                onChange={(newValue) => { if (newValue) { setStartDate(newValue) } }}
-                                renderInput={(params) => <TextField size="small" {...params} />}
-                            />
-                            <DatePicker
-                                views={['day']}
-                                label={t('end')}
-                                inputFormat="yyyy-MM-DD"
-                                value={endDate}
-                                onChange={(newValue) => { if (newValue) { setEndDate(newValue) } }}
-                                renderInput={(params) => <TextField size="small" {...params} />}
-                            />
-
-                            <Button variant="contained" size="small" startIcon={<SaveAltIcon />}
-                                onClick={e => { }}>
-                                {t('save')}
-                            </Button>
-
-                            <Button variant="contained" size="small" startIcon={<AddBoxIcon />}
-                                onClick={e => { expandAllRows() }}>
-                                {t('expand')}
-                            </Button>
-                            <Button variant="contained" size="small" startIcon={<IndeterminateCheckBoxIcon />}
-                                onClick={e => { collapseAllRows() }}>
-                                {t('collapse')}
-                            </Button>
-
-                            {/* <Button
-                                aria-controls={open ? 'basic-menu' : undefined}
-                                aria-haspopup="true"
-                                aria-expanded={open ? 'true' : undefined}
-                                onClick={handleClick}
-                                variant="contained"
-                                size="small"
-                            >
-                                ...
-                            </Button>
-                            <Menu
-                                anchorEl={anchorEl}
-                                open={open}
-                                onClose={handleClose}
-                            >
-                                <MenuItem >Profile</MenuItem>
-                                <MenuItem >My account</MenuItem>
-                                <MenuItem >Logout</MenuItem>
-                            </Menu> */}
-
-                            <FormGroup>
-                                <FormControlLabel
-                                    control={<Checkbox checked={hiddenRows.length > 0}
-                                        onChange={e => { setHiddenRows(!e.target.checked ? [] : getRowsWithEmtyPlans(plan)) }}
-                                    />}
-                                    label={t('hide-project-with-no-estimation')} />
-                            </FormGroup>
-                        </Stack>
-                    </Grid>
-                </Grid>
-            </div>
+            <DepartmentPlanToolbar hotTableRef={hotTableRef} departmentName={departmentName as string}></DepartmentPlanToolbar>
             <div style={{ marginTop: "8em" }}>
                 <HotTable
                     id="projectDetailsTable"
