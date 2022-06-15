@@ -14,19 +14,15 @@ import AddBoxIcon from '@mui/icons-material/AddBox';
 import { DatePicker } from "@mui/lab";
 import moment from "moment";
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
-
-const initData: DepartmentUserPlan[] = [{
-    id: '',
-    userName: '',
-    userPosition: '',
-    project: '',
-    hours: '',
-    __children: [],
-}]
+import { useAppDispatch, useAppSelector } from "../hooks/redux.hook";
+import { updatePlan, onPlanChanged } from "../redux/departmentPlanSlice";
 
 export const DepartmentDetailedPlan: React.FunctionComponent = () => {
     const departmentId = useParams<{ id?: string, name?: string }>()!.id
     const departmentName = useParams<{ id?: string, name?: string }>()!.name
+
+    const dispatch = useAppDispatch()
+    const plan = useAppSelector(state => state.departmentPlanReducer.plan)
 
     const { request } = useHttp()
     const { t } = useTranslation();
@@ -35,8 +31,6 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
     const columnWidths = [50, 280, 50, 50, 330]
     const hotTableRef = useRef<HotTable>(null);
 
-    // unfortunately, we must store the state locally because passing such amount of records to redux causes low performance
-    const [plan, setPlan] = useState<DepartmentUserPlan[]>(initData)
     const [headers, setHeaders] = useState<string[]>(['', '', '', '', ''])
     const [hiddenRows, setHiddenRows] = useState<number[]>([])
     const [startDate, setStartDate] = useState<Date>(new Date(new Date().getFullYear(), 0, 1))
@@ -80,38 +74,23 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
         }
     }
 
-    const onPlanChanged = (plan: DepartmentUserPlan[], projectId: string, weekId: string, hours: string): boolean => {
+    const onBeforePlanChange = (plan: DepartmentUserPlan[], projectId: string, weekId: string, hours: string): boolean => {
         // prevent editing cells with summary info
         if (projectId[0] === 'u') {
             return false
         }
 
-        // find and update changed record
-        let record: DepartmentProjectPlan = { id: '', hours: '', project: '', userPosition: '', userName: '', userId: '', projectId: 0 }
-        const found = plan.some(u => u.__children.some(p => {
-            record = p
-            return p.id === projectId
-        }))
+        // extract week start
+        // const weekIdx = parseInt(weekId.replace("week", ""))
+        // let dt = startDate
+        // while (dt.getDay() !== 1) {
+        //     dt = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate() - 1)
+        // }
+        // dt.setDate(dt.getDate() + 7 * (weekIdx - 1))
+        // const dtAsStr = dateTorequestStr(dt)
 
-        if (found) {
-            // send changes to the server
-
-            // extract week start
-            const weekIdx = parseInt(weekId.replace("week", ""))
-            let dt = startDate
-            while (dt.getDay() !== 1) {
-                dt = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate() - 1)
-            }
-            dt.setDate(dt.getDate() + 7 * (weekIdx - 1))
-            const dtAsStr = dateTorequestStr(dt)
-
-            record[weekId] = hours
-            DepartmentPlanFlatRecordVmHelper.recalcHours(plan, record.userId)
-
-            //request("/api/v1/departments/plan/" + departmentId + "/" + record.projectId + "/" + record.userId + "/" + dtAsStr + "/" + hours, "POST", {})
-
-            return true
-        }
+        dispatch(onPlanChanged({ projectId: projectId, weekId: weekId, hours: hours }))
+        //request("/api/v1/departments/plan/" + departmentId + "/" + record.projectId + "/" + record.userId + "/" + dtAsStr + "/" + hours, "POST", {})
 
         return false
     }
@@ -176,16 +155,19 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
             setHeaders(headers)
 
             const flatPlan = DepartmentPlanFlatRecordVmHelper.buildFlatPlan(depPlan)
+            DepartmentPlanFlatRecordVmHelper.freezePlan(flatPlan)
+
             setHiddenRows(getRowsWithEmtyPlans(flatPlan))
-            setPlan(flatPlan)
+            dispatch(updatePlan(flatPlan))
         })
     }, [startDate, endDate])
 
     useEffect(() => {
         if (plan && plan.length > 0 && hotTableRef && hotTableRef.current && hotTableRef.current.hotInstance) {
+            //hotTableRef.current.hotInstance.render()
             hotTableRef.current.hotInstance.loadData(plan)
-            const plugin = hotTableRef.current.hotInstance.getPlugin('nestedRows') as any
-            plugin.collapsingUI.collapseAll()
+            //const plugin = hotTableRef.current.hotInstance.getPlugin('nestedRows') as any
+            //plugin.collapsingUI.collapseAll()
         }
     }, [plan])
 
@@ -288,11 +270,15 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
                     fillHandle={false}
                     manualColumnResize={true}
 
-                    afterPaste={(data: CellValue[][], coords: RangeType[]): void => {
-                        DepartmentPlanFlatRecordVmHelper.recalcHours(plan)
-                        if (hotTableRef && hotTableRef.current && hotTableRef.current.hotInstance) {
-                            hotTableRef.current.hotInstance.render()
-                        }
+                    beforePaste={(data: CellValue[][], coords: RangeType[]): boolean => {
+                        // DepartmentPlanFlatRecordVmHelper.recalcHours(plan)
+                        // dispatch(updatePlan(plan))
+
+                        // if (hotTableRef && hotTableRef.current && hotTableRef.current.hotInstance) {
+                        //     hotTableRef.current.hotInstance.render()
+                        // }
+
+                        return false
                     }}
 
                     afterSelection={(row: number, column: number, row2: number, column2: number, preventScrolling: { value: boolean }, selectionLayerLevel: number) => {
@@ -308,7 +294,7 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
                         const weekId = changes[0][1]
                         const newValue = changes[0][3]
 
-                        return onPlanChanged(plan, projectId, weekId as string, newValue)
+                        return onBeforePlanChange(plan, projectId, weekId as string, newValue)
                     }}
 
                     outsideClickDeselects={true}
