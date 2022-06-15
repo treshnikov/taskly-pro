@@ -42,17 +42,16 @@ export type DepartmentProjectPlan = {
 
 export class DepartmentPlanFlatRecordVmHelper {
 
-    public static recalcHours(arg: DepartmentUserPlan[]) {
-        arg.forEach(user => {
+    public static recalcHours(arg: DepartmentUserPlan[], userIdFilter: string | null = null) {
+        arg.filter(u => userIdFilter === null ? true : u.userId === userIdFilter).forEach(user => {
             let userHours = 0
             let weekSumHours: {[key: string]: number} = {}
             
         
             user.__children.forEach(project => {
                 let projectHours = 0
+
                 let weekIdx = 1
-
-
                 while ((project as any).hasOwnProperty("week" + weekIdx.toString())) {
                     const weekIdent = "week" + weekIdx.toString()
                     
@@ -72,6 +71,7 @@ export class DepartmentPlanFlatRecordVmHelper {
                 }
                 project.hours = projectHours > 0 ? projectHours.toString() : null
             });
+
             user.hours = userHours > 0 ? userHours.toString() : null
             Object.keys(weekSumHours).forEach(weekIdent => {
                 user[weekIdent.toString()] = weekSumHours[weekIdent] > 0 ? weekSumHours[weekIdent].toString() : null
@@ -89,6 +89,7 @@ export class DepartmentPlanFlatRecordVmHelper {
                 id: "u" + idx.toString(),
                 userName: user.userName,
                 userPosition: user.userPosition,
+                userId: user.userId,
                 project: '',
                 hours: null,
                 __children: []
@@ -111,8 +112,7 @@ export class DepartmentPlanFlatRecordVmHelper {
                     projectRecord["week" + week.weekNumber.toString()] = week.plannedHours === 0 ? null : week.plannedHours.toString();
                 });
 
-                userRecord.__children.push(projectRecord);
-
+                userRecord.__children.push(projectRecord)
             });
 
             res.push(userRecord);

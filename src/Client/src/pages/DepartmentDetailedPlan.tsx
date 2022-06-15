@@ -1,7 +1,7 @@
 import HotTable, { HotColumn } from "@handsontable/react";
-import { Button, Checkbox, FormControlLabel, FormGroup, Grid, Stack, TextField, Typography } from "@mui/material";
+import { Button, Checkbox, FormControlLabel, FormGroup, Grid, Menu, MenuItem, Stack, TextField, Typography } from "@mui/material";
 import Handsontable from "handsontable";
-import { CellChange, ChangeSource } from "handsontable/common";
+import { CellChange, CellValue, ChangeSource, RangeType } from "handsontable/common";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
@@ -13,6 +13,7 @@ import IndeterminateCheckBoxIcon from '@mui/icons-material/IndeterminateCheckBox
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import { DatePicker } from "@mui/lab";
 import moment from "moment";
+import SaveAltIcon from '@mui/icons-material/SaveAlt';
 
 const initData: DepartmentUserPlan[] = [{
     id: '',
@@ -40,6 +41,15 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
     const [hiddenRows, setHiddenRows] = useState<number[]>([])
     const [startDate, setStartDate] = useState<Date>(new Date(new Date().getFullYear(), 0, 1))
     const [endDate, setEndDate] = useState<Date>(new Date(new Date().getFullYear(), 11, 31))
+
+    // const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+    // const open = Boolean(anchorEl)
+    // const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    //     setAnchorEl(event.currentTarget);
+    // }
+    // const handleClose = () => {
+    //     setAnchorEl(null)
+    // }
 
     const getRowsWithEmtyPlans = (plan: DepartmentUserPlan[]): number[] => {
         let hiddenRows: number[] = [];
@@ -95,14 +105,12 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
             dt.setDate(dt.getDate() + 7 * (weekIdx - 1))
             const dtAsStr = dateTorequestStr(dt)
 
-            request("/api/v1/departments/plan/" + departmentId + "/" + record.projectId + "/" + record.userId + "/" + dtAsStr + "/" + hours, "POST", {}).then(_ => {
-                record[weekId] = hours
-                DepartmentPlanFlatRecordVmHelper.recalcHours(plan)
+            record[weekId] = hours
+            DepartmentPlanFlatRecordVmHelper.recalcHours(plan, record.userId)
 
-                return true
-            }).catch(ex => {
-                return false
-            })
+            //request("/api/v1/departments/plan/" + departmentId + "/" + record.projectId + "/" + record.userId + "/" + dtAsStr + "/" + hours, "POST", {})
+
+            return true
         }
 
         return false
@@ -205,14 +213,40 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
                                 onChange={(newValue) => { if (newValue) { setEndDate(newValue) } }}
                                 renderInput={(params) => <TextField size="small" {...params} />}
                             />
-                            <Button variant="contained" startIcon={<AddBoxIcon />}
+
+                            <Button variant="contained" size="small" startIcon={<SaveAltIcon />}
+                                onClick={e => { }}>
+                                {t('save')}
+                            </Button>
+
+                            <Button variant="contained" size="small" startIcon={<AddBoxIcon />}
                                 onClick={e => { expandAllRows() }}>
                                 {t('expand')}
                             </Button>
-                            <Button variant="contained" startIcon={<IndeterminateCheckBoxIcon />}
+                            <Button variant="contained" size="small" startIcon={<IndeterminateCheckBoxIcon />}
                                 onClick={e => { collapseAllRows() }}>
                                 {t('collapse')}
                             </Button>
+
+                            {/* <Button
+                                aria-controls={open ? 'basic-menu' : undefined}
+                                aria-haspopup="true"
+                                aria-expanded={open ? 'true' : undefined}
+                                onClick={handleClick}
+                                variant="contained"
+                                size="small"
+                            >
+                                ...
+                            </Button>
+                            <Menu
+                                anchorEl={anchorEl}
+                                open={open}
+                                onClose={handleClose}
+                            >
+                                <MenuItem >Profile</MenuItem>
+                                <MenuItem >My account</MenuItem>
+                                <MenuItem >Logout</MenuItem>
+                            </Menu> */}
 
                             <FormGroup>
                                 <FormControlLabel
@@ -253,6 +287,13 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
                     wordWrap={true}
                     fillHandle={false}
                     manualColumnResize={true}
+
+                    afterPaste={(data: CellValue[][], coords: RangeType[]): void => {
+                        DepartmentPlanFlatRecordVmHelper.recalcHours(plan)
+                        if (hotTableRef && hotTableRef.current && hotTableRef.current.hotInstance) {
+                            hotTableRef.current.hotInstance.render()
+                        }
+                    }}
 
                     afterSelection={(row: number, column: number, row2: number, column2: number, preventScrolling: { value: boolean }, selectionLayerLevel: number) => {
                         preventScrolling.value = true
