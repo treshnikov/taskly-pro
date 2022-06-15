@@ -1,5 +1,5 @@
 import { createSlice, freeze, PayloadAction } from "@reduxjs/toolkit"
-import { DepartmentUserPlan, DepartmentPlanFlatRecordVmHelper, DepartmentProjectPlan, } from "../models/DepartmentPlan/DepartmentPlanClasses";
+import { DepartmentUserPlan, DepartmentPlanHelper, DepartmentProjectPlan, } from "../models/DepartmentPlan/DepartmentPlanClasses";
 import { RootState } from "./store";
 
 export type DepartmentPlanState = {

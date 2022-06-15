@@ -7,13 +7,13 @@ import { useParams } from "react-router-dom";
 import { dateAsShortStrWithShortYear, dateTorequestStr } from "../common/dateFormatter";
 import { getColor } from "../common/getColor";
 import { useHttp } from "../hooks/http.hook";
-import { DepartmentUserPlan as DepartmentUserPlan, DepartmentPlanFlatRecordVmHelper, DepartmentPlanUserRecordVm, DepartmentProjectPlan } from "../models/DepartmentPlan/DepartmentPlanClasses";
+import { DepartmentUserPlan as DepartmentUserPlan, DepartmentPlanHelper, DepartmentPlanUserRecordVm, DepartmentProjectPlan } from "../models/DepartmentPlan/DepartmentPlanClasses";
 import moment from "moment";
 import { DepartmentPlanToolbar } from "../components/DepartmentPlan/DepartmentPlanToolbar";
 import { useAppDispatch, useAppSelector } from "../hooks/redux.hook";
 import { setHiddenRows } from "../redux/departmentPlanSlice";
 
-const initData: DepartmentUserPlan[] = [{
+const initPlan: DepartmentUserPlan[] = [{
     id: '',
     userName: '',
     userPosition: '',
@@ -34,37 +34,13 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
     const hotTableRef = useRef<HotTable>(null);
 
     // unfortunately, we must store the state locally because passing such amount of records to redux causes low performance
-    const [plan, setPlan] = useState<DepartmentUserPlan[]>(initData)
+    const [plan, setPlan] = useState<DepartmentUserPlan[]>(initPlan)
     const [headers, setHeaders] = useState<string[]>(['', '', '', '', ''])
 
     const dispatch = useAppDispatch()
     const startDate = useAppSelector(state => state.departmentPlanReducer.startDate)
     const endDate = useAppSelector(state => state.departmentPlanReducer.endDate)
     const hiddenRows = useAppSelector(state => state.departmentPlanReducer.hiddenRows)
-
-    // const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
-    // const open = Boolean(anchorEl)
-    // const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    //     setAnchorEl(event.currentTarget);
-    // }
-    // const handleClose = () => {
-    //     setAnchorEl(null)
-    // }
-
-    const getRowsWithEmtyPlans = (plan: DepartmentUserPlan[]): number[] => {
-        let hiddenRows: number[] = [];
-        let idx = 0;
-        for (let i = 0; i < plan.length; i++) {
-            idx++;
-            for (let j = 0; j < plan[i].__children.length; j++) {
-                if (!plan[i].__children[j].hours) {
-                    hiddenRows.push(idx);
-                }
-                idx++;
-            }
-        }
-        return hiddenRows;
-    }
 
     const onPlanChanged = (plan: DepartmentUserPlan[], projectId: string, weekId: string, hours: string): boolean => {
         // prevent editing cells with summary info
@@ -92,7 +68,7 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
             const dtAsStr = dateTorequestStr(dt)
 
             record[weekId] = hours
-            DepartmentPlanFlatRecordVmHelper.recalcHours(plan, record.userId)
+            DepartmentPlanHelper.recalcHours(plan, record.userId)
 
             //request("/api/v1/departments/plan/" + departmentId + "/" + record.projectId + "/" + record.userId + "/" + dtAsStr + "/" + hours, "POST", {})
 
@@ -147,7 +123,6 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
     }
 
     useEffect(() => {
-        //todo pass start and end date
         request<DepartmentPlanUserRecordVm[]>(`/api/v1/departments/${departmentId}/${moment(startDate).format("YYYY-MM-DD")}/${moment(endDate).format("YYYY-MM-DD")}/plan`, 'GET').then(depPlan => {
             let headers: string[] = [...staticHeaders]
             const weekCount = (depPlan.length > 0 && depPlan[0].projects.length > 0)
@@ -161,8 +136,8 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
 
             setHeaders(headers)
 
-            const flatPlan = DepartmentPlanFlatRecordVmHelper.buildFlatPlan(depPlan)
-            dispatch(setHiddenRows(getRowsWithEmtyPlans(flatPlan)))
+            const flatPlan = DepartmentPlanHelper.buildFlatPlan(depPlan)
+            dispatch(setHiddenRows(DepartmentPlanHelper.getRowsWithEmtyPlans(flatPlan)))
             setPlan(flatPlan)
         })
     }, [startDate, endDate])
@@ -208,7 +183,7 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
                     manualColumnResize={true}
 
                     afterPaste={(data: CellValue[][], coords: RangeType[]): void => {
-                        DepartmentPlanFlatRecordVmHelper.recalcHours(plan)
+                        DepartmentPlanHelper.recalcHours(plan)
                         if (hotTableRef && hotTableRef.current && hotTableRef.current.hotInstance) {
                             hotTableRef.current.hotInstance.render()
                         }

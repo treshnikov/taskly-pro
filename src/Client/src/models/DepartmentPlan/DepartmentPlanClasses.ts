@@ -24,7 +24,7 @@ export type DepartmentUserPlan = {
     id: string
     userName: string
     userPosition: string
-    project: string 
+    project: string
     hours: string | null
     __children: DepartmentProjectPlan[]
     [weekNumber: string]: string | DepartmentProjectPlan[] | null
@@ -40,21 +40,21 @@ export type DepartmentProjectPlan = {
     [weekNumber: string]: string | null | number
 }
 
-export class DepartmentPlanFlatRecordVmHelper {
+export class DepartmentPlanHelper {
 
     public static recalcHours(arg: DepartmentUserPlan[], userIdFilter: string | null = null) {
         arg.filter(u => userIdFilter === null ? true : u.userId === userIdFilter).forEach(user => {
             let userHours = 0
-            let weekSumHours: {[key: string]: number} = {}
-            
-        
+            let weekSumHours: { [key: string]: number } = {}
+
+
             user.__children.forEach(project => {
                 let projectHours = 0
 
                 let weekIdx = 1
                 while ((project as any).hasOwnProperty("week" + weekIdx.toString())) {
                     const weekIdent = "week" + weekIdx.toString()
-                    
+
                     const hoursAsString = project[weekIdent]
                     if (hoursAsString && hoursAsString !== "") {
                         const weekHours = parseFloat(hoursAsString as string)
@@ -64,8 +64,8 @@ export class DepartmentPlanFlatRecordVmHelper {
                         if (!(weekSumHours as any).hasOwnProperty(weekIdent)) {
                             weekSumHours[weekIdent] = 0
                         }
-        
-                        weekSumHours[weekIdent] += weekHours                     
+
+                        weekSumHours[weekIdent] += weekHours
                     }
                     weekIdx++
                 }
@@ -102,7 +102,7 @@ export class DepartmentPlanFlatRecordVmHelper {
                     userPosition: '',
                     hours: null,
                     userId: user.userId,
-                    projectId: project.projectId, 
+                    projectId: project.projectId,
                     project: project.projectId + ": " + (project.projectShortName ? project.projectShortName : project.projectName)
                 }
                 idx++;
@@ -118,7 +118,23 @@ export class DepartmentPlanFlatRecordVmHelper {
             res.push(userRecord);
         });
 
-        DepartmentPlanFlatRecordVmHelper.recalcHours(res)
+        DepartmentPlanHelper.recalcHours(res)
         return res;
     }
+
+    public static getRowsWithEmtyPlans(plan: DepartmentUserPlan[]): number[] {
+        let hiddenRows: number[] = [];
+        let idx = 0;
+        for (let i = 0; i < plan.length; i++) {
+            idx++;
+            for (let j = 0; j < plan[i].__children.length; j++) {
+                if (!plan[i].__children[j].hours) {
+                    hiddenRows.push(idx);
+                }
+                idx++;
+            }
+        }
+        return hiddenRows;
+    }
+
 }
