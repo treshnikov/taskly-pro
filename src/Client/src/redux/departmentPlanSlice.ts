@@ -1,5 +1,4 @@
-import { createSlice, freeze, PayloadAction } from "@reduxjs/toolkit"
-import { DepartmentUserPlan, DepartmentPlanHelper, DepartmentProjectPlan, } from "../models/DepartmentPlan/DepartmentPlanClasses";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { RootState } from "./store";
 
 export type DepartmentPlanState = {

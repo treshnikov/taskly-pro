@@ -3,11 +3,11 @@ import Handsontable from "handsontable";
 import { CellChange, CellValue, ChangeSource, RangeType } from "handsontable/common";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { dateAsShortStrWithShortYear, dateTorequestStr } from "../common/dateFormatter";
 import { getColor } from "../common/getColor";
 import { useHttp } from "../hooks/http.hook";
-import { DepartmentUserPlan as DepartmentUserPlan, DepartmentPlanHelper, DepartmentPlanUserRecordVm, DepartmentProjectPlan } from "../models/DepartmentPlan/DepartmentPlanClasses";
+import { DepartmentUserPlan, DepartmentPlanHelper, DepartmentPlanUserRecordVm, DepartmentProjectPlan } from "../models/DepartmentPlan/DepartmentPlanClasses";
 import moment from "moment";
 import { DepartmentPlanToolbar } from "../components/DepartmentPlan/DepartmentPlanToolbar";
 import { useAppDispatch, useAppSelector } from "../hooks/redux.hook";
@@ -28,9 +28,10 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
 
     const { request } = useHttp()
     const { t } = useTranslation();
+    const navigate = useNavigate()
 
-    const staticHeaders = ["Id", t('name'), t('position'), t('hours'), t('project')]
-    const columnWidths = [50, 280, 50, 50, 330]
+    const staticHeaders = ["Id", t('name'), t('position'), t('hours'), t('project'), '']
+    const columnWidths = [50, 280, 50, 50, 330, 25]
     const hotTableRef = useRef<HotTable>(null);
 
     // unfortunately, we must store the state locally because passing such amount of records to redux causes low performance
@@ -85,8 +86,8 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
 
         // rows with user name contain summary info that should not be editable
         if (rowId[0] === 'u') {
-            cellProperties.readOnly = true;
-            td.style.fontStyle = 'italic';
+            cellProperties.readOnly = true
+            td.style.fontStyle = 'italic'
 
             const valueAsFloat = parseFloat(value)
             if (!isNaN(valueAsFloat)) {
@@ -122,6 +123,22 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
         }
     }
 
+    const openProjectCellRenderer = (instance: Handsontable.Core, td: HTMLTableCellElement, row: number, col: number, prop: string | number, value: any, cellProperties: Handsontable.CellProperties): void => {
+        Handsontable.renderers.TextRenderer.apply(this, [instance, td, row, col, prop, value, cellProperties]);
+
+        const rowId = instance.getDataAtCell(row, 0);
+
+        if (rowId[0] === 'p') {
+            td.style.textDecoration = 'underline'
+            td.style.cursor = 'pointer'
+            td.onclick = () => {
+                const projectId = (value as string).split(':')[0] 
+                navigate(`/projects/${projectId}`)
+            }
+            td.innerText = '...'
+        }
+    }
+
     useEffect(() => {
         request<DepartmentPlanUserRecordVm[]>(`/api/v1/departments/${departmentId}/${moment(startDate).format("YYYY-MM-DD")}/${moment(endDate).format("YYYY-MM-DD")}/plan`, 'GET').then(depPlan => {
             let headers: string[] = [...staticHeaders]
@@ -140,7 +157,7 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
             dispatch(setHiddenRows(DepartmentPlanHelper.getRowsWithEmtyPlans(flatPlan)))
             setPlan(flatPlan)
         })
-    }, [startDate, endDate])
+    }, [startDate, endDate, departmentId])
 
     useEffect(() => {
         if (plan && plan.length > 0 && hotTableRef && hotTableRef.current && hotTableRef.current.hotInstance) {
@@ -215,6 +232,7 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
                     <HotColumn data={"project"} type={"text"} readOnly >
                         {/* <ProjectNameRenderer hot-renderer></ProjectNameRenderer> */}
                     </HotColumn>
+                    <HotColumn data={"project"} readOnly renderer={openProjectCellRenderer}/>
                     {
                         headers.slice(staticHeaders.length).map((header, idx) => {
                             return (

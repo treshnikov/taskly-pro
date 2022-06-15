@@ -1,16 +1,14 @@
 import { DatePicker } from "@mui/lab"
-import { Button, Checkbox, FormControlLabel, FormGroup, Grid, Menu, MenuItem, Stack, TextField, Typography } from "@mui/material"
+import { Button, Grid, Menu, MenuItem, Stack, TextField, Typography } from "@mui/material"
 import IndeterminateCheckBoxIcon from '@mui/icons-material/IndeterminateCheckBox';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
 import { useTranslation } from "react-i18next";
 import { useHttp } from "../../hooks/http.hook";
 import { RefObject, useState } from "react";
-import Handsontable from "handsontable";
 import HotTable from "@handsontable/react";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux.hook";
 import { setEndDate, setHiddenRows, setStartDate } from "../../redux/departmentPlanSlice";
-import { DepartmentPlanHelper } from "../../models/DepartmentPlan/DepartmentPlanClasses";
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 
 export const DepartmentPlanToolbar: React.FunctionComponent<{ hotTableRef: RefObject<HotTable>, departmentName: string }> = ({ hotTableRef, departmentName }) => {
@@ -20,7 +18,6 @@ export const DepartmentPlanToolbar: React.FunctionComponent<{ hotTableRef: RefOb
     const dispatch = useAppDispatch()
     const startDate = useAppSelector(state => state.departmentPlanReducer.startDate)
     const endDate = useAppSelector(state => state.departmentPlanReducer.endDate)
-    const hiddenRows = useAppSelector(state => state.departmentPlanReducer.hiddenRows)
 
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
     const open = Boolean(anchorEl)
