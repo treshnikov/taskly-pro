@@ -2,7 +2,7 @@ import HotTable, { HotColumn } from "@handsontable/react";
 import { CellChange, CellValue, ChangeSource, RangeType } from "handsontable/common";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { dateAsShortStrWithShortYear, dateTorequestStr } from "../common/dateFormatter";
 import { useHttp } from "../hooks/http.hook";
 import { DepartmentUserPlan, DepartmentPlanHelper, DepartmentPlanUserRecordVm, DepartmentProjectPlan } from "../models/DepartmentPlan/DepartmentPlanClasses";
@@ -12,6 +12,7 @@ import { useAppDispatch, useAppSelector } from "../hooks/redux.hook";
 import { setHiddenRows } from "../redux/departmentPlanSlice";
 import { WeekPlanCellRenderer } from "../components/DepartmentPlan/Renderers/WeekPlanCellRenderer";
 import { ProjectNameCellRenderer } from "../components/DepartmentPlan/Renderers/ProjectNameCellRenderer";
+import { NavigateHelper } from "../common/navigateHelper";
 
 const initPlan: DepartmentUserPlan[] = [{
     id: '',
@@ -31,8 +32,12 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
     const staticHeaders = ["Id", t('name'), t('position'), t('hours'), t('project')]
     const columnWidths = [50, 280, 50, 50, 330]
     const hotTableRef = useRef<HotTable>(null);
+    const navigate = useNavigate()
 
-    // unfortunately, we must store the state locally because passing such amount of records to redux causes low performance
+    // workaround for passing a navigate function to ProjectNameCellRenderer that cannot be extended by adding new props without changing the source code of the component
+    NavigateHelper.navigateFunction = (arg: string) => { navigate(arg) } 
+
+    // unfortunately, we must store the state locally because passing such an amount of records to redux causes low performance even the records will be frozen
     const [plan, setPlan] = useState<DepartmentUserPlan[]>(initPlan)
     const [headers, setHeaders] = useState<string[]>(['', '', '', '', ''])
 
