@@ -59,6 +59,7 @@ export const DepartmentPlanToolbar: React.FunctionComponent<{ hotTableRef: RefOb
                         onChange={(newValue) => { if (newValue) { dispatch(setStartDate(new Date(newValue))) } }}
                         renderInput={(params) => <TextField size="small" {...params} />}
                     />
+
                     <DatePicker
                         views={['day']}
                         label={t('end')}
@@ -78,7 +79,8 @@ export const DepartmentPlanToolbar: React.FunctionComponent<{ hotTableRef: RefOb
                             const data = DepartmentPlanHelper.preparePlanFToSendToServer(plan, new Date(startDate))
 
                             // using hooks causes render and the table renders all its rows expanded 
-                            // even if they were collapsed before render which brings us to a need to save and restore collapsed rows
+                            // even if they were collapsed previously  
+                            // this fact brings us to a need to save and restore collapsed rows
                             await request("/api/v1/departments/plan", "POST",
                                 { departmentId: departmentId, data: data },
                                 [{ name: 'Content-Type', value: 'application/json' }])
@@ -92,6 +94,7 @@ export const DepartmentPlanToolbar: React.FunctionComponent<{ hotTableRef: RefOb
                         onClick={e => { expandAllRows() }}>
                         {t('expand')}
                     </Button>
+
                     <Button variant="contained" size="small" startIcon={<IndeterminateCheckBoxIcon />}
                         onClick={e => { collapseAllRows() }}>
                         {t('collapse')}
