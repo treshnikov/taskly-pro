@@ -3,9 +3,9 @@ import { CellChange, CellValue, ChangeSource, RangeType } from "handsontable/com
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams, useNavigate } from "react-router-dom";
-import { dateAsShortStrWithShortYear, dateTorequestStr } from "../common/dateFormatter";
+import { dateAsShortStrWithShortYear } from "../common/dateFormatter";
 import { useHttp } from "../hooks/http.hook";
-import { DepartmentUserPlan, DepartmentPlanUserRecordVm, DepartmentProjectPlan } from "../models/DepartmentPlan/DepartmentPlanClasses";
+import { DepartmentUserPlan, DepartmentPlanUserRecordVm } from "../models/DepartmentPlan/DepartmentPlanClasses";
 import { DepartmentPlanHelper } from "../models/DepartmentPlan/DepartmentPlanHelper";
 import moment from "moment";
 import { DepartmentPlanToolbar } from "../components/DepartmentPlan/DepartmentPlanToolbar";
@@ -46,28 +46,6 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
     const startDate = useAppSelector(state => state.departmentPlanReducer.startDate)
     const endDate = useAppSelector(state => state.departmentPlanReducer.endDate)
     const hiddenRows = useAppSelector(state => state.departmentPlanReducer.hiddenRows)
-
-    const onPlanChanged = (plan: DepartmentUserPlan[], projectId: string, weekId: string, hours: string): boolean => {
-        // prevent editing cells with summary info
-        if (projectId[0] === 'u') {
-            return false
-        }
-
-        // find and update changed record
-        let record: DepartmentProjectPlan = { id: '', hours: '', project: '', userPosition: '', userName: '', userId: '', projectId: 0 }
-        const found = plan.some(u => u.__children.some(p => {
-            record = p
-            return p.id === projectId
-        }))
-
-        if (found) {
-            record[weekId] = hours
-            DepartmentPlanHelper.recalcHours(plan, record.userId)
-            return true
-        }
-
-        return false
-    }
 
     useEffect(() => {
         request<DepartmentPlanUserRecordVm[]>(`/api/v1/departments/${departmentId}/${moment(startDate).format("YYYY-MM-DD")}/${moment(endDate).format("YYYY-MM-DD")}/plan`, 'GET').then(depPlan => {
@@ -136,6 +114,15 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
                         }
                     }}
 
+                    afterDocumentKeyDown={(event: KeyboardEvent): void => {
+                        if (event.key === 'Delete' || event.key === 'Backspace') {
+                            DepartmentPlanHelper.recalcHours(plan)
+                            if (hotTableRef && hotTableRef.current && hotTableRef.current.hotInstance) {
+                                hotTableRef.current.hotInstance.render()
+                            }
+                        }
+                    }}
+
                     afterSelection={(row: number, column: number, row2: number, column2: number, preventScrolling: { value: boolean }, selectionLayerLevel: number) => {
                         preventScrolling.value = true
                     }}
@@ -147,9 +134,8 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
 
                         const projectId = hotTableRef.current.hotInstance.getDataAtCell(changes[0][0], 0)
                         const weekId = changes[0][1]
-                        const newValue = changes[0][3]
-
-                        return onPlanChanged(plan, projectId, weekId as string, newValue)
+                        const newValue = changes[0][3] ? changes[0][3] : 0
+                        return DepartmentPlanHelper.onPlanChanged(plan, projectId, weekId as string, newValue)
                     }}
 
                     outsideClickDeselects={true}

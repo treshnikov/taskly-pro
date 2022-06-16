@@ -115,7 +115,7 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentPlan
             var dt = start;
             while (dt.DayOfWeek != DayOfWeek.Monday)
             {
-                dt = dt.AddDays(-1);
+                dt = dt.AddDays(1);
             }
 
             while (dt <= end)

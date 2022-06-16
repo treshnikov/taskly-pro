@@ -100,11 +100,11 @@ export class DepartmentPlanHelper {
 
     public static preparePlanFToSendToServer(plan: DepartmentUserPlan[], startDate: Date): DepartmentPlanUserRecordVm[] {
         const res: DepartmentPlanUserRecordVm[] = [];
-        
+
         let firstMonday = new Date(startDate)
         while (firstMonday.getDay() !== 1) {
-            firstMonday = new Date(firstMonday.getFullYear(), firstMonday.getMonth(), firstMonday.getDate() - 1)
-        }        
+            firstMonday = new Date(firstMonday.getFullYear(), firstMonday.getMonth(), firstMonday.getDate() + 1)
+        }
 
         plan.forEach(user => {
 
@@ -151,6 +151,28 @@ export class DepartmentPlanHelper {
             res.push(userRecord);
         })
         return res
+    }
+
+    public static onPlanChanged(plan: DepartmentUserPlan[], projectId: string, weekId: string, hours: string): boolean {
+        // prevent editing cells with summary info
+        if (projectId[0] === 'u') {
+            return false
+        }
+
+        // find and update changed record
+        let record: DepartmentProjectPlan = { id: '', hours: '', project: '', userPosition: '', userName: '', userId: '', projectId: 0 }
+        const found = plan.some(u => u.__children.some(p => {
+            record = p
+            return p.id === projectId
+        }))
+
+        if (found) {
+            record[weekId] = hours
+            DepartmentPlanHelper.recalcHours(plan, record.userId)
+            return true
+        }
+
+        return false
     }
 }
 

@@ -45,6 +45,24 @@ export const DepartmentPlanToolbar: React.FunctionComponent<{ hotTableRef: RefOb
         }
     }
 
+    const saveChanges = async () => {
+        if (!hotTableRef || !hotTableRef.current || !hotTableRef.current.hotInstance) {
+            return;
+        }
+        const plugin = hotTableRef.current.hotInstance.getPlugin('nestedRows') as any;
+        const collapsedRows: number[] = plugin.collapsingUI.collapsedRows as number[];
+        const data = DepartmentPlanHelper.preparePlanFToSendToServer(plan, new Date(startDate));
+
+        // using hooks causes render and the table renders all its rows expanded 
+        // even if they were collapsed previously  
+        // this fact brings us to a need to save and restore collapsed rows
+        await request("/api/v1/departments/plan", "POST",
+            { departmentId: departmentId, data: data },
+            [{ name: 'Content-Type', value: 'application/json' }]);
+
+        plugin.collapsingUI.collapseMultipleChildren(collapsedRows);
+    };
+
     return <div style={{ position: "fixed", top: "5em", left: "1em" }}>
         <Grid container>
             <Grid item xs={12}>
@@ -70,23 +88,7 @@ export const DepartmentPlanToolbar: React.FunctionComponent<{ hotTableRef: RefOb
                     />
 
                     <Button variant="contained" size="small" startIcon={<SaveAltIcon />}
-                        onClick={async e => {
-                            if (!hotTableRef || !hotTableRef.current || !hotTableRef.current.hotInstance) {
-                                return
-                            }
-                            const plugin = hotTableRef.current.hotInstance.getPlugin('nestedRows') as any
-                            const collapsedRows: number[] = plugin.collapsingUI.collapsedRows as number[]
-                            const data = DepartmentPlanHelper.preparePlanFToSendToServer(plan, new Date(startDate))
-
-                            // using hooks causes render and the table renders all its rows expanded 
-                            // even if they were collapsed previously  
-                            // this fact brings us to a need to save and restore collapsed rows
-                            await request("/api/v1/departments/plan", "POST",
-                                { departmentId: departmentId, data: data },
-                                [{ name: 'Content-Type', value: 'application/json' }])
-
-                            plugin.collapsingUI.collapseMultipleChildren(collapsedRows)
-                        }}>
+                        onClick={saveChanges}>
                         {t('save')}
                     </Button>
 

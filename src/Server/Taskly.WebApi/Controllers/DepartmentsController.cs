@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Taskly.Application.Departments.Commands.UpdatePlans;
 using Taskly.Application.Departments.Queries;
 using Taskly.Application.Departments.Queries.GetDepartmentPlan;
 using Taskly.Application.Departments.Queries.GetDepartmentsForPlan;
@@ -57,6 +58,12 @@ namespace Taskly.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<string>> UpdatePlan([FromBody] UpdateDepartmentPlanVm arg)
         {
+            await Mediator.Send(new UpdateDepartmentPlanRequest
+            {
+                DepartmentId = arg.DepartmentId,
+                Data = arg.Data
+            });
+            
             return Ok(new Object());
         }
 
