@@ -75,6 +75,13 @@ export const ProjectDetailsDepartemntsPlan: React.FunctionComponent<ProjectDetai
                 scroll="paper"
                 fullWidth={true}
                 maxWidth="lg"
+                PaperProps={{
+                    style: {
+                        minHeight: "90%",
+                        maxHeight: "90%"
+                    }
+                }}
+
                 open={showDepartmentsPlan}
                 onClose={e => onClose()}
                 aria-labelledby="_showDepartmentsPlan"
@@ -85,7 +92,7 @@ export const ProjectDetailsDepartemntsPlan: React.FunctionComponent<ProjectDetai
                 <Divider></Divider>
                 <DialogContent>
                     <FormGroup>
-                        <FormControlLabel control={<Checkbox 
+                        <FormControlLabel control={<Checkbox
                             value={hideEmpty}
                             onChange={e => setHideEmpty(e.target.checked)}
                         />} label={t('hide-empty')} />
