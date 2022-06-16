@@ -1,17 +1,17 @@
 import HotTable, { HotColumn } from "@handsontable/react";
-import Handsontable from "handsontable";
 import { CellChange, CellValue, ChangeSource, RangeType } from "handsontable/common";
-import { createElement, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { dateAsShortStrWithShortYear, dateTorequestStr } from "../common/dateFormatter";
-import { getColor } from "../common/getColor";
 import { useHttp } from "../hooks/http.hook";
 import { DepartmentUserPlan, DepartmentPlanHelper, DepartmentPlanUserRecordVm, DepartmentProjectPlan } from "../models/DepartmentPlan/DepartmentPlanClasses";
 import moment from "moment";
 import { DepartmentPlanToolbar } from "../components/DepartmentPlan/DepartmentPlanToolbar";
 import { useAppDispatch, useAppSelector } from "../hooks/redux.hook";
 import { setHiddenRows } from "../redux/departmentPlanSlice";
+import { WeekPlanCellRenderer } from "../components/DepartmentPlan/Renderers/WeekPlanCellRenderer";
+import { ProjectNameCellRenderer } from "../components/DepartmentPlan/Renderers/ProjectNameCellRenderer";
 
 const initPlan: DepartmentUserPlan[] = [{
     id: '',
@@ -28,8 +28,6 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
 
     const { request } = useHttp()
     const { t } = useTranslation();
-    const navigate = useNavigate()
-
     const staticHeaders = ["Id", t('name'), t('position'), t('hours'), t('project')]
     const columnWidths = [50, 280, 50, 50, 330]
     const hotTableRef = useRef<HotTable>(null);
@@ -77,76 +75,6 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
         }
 
         return false
-    }
-
-    const weekPlanCellRenderer = (instance: Handsontable.Core, td: HTMLTableCellElement, row: number, col: number, prop: string | number, value: any, cellProperties: Handsontable.CellProperties): void => {
-        Handsontable.renderers.TextRenderer.apply(this, [instance, td, row, col, prop, value, cellProperties]);
-
-        const rowId = instance.getDataAtCell(row, 0);
-
-        // rows with user name contain summary info that should not be editable
-        if (rowId[0] === 'u') {
-            cellProperties.readOnly = true
-            td.style.fontStyle = 'italic'
-
-            const valueAsFloat = parseFloat(value)
-            if (!isNaN(valueAsFloat)) {
-                td.style.fontWeight = '500'
-                if (valueAsFloat === 40) {
-                    td.style.background = '-webkit-linear-gradient(bottom, #ecffebaa 100%, white 100%)'
-                }
-                else {
-                    if (valueAsFloat > 40) {
-                        td.style.background = '-webkit-linear-gradient(bottom, #ffcccc88 100%, white 100%)'
-                    }
-                    else {
-                        td.style.background = '-webkit-linear-gradient(bottom, #ffffe0aa 100%, white 100%)'
-                    }
-                }
-            }
-            else {
-                td.style.background = '-webkit-linear-gradient(bottom, #f8f8f8 100%, white 100%)'
-            }
-
-        }
-    }
-
-    const projectCellRenderer = (instance: Handsontable.Core, td: HTMLTableCellElement, row: number, col: number, prop: string | number, value: any, cellProperties: Handsontable.CellProperties): void => {
-        Handsontable.renderers.TextRenderer.apply(this, [instance, td, row, col, prop, value, cellProperties]);
-
-        const rowId = instance.getDataAtCell(row, 0);
-
-        const color = getColor(value)
-        if (rowId[0] === 'p') {
-            td.style.background = '-webkit-linear-gradient(left, ' + color + '88 8px, white 8px)'
-            td.style.paddingLeft = '10px'
-        }
-    }
-
-    const projectNameCellRenderer = (instance: Handsontable.Core, td: HTMLTableCellElement, row: number, col: number, prop: string | number, value: any, cellProperties: Handsontable.CellProperties): void => {
-        Handsontable.renderers.TextRenderer.apply(this, [instance, td, row, col, prop, value, cellProperties]);
-
-        const rowId = instance.getDataAtCell(row, 0);
-
-        if (rowId[0] === 'p') {
-            //const text = createElement("div", null, [value, "...", "123"])
-            const text = document.createElement("div")
-            text.innerText = value
-            text.style.display = 'inline-block'
-
-            const link = document.createElement("div")
-            link.innerText = " ..."
-            link.style.display = 'inline-block'
-            link.style.cursor = 'pointer'
-            link.onclick = () => {
-                const projectId = (value as string).split(':')[0] 
-                navigate(`/projects/${projectId}`)
-            }
-
-            td.innerText = ''
-            td.appendChild(text)
-            td.appendChild(link) 
-        }
     }
 
     useEffect(() => {
@@ -239,14 +167,12 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
                     <HotColumn data={"userName"} wordWrap={false} readOnly type={"text"} />
                     <HotColumn data={"userPosition"} wordWrap={false} readOnly type={"text"} />
                     <HotColumn data={"hours"} type={"text"} readOnly />
-                    <HotColumn data={"project"} type={"text"} readOnly renderer={projectNameCellRenderer} >
-                        {/* <ProjectNameRenderer hot-renderer></ProjectNameRenderer> */}
-                    </HotColumn>
+                    <HotColumn data={"project"} type={"text"} readOnly renderer={ProjectNameCellRenderer} />
                     {
                         headers.slice(staticHeaders.length).map((header, idx) => {
                             return (
                                 <HotColumn key={"depPlanWeek" + idx} data={"week" + (idx + 1).toString()} type={"text"}
-                                    renderer={weekPlanCellRenderer}
+                                    renderer={WeekPlanCellRenderer}
                                 >
                                 </HotColumn>)
                         })
