@@ -179,7 +179,7 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
 
     return (
         <div className='page-container'>
-            <DepartmentPlanToolbar hotTableRef={hotTableRef} departmentName={departmentName as string}></DepartmentPlanToolbar>
+            <DepartmentPlanToolbar hotTableRef={hotTableRef} departmentName={departmentName as string} plan={plan}></DepartmentPlanToolbar>
             <div style={{ marginTop: "8em" }}>
                 <HotTable
                     id="projectDetailsTable"

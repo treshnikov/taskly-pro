@@ -10,8 +10,9 @@ import HotTable from "@handsontable/react";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux.hook";
 import { setEndDate, setHiddenRows, setStartDate } from "../../redux/departmentPlanSlice";
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import { DepartmentPlanHelper, DepartmentUserPlan } from "../../models/DepartmentPlan/DepartmentPlanClasses";
 
-export const DepartmentPlanToolbar: React.FunctionComponent<{ hotTableRef: RefObject<HotTable>, departmentName: string }> = ({ hotTableRef, departmentName }) => {
+export const DepartmentPlanToolbar: React.FunctionComponent<{ hotTableRef: RefObject<HotTable>, departmentName: string, plan: DepartmentUserPlan[] }> = ({ hotTableRef, departmentName, plan }) => {
     const { request } = useHttp()
     const { t } = useTranslation()
 
@@ -104,7 +105,7 @@ export const DepartmentPlanToolbar: React.FunctionComponent<{ hotTableRef: RefOb
                         }}>{t('show-project-with-no-estimation')}</MenuItem>
 
                         <MenuItem onClick={e => {
-                            //dispatch(setHiddenRows(DepartmentPlanHelper.getRowsWithEmtyPlans(plan)))
+                            dispatch(setHiddenRows(DepartmentPlanHelper.getRowsWithEmtyPlans(plan)))
                             //handleClose()
                         }} >{t('hide-project-with-no-estimation')}</MenuItem>
                     </Menu>
