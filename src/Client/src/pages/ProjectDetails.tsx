@@ -55,7 +55,7 @@ export const ProjectDetails: React.FunctionComponent = () => {
     <div className='page-container'>
       <ProjectDetailsToolBar scrollToTheLastRowFunc={scrollToRow}></ProjectDetailsToolBar>
 
-      <div id="hotContainer" style={{ overflowX: 'auto', height: tableHeight }} onClickCapture={e => { e.stopPropagation() }}>
+      <div id="hotContainer" style={{ overflowX: 'auto', height: tableHeight }} >
         <HotTable
           id="projectDetailsTable"
           ref={hotTableRef}
