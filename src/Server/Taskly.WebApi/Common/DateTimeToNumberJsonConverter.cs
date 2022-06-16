@@ -7,14 +7,9 @@ namespace Taskly.WebApi.Common
     {
         public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            var dateAsStr = reader.GetString();
-            if (string.IsNullOrWhiteSpace(dateAsStr))
-            {
-                throw new ArgumentException("Cannot convert an empty string to DateTime.");
-            }
-
-            DateTime epoch = DateTime.UnixEpoch;
-            return epoch.Add(TimeSpan.FromMilliseconds(long.Parse(dateAsStr)));
+            var dateAsNumber = reader.GetInt64();
+            DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc); ;
+            return epoch.Add(TimeSpan.FromMilliseconds(dateAsNumber)).ToLocalTime();
         }
 
         public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)

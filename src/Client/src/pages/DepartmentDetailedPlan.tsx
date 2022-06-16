@@ -5,7 +5,8 @@ import { useTranslation } from "react-i18next";
 import { useParams, useNavigate } from "react-router-dom";
 import { dateAsShortStrWithShortYear, dateTorequestStr } from "../common/dateFormatter";
 import { useHttp } from "../hooks/http.hook";
-import { DepartmentUserPlan, DepartmentPlanHelper, DepartmentPlanUserRecordVm, DepartmentProjectPlan } from "../models/DepartmentPlan/DepartmentPlanClasses";
+import { DepartmentUserPlan, DepartmentPlanUserRecordVm, DepartmentProjectPlan } from "../models/DepartmentPlan/DepartmentPlanClasses";
+import { DepartmentPlanHelper } from "../models/DepartmentPlan/DepartmentPlanHelper";
 import moment from "moment";
 import { DepartmentPlanToolbar } from "../components/DepartmentPlan/DepartmentPlanToolbar";
 import { useAppDispatch, useAppSelector } from "../hooks/redux.hook";
@@ -60,22 +61,8 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
         }))
 
         if (found) {
-            // send changes to the server
-
-            // extract week start
-            const weekIdx = parseInt(weekId.replace("week", ""))
-            let dt = new Date(startDate)
-            while (dt.getDay() !== 1) {
-                dt = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate() - 1)
-            }
-            dt.setDate(dt.getDate() + 7 * (weekIdx - 1))
-            const dtAsStr = dateTorequestStr(dt)
-
             record[weekId] = hours
             DepartmentPlanHelper.recalcHours(plan, record.userId)
-
-            //request("/api/v1/departments/plan/" + departmentId + "/" + record.projectId + "/" + record.userId + "/" + dtAsStr + "/" + hours, "POST", {})
-
             return true
         }
 
@@ -112,7 +99,7 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
 
     return (
         <div className='page-container'>
-            <DepartmentPlanToolbar hotTableRef={hotTableRef} departmentName={departmentName as string} plan={plan}></DepartmentPlanToolbar>
+            <DepartmentPlanToolbar hotTableRef={hotTableRef} departmentName={departmentName as string} departmentId={departmentId as string} plan={plan}></DepartmentPlanToolbar>
             <div style={{ marginTop: "8em" }}>
                 <HotTable
                     id="projectDetailsTable"

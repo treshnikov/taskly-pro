@@ -10,9 +10,10 @@ import HotTable from "@handsontable/react";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux.hook";
 import { setEndDate, setHiddenRows, setStartDate } from "../../redux/departmentPlanSlice";
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import { DepartmentPlanHelper, DepartmentUserPlan } from "../../models/DepartmentPlan/DepartmentPlanClasses";
+import { DepartmentUserPlan } from "../../models/DepartmentPlan/DepartmentPlanClasses";
+import { DepartmentPlanHelper } from "../../models/DepartmentPlan/DepartmentPlanHelper";
 
-export const DepartmentPlanToolbar: React.FunctionComponent<{ hotTableRef: RefObject<HotTable>, departmentName: string, plan: DepartmentUserPlan[] }> = ({ hotTableRef, departmentName, plan }) => {
+export const DepartmentPlanToolbar: React.FunctionComponent<{ hotTableRef: RefObject<HotTable>, departmentName: string, departmentId: string, plan: DepartmentUserPlan[] }> = ({ hotTableRef, departmentName, departmentId, plan }) => {
     const { request } = useHttp()
     const { t } = useTranslation()
 
@@ -68,8 +69,21 @@ export const DepartmentPlanToolbar: React.FunctionComponent<{ hotTableRef: RefOb
                     />
 
                     <Button variant="contained" size="small" startIcon={<SaveAltIcon />}
-                        onClick={e => {
-                            request("/api/v1/departments/plan/bab041b3-3af4-41d9-8992-5befe5661314/739/695114a8-9626-4c49-ab5c-3da9b04bf3fa/2022-01-10/111", "POST", {})
+                        onClick={async e => {
+                            if (!hotTableRef || !hotTableRef.current || !hotTableRef.current.hotInstance) {
+                                return
+                            }
+                            const plugin = hotTableRef.current.hotInstance.getPlugin('nestedRows') as any
+                            const collapsedRows: number[] = plugin.collapsingUI.collapsedRows as number[]
+                            const data = DepartmentPlanHelper.preparePlanFToSendToServer(plan, new Date(startDate))
+
+                            // using hooks causes render and the table renders all its rows expanded 
+                            // even if they were collapsed before render which brings us to a need to save and restore collapsed rows
+                            await request("/api/v1/departments/plan", "POST",
+                                { departmentId: departmentId, data: data },
+                                [{ name: 'Content-Type', value: 'application/json' }])
+
+                            plugin.collapsingUI.collapseMultipleChildren(collapsedRows)
                         }}>
                         {t('save')}
                     </Button>

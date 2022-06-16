@@ -53,9 +53,9 @@ namespace Taskly.WebApi.Controllers
         }
 
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        [HttpPost("plan/{departmentid}/{projectid}/{userid}/{week}/{hours}")]
+        [HttpPost("plan")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<string>> UpdatePlan(Guid departmentid, int projectid, Guid userid, DateTime week, float hours)
+        public async Task<ActionResult<string>> UpdatePlan([FromBody] UpdateDepartmentPlanVm arg)
         {
             return Ok(new Object());
         }
