@@ -1,9 +1,15 @@
-import { Box, Divider, Drawer, IconButton, List, ListItem, ListItemText } from "@mui/material";
+import { Box, Divider, Drawer, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 import { t } from "i18next";
 import { useState } from "react"
 import { useNavigate } from "react-router-dom";
 import MenuIcon from '@mui/icons-material/Menu';
 import { useHttp } from "../hooks/http.hook";
+import HomeIcon from '@mui/icons-material/Home';
+import AccountTreeIcon from '@mui/icons-material/AccountTree';
+import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
+import SettingsIcon from '@mui/icons-material/Settings';
+import { Logout } from '@mui/icons-material';
+
 
 export const SidebarMenu: React.FunctionComponent = () => {
     const [toggled, setToggled] = useState<boolean>(false)
@@ -17,32 +23,54 @@ export const SidebarMenu: React.FunctionComponent = () => {
             onClick={() => setToggled(false)}
         >
             <List>
-                <ListItem button key={t('home') as string}
-                    onClick={() => navigate("/")}>
-                    <ListItemText primary={t('home') as string} />
+                <ListItem disablePadding onClick={() => navigate("/")}>
+                    <ListItemButton>
+                        <ListItemIcon>
+                            <HomeIcon />
+                        </ListItemIcon>
+                        <ListItemText primary={t('home') as string} />
+                    </ListItemButton>
                 </ListItem>
-                <ListItem button key={t('projects') as string}
-                    onClick={() => navigate("/projects")}>
-                    <ListItemText primary={t('projects') as string} />
+
+                <ListItem disablePadding onClick={() => navigate("/projects")}>
+                    <ListItemButton>
+                        <ListItemIcon>
+                            <ArticleOutlinedIcon />
+                        </ListItemIcon>
+                        <ListItemText primary={t('projects') as string} />
+                    </ListItemButton>
                 </ListItem>
-                <ListItem button key={t('users') as string}
-                    onClick={() => navigate("/users")}>
-                    <ListItemText primary={t('users') as string} />
+
+
+                <ListItem disablePadding onClick={() => navigate("/departmentPlans")}>
+                    <ListItemButton>
+                        <ListItemIcon>
+                            <AccountTreeIcon />
+                        </ListItemIcon>
+                        <ListItemText primary={t('departments') as string} />
+                    </ListItemButton>
                 </ListItem>
-                <ListItem button key={t('departments') as string}
-                    onClick={() => navigate("/departments")}>
-                    <ListItemText primary={t('departments') as string} />
-                </ListItem>
+
             </List>
             <Divider />
             <List>
-                <ListItem button key={t('settings') as string}
-                    onClick={() => navigate("/settings")}>
-                    <ListItemText primary={t('settings') as string} />
+
+                <ListItem disablePadding onClick={() => navigate("/settings")}>
+                    <ListItemButton>
+                        <ListItemIcon>
+                            <SettingsIcon />
+                        </ListItemIcon>
+                        <ListItemText primary={t('settings') as string} />
+                    </ListItemButton>
                 </ListItem>
-                <ListItem button key={t('logout') as string}
-                    onClick={() => logout()}>
-                    <ListItemText primary={t('logout') as string} />
+
+                <ListItem disablePadding onClick={() => logout()}>
+                    <ListItemButton>
+                        <ListItemIcon>
+                            <Logout />
+                        </ListItemIcon>
+                        <ListItemText primary={t('logout') as string} />
+                    </ListItemButton>
                 </ListItem>
             </List>
         </Box>

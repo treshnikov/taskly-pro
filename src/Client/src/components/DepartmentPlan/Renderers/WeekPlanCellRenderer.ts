@@ -4,6 +4,7 @@ export const WeekPlanCellRenderer = (instance: Handsontable.Core, td: HTMLTableC
     Handsontable.renderers.TextRenderer.apply(this, [instance, td, row, col, prop, value, cellProperties]);
 
     const rowId = instance.getDataAtCell(row, 0);
+    td.style.textAlign = 'center'
 
     // rows with user name contain summary info that should not be editable
     if (rowId[0] === 'u') {

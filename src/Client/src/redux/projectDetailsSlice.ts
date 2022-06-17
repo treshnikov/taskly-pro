@@ -18,7 +18,7 @@ type ProjectDetailsStoreStateType = {
     project: IProjectDetailedInfoVm
 }
 
-const initialDemoState = {
+const initState = {
     ganttChartZoomLevel: 0.3,
     compactMode: false,
     showDetails: false,
@@ -64,7 +64,7 @@ const initialDemoState = {
 
 export const projectDetailsSlice = createSlice({
     name: "projectDetailsSlice",
-    initialState: initialDemoState,
+    initialState: initState,
     reducers: {
         zoomInGanttChart(state: ProjectDetailsStoreStateType) {
             state.ganttChartZoomLevel = state.ganttChartZoomLevel * 1.2
