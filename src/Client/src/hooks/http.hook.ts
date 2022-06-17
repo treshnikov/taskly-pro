@@ -19,7 +19,7 @@ export const useHttp = () => {
     }
 
     const request = useCallback(async<T>(address: string,
-        method: "GET" | "POST" | "PUT" | "PATCH" = "GET",
+        method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE" = "GET",
         body: any = null,
         headers: { name: string, value: string }[] = []) => {
 

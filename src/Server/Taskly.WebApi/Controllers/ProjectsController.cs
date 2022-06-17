@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Taskly.Application.Projects;
+using Taskly.Application.Projects.Commands.AddNewTask;
+using Taskly.Application.Projects.Commands.DeleteTask;
 using Taskly.Application.Projects.Queries;
 
 namespace Taskly.WebApi.Controllers
@@ -37,5 +39,28 @@ namespace Taskly.WebApi.Controllers
             return Ok(res);
         }
 
+        [HttpPost()]        
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<ProjectTaskVm>> AddNewTask([FromBody]int projectId)
+        {            
+            var res = await Mediator.Send(new AddNewTaskRequest{
+                ProjectId = projectId
+            });
+
+            return res;
+        }
+
+        [HttpDelete()]        
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult> DeleteTask([FromBody]Guid taskId)
+        {            
+            await Mediator.Send(new DeleteTaskRequest{
+                TaskId = taskId
+            });
+
+            return Ok(new object());
+        }
     }
 }

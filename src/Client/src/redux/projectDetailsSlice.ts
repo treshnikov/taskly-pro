@@ -102,14 +102,8 @@ export const projectDetailsSlice = createSlice({
             state.project = action.payload
         },
 
-        addTask(state: ProjectDetailsStoreStateType, action: PayloadAction<{defaultEstimations: IProjectTaskDepartmentEstimationVm[]}>) {
-            const testTask = new ProjectTaskVm()
-            testTask.description = "..."
-            testTask.start = state.project.start
-            testTask.end = state.project.end
-            testTask.departmentEstimations = [...action.payload.defaultEstimations]
-
-            state.project.tasks = [...state.project.tasks, { ...testTask }]
+        addTask(state: ProjectDetailsStoreStateType, action: PayloadAction<{task : ProjectTaskVm}>) {
+            state.project.tasks = [...state.project.tasks, { ...action.payload.task }]
             ProjectDetailedInfoVmHelper.init(state.project)
         },
 

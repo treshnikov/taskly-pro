@@ -29,7 +29,7 @@ export const ProjectDetails: React.FunctionComponent = () => {
   const hiddenColumns = useAppSelector(state => state.projectDetailsReducer.hiddenColumns)
 
   const defaultColWidths = [5, 300, 150, 70, 310, 100, 100]
-  const defaultHeaders = useMemo(() => ['', t('task'), t('comment'), t('estimationH'), t('departments'), t('start'), t('end')], [t])
+  const defaultHeaders = useMemo(() => ['', t('task'), t('comment'), t('estimationH'), t('departments'), t('start'), t('end'), ''], [t])
   const [headers, setHeaders] = useState<string[]>(defaultHeaders)
   const [tableHeight, setTableHeight] = useState<number>(3500)
 
@@ -53,9 +53,9 @@ export const ProjectDetails: React.FunctionComponent = () => {
 
   return (
     <div className='page-container'>
-      <ProjectDetailsToolBar scrollToTheLastRowFunc={scrollToRow}></ProjectDetailsToolBar>
+      <ProjectDetailsToolBar hotTableRef={hotTableRef}></ProjectDetailsToolBar>
 
-      <div id="hotContainer" style={{ overflowX: 'auto', height: tableHeight }} >
+      <div id="hotContainer" style={{marginTop: "8em", overflowX: 'auto', height: tableHeight }} >
         <HotTable
           id="projectDetailsTable"
           ref={hotTableRef}
