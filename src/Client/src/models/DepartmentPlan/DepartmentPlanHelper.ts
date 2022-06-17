@@ -8,24 +8,21 @@ export class DepartmentPlanHelper {
             let userHours = 0;
             let weekSumHours: { [key: string]: number; } = {};
 
-
             user.__children.forEach(project => {
                 let projectHours = 0;
 
                 let weekIdx = 1;
                 while ((project as any).hasOwnProperty("week" + weekIdx.toString())) {
                     const weekIdent = "week" + weekIdx.toString();
+                    if (!(weekSumHours as any).hasOwnProperty(weekIdent)) {
+                        weekSumHours[weekIdent] = 0;
+                    }
 
                     const hoursAsString = project[weekIdent];
                     if (hoursAsString && hoursAsString !== "") {
                         const weekHours = parseFloat(hoursAsString as string);
                         projectHours += weekHours;
                         userHours += weekHours;
-
-                        if (!(weekSumHours as any).hasOwnProperty(weekIdent)) {
-                            weekSumHours[weekIdent] = 0;
-                        }
-
                         weekSumHours[weekIdent] += weekHours;
                     }
                     weekIdx++;
