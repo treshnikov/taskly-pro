@@ -75,6 +75,8 @@ export const ProjectDetails: React.FunctionComponent = () => {
             columns: hiddenColumns
           }}
 
+          outsideClickDeselects={false}
+
           afterSelection={(row: number, column: number, row2: number, column2: number, preventScrolling: { value: boolean }, selectionLayerLevel: number) => {
             preventScrolling.value = true
           }}
@@ -90,19 +92,12 @@ export const ProjectDetails: React.FunctionComponent = () => {
           afterSelectionEnd={(row: number, column: number, row2: number, column2: number, selectionLayerLevel: number) => {
             dispatch(onRowSelected(row))
           }}
-          afterDeselect={() => {
-            // to allow capturing selectedRowIdx for dialog windows
-            setTimeout(() => {
-              dispatch(onRowSelected(-1))
-            }, 200);
-          }}
           afterRender={(isForced: boolean) => {
             setTimeout(() => {
               const tableHeight = document.querySelector<HTMLElement>(".htCore")?.offsetHeight
               setTableHeight(50 + (tableHeight as number))
             }, 500);
           }}
-          outsideClickDeselects={true}
           licenseKey='non-commercial-and-evaluation'
         >
           <HotColumn data={"id"} editor={false} type={"text"} />
