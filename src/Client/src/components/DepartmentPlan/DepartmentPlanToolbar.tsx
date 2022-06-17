@@ -63,6 +63,36 @@ export const DepartmentPlanToolbar: React.FunctionComponent<{ hotTableRef: RefOb
         plugin.collapsingUI.collapseMultipleChildren(collapsedRows);
     };
 
+    const showAllProjects = () => {
+        if (!hotTableRef || !hotTableRef.current || !hotTableRef.current.hotInstance) {
+            return;
+        }
+        const plugin = hotTableRef.current.hotInstance.getPlugin('nestedRows') as any;
+        const collapsedRows: number[] = plugin.collapsingUI.collapsedRows as number[];
+
+        dispatch(setHiddenRows([]))
+        
+        setTimeout(() => {
+            plugin.collapsingUI.collapseMultipleChildren(collapsedRows);
+            handleClose()
+        }, 100);
+    }
+
+    const showProjectsWithEstimation = () => {
+        if (!hotTableRef || !hotTableRef.current || !hotTableRef.current.hotInstance) {
+            return;
+        }
+        const plugin = hotTableRef.current.hotInstance.getPlugin('nestedRows') as any;
+        const collapsedRows: number[] = plugin.collapsingUI.collapsedRows as number[];
+
+        dispatch(setHiddenRows(DepartmentPlanHelper.getRowsWithEmtyPlans(plan)))
+
+        setTimeout(() => {
+            plugin.collapsingUI.collapseMultipleChildren(collapsedRows);
+            handleClose()
+        }, 100);
+    }
+
     return <div style={{ position: "fixed", top: "5em", left: "1em" }}>
         <Grid container>
             <Grid item xs={12}>
@@ -118,15 +148,9 @@ export const DepartmentPlanToolbar: React.FunctionComponent<{ hotTableRef: RefOb
                         open={open}
                         onClose={handleClose}
                     >
-                        <MenuItem onClick={e => {
-                            dispatch(setHiddenRows([]))
-                            //handleClose()
-                        }}>{t('show-project-with-no-estimation')}</MenuItem>
+                        <MenuItem onClick={e => { showAllProjects() }}>{t('show-project-with-no-estimation')}</MenuItem>
 
-                        <MenuItem onClick={e => {
-                            dispatch(setHiddenRows(DepartmentPlanHelper.getRowsWithEmtyPlans(plan)))
-                            //handleClose()
-                        }} >{t('hide-project-with-no-estimation')}</MenuItem>
+                        <MenuItem onClick={e => { showProjectsWithEstimation() }} >{t('hide-project-with-no-estimation')}</MenuItem>
                     </Menu>
                 </Stack>
             </Grid>
