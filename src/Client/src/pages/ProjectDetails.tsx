@@ -5,15 +5,13 @@ import { useTranslation } from 'react-i18next';
 import { useHttp } from '../hooks/http.hook';
 import { useParams } from 'react-router-dom';
 import { ProjectDetailedInfoVm, ProjectDetailedInfoVmHelper } from "../models/ProjectDetails/ProjectDetailedInfoVm";
-import { DepartmentsCellRenderer, DepartmentsCellRenderer2 } from "../components/ProjectDetails/Renderers/DepartmentsCellRenderer"
+import { DepartmentsCellRenderer2 } from "../components/ProjectDetails/Renderers/DepartmentsCellRenderer"
 import { GanttCellRenderer } from '../components/ProjectDetails/Renderers/GanttCellRenderer';
 import { dateAsShortStrFromNumber } from '../common/dateFormatter';
 import { ProjectDetailsToolBar } from '../components/ProjectDetails/ProjectDetailsToolBar';
 import { useAppDispatch, useAppSelector } from "../hooks/redux.hook";
 import { onRowSelected, onTaskAttributeChanged, onTasksMoved, updateProjectDetailsInfo } from '../redux/projectDetailsSlice';
 import { CellChange, ChangeSource } from 'handsontable/common';
-import Handsontable from 'handsontable';
-import { ProjectTaskDepartmentEstimationVm } from '../models/ProjectDetails/ProjectTaskDepartmentEstimationVm';
 
 registerAllModules();
 
@@ -30,16 +28,15 @@ export const ProjectDetails: React.FunctionComponent = () => {
   const hiddenColumns = useAppSelector(state => state.projectDetailsReducer.hiddenColumns)
 
   const defaultColWidths = [5, 300, 150, 70, 310, 100, 100]
-  const defaultHeaders = useMemo(() => ['', t('task'), t('comment'), t('estimationH'), t('departments'), t('start'), t('end'), ''], [t])
+  const defaultHeaders = useMemo(() => ['', t('task'), t('comment'), t('estimationH'), t('departments'), t('start'), t('end')], [t])
   const [headers, setHeaders] = useState<string[]>(defaultHeaders)
-  const [tableHeight, setTableHeight] = useState<number>(3500)
 
   useEffect(() => {
     async function requestDetails() {
       let data = await request<ProjectDetailedInfoVm>("/api/v1/projects/" + projectId)
       ProjectDetailedInfoVmHelper.init(data)
       dispatch(updateProjectDetailsInfo(data))
-      setHeaders([...defaultHeaders, dateAsShortStrFromNumber(data.taskMinDate) + " - " + dateAsShortStrFromNumber(data.taskMaxDate)])
+      setHeaders([...defaultHeaders, data.tasks?.length > 0 ? (dateAsShortStrFromNumber(data.taskMinDate) + " - " + dateAsShortStrFromNumber(data.taskMaxDate)) : ''])
     }
     requestDetails()
 
@@ -93,12 +90,6 @@ export const ProjectDetails: React.FunctionComponent = () => {
           afterSelectionEnd={(row: number, column: number, row2: number, column2: number, selectionLayerLevel: number) => {
             dispatch(onRowSelected(row))
           }}
-          afterRender={(isForced: boolean) => {
-            setTimeout(() => {
-              const tableHeight = document.querySelector<HTMLElement>(".htCore")?.offsetHeight
-              setTableHeight(50 + (tableHeight as number))
-            }, 500);
-          }}
           licenseKey='non-commercial-and-evaluation'
         >
           <HotColumn data={"id"} editor={false} type={"text"} />
@@ -108,8 +99,8 @@ export const ProjectDetails: React.FunctionComponent = () => {
           <HotColumn data={"departmentEstimations"} readOnly renderer={DepartmentsCellRenderer2} >
             {/* <DepartmentsCellRenderer hot-renderer></DepartmentsCellRenderer> */}
           </HotColumn>
-          <HotColumn data={"startAsStr"} type={"text"} />
-          <HotColumn data={"endAsStr"} type={"text"} />
+          <HotColumn data={"startAsStr"} type={"text"} className='htCenter' />
+          <HotColumn data={"endAsStr"} type={"text"} className='htCenter' />
           <HotColumn data={"departmentEstimations"} key={"ganttColumn"} width={getGanttWidth(ganttChartZoomLevel, projectInfo)} readOnly>
             <GanttCellRenderer width={getGanttWidth(ganttChartZoomLevel, projectInfo)} startDate={new Date(projectInfo.taskMinDate)} tasks={projectInfo.tasks} hot-renderer></GanttCellRenderer>
           </HotColumn>
