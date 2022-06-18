@@ -13,7 +13,7 @@ import { useAppDispatch, useAppSelector } from "../hooks/redux.hook";
 import { setHiddenRows } from "../redux/departmentPlanSlice";
 import { WeekPlanCellRenderer } from "../components/DepartmentPlan/Renderers/WeekPlanCellRenderer";
 import { ProjectNameCellRenderer } from "../components/DepartmentPlan/Renderers/ProjectNameCellRenderer";
-import { NavigateHelper } from "../common/navigateHelper";
+import { ServicesStorageHelper } from "../common/servicesStorageHelper";
 
 const initPlan: DepartmentUserPlan[] = [{
     id: '',
@@ -36,7 +36,7 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
     const navigate = useNavigate()
 
     // workaround for passing a navigate function to ProjectNameCellRenderer that cannot be extended by adding new props without changing the source code of the component
-    NavigateHelper.navigateFunction = (arg: string) => { navigate(arg) } 
+    ServicesStorageHelper.navigateFunction = (arg: string) => { navigate(arg) } 
 
     // unfortunately, we must store the state locally because passing such an amount of records to redux causes low performance even the records will be frozen
     const [plan, setPlan] = useState<DepartmentUserPlan[]>(initPlan)

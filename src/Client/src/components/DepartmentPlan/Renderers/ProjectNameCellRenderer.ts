@@ -1,5 +1,5 @@
 import Handsontable from "handsontable";
-import { NavigateHelper } from "../../../common/navigateHelper";
+import { ServicesStorageHelper } from "../../../common/servicesStorageHelper";
 
 export const ProjectNameCellRenderer = (instance: Handsontable.Core, td: HTMLTableCellElement, row: number, col: number, prop: string | number, value: any, cellProperties: Handsontable.CellProperties): void => {
     Handsontable.renderers.TextRenderer.apply(this, [instance, td, row, col, prop, value, cellProperties]);
@@ -17,7 +17,7 @@ export const ProjectNameCellRenderer = (instance: Handsontable.Core, td: HTMLTab
         link.style.cursor = 'pointer'
         link.onclick = () => {
             const projectId = (value as string).split(':')[0] 
-            NavigateHelper.navigate(`/projects/${projectId}`)
+            ServicesStorageHelper.navigate(`/projects/${projectId}`)
         }
 
         td.innerText = ''

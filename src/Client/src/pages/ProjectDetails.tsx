@@ -3,15 +3,16 @@ import HotTable, { HotColumn } from '@handsontable/react';
 import { registerAllModules } from 'handsontable/registry';
 import { useTranslation } from 'react-i18next';
 import { useHttp } from '../hooks/http.hook';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { ProjectDetailedInfoVm, ProjectDetailedInfoVmHelper } from "../models/ProjectDetails/ProjectDetailedInfoVm";
-import { DepartmentsCellRenderer2 } from "../components/ProjectDetails/Renderers/DepartmentsCellRenderer"
+import { DepartmentsCellRenderer } from "../components/ProjectDetails/Renderers/DepartmentsCellRenderer"
 import { GanttCellRenderer } from '../components/ProjectDetails/Renderers/GanttCellRenderer';
 import { dateAsShortStrFromNumber } from '../common/dateFormatter';
 import { ProjectDetailsToolBar } from '../components/ProjectDetails/ProjectDetailsToolBar';
 import { useAppDispatch, useAppSelector } from "../hooks/redux.hook";
 import { onRowSelected, onTaskAttributeChanged, onTasksMoved, updateProjectDetailsInfo } from '../redux/projectDetailsSlice';
 import { CellChange, ChangeSource } from 'handsontable/common';
+import { ServicesStorageHelper } from '../common/servicesStorageHelper';
 
 registerAllModules();
 
@@ -19,6 +20,7 @@ export const ProjectDetails: React.FunctionComponent = () => {
   const projectId = useParams<{ id?: string }>()!.id
   const { request } = useHttp()
   const { t } = useTranslation();
+  const navigate = useNavigate()
   const dispatch = useAppDispatch()
   const hotTableRef = useRef<HotTable>(null);
 
@@ -30,6 +32,11 @@ export const ProjectDetails: React.FunctionComponent = () => {
   const defaultColWidths = [5, 300, 150, 70, 310, 100, 100]
   const defaultHeaders = useMemo(() => ['', t('task'), t('comment'), t('estimationH'), t('departments'), t('start'), t('end')], [t])
   const [headers, setHeaders] = useState<string[]>(defaultHeaders)
+
+  // workaround for passing a navigate and translate functions to DepartmentsCellRenderer that cannot be extended by adding new props without changing the source code of the component
+  ServicesStorageHelper.navigateFunction = (arg: string) => { navigate(arg) }
+  ServicesStorageHelper.translateFunction = (arg: string): string => t(arg)
+  ServicesStorageHelper.dispatchFunction = (arg: any) : any => dispatch(arg)
 
   useEffect(() => {
     async function requestDetails() {
@@ -96,9 +103,7 @@ export const ProjectDetails: React.FunctionComponent = () => {
           <HotColumn data={"description"} wordWrap={false} type={"text"} className="ellipsis-text" />
           <HotColumn data={"comment"} wordWrap={false} className="ellipsis-text" type={"text"} />
           <HotColumn data={"totalHours"} type={"text"} className='htCenter' readOnly={true} />
-          <HotColumn data={"departmentEstimations"} readOnly renderer={DepartmentsCellRenderer2} >
-            {/* <DepartmentsCellRenderer hot-renderer></DepartmentsCellRenderer> */}
-          </HotColumn>
+          <HotColumn data={"departmentEstimations"} readOnly renderer={DepartmentsCellRenderer} />
           <HotColumn data={"startAsStr"} type={"text"} className='htCenter' />
           <HotColumn data={"endAsStr"} type={"text"} className='htCenter' />
           <HotColumn data={"departmentEstimations"} key={"ganttColumn"} width={getGanttWidth(ganttChartZoomLevel, projectInfo)} readOnly>

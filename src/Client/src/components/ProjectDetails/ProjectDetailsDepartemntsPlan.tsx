@@ -18,7 +18,7 @@ export const ProjectDetailsDepartemntsPlan: React.FunctionComponent<ProjectDetai
     const project = useAppSelector(state => state.projectDetailsReducer.project)
     const [changed, setChanged] = useState<boolean>(false)
     const [task, setTask] = useState<IProjectTaskVm>(new ProjectTaskVm())
-    const [hideEmpty, setHideEmpty] = useState<boolean>(false)
+    const [hideEmpty, setHideEmpty] = useState<boolean>(true)
 
     useEffect(() => {
         if (selectedRowIdx < 0) {
@@ -64,7 +64,6 @@ export const ProjectDetailsDepartemntsPlan: React.FunctionComponent<ProjectDetai
         }
         dispatch(toggleShowDepartmentsPlan())
         setChanged(false)
-        setHideEmpty(false)
         setTask(new ProjectTaskVm())
         afterClose()
     }
@@ -94,6 +93,7 @@ export const ProjectDetailsDepartemntsPlan: React.FunctionComponent<ProjectDetai
                     <FormGroup>
                         <FormControlLabel control={<Checkbox
                             value={hideEmpty}
+                            checked={hideEmpty}
                             onChange={e => setHideEmpty(e.target.checked)}
                         />} label={t('hide-empty')} />
                     </FormGroup>                    {
