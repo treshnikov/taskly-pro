@@ -36,7 +36,7 @@ export const ProjectDetails: React.FunctionComponent = () => {
   // workaround for passing a navigate and translate functions to DepartmentsCellRenderer that cannot be extended by adding new props without changing the source code of the component
   ServicesStorageHelper.navigateFunction = (arg: string) => { navigate(arg) }
   ServicesStorageHelper.translateFunction = (arg: string): string => t(arg)
-  ServicesStorageHelper.dispatchFunction = (arg: any) : any => dispatch(arg)
+  ServicesStorageHelper.dispatchFunction = (arg: any): any => dispatch(arg)
 
   useEffect(() => {
     async function requestDetails() {

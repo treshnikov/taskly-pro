@@ -73,5 +73,6 @@
     "hours": "Hours",
     "project": "Project",
     "save": "Save",
-    "estimation": "Estimation"
+    "estimation": "Estimation",
+    "changes-saved": "Changes has been successfully saved"
 }

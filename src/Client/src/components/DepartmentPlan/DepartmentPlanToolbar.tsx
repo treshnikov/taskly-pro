@@ -12,6 +12,7 @@ import { setEndDate, setHiddenRows, setStartDate } from "../../redux/departmentP
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { DepartmentUserPlan } from "../../models/DepartmentPlan/DepartmentPlanClasses";
 import { DepartmentPlanHelper } from "../../models/DepartmentPlan/DepartmentPlanHelper";
+import { toast } from 'react-toastify'
 
 export const DepartmentPlanToolbar: React.FunctionComponent<{ hotTableRef: RefObject<HotTable>, departmentName: string, departmentId: string, plan: DepartmentUserPlan[] }> = ({ hotTableRef, departmentName, departmentId, plan }) => {
     const { request } = useHttp()
@@ -59,6 +60,8 @@ export const DepartmentPlanToolbar: React.FunctionComponent<{ hotTableRef: RefOb
         await request("/api/v1/departments/plan", "POST",
             { departmentId: departmentId, data: data },
             [{ name: 'Content-Type', value: 'application/json' }]);
+
+        toast.success(t('changes-saved'))
 
         plugin.collapsingUI.collapseMultipleChildren(collapsedRows);
     };

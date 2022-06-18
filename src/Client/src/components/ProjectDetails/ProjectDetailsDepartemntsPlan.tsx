@@ -7,10 +7,9 @@ import { changeTask, toggleShowDepartmentsPlan } from "../../redux/projectDetail
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 type ProjectDetailsDepartemntsPlanProps = {
-    afterClose: () => void
 }
 
-export const ProjectDetailsDepartemntsPlan: React.FunctionComponent<ProjectDetailsDepartemntsPlanProps> = ({ afterClose }) => {
+export const ProjectDetailsDepartemntsPlan: React.FunctionComponent<ProjectDetailsDepartemntsPlanProps> = () => {
     const { t } = useTranslation();
     const dispatch = useAppDispatch()
     const selectedRowIdx = useAppSelector(state => state.projectDetailsReducer.selectedRowIdx)
@@ -65,7 +64,6 @@ export const ProjectDetailsDepartemntsPlan: React.FunctionComponent<ProjectDetai
         dispatch(toggleShowDepartmentsPlan())
         setChanged(false)
         setTask(new ProjectTaskVm())
-        afterClose()
     }
 
     return (
@@ -86,7 +84,7 @@ export const ProjectDetailsDepartemntsPlan: React.FunctionComponent<ProjectDetai
                 aria-labelledby="_showDepartmentsPlan"
             >
                 <DialogTitle id="_showDepartmentsPlan">
-                    {task.description} {task.totalHours}{t('hour')}
+                    #{selectedRowIdx + 1} {task.description} {task.totalHours}{t('hour')}
                 </DialogTitle>
                 <Divider></Divider>
                 <DialogContent>

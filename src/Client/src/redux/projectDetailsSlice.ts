@@ -11,7 +11,6 @@ type ProjectDetailsStoreStateType = {
     showStatistics: boolean
     showDepartmentsPlan: boolean
     selectedRowIdx: number
-    lastSelectedRowIdx: number
     hiddenColumns: number[]
     project: IProjectDetailedInfoVm
 }
@@ -22,7 +21,6 @@ const initState = {
     showStatistics: false,
     showDepartmentsPlan: false,
     selectedRowIdx: -1,
-    lastSelectedRowIdx: -1,
     hiddenColumns: [0],
     project: {
         id: 0,
@@ -151,10 +149,6 @@ export const projectDetailsSlice = createSlice({
         },
 
         onRowSelected(state: ProjectDetailsStoreStateType, action: PayloadAction<number>) {
-            if (action.payload >= 0){
-                state.lastSelectedRowIdx = action.payload
-            }
-            
             state.selectedRowIdx = action.payload
         },
 

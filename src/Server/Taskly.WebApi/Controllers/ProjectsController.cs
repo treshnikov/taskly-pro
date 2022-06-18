@@ -51,6 +51,14 @@ namespace Taskly.WebApi.Controllers
             return res;
         }
 
+        [HttpPost("updateTasks")]        
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<ProjectTaskVm>> AddNewTask([FromBody]ProjectTaskVm[] tasks)
+        {            
+            return Ok(new Object());
+        }
+
         [HttpDelete()]        
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
