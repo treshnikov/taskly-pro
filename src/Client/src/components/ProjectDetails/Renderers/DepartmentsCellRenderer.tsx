@@ -1,3 +1,4 @@
+import Handsontable from 'handsontable';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -5,13 +6,96 @@ import { useAppDispatch } from '../../../hooks/redux.hook';
 import { ProjectTaskDepartmentEstimationVm } from "../../../models/ProjectDetails/ProjectTaskDepartmentEstimationVm";
 import { toggleShowDepartmentsPlan } from '../../../redux/projectDetailsSlice';
 
+export const DepartmentsCellRenderer2 = (instance: Handsontable.Core, td: HTMLTableCellElement, row: number, col: number, prop: string | number, value: any, cellProperties: Handsontable.CellProperties): void => {
+    Handsontable.renderers.TextRenderer.apply(this, [instance, td, row, col, prop, value, cellProperties]);
+
+    const estimations = value as ProjectTaskDepartmentEstimationVm[]
+    const estimationsToRender = estimations?.filter(i => i.totalHours > 0)
+
+    td.innerText = ''
+
+    if (estimationsToRender.length === 0) {
+        const text = document.createElement("div")
+        text.style.width = "100%"
+        text.style.height = "20px"
+        text.ondblclick = () => {
+            //todo {dispatch(toggleShowDepartmentsPlan())}
+            alert("dispatch(toggleShowDepartmentsPlan())")
+        }
+        td.appendChild(text)
+    }
+    else {
+
+        estimationsToRender.sort((a, b) => (a.totalHours < b.totalHours ? 1 : -1)).map((i, idx) => {
+            const container = document.createElement("div")
+            container.ondblclick = () => {
+                //todo {dispatch(toggleShowDepartmentsPlan())}
+                alert("dispatch(toggleShowDepartmentsPlan())")
+            }
+
+            const colorFlag = document.createElement("span")
+            colorFlag.style.backgroundColor = i.color
+            colorFlag.style.display = "inline-block"
+            colorFlag.style.verticalAlign = "top"
+            colorFlag.style.height = i.lineHeight + "px"
+            colorFlag.style.width = "20px"
+            colorFlag.style.marginLeft = "-2px"
+            colorFlag.style.marginTop = "5px"
+            colorFlag.style.marginRight = "2px"
+
+            const text = document.createElement("span")
+            text.innerText = i.departmentName + " " + i.totalHours
+            text.style.display = "inline-block"
+
+            const link = document.createElement("span")
+            link.innerText = " ..."
+            link.style.cursor = "pointer"
+            link.onclick = () => {
+                alert("open dep")
+            }
+
+            container.appendChild(colorFlag)
+            container.appendChild(text)
+            container.appendChild(link)
+            td.appendChild(container)
+
+            if (true) {
+                const detailsContainer = document.createElement("span")
+                detailsContainer.style.display = "block"
+                detailsContainer.style.fontSize = "10px"
+                detailsContainer.style.color = "dimgray"
+                detailsContainer.style.marginTop = "-5px"
+                detailsContainer.ondblclick = () => {
+                    //todo {dispatch(toggleShowDepartmentsPlan())}
+                    alert("dispatch(toggleShowDepartmentsPlan())")
+                }
+
+                const emptyDiv = document.createElement("div")
+                emptyDiv.style.width = "20px"
+                emptyDiv.style.display = "inline-block"
+                detailsContainer.appendChild(emptyDiv)
+
+                i.estimations.filter(f => f.hours !== 0).map(p => {
+                    const div = document.createElement("div")
+                    div.innerText = (p.userPositionIdent ? p.userPositionIdent : "") + ": " + p.hours
+                    div.style.display = "inline"
+                    div.style.marginRight = "5px"
+                    detailsContainer.appendChild(div)
+                })
+
+                td.appendChild(detailsContainer)
+            }
+        })
+
+    }
+}
+
 export const DepartmentsCellRenderer = (props: any) => {
-    const { showDetails, value } = props
+    const { value } = props
     const dispatch = useAppDispatch()
     const navigate = useNavigate()
     const estimations = value as ProjectTaskDepartmentEstimationVm[]
     const { t } = useTranslation();
-    const showDetailsAsBool = showDetails as boolean
 
     const departmentCellStyle = {
         width: "100%",
@@ -40,22 +124,13 @@ export const DepartmentsCellRenderer = (props: any) => {
         }
     }
 
-    if (estimations?.length === 0) {
-        return (
-            <div onDoubleClick={e => { dispatch(toggleShowDepartmentsPlan()) }} style={{ width: "100%", height: "20px" }}></div>
-        )
-    }
-
     const estimationsToRender = estimations?.filter(i => i.totalHours > 0)
-
     if (estimationsToRender.length === 0) {
         return (
             <div
-                onDoubleClick={e => { dispatch(toggleShowDepartmentsPlan()) }}
-                style={{ width: "100%", height: "20px" }}>
+                onDoubleClick={e => { dispatch(toggleShowDepartmentsPlan()) }} style={{ width: "100%", height: "20px" }}>
             </div>
         )
-
     }
 
     return (
@@ -80,16 +155,13 @@ export const DepartmentsCellRenderer = (props: any) => {
                                 &nbsp;...
                             </div>
 
-                            <span style={{ display: showDetailsAsBool ? "block" : "none", fontSize: "10px", color: "dimgray" }} onDoubleClick={e => { dispatch(toggleShowDepartmentsPlan()) }}>
+                            <span style={{ display: "block", fontSize: "10px", color: "dimgray" }} onDoubleClick={e => { dispatch(toggleShowDepartmentsPlan()) }}>
                                 <div style={{ width: "20px", display: "inline-block" }}></div>
                                 {
                                     i.estimations.filter(f => f.hours !== 0).map(p => {
                                         return (
                                             <div key={p.id + p.userPositionId + p.hours}
-                                                style={{
-                                                    display: "inline",
-                                                    marginRight: "5px"
-                                                }}>{p.userPositionIdent}: {p.hours + t('hour')}</div>
+                                                style={{ display: "inline", marginRight: "5px" }}>{p.userPositionIdent}: {p.hours + t('hour')}</div>
                                         )
                                     }
                                     )

@@ -9,7 +9,6 @@ import { RootState } from "./store"
 type ProjectDetailsStoreStateType = {
     ganttChartZoomLevel: number
     compactMode: boolean
-    showDetails: boolean
     showStatistics: boolean
     showDepartmentsPlan: boolean
     selectedRowIdx: number
@@ -21,7 +20,6 @@ type ProjectDetailsStoreStateType = {
 const initState = {
     ganttChartZoomLevel: 0.3,
     compactMode: false,
-    showDetails: false,
     showStatistics: false,
     showDepartmentsPlan: false,
     selectedRowIdx: -1,
@@ -72,10 +70,6 @@ export const projectDetailsSlice = createSlice({
 
         zoomOutGanttChart(state: ProjectDetailsStoreStateType) {
             state.ganttChartZoomLevel = state.ganttChartZoomLevel / 1.2
-        },
-
-        toggleShowDetails(state: ProjectDetailsStoreStateType) {
-            state.showDetails = !state.showDetails
         },
 
         toggleShowStatistics(state: ProjectDetailsStoreStateType) {
@@ -204,7 +198,7 @@ export const projectDetailsSlice = createSlice({
     }
 })
 
-export const { zoomInGanttChart, zoomOutGanttChart, toggleShowDetails, toggleCompactMode,
+export const { zoomInGanttChart, zoomOutGanttChart, toggleCompactMode,
     updateProjectDetailsInfo, addTask, onTaskAttributeChanged, onTasksMoved, toggleShowStatistics,
     onRowSelected, removeTask, orderTasks, toggleShowDepartmentsPlan, changeEstimation, changeTask } = projectDetailsSlice.actions
 export const selectDemo = (state: RootState) => state.projectDetailsReducer

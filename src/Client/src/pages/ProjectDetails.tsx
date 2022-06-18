@@ -5,13 +5,15 @@ import { useTranslation } from 'react-i18next';
 import { useHttp } from '../hooks/http.hook';
 import { useParams } from 'react-router-dom';
 import { ProjectDetailedInfoVm, ProjectDetailedInfoVmHelper } from "../models/ProjectDetails/ProjectDetailedInfoVm";
-import { DepartmentsCellRenderer } from "../components/ProjectDetails/Renderers/DepartmentsCellRenderer"
+import { DepartmentsCellRenderer, DepartmentsCellRenderer2 } from "../components/ProjectDetails/Renderers/DepartmentsCellRenderer"
 import { GanttCellRenderer } from '../components/ProjectDetails/Renderers/GanttCellRenderer';
 import { dateAsShortStrFromNumber } from '../common/dateFormatter';
 import { ProjectDetailsToolBar } from '../components/ProjectDetails/ProjectDetailsToolBar';
 import { useAppDispatch, useAppSelector } from "../hooks/redux.hook";
 import { onRowSelected, onTaskAttributeChanged, onTasksMoved, updateProjectDetailsInfo } from '../redux/projectDetailsSlice';
 import { CellChange, ChangeSource } from 'handsontable/common';
+import Handsontable from 'handsontable';
+import { ProjectTaskDepartmentEstimationVm } from '../models/ProjectDetails/ProjectTaskDepartmentEstimationVm';
 
 registerAllModules();
 
@@ -25,7 +27,6 @@ export const ProjectDetails: React.FunctionComponent = () => {
   const projectInfo = useAppSelector(state => state.projectDetailsReducer.project)
 
   const ganttChartZoomLevel = useAppSelector(state => state.projectDetailsReducer.ganttChartZoomLevel)
-  const showDetails = useAppSelector(state => state.projectDetailsReducer.showDetails)
   const hiddenColumns = useAppSelector(state => state.projectDetailsReducer.hiddenColumns)
 
   const defaultColWidths = [5, 300, 150, 70, 310, 100, 100]
@@ -55,7 +56,7 @@ export const ProjectDetails: React.FunctionComponent = () => {
     <div className='page-container'>
       <ProjectDetailsToolBar hotTableRef={hotTableRef}></ProjectDetailsToolBar>
 
-      <div id="hotContainer" style={{marginTop: "8em", overflowX: 'auto', height: tableHeight }} >
+      <div id="hotContainer" style={{ marginTop: "8em" }} >
         <HotTable
           id="projectDetailsTable"
           ref={hotTableRef}
@@ -104,8 +105,8 @@ export const ProjectDetails: React.FunctionComponent = () => {
           <HotColumn data={"description"} wordWrap={false} type={"text"} className="ellipsis-text" />
           <HotColumn data={"comment"} wordWrap={false} className="ellipsis-text" type={"text"} />
           <HotColumn data={"totalHours"} type={"text"} className='htCenter' readOnly={true} />
-          <HotColumn data={"departmentEstimations"} readOnly >
-            <DepartmentsCellRenderer showDetails={showDetails} hot-renderer></DepartmentsCellRenderer>
+          <HotColumn data={"departmentEstimations"} readOnly renderer={DepartmentsCellRenderer2} >
+            {/* <DepartmentsCellRenderer hot-renderer></DepartmentsCellRenderer> */}
           </HotColumn>
           <HotColumn data={"startAsStr"} type={"text"} />
           <HotColumn data={"endAsStr"} type={"text"} />
