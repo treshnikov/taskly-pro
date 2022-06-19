@@ -2,7 +2,9 @@
 using Taskly.Application.Projects;
 using Taskly.Application.Projects.Commands.AddNewTask;
 using Taskly.Application.Projects.Commands.DeleteTask;
+using Taskly.Application.Projects.Commands.UpdateTasks;
 using Taskly.Application.Projects.Queries;
+using Taskly.WebApi.Models.Projects;
 
 namespace Taskly.WebApi.Controllers
 {
@@ -54,8 +56,13 @@ namespace Taskly.WebApi.Controllers
         [HttpPost("updateTasks")]        
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<ProjectTaskVm>> AddNewTask([FromBody]ProjectTaskVm[] tasks)
+        public async Task<ActionResult<ProjectTaskVm>> AddNewTask([FromBody]SaveProjectChangesVm data)
         {            
+            await Mediator.Send(new UpdateTasksRequest{
+                ProjectId = data.ProjectId,
+                Tasks = data.Tasks
+            });
+            
             return Ok(new Object());
         }
 

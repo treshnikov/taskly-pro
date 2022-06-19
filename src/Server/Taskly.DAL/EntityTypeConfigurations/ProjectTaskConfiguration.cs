@@ -11,6 +11,7 @@ namespace Taskly.DAL.EntityTypeConfigurations
         {
             builder.ToTable("ProjectTasks");
             builder.HasIndex(u => u.Id).IsUnique();
+            builder.HasMany(u => u.DepartmentEstimations).WithOne().OnDelete(DeleteBehavior.Cascade);
         }
     }
 
