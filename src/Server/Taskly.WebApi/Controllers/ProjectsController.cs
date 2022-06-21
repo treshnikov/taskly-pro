@@ -53,12 +53,12 @@ namespace Taskly.WebApi.Controllers
             return res;
         }
 
-        [HttpPost("updateTasks")]        
+        [HttpPost("saveProjectChanges")]        
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<ProjectTaskVm>> AddNewTask([FromBody]SaveProjectChangesVm data)
+        public async Task<ActionResult<ProjectTaskVm>> SaveProjectChanges([FromBody]SaveProjectChangesVm data)
         {            
-            await Mediator.Send(new UpdateTasksRequest{
+            await Mediator.Send(new SaveProjectChangesRequest{
                 ProjectId = data.ProjectId,
                 Tasks = data.Tasks
             });

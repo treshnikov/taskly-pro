@@ -38,7 +38,7 @@ namespace Taskly.Application.Projects
         public DateTime Start { get; set; }
         public DateTime End { get; set; }
         public string Description { get; set; }
-        public string Comment { get; set; }
+        public string? Comment { get; set; }
         public ProjectTaskDepartmentEstimationVm[] DepartmentEstimations { get; set; }
 
         public static ProjectTaskVm From(ProjectTask arg)

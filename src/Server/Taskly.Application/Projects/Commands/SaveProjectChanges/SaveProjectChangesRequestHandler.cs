@@ -5,16 +5,16 @@ using Taskly.Domain;
 
 namespace Taskly.Application.Projects.Commands.UpdateTasks
 {
-    public class UpdateTasksCommandHandler : IRequestHandler<UpdateTasksRequest, Unit>
+    public class SaveProjectChangesRequestHandler : IRequestHandler<SaveProjectChangesRequest, Unit>
     {
         private ITasklyDbContext _dbContext;
 
-        public UpdateTasksCommandHandler(ITasklyDbContext dbContext)
+        public SaveProjectChangesRequestHandler(ITasklyDbContext dbContext)
         {
             _dbContext = dbContext;
         }
 
-        public async Task<Unit> Handle(UpdateTasksRequest request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(SaveProjectChangesRequest request, CancellationToken cancellationToken)
         {
             using var transaction = _dbContext.Database.BeginTransaction();
             var dbProj = await _dbContext.Projects.Include(i => i.Tasks).FirstAsync(i => i.Id == request.ProjectId, cancellationToken: cancellationToken);
@@ -24,6 +24,7 @@ namespace Taskly.Application.Projects.Commands.UpdateTasks
                 var dbTask = await _dbContext.ProjectTasks.FirstAsync(i => i.Id == t.Id, cancellationToken: cancellationToken);
                 _dbContext.ProjectTasks.Remove(dbTask);
             }
+            await _dbContext.SaveChangesAsync(cancellationToken);
 
             foreach (var t in request.Tasks)
             {

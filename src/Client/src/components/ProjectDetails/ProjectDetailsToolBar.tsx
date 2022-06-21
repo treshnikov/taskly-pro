@@ -129,10 +129,8 @@ export const ProjectDetailsToolBar: React.FunctionComponent<ProjectDetailsToolBa
             newTasks.push(newTask)
         })
 
-        console.log(newTasks)
-
-        await request("/api/v1/projects/updateTasks", "POST",
-            {projectId: project.id,  tasks: newTasks},
+        await request("/api/v1/projects/saveProjectChanges", "POST",
+            { projectId: project.id, tasks: newTasks },
             [{ name: 'Content-Type', value: 'application/json' }]);
 
         toast.success(t('changes-saved'))
