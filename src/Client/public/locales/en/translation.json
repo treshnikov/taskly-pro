@@ -74,5 +74,6 @@
     "project": "Project",
     "save": "Save",
     "estimation": "Estimation",
-    "changes-saved": "Changes has been successfully saved"
+    "changes-saved": "Changes has been successfully saved",
+    "all-projects": "All projects"
 }

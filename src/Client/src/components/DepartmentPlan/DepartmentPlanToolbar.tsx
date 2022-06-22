@@ -22,20 +22,18 @@ export const DepartmentPlanToolbar: React.FunctionComponent<{ hotTableRef: RefOb
     const startDate = useAppSelector(state => state.departmentPlanReducer.startDate)
     const endDate = useAppSelector(state => state.departmentPlanReducer.endDate)
 
-    const [projectFilter, setprojectFilter] = useState<string>('10');
+    const [projectFilter, setprojectFilter] = useState<string>('0');
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 
     const onProjectFilterChanged = (event: SelectChangeEvent) => {
         setprojectFilter(event.target.value as string);
     };
 
-    const open = Boolean(anchorEl)
-    
-    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const isAdditionalMenuOpen = Boolean(anchorEl)
+    const onAdditionalMenuButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
     }
-
-    const handleClose = () => {
+    const closeAdditionalMenu = () => {
         setAnchorEl(null)
     }
 
@@ -84,7 +82,7 @@ export const DepartmentPlanToolbar: React.FunctionComponent<{ hotTableRef: RefOb
 
         setTimeout(() => {
             plugin.collapsingUI.collapseMultipleChildren(collapsedRows);
-            handleClose()
+            closeAdditionalMenu()
         }, 100);
     }
 
@@ -99,7 +97,7 @@ export const DepartmentPlanToolbar: React.FunctionComponent<{ hotTableRef: RefOb
 
         setTimeout(() => {
             plugin.collapsingUI.collapseMultipleChildren(collapsedRows);
-            handleClose()
+            closeAdditionalMenu()
         }, 100);
     }
 
@@ -136,9 +134,7 @@ export const DepartmentPlanToolbar: React.FunctionComponent<{ hotTableRef: RefOb
                                 label={t('project')}
                                 onChange={onProjectFilterChanged}
                             >
-                                <MenuItem value={10}>Ten asdnf asjdfka dfvsdsfsadf asdfasdfsadf asdfsdfsdaf</MenuItem>
-                                <MenuItem value={20}>Twenty</MenuItem>
-                                <MenuItem value={30}>Thirty</MenuItem>
+                                <MenuItem value={0}>{t('all-projects')}</MenuItem>
                             </Select>
                         </FormControl>
                     </Box>
@@ -165,10 +161,10 @@ export const DepartmentPlanToolbar: React.FunctionComponent<{ hotTableRef: RefOb
 
                     <Button
                         startIcon={<MoreHorizIcon />}
-                        aria-controls={open ? 'basic-menu' : undefined}
+                        aria-controls={isAdditionalMenuOpen ? 'basic-menu' : undefined}
                         aria-haspopup="true"
-                        aria-expanded={open ? 'true' : undefined}
-                        onClick={handleClick}
+                        aria-expanded={isAdditionalMenuOpen ? 'true' : undefined}
+                        onClick={onAdditionalMenuButtonClick}
                         variant="contained"
                         size="small"
                     >
@@ -176,11 +172,17 @@ export const DepartmentPlanToolbar: React.FunctionComponent<{ hotTableRef: RefOb
                     </Button>
                     <Menu
                         anchorEl={anchorEl}
-                        open={open}
-                        onClose={handleClose}
+                        open={isAdditionalMenuOpen}
+                        onClose={closeAdditionalMenu}
                     >
-                        <MenuItem onClick={e => { showAllProjects() }}>{t('show-project-with-no-estimation')}</MenuItem>
-                        <MenuItem onClick={e => { showProjectsWithEstimation() }} >{t('hide-project-with-no-estimation')}</MenuItem>
+                        <MenuItem
+                            onClick={e => { showAllProjects() }}>
+                            {t('show-project-with-no-estimation')}
+                        </MenuItem>
+                        <MenuItem
+                            onClick={e => { showProjectsWithEstimation() }} >
+                            {t('hide-project-with-no-estimation')}
+                        </MenuItem>
                     </Menu>
                 </Stack>
             </Grid>
