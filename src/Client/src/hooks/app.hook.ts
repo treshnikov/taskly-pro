@@ -11,14 +11,28 @@ export const useApp = () => {
     const [, setTheme] = useState<Theme>(themeEn)
 
     const setEnLang = useCallback(() => {
-        i18n.changeLanguage('en'); 
+        localStorage.setItem('lang', 'en')
+        i18n.changeLanguage('en');
         setTheme(themeEn)
     }, [])
 
     const setRuLang = useCallback(() => {
-        i18n.changeLanguage('ru'); 
+        localStorage.setItem('lang', 'ru')
+        i18n.changeLanguage('ru');
         setTheme(themeRu)
     }, [])
 
-    return { setEnLang, setRuLang }
+    const initLanguage = useCallback(() => {
+        const lang = localStorage.getItem('lang')
+
+        if (lang === 'en') {
+            setEnLang()
+        }
+
+        if (lang === 'ru') {
+            setRuLang()
+        }
+    }, [])
+
+    return { initLanguage, setEnLang, setRuLang }
 }

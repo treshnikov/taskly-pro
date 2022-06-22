@@ -10,11 +10,16 @@ import { AppContext } from './context/AppContext';
 import { useAppSelector } from './hooks/redux.hook';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { LocalizationProvider } from '@mui/lab';
+import { useEffect, useLayoutEffect } from 'react';
 
 function App() {
-  const { setEnLang, setRuLang } = useApp()
+  const { initLanguage, setEnLang, setRuLang } = useApp()
   const routes = useAppRoutes({})
   const requestsInProgress = useAppSelector(state => state.appReducer.requestsInProgress)
+
+  useEffect(() => {
+    initLanguage()
+  }, [])
 
   return (
     <div className="App">
