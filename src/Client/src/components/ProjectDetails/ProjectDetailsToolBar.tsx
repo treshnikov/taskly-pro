@@ -12,7 +12,7 @@ import { ProjectDetailsDepartemntsPlan } from "./ProjectDetailsDepartemntsPlan";
 import { ProjectDetailsStatistics } from "./ProjectDetailsStatistics";
 import { useHttp } from "../../hooks/http.hook";
 import { IProjectTaskDepartmentEstimationVm, ProjectTaskDepartmentEstimationVm } from "../../models/ProjectDetails/ProjectTaskDepartmentEstimationVm";
-import { ProjectTaskVm } from "../../models/ProjectDetails/ProjectTaskVm";
+import { IProjectTaskVm, ProjectTaskVm } from "../../models/ProjectDetails/ProjectTaskVm";
 import { RefObject } from "react";
 import HotTable from "@handsontable/react";
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
@@ -56,17 +56,17 @@ export const ProjectDetailsToolBar: React.FunctionComponent<ProjectDetailsToolBa
 
     const onAddNewTask = () => {
         async function getData() {
-            const newTask = new ProjectTaskVm()
-            newTask.id = generateGuid()
-            newTask.comment = "..."
-            newTask.description = "..."
-            newTask.totalHours = 0
-            newTask.start = project.start
-            newTask.end = project.end
-            newTask.startAsStr = dateAsShortStr(new Date(project.start))
-            newTask.endAsStr = dateAsShortStr(new Date(project.end))
-            newTask.departmentEstimations = await request<IProjectTaskDepartmentEstimationVm[]>("/api/v1/projects/defaultEstimations")
-
+            const newTask: IProjectTaskVm = {
+                id: generateGuid(),
+                comment: "...",
+                description: "...",
+                totalHours: 0,
+                start: project.start,
+                end: project.end,
+                startAsStr: dateAsShortStr(new Date(project.start)),
+                endAsStr: dateAsShortStr(new Date(project.end)),
+                departmentEstimations: await request<IProjectTaskDepartmentEstimationVm[]>("/api/v1/projects/defaultEstimations")
+            }
             dispatch(addTask({ task: newTask }))
         }
 

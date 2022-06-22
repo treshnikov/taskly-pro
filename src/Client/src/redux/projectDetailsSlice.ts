@@ -93,7 +93,7 @@ export const projectDetailsSlice = createSlice({
             state.project = action.payload
         },
 
-        addTask(state: ProjectDetailsStoreStateType, action: PayloadAction<{task : ProjectTaskVm}>) {
+        addTask(state: ProjectDetailsStoreStateType, action: PayloadAction<{ task: IProjectTaskVm }>) {
             state.project.tasks.splice(state.selectedRowIdx + 1, 0, action.payload.task)
             ProjectDetailedInfoVmHelper.init(state.project)
         },
