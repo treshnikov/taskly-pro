@@ -72,50 +72,58 @@ export const ProjectDetailsDepartemntsPlan: React.FunctionComponent<ProjectDetai
                 scroll="paper"
                 fullWidth={true}
                 maxWidth="lg"
-                PaperProps={{
-                    style: {
-                        minHeight: "90%",
-                        maxHeight: "90%"
-                    }
-                }}
-
+                PaperProps={{ style: { minHeight: "90%", maxHeight: "90%" } }}
                 open={showDepartmentsPlan}
                 onClose={e => onClose()}
                 aria-labelledby="_showDepartmentsPlan"
             >
-                <DialogTitle id="_showDepartmentsPlan">
+                <DialogTitle
+                    id="_showDepartmentsPlan">
                     #{selectedRowIdx + 1} {task.description} {task.totalHours}{t('hour')}
                 </DialogTitle>
-                <Divider></Divider>
+                <Divider />
                 <DialogContent>
                     <FormGroup>
-                        <FormControlLabel control={<Checkbox
-                            value={hideEmpty}
-                            checked={hideEmpty}
-                            onChange={e => setHideEmpty(e.target.checked)}
-                        />} label={t('hide-empty')} />
-                    </FormGroup>                    {
+                        <FormControlLabel
+                            control={<Checkbox
+                                value={hideEmpty}
+                                checked={hideEmpty}
+                                onChange={e => setHideEmpty(e.target.checked)}
+                            />} label={t('hide-empty')} />
+                    </FormGroup>
+                    {
                         task.departmentEstimations.filter(e => hideEmpty && e.totalHours === 0 ? false : true).map((i, idx) => {
                             return (
-                                <Accordion key={task.id + "est" + idx}>
+                                <Accordion
+                                    key={task.id + "est" + idx}>
                                     <AccordionSummary
                                         expandIcon={<ExpandMoreIcon />}
                                         aria-controls={"panel-content" + idx}
                                         id={"panelheader-content" + idx}
                                     >
-                                        <Typography>{i.departmentShortName === '' ? i.departmentName : i.departmentShortName}: {i.totalHours}{t('hour')}</Typography>
+                                        <Typography>
+                                            {i.departmentShortName === '' ? i.departmentName : i.departmentShortName}: {i.totalHours}{t('hour')}
+                                        </Typography>
                                     </AccordionSummary>
                                     <AccordionDetails>
-                                        <Stack direction="row" spacing={2}>
+                                        <Stack
+                                            direction="row"
+                                            spacing={2}>
                                             {
                                                 i.estimations.map((e, eidx) => {
                                                     return (
-                                                        <span style={{ maxWidth: "300px" }} key={i.id + e.userPositionId}>
-                                                            <div style={{ maxHeight: "60px", fontSize: "14px" }}>{e.userPositionName}:</div>
-                                                            <TextField style={{ fontSize: "14px" }} variant="standard" value={e.hours}
-                                                                onChange={ev => {
-                                                                    updateLocalTask(i.departmentId, e.userPositionId, ev.target.value)
-                                                                }} />
+                                                        <span
+                                                            style={{ maxWidth: "300px" }}
+                                                            key={i.id + e.userPositionId}>
+                                                            <div
+                                                                style={{ maxHeight: "60px", fontSize: "14px" }}>
+                                                                {e.userPositionName}:
+                                                            </div>
+                                                            <TextField
+                                                                style={{ fontSize: "14px" }}
+                                                                variant="standard"
+                                                                value={e.hours}
+                                                                onChange={ev => { updateLocalTask(i.departmentId, e.userPositionId, ev.target.value) }} />
                                                         </span>
                                                     )
                                                 })
@@ -127,11 +135,11 @@ export const ProjectDetailsDepartemntsPlan: React.FunctionComponent<ProjectDetai
                             )
                         })
                     }
-
-
                 </DialogContent>
                 <DialogActions>
-                    <Button variant="contained" onClick={e => onClose()}>
+                    <Button
+                        variant="contained"
+                        onClick={e => onClose()}>
                         {t('close')}
                     </Button>
                 </DialogActions>

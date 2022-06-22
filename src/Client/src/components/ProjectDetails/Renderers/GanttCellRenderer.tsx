@@ -84,13 +84,18 @@ export const GanttCellRenderer = (props: any) => {
     }
 
     return (
-        <div style={{
-            height: ganttDivHeight,
-            marginLeft: "-4px",
-            paddingRight: "8px"
-        }}
+        <div
+            style={{
+                height: ganttDivHeight,
+                marginLeft: "-4px",
+                paddingRight: "8px"
+            }}
             title={getCanvasTitle(estimations)}>
-            <canvas ref={canvasRef} width={width}></canvas>
+            <canvas
+                ref={canvasRef}
+                width={width}>
+
+            </canvas>
         </div>)
 }
 

@@ -45,15 +45,6 @@ export const ProjectDetailsToolBar: React.FunctionComponent<ProjectDetailsToolBa
         hotTableRef.current.hotInstance.selectCell(rowIdx, 1)
     }
 
-    const selectLastRow = (): void => {
-        if (!hotTableRef || !hotTableRef.current || !hotTableRef.current.hotInstance) {
-            return
-        }
-
-        const lastIdx = hotTableRef.current.hotInstance.countRows() - 1
-        selectRow(lastIdx)
-    }
-
     const onAddNewTask = () => {
         async function getData() {
             const newTask: IProjectTaskVm = {
@@ -137,20 +128,81 @@ export const ProjectDetailsToolBar: React.FunctionComponent<ProjectDetailsToolBa
     }
 
     return (
-        <div style={{ position: "fixed", top: "5em", left: "1em" }}>
-            <Grid container  >
-                <Grid item xs={12} >
-                    <Stack direction="row" spacing={1} alignItems={"center"}>
-                        <Typography variant='h6' style={{ maxWidth: "200px", whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden" }}>{projectShortName}</Typography>
-                        <Button variant="contained" size="small" startIcon={<SaveAltIcon />} onClick={saveChanges}> {t('save')}  </Button>
-                        <Button variant='contained' size='small' onClick={e => { onAddNewTask() }} startIcon={<PlaylistAddIcon />}>{t('add')}</Button>
-                        <Button variant='contained' size='small' onClick={e => { onDeleteTask() }} disabled={selectedRowIdx < 0} startIcon={<RemoveIcon />}>{t('remove')}</Button>
-                        <Button variant='contained' size='small' onClick={e => { dispatch(orderTasks()) }} startIcon={<SortIcon />}>{t('order-tasks')}</Button>
-                        <Button variant='contained' size='small' onClick={e => { dispatch(toggleShowDepartmentsPlan()) }} disabled={selectedRowIdx < 0} startIcon={<BarChartIcon />}>{t('estimation')}</Button>
-                        <Button variant='contained' size='small' onClick={e => { dispatch(toggleShowStatistics()) }} startIcon={<BarChartIcon />}>{t('statistics')}</Button>
-                        <FormControlLabel label={t('compact-mode')} control={<Checkbox checked={compactMode} onChange={e => { dispatch(toggleCompactMode()) }} size='small' />} />
-                        <Button style={{ display: compactMode ? 'none' : 'inline' }} variant='text' size='small' startIcon={<ZoomInIcon />} onClick={e => { dispatch(zoomInGanttChart()) }} ></Button>
-                        <Button style={{ display: compactMode ? 'none' : 'inline' }} variant='text' size='small' startIcon={<ZoomOutIcon />} onClick={e => { dispatch(zoomOutGanttChart()) }} ></Button>
+        <div
+            style={{ position: "fixed", top: "5em", left: "1em" }}>
+            <Grid
+                container  >
+                <Grid
+                    item
+                    xs={12} >
+                    <Stack
+                        direction="row"
+                        spacing={1}
+                        alignItems={"center"}>
+                        <Typography
+                            variant='h6'
+                            style={{ maxWidth: "200px", whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden" }}>
+                            {projectShortName}
+                        </Typography>
+                        <Button
+                            variant="contained"
+                            size="small"
+                            startIcon={<SaveAltIcon />}
+                            onClick={saveChanges}>
+                            {t('save')}
+                        </Button>
+                        <Button
+                            variant='contained'
+                            size='small'
+                            onClick={e => { onAddNewTask() }}
+                            startIcon={<PlaylistAddIcon />}>
+                            {t('add')}
+                        </Button>
+                        <Button
+                            variant='contained'
+                            size='small'
+                            onClick={e => { onDeleteTask() }}
+                            disabled={selectedRowIdx < 0}
+                            startIcon={<RemoveIcon />}>
+                            {t('remove')}
+                        </Button>
+                        <Button
+                            variant='contained'
+                            size='small'
+                            onClick={e => { dispatch(orderTasks()) }}
+                            startIcon={<SortIcon />}>
+                            {t('order-tasks')}
+                        </Button>
+                        <Button
+                            variant='contained'
+                            size='small'
+                            onClick={e => { dispatch(toggleShowDepartmentsPlan()) }}
+                            disabled={selectedRowIdx < 0} startIcon={<BarChartIcon />}>
+                            {t('estimation')}
+                        </Button>
+                        <Button
+                            variant='contained'
+                            size='small'
+                            onClick={e => { dispatch(toggleShowStatistics()) }}
+                            startIcon={<BarChartIcon />}>
+                            {t('statistics')}
+                        </Button>
+                        <FormControlLabel
+                            label={t('compact-mode')}
+                            control={<Checkbox checked={compactMode}
+                                onChange={e => { dispatch(toggleCompactMode()) }}
+                                size='small' />} />
+                        <Button
+                            style={{ display: compactMode ? 'none' : 'inline' }}
+                            variant='text' size='small' startIcon={<ZoomInIcon />}
+                            onClick={e => { dispatch(zoomInGanttChart()) }} >
+
+                        </Button>
+                        <Button
+                            style={{ display: compactMode ? 'none' : 'inline' }}
+                            variant='text' size='small' startIcon={<ZoomOutIcon />}
+                            onClick={e => { dispatch(zoomOutGanttChart()) }} >
+                        </Button>
                     </Stack>
                 </Grid>
 

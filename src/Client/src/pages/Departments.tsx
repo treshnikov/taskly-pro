@@ -33,9 +33,16 @@ export const Departments: React.FunctionComponent = () => {
     }, [department])
 
     const renderTree = (node: DepartmentUserVm) => (
-        <TreeItem key={node.id} nodeId={node.id} label={
-            <Typography padding={0.5} sx={node.type !== 1 ? { fontWeight: "bold" } : { m: 0 }}>{node.name}</Typography>
-        }>
+        <TreeItem
+            key={node.id}
+            nodeId={node.id}
+            label={
+                <Typography
+                    padding={0.5}
+                    sx={node.type !== 1 ? { fontWeight: "bold" } : { m: 0 }}>
+                    {node.name}
+                </Typography>
+            }>
             {Array.isArray(node.children)
                 ? node.children.map((node) => renderTree(node))
                 : null}
@@ -66,11 +73,23 @@ export const Departments: React.FunctionComponent = () => {
     }
 
     return (
-        <div className='page-container'>
-            <h3>{t('departments')}</h3>
-            <Stack spacing={1} paddingBottom={1} direction="row">
-                <Button onClick={e => { expandAll() }} variant='contained'>{t('expand-all')}</Button>
-                <Button onClick={e => { setExpanded([]) }} variant='contained'>{t('collapse-all')}</Button>
+        <div
+            className='page-container'>
+            <h3>
+                {t('departments')}
+            </h3>
+            <Stack
+                spacing={1}
+                paddingBottom={1}
+                direction="row">
+                <Button
+                    onClick={e => { expandAll() }}
+                    variant='contained'>{t('expand-all')}
+                </Button>
+                <Button
+                    onClick={e => { setExpanded([]) }}
+                    variant='contained'>{t('collapse-all')}
+                </Button>
             </Stack>
             <TreeView
                 aria-label="rich object"

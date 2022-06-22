@@ -10,7 +10,6 @@ import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { Logout } from '@mui/icons-material';
 
-
 export const SidebarMenu: React.FunctionComponent = () => {
     const [toggled, setToggled] = useState<boolean>(false)
     const navigate = useNavigate()
@@ -23,31 +22,40 @@ export const SidebarMenu: React.FunctionComponent = () => {
             onClick={() => setToggled(false)}
         >
             <List>
-                <ListItem disablePadding onClick={() => navigate("/")}>
+                <ListItem
+                    disablePadding
+                    onClick={() => navigate("/")}>
                     <ListItemButton>
                         <ListItemIcon>
                             <HomeIcon />
                         </ListItemIcon>
-                        <ListItemText primary={t('home') as string} />
+                        <ListItemText
+                            primary={t('home') as string} />
                     </ListItemButton>
                 </ListItem>
 
-                <ListItem disablePadding onClick={() => navigate("/projects")}>
+                <ListItem
+                    disablePadding
+                    onClick={() => navigate("/projects")}>
                     <ListItemButton>
                         <ListItemIcon>
                             <ArticleOutlinedIcon />
                         </ListItemIcon>
-                        <ListItemText primary={t('projects') as string} />
+                        <ListItemText
+                            primary={t('projects') as string} />
                     </ListItemButton>
                 </ListItem>
 
 
-                <ListItem disablePadding onClick={() => navigate("/departmentPlans")}>
+                <ListItem
+                    disablePadding
+                    onClick={() => navigate("/departmentPlans")}>
                     <ListItemButton>
                         <ListItemIcon>
                             <AccountTreeIcon />
                         </ListItemIcon>
-                        <ListItemText primary={t('departments') as string} />
+                        <ListItemText
+                            primary={t('departments') as string} />
                     </ListItemButton>
                 </ListItem>
 
@@ -55,21 +63,27 @@ export const SidebarMenu: React.FunctionComponent = () => {
             <Divider />
             <List>
 
-                <ListItem disablePadding onClick={() => navigate("/settings")}>
+                <ListItem
+                    disablePadding
+                    onClick={() => navigate("/settings")}>
                     <ListItemButton>
                         <ListItemIcon>
                             <SettingsIcon />
                         </ListItemIcon>
-                        <ListItemText primary={t('settings') as string} />
+                        <ListItemText
+                            primary={t('settings') as string} />
                     </ListItemButton>
                 </ListItem>
 
-                <ListItem disablePadding onClick={() => logout()}>
+                <ListItem
+                    disablePadding
+                    onClick={() => logout()}>
                     <ListItemButton>
                         <ListItemIcon>
                             <Logout />
                         </ListItemIcon>
-                        <ListItemText primary={t('logout') as string} />
+                        <ListItemText
+                            primary={t('logout') as string} />
                     </ListItemButton>
                 </ListItem>
             </List>
@@ -97,5 +111,6 @@ export const SidebarMenu: React.FunctionComponent = () => {
             >
                 {list()}
             </Drawer>
-        </div>)
+        </div>
+    )
 }

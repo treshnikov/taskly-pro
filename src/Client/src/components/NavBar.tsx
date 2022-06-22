@@ -47,17 +47,26 @@ export const NavBar: React.FunctionComponent = () => {
     <Box sx={{ flexGrow: 1 }}>
       <FormGroup>
       </FormGroup>
-      <AppBar position="static" style={{
-        backgroundColor: "rgb(243, 244, 245)",
-        boxShadow: "#eeeeee 0px 0px 20px 0px",
-        color: "rgb(44, 44, 44)",
-        height: "60px",
-        position: "fixed"
-      }}>
+      <AppBar
+        position="static"
+        style={{
+          backgroundColor: "rgb(243, 244, 245)",
+          boxShadow: "#eeeeee 0px 0px 20px 0px",
+          color: "rgb(44, 44, 44)",
+          height: "60px",
+          position: "fixed"
+        }}>
         <Toolbar >
           <SidebarMenu />
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            <p className='logo' onClick={e => { navigate("/") }} >{t('app-name')}</p>
+          <Typography
+            variant="h6"
+            component="div"
+            sx={{ flexGrow: 1 }}>
+            <p
+              className='logo'
+              onClick={e => { navigate("/") }} >
+              {t('app-name')}
+            </p>
           </Typography>
 
           <div>
@@ -85,11 +94,13 @@ export const NavBar: React.FunctionComponent = () => {
               open={Boolean(anchorEl)}
               onClose={handleClose}
             >
-              <div style={{ paddingLeft: 10, paddingRight: 10, cursor: 'default', textAlign: 'center' }}>
+              <div
+                style={{ paddingLeft: 10, paddingRight: 10, cursor: 'default', textAlign: 'center' }}>
                 {user.name}
               </div>
               <Divider />
-              <MenuItem onClick={(logoutHandler)}>
+              <MenuItem
+                onClick={(logoutHandler)}>
                 <Logout />
                 &nbsp;{t("logout")}
               </MenuItem>
@@ -98,6 +109,5 @@ export const NavBar: React.FunctionComponent = () => {
         </Toolbar>
       </AppBar>
     </Box>
-
   )
 }

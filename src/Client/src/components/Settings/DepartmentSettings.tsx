@@ -33,29 +33,33 @@ export const DepartmentSettings: React.FunctionComponent = () => {
     }
 
     const renderTree = (node: DepartmentUserVm) => (
-        <TreeItem key={node.id} nodeId={node.id} label={
-            node.type === 0
-                ? (<>
-                    <Typography>
-                        <Checkbox
-                            checked={node.includeInWorkPlan}
-                            onClick={e => {
-                                node.includeInWorkPlan = !node.includeInWorkPlan
-                                // to force rerender
-                                //setDepartments({ ...department })
-                                setDepartmentIncludeInWorkPlan(node.id, node.includeInWorkPlan)
-                                e.stopPropagation()
-                            }}
-                        /> {node.name}
-                    </Typography>
-                </>)
-                : (<>
-                    <Typography padding={1}>
-                        {node.name}
-                    </Typography>
+        <TreeItem
+            key={node.id}
+            nodeId={node.id}
+            label={
+                node.type === 0
+                    ? (<>
+                        <Typography>
+                            <Checkbox
+                                checked={node.includeInWorkPlan}
+                                onClick={e => {
+                                    node.includeInWorkPlan = !node.includeInWorkPlan
+                                    // to force rerender
+                                    //setDepartments({ ...department })
+                                    setDepartmentIncludeInWorkPlan(node.id, node.includeInWorkPlan)
+                                    e.stopPropagation()
+                                }}
+                            /> {node.name}
+                        </Typography>
+                    </>)
+                    : (<>
+                        <Typography
+                            padding={1}>
+                            {node.name}
+                        </Typography>
 
-                </>)
-        }>
+                    </>)
+            }>
             {
                 Array.isArray(node.children) && node.children.some(i => i.type === 0)
                     ? node.children.map((node) => renderTree(node))
@@ -89,11 +93,23 @@ export const DepartmentSettings: React.FunctionComponent = () => {
     }
 
     return (
-        <div className='page-container'>
-            <h3>{t('departments')}</h3>
-            <Stack spacing={1} paddingBottom={1} direction="row">
-                <Button onClick={e => { expandAll() }} variant='contained'>{t('expand-all')}</Button>
-                <Button onClick={e => { setExpanded([]) }} variant='contained'>{t('collapse-all')}</Button>
+        <div
+            className='page-container'>
+            <h3>
+                {t('departments')}
+            </h3>
+            <Stack
+                spacing={1}
+                paddingBottom={1}
+                direction="row">
+                <Button
+                    onClick={e => { expandAll() }}
+                    variant='contained'>{t('expand-all')}
+                </Button>
+                <Button
+                    onClick={e => { setExpanded([]) }}
+                    variant='contained'>{t('collapse-all')}
+                </Button>
             </Stack>
             <TreeView
                 aria-label="rich object"

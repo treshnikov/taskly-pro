@@ -22,26 +22,63 @@ export const useAppRoutes: React.FunctionComponent = () => {
       <div>
         <NavBar />
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/projects" element={<Projects />} />
-          <Route path="/projects/:id" element={<ProjectDetails />} />
-          <Route path="/users" element={<Users />} />
-          <Route path="/departments" element={<Departments />} />
-          <Route path="/departmentPlans" element={<DepartmentPlans />} />
-          <Route path="/departmentPlans/:id/:name" element={<DepartmentDetailedPlan />} />
-          <Route path="/departmentsSettings" element={<DepartmentSettings />} />
-          <Route path="/settings" element={<Settings />} />
+          <Route
+            path="/"
+            element={<Home />}
+          />
+          <Route
+            path="/projects"
+            element={<Projects />}
+          />
+          <Route
+            path="/projects/:id"
+            element={<ProjectDetails />}
+          />
+          <Route
+            path="/users"
+            element={<Users />}
+          />
+          <Route
+            path="/departments"
+            element={<Departments />}
+          />
+          <Route
+            path="/departmentPlans"
+            element={<DepartmentPlans />}
+          />
+          <Route
+            path="/departmentPlans/:id/:name"
+            element={<DepartmentDetailedPlan />}
+          />
+          <Route
+            path="/departmentsSettings"
+            element={<DepartmentSettings />}
+          />
+          <Route
+            path="/settings"
+            element={<Settings />}
+          />
         </Routes>
       </div>
     )
   }
 
   return (
-    <div className="App">
+    <div
+      className="App">
       <Routes>
-        <Route path="*" element={<Login />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route
+          path="*"
+          element={<Login />}
+        />
+        <Route
+          path="/login"
+          element={<Login />}
+        />
+        <Route
+          path="/register"
+          element={<Register />}
+        />
       </Routes>
     </div >
   )

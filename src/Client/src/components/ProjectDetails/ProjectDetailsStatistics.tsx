@@ -25,6 +25,22 @@ export const ProjectDetailsStatistics: React.FunctionComponent = () => {
         responsive: true,
     };
 
+    const onClose = () => {
+        dispatch(toggleShowStatistics())
+    }
+
+    const getLegendFlagStyle = (color: string) => {
+        return {
+            backgroundColor: color,
+            verticalAlign: "top",
+            height: "10px",
+            width: "20px",
+            marginLeft: "-2px",
+            marginTop: "5px",
+            marginRight: "2px"
+        }
+    }
+
     useEffect(() => {
         if (project.tasks?.length === 0) {
             setPlan(new DepartmentsPlan())
@@ -36,10 +52,6 @@ export const ProjectDetailsStatistics: React.FunctionComponent = () => {
         setPlan(newPlan)
     }, [project])
 
-    const onClose = () => {
-        dispatch(toggleShowStatistics())
-    }
-
     return (
         <div>
             <Dialog
@@ -49,13 +61,17 @@ export const ProjectDetailsStatistics: React.FunctionComponent = () => {
                 onClose={e => onClose()}
                 aria-labelledby="responsive-dialog-title"
             >
-                <DialogTitle id="responsive-dialog-title">
+                <DialogTitle
+                    id="responsive-dialog-title">
                     {project.shortName}
                 </DialogTitle>
                 <Divider></Divider>
                 <DialogContent>
-                    <Grid container>
-                        <Grid item xs={7}>
+                    <Grid
+                        container>
+                        <Grid
+                            item
+                            xs={7}>
                             {t('total-planned-hours')}: {project.totalHours}{t('hour')}
                             <ul>
                                 {
@@ -69,19 +85,15 @@ export const ProjectDetailsStatistics: React.FunctionComponent = () => {
                                         const percent = i.percent
                                         const color = i.color
                                         return (
-                                            <li key={project.id + i.name}>
-                                                <Stack direction="row">
-                                                    <span style={{
-                                                        backgroundColor: color,
-                                                        verticalAlign: "top",
-                                                        height: "10px",
-                                                        width: "20px",
-                                                        marginLeft: "-2px",
-                                                        marginTop: "5px",
-                                                        marginRight: "2px"
-                                                    }}>
+                                            <li
+                                                key={project.id + i.name}>
+                                                <Stack
+                                                    direction="row">
+                                                    <span
+                                                        style={getLegendFlagStyle(color)}>
                                                     </span>
-                                                    <div style={{ display: "inline" }}>
+                                                    <div
+                                                        style={{ display: "inline" }}>
                                                         {i.name}: {hours}{t('hour')} <p style={{ display: "inline", color: "silver" }}>{percent}%</p>
                                                     </div>
                                                 </Stack>
@@ -110,19 +122,13 @@ export const ProjectDetailsStatistics: React.FunctionComponent = () => {
                                         }
 
                                         const percent = i.percent
-                                        const color = i.color 
+                                        const color = i.color
                                         return (
                                             <li key={project.id + i.name}>
-                                                <Stack direction="row">
-                                                    <span style={{
-                                                        backgroundColor: color,
-                                                        verticalAlign: "top",
-                                                        height: "10px",
-                                                        width: "20px",
-                                                        marginLeft: "-2px",
-                                                        marginTop: "5px",
-                                                        marginRight: "2px"
-                                                    }}>
+                                                <Stack
+                                                    direction="row">
+                                                    <span
+                                                        style={getLegendFlagStyle(color)}>
                                                     </span>
 
                                                     <div style={{ display: "inline" }}>
@@ -135,15 +141,20 @@ export const ProjectDetailsStatistics: React.FunctionComponent = () => {
                                 }
                             </ul>
                         </Grid>
-                        <Grid item xs={5}>
+                        <Grid
+                            item
+                            xs={5}>
                             <Doughnut
-                                data={plan.userPositionsToHoursChartData} options={options}
+                                data={plan.userPositionsToHoursChartData}
+                                options={options}
                             />
                         </Grid>
                     </Grid>
                 </DialogContent>
                 <DialogActions>
-                    <Button variant="contained" onClick={e => onClose()}>
+                    <Button
+                        variant="contained"
+                        onClick={e => onClose()}>
                         {t('close')}
                     </Button>
                 </DialogActions>
@@ -151,3 +162,4 @@ export const ProjectDetailsStatistics: React.FunctionComponent = () => {
         </div>
     )
 }
+

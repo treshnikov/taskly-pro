@@ -36,7 +36,7 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
     const navigate = useNavigate()
 
     // workaround for passing a navigate function to ProjectNameCellRenderer that cannot be extended by adding new props without changing the source code of the component
-    ServicesStorageHelper.navigateFunction = (arg: string) => { navigate(arg) } 
+    ServicesStorageHelper.navigateFunction = (arg: string) => { navigate(arg) }
 
     // unfortunately, we must store the state locally because passing such an amount of records to redux causes low performance even the records will be frozen
     const [plan, setPlan] = useState<DepartmentUserPlan[]>(initPlan)
@@ -76,9 +76,15 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
     }, [plan])
 
     return (
-        <div className='page-container'>
-            <DepartmentPlanToolbar hotTableRef={hotTableRef} departmentName={departmentName as string} departmentId={departmentId as string} plan={plan}></DepartmentPlanToolbar>
-            <div style={{ marginTop: "8em" }}>
+        <div
+            className='page-container'>
+            <DepartmentPlanToolbar
+                hotTableRef={hotTableRef}
+                departmentName={departmentName as string}
+                departmentId={departmentId as string}
+                plan={plan}></DepartmentPlanToolbar>
+            <div
+                style={{ marginTop: "8em" }}>
                 <HotTable
                     id="projectDetailsTable"
                     ref={hotTableRef}
@@ -141,15 +147,42 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
                     outsideClickDeselects={true}
                     licenseKey='non-commercial-and-evaluation'
                 >
-                    <HotColumn data={"id"} wordWrap={false} readOnly type={"text"} />
-                    <HotColumn data={"userName"} wordWrap={false} readOnly type={"text"} />
-                    <HotColumn data={"userPosition"} wordWrap={false} readOnly type={"text"} />
-                    <HotColumn data={"hours"} type={"text"} readOnly />
-                    <HotColumn data={"project"} type={"text"} readOnly renderer={ProjectNameCellRenderer} />
+                    <HotColumn
+                        data={"id"}
+                        wordWrap={false}
+                        readOnly
+                        type={"text"}
+                    />
+                    <HotColumn
+                        data={"userName"}
+                        wordWrap={false}
+                        readOnly
+                        type={"text"}
+                    />
+                    <HotColumn
+                        data={"userPosition"}
+                        wordWrap={false}
+                        readOnly
+                        type={"text"}
+                    />
+                    <HotColumn
+                        data={"hours"}
+                        type={"text"}
+                        readOnly
+                    />
+                    <HotColumn
+                        data={"project"}
+                        type={"text"}
+                        readOnly
+                        renderer={ProjectNameCellRenderer}
+                    />
                     {
                         headers.slice(staticHeaders.length).map((header, idx) => {
                             return (
-                                <HotColumn key={"depPlanWeek" + idx} data={"week" + (idx + 1).toString()} type={"text"}
+                                <HotColumn
+                                    key={"depPlanWeek" + idx}
+                                    data={"week" + (idx + 1).toString()}
+                                    type={"text"}
                                     renderer={WeekPlanCellRenderer}
                                 >
                                 </HotColumn>)
