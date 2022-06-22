@@ -70,10 +70,10 @@ export const ProjectDetailsToolBar: React.FunctionComponent<ProjectDetailsToolBa
             dispatch(addTask({ task: newTask }))
         }
 
-        getData().then(i => {
-            selectLastRow()
-            window.scrollTo(0, document.body.scrollHeight)
-        })
+        getData()
+            .then(i => {
+                selectRow(selectedRowIdx + 1)
+            })
     }
 
     const onDeleteTask = () => {

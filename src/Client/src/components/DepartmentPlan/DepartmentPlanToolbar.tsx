@@ -31,7 +31,6 @@ export const DepartmentPlanToolbar: React.FunctionComponent<{ hotTableRef: RefOb
         setAnchorEl(null)
     }
 
-
     const collapseAllRows = (): void => {
         if (hotTableRef && hotTableRef.current && hotTableRef.current.hotInstance) {
             const plugin = hotTableRef.current.hotInstance.getPlugin('nestedRows') as any
@@ -74,7 +73,7 @@ export const DepartmentPlanToolbar: React.FunctionComponent<{ hotTableRef: RefOb
         const collapsedRows: number[] = plugin.collapsingUI.collapsedRows as number[];
 
         dispatch(setHiddenRows([]))
-        
+
         setTimeout(() => {
             plugin.collapsingUI.collapseMultipleChildren(collapsedRows);
             handleClose()
@@ -120,12 +119,18 @@ export const DepartmentPlanToolbar: React.FunctionComponent<{ hotTableRef: RefOb
                         renderInput={(params) => <TextField size="small" {...params} />}
                     />
 
-                    <Button variant="contained" size="small" startIcon={<SaveAltIcon />}
+                    <Button
+                        variant="contained"
+                        size="small"
+                        startIcon={<SaveAltIcon />}
                         onClick={saveChanges}>
                         {t('save')}
                     </Button>
 
-                    <Button variant="contained" size="small" startIcon={<AddBoxIcon />}
+                    <Button
+                        variant="contained"
+                        size="small"
+                        startIcon={<AddBoxIcon />}
                         onClick={e => { expandAllRows() }}>
                         {t('expand')}
                     </Button>
@@ -152,7 +157,6 @@ export const DepartmentPlanToolbar: React.FunctionComponent<{ hotTableRef: RefOb
                         onClose={handleClose}
                     >
                         <MenuItem onClick={e => { showAllProjects() }}>{t('show-project-with-no-estimation')}</MenuItem>
-
                         <MenuItem onClick={e => { showProjectsWithEstimation() }} >{t('hide-project-with-no-estimation')}</MenuItem>
                     </Menu>
                 </Stack>
