@@ -80,6 +80,21 @@ export class DepartmentPlanHelper {
         return res;
     }
 
+    public static getRowsForByProjectCode(plan: DepartmentUserPlan[], projectId: number): number[] {
+        let hiddenRows: number[] = [];
+        let idx = 0;
+        for (let i = 0; i < plan.length; i++) {
+            idx++;
+            for (let j = 0; j < plan[i].__children.length; j++) {
+                if (plan[i].__children[j].projectId !== projectId) {
+                    hiddenRows.push(idx);
+                }
+                idx++;
+            }
+        }
+        return hiddenRows;
+    }
+
     public static getRowsWithEmtyPlans(plan: DepartmentUserPlan[]): number[] {
         let hiddenRows: number[] = [];
         let idx = 0;

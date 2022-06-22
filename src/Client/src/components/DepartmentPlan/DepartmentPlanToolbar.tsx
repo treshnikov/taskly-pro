@@ -1,5 +1,5 @@
 import { DatePicker } from "@mui/lab"
-import { Button, Grid, Menu, MenuItem, Stack, TextField, Typography } from "@mui/material"
+import { Box, Button, FormControl, Grid, InputLabel, Menu, MenuItem, Select, SelectChangeEvent, Stack, TextField, Typography } from "@mui/material"
 import IndeterminateCheckBoxIcon from '@mui/icons-material/IndeterminateCheckBox';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
@@ -22,11 +22,19 @@ export const DepartmentPlanToolbar: React.FunctionComponent<{ hotTableRef: RefOb
     const startDate = useAppSelector(state => state.departmentPlanReducer.startDate)
     const endDate = useAppSelector(state => state.departmentPlanReducer.endDate)
 
+    const [projectFilter, setprojectFilter] = useState<string>('10');
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+
+    const onProjectFilterChanged = (event: SelectChangeEvent) => {
+        setprojectFilter(event.target.value as string);
+    };
+
     const open = Boolean(anchorEl)
+    
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
     }
+
     const handleClose = () => {
         setAnchorEl(null)
     }
@@ -107,18 +115,33 @@ export const DepartmentPlanToolbar: React.FunctionComponent<{ hotTableRef: RefOb
                         inputFormat="yyyy-MM-DD"
                         value={startDate}
                         onChange={(newValue) => { if (newValue) { dispatch(setStartDate(new Date(newValue))) } }}
-                        renderInput={(params) => <TextField size="small" {...params} />}
+                        renderInput={(params) => <TextField sx={{ width: 145 }} size="small" {...params} />}
                     />
-
                     <DatePicker
                         views={['day']}
                         label={t('end')}
                         inputFormat="yyyy-MM-DD"
                         value={endDate}
                         onChange={(newValue) => { if (newValue) { dispatch(setEndDate(new Date(newValue))) } }}
-                        renderInput={(params) => <TextField size="small" {...params} />}
+                        renderInput={(params) => <TextField sx={{ width: 145 }} size="small" {...params} />}
                     />
-
+                    <Box sx={{ width: 150 }}>
+                        <FormControl fullWidth>
+                            <InputLabel id="projectLabelId">{t('project')}</InputLabel>
+                            <Select
+                                size="small"
+                                labelId="projectLabelId"
+                                id="demo-simple-select"
+                                value={projectFilter}
+                                label={t('project')}
+                                onChange={onProjectFilterChanged}
+                            >
+                                <MenuItem value={10}>Ten asdnf asjdfka dfvsdsfsadf asdfasdfsadf asdfsdfsdaf</MenuItem>
+                                <MenuItem value={20}>Twenty</MenuItem>
+                                <MenuItem value={30}>Thirty</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </Box>
                     <Button
                         variant="contained"
                         size="small"
