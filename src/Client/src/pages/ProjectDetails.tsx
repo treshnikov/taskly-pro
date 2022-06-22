@@ -100,8 +100,8 @@ export const ProjectDetails: React.FunctionComponent = () => {
           licenseKey='non-commercial-and-evaluation'
         >
           <HotColumn data={"id"} editor={false} type={"text"} />
-          <HotColumn data={"description"} wordWrap={false} type={"text"} className="ellipsis-text" />
-          <HotColumn data={"comment"} wordWrap={false} className="ellipsis-text" type={"text"} />
+          <HotColumn data={"description"} wordWrap={true} type={"text"} className="ellipsis-text" />
+          <HotColumn data={"comment"} wordWrap={true} className="ellipsis-text" type={"text"} />
           <HotColumn data={"totalHours"} type={"text"} className='htCenter' readOnly={true} />
           <HotColumn data={"departmentEstimations"} readOnly renderer={DepartmentsCellRenderer} />
           <HotColumn data={"startAsStr"} type={"text"} className='htCenter' />

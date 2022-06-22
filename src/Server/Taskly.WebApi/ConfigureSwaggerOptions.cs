@@ -22,8 +22,8 @@ public class ConfigureSwaggerOptions : IConfigureOptions<SwaggerGenOptions>
             var apiVersion = description.ApiVersion.ToString();
             options.SwaggerDoc(description.GroupName, new OpenApiInfo{
                 Version = apiVersion,
-                Title = $"Notes API {apiVersion}",
-                Description = "Notes",
+                Title = $"Taskly API {apiVersion}",
+                Description = "Taskly",
                 //TermsOfService = new Uri()
                 Contact = new OpenApiContact
                 {
