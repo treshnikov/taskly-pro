@@ -34,9 +34,11 @@ export const Settings: React.FunctionComponent = () => {
             </CardContent>
             <CardActions>
               <Button
+                size='small'
                 variant='contained'
                 onClick={e => { setEnLang() }}>EN</Button>
               <Button
+                size='small'
                 variant='contained'
                 onClick={e => { setRuLang() }}>RU</Button>
             </CardActions>
@@ -55,7 +57,11 @@ export const Settings: React.FunctionComponent = () => {
               {t('users-welcome')}<br />&nbsp;<br />&nbsp;
             </CardContent>
             <CardActions>
-              <Button variant='contained' onClick={e => { navigate("/users") }}>{t('users') as string}</Button>
+              <Button
+                size='small'
+                variant='contained'
+                onClick={e => { navigate("/users") }}>{t('users') as string}
+              </Button>
             </CardActions>
           </Card>
         </Grid>
@@ -67,7 +73,12 @@ export const Settings: React.FunctionComponent = () => {
               {t('departments-welcome')}<br />&nbsp;<br />&nbsp;
             </CardContent>
             <CardActions>
-              <Button variant='contained' onClick={e => { navigate("/departments") }}>{t('departments') as string}</Button>
+              <Button
+                size='small'
+                variant='contained'
+                onClick={e => { navigate("/departments") }}>
+                {t('departments') as string}
+              </Button>
             </CardActions>
           </Card>
         </Grid>
@@ -87,7 +98,12 @@ export const Settings: React.FunctionComponent = () => {
               {t('select-departments-for-work-planning')}<br />&nbsp;
             </CardContent>
             <CardActions>
-              <Button variant='contained' onClick={e => { navigate("/departmentsSettings") }}>{t('open')}</Button>
+              <Button
+                size='small'
+                variant='contained'
+                onClick={e => { navigate("/departmentsSettings") }}>
+                {t('open')}
+              </Button>
             </CardActions>
           </Card>
 
@@ -100,11 +116,12 @@ export const Settings: React.FunctionComponent = () => {
               {t('import-users-and-departments-records')}<br />&nbsp;
             </CardContent>
             <CardActions>
-              <Button variant='contained' onClick={async e => {
-
-                await request<{ msg: string }>("/api/v1/admin/import", 'POST');
-
-              }}>{t('import')}</Button>
+              <Button
+                size='small'
+                variant='contained'
+                onClick={async e => { await request<{ msg: string }>("/api/v1/admin/import", 'POST') }}>
+                {t('import')}
+              </Button>
             </CardActions>
           </Card>
         </Grid>

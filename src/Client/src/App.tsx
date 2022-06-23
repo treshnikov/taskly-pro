@@ -25,7 +25,12 @@ function App() {
     <div className="App">
       <ThemeProvider theme={createTheme({
         palette: {
-          primary: { main: '#3178c6' },
+          primary: { main: '#f3f4f5' },
+        },
+        typography: {
+          button: {
+            textTransform: "none"
+          }
         }
       })}>
         <CssBaseline />

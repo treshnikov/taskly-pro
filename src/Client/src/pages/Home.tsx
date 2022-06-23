@@ -36,6 +36,7 @@ export const Home: React.FunctionComponent = () => {
             </CardContent>
             <CardActions>
               <Button
+                size='small'
                 variant='contained'
                 onClick={e => { navigate("/projects") }}>
                 {t('projects') as string}
@@ -60,6 +61,7 @@ export const Home: React.FunctionComponent = () => {
             </CardContent>
             <CardActions>
               <Button
+                size='small'
                 variant='contained'
                 onClick={e => { navigate("/departmentPlans") }}>{t('plans') as string}
               </Button>
@@ -106,6 +108,7 @@ export const Home: React.FunctionComponent = () => {
             <CardActions>
               <Button
                 variant='contained'
+                size='small'
                 onClick={e => { navigate("/settings") }}>{t('settings') as string}
               </Button>
             </CardActions>

@@ -60,7 +60,7 @@ export const DepartmentPlanToolbar: React.FunctionComponent<DepartmentPlanToolba
 
         // workaround to avoid freezing of select mui component in Firefox
         setTimeout(() => {
-            dispatch(setHiddenRows(DepartmentPlanHelper.getProjectRows(plan, i => i.projectId.toString() !== projId)))
+            updateHiddenRows(DepartmentPlanHelper.getProjectRows(plan, i => i.projectId.toString() !== projId))
         }, 0)
     };
 
