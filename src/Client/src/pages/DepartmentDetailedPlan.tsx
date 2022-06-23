@@ -10,10 +10,10 @@ import { DepartmentPlanHelper } from "../models/DepartmentPlan/DepartmentPlanHel
 import moment from "moment";
 import { DepartmentPlanToolbar } from "../components/DepartmentPlan/DepartmentPlanToolbar";
 import { useAppDispatch, useAppSelector } from "../hooks/redux.hook";
-import { setHiddenRows } from "../redux/departmentPlanSlice";
 import { WeekPlanCellRenderer } from "../components/DepartmentPlan/Renderers/WeekPlanCellRenderer";
 import { ProjectNameCellRenderer } from "../components/DepartmentPlan/Renderers/ProjectNameCellRenderer";
 import { ServicesStorageHelper } from "../common/servicesStorageHelper";
+import { setHiddenRows } from "../redux/departmentPlanSlice";
 
 const initPlan: DepartmentUserPlan[] = [{
     id: '',
@@ -62,7 +62,7 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
             setHeaders(headers)
 
             const flatPlan = DepartmentPlanHelper.buildFlatPlan(depPlan)
-            
+
             // hide rows with empty estimation by default
             dispatch(setHiddenRows(DepartmentPlanHelper.getRowsWithEmtyPlans(flatPlan)))
             setPlan(flatPlan)
@@ -84,7 +84,8 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
                 hotTableRef={hotTableRef}
                 departmentName={departmentName as string}
                 departmentId={departmentId as string}
-                plan={plan}></DepartmentPlanToolbar>
+                plan={plan}
+            ></DepartmentPlanToolbar>
             <div
                 style={{ marginTop: "8em" }}>
                 <HotTable

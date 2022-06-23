@@ -1,5 +1,5 @@
 import { DatePicker } from "@mui/lab"
-import { Box, Button, FormControl, Grid, InputLabel, Menu, MenuItem, Select, SelectChangeEvent, Stack, TextField, Typography } from "@mui/material"
+import { Box, Button, Divider, FormControl, Grid, InputLabel, Menu, MenuItem, Select, SelectChangeEvent, Stack, TextField, Typography } from "@mui/material"
 import IndeterminateCheckBoxIcon from '@mui/icons-material/IndeterminateCheckBox';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
@@ -9,7 +9,6 @@ import { RefObject, useEffect, useState } from "react";
 import HotTable from "@handsontable/react";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux.hook";
 import { setEndDate, setHiddenRows, setStartDate } from "../../redux/departmentPlanSlice";
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { DepartmentUserPlan } from "../../models/DepartmentPlan/DepartmentPlanClasses";
 import { DepartmentPlanHelper } from "../../models/DepartmentPlan/DepartmentPlanHelper";
 import { toast } from 'react-toastify'
@@ -19,7 +18,14 @@ type ProjectSelectItem = {
     name: string
 }
 
-export const DepartmentPlanToolbar: React.FunctionComponent<{ hotTableRef: RefObject<HotTable>, departmentName: string, departmentId: string, plan: DepartmentUserPlan[] }> = ({ hotTableRef, departmentName, departmentId, plan }) => {
+type DepartmentPlanToolbarProps = {
+    hotTableRef: RefObject<HotTable>,
+    departmentName: string,
+    departmentId: string,
+    plan: DepartmentUserPlan[]
+}
+
+export const DepartmentPlanToolbar: React.FunctionComponent<DepartmentPlanToolbarProps> = ({ hotTableRef, departmentName, departmentId, plan }) => {
     const { request } = useHttp()
     const { t } = useTranslation()
 
@@ -27,22 +33,32 @@ export const DepartmentPlanToolbar: React.FunctionComponent<{ hotTableRef: RefOb
     const startDate = useAppSelector(state => state.departmentPlanReducer.startDate)
     const endDate = useAppSelector(state => state.departmentPlanReducer.endDate)
 
-    const [projectFilter, setprojectFilter] = useState<string>('0');
+    const projectsWithEstimation: ProjectSelectItem = { id: 'projects-with-estimation', name: t('projects-with-estimation') }
+    const allProjectsItem: ProjectSelectItem = { id: 'all-projects', name: t('all-projects') }
+    const [projectFilter, setprojectFilter] = useState<string>(projectsWithEstimation.id);
     const [projectSelectItems, setProjectSelectItems] = useState<ProjectSelectItem[]>([])
 
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
-
     const onProjectFilterChanged = (event: SelectChangeEvent) => {
-        setprojectFilter(event.target.value as string);
-    };
+        const projId = event.target.value as string
 
-    const isAdditionalMenuOpen = Boolean(anchorEl)
-    const onAdditionalMenuButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-        setAnchorEl(event.currentTarget);
-    }
-    const closeAdditionalMenu = () => {
-        setAnchorEl(null)
-    }
+        if (projId === allProjectsItem.id) {
+            // workaround to avoid freezing of select mui component in Firefox
+            setTimeout(() => {
+                showAllProjects()
+            }, 0)
+            setprojectFilter(projId)
+            return
+        }
+
+        if (projId === projectsWithEstimation.id) {
+            // workaround to avoid freezing of select mui component in Firefox
+            setTimeout(() => {
+                showProjectsWithEstimation()
+            }, 0)
+            setprojectFilter(projId)
+            return
+        }
+    };
 
     const collapseAllRows = (): void => {
         if (hotTableRef && hotTableRef.current && hotTableRef.current.hotInstance) {
@@ -89,7 +105,6 @@ export const DepartmentPlanToolbar: React.FunctionComponent<{ hotTableRef: RefOb
 
         setTimeout(() => {
             plugin.collapsingUI.collapseMultipleChildren(collapsedRows);
-            closeAdditionalMenu()
         }, 100);
     }
 
@@ -104,7 +119,6 @@ export const DepartmentPlanToolbar: React.FunctionComponent<{ hotTableRef: RefOb
 
         setTimeout(() => {
             plugin.collapsingUI.collapseMultipleChildren(collapsedRows);
-            closeAdditionalMenu()
         }, 100);
     }
 
@@ -119,12 +133,7 @@ export const DepartmentPlanToolbar: React.FunctionComponent<{ hotTableRef: RefOb
                 return p
             })
 
-            const allProjectsItem: ProjectSelectItem = {
-                id: '0',
-                name: t('all-projects')
-            }
-
-            setProjectSelectItems([allProjectsItem, ...depProjects])
+            setProjectSelectItems(depProjects)
         }
     }, [plan])
 
@@ -161,6 +170,15 @@ export const DepartmentPlanToolbar: React.FunctionComponent<{ hotTableRef: RefOb
                                 label={t('project')}
                                 onChange={onProjectFilterChanged}
                             >
+                                <MenuItem
+                                    value={projectsWithEstimation.id}>
+                                    {projectsWithEstimation.name}
+                                </MenuItem>
+                                <MenuItem
+                                    value={allProjectsItem.id}>
+                                    {allProjectsItem.name}
+                                </MenuItem>
+                                <Divider />
                                 {
                                     projectSelectItems.map(i => {
                                         return (
@@ -195,32 +213,6 @@ export const DepartmentPlanToolbar: React.FunctionComponent<{ hotTableRef: RefOb
                         onClick={e => { collapseAllRows() }}>
                         {t('collapse')}
                     </Button>
-
-                    <Button
-                        startIcon={<MoreHorizIcon />}
-                        aria-controls={isAdditionalMenuOpen ? 'basic-menu' : undefined}
-                        aria-haspopup="true"
-                        aria-expanded={isAdditionalMenuOpen ? 'true' : undefined}
-                        onClick={onAdditionalMenuButtonClick}
-                        variant="contained"
-                        size="small"
-                    >
-                        &nbsp;
-                    </Button>
-                    <Menu
-                        anchorEl={anchorEl}
-                        open={isAdditionalMenuOpen}
-                        onClose={closeAdditionalMenu}
-                    >
-                        <MenuItem
-                            onClick={e => { showAllProjects() }}>
-                            {t('show-project-with-no-estimation')}
-                        </MenuItem>
-                        <MenuItem
-                            onClick={e => { showProjectsWithEstimation() }} >
-                            {t('hide-project-with-no-estimation')}
-                        </MenuItem>
-                    </Menu>
                 </Stack>
             </Grid>
         </Grid>
