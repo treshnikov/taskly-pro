@@ -40,24 +40,28 @@ export const DepartmentPlanToolbar: React.FunctionComponent<DepartmentPlanToolba
 
     const onProjectFilterChanged = (event: SelectChangeEvent) => {
         const projId = event.target.value as string
+        setprojectFilter(projId)
 
         if (projId === allProjectsItem.id) {
             // workaround to avoid freezing of select mui component in Firefox
             setTimeout(() => {
-                showAllProjects()
+                updateHiddenRows([])
             }, 0)
-            setprojectFilter(projId)
             return
         }
 
         if (projId === projectsWithEstimation.id) {
             // workaround to avoid freezing of select mui component in Firefox
             setTimeout(() => {
-                showProjectsWithEstimation()
+                updateHiddenRows(DepartmentPlanHelper.getProjectRows(plan, i => !i.hours))
             }, 0)
-            setprojectFilter(projId)
             return
         }
+
+        // workaround to avoid freezing of select mui component in Firefox
+        setTimeout(() => {
+            dispatch(setHiddenRows(DepartmentPlanHelper.getProjectRows(plan, i => i.projectId.toString() !== projId)))
+        }, 0)
     };
 
     const collapseAllRows = (): void => {
@@ -94,28 +98,14 @@ export const DepartmentPlanToolbar: React.FunctionComponent<DepartmentPlanToolba
         plugin.collapsingUI.collapseMultipleChildren(collapsedRows);
     };
 
-    const showAllProjects = () => {
+    const updateHiddenRows = (hiddenRows: number[]) => {
         if (!hotTableRef || !hotTableRef.current || !hotTableRef.current.hotInstance) {
             return;
         }
         const plugin = hotTableRef.current.hotInstance.getPlugin('nestedRows') as any;
         const collapsedRows: number[] = plugin.collapsingUI.collapsedRows as number[];
 
-        dispatch(setHiddenRows([]))
-
-        setTimeout(() => {
-            plugin.collapsingUI.collapseMultipleChildren(collapsedRows);
-        }, 100);
-    }
-
-    const showProjectsWithEstimation = () => {
-        if (!hotTableRef || !hotTableRef.current || !hotTableRef.current.hotInstance) {
-            return;
-        }
-        const plugin = hotTableRef.current.hotInstance.getPlugin('nestedRows') as any;
-        const collapsedRows: number[] = plugin.collapsingUI.collapsedRows as number[];
-
-        dispatch(setHiddenRows(DepartmentPlanHelper.getRowsWithEmtyPlans(plan)))
+        dispatch(setHiddenRows(hiddenRows))
 
         setTimeout(() => {
             plugin.collapsingUI.collapseMultipleChildren(collapsedRows);

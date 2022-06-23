@@ -64,7 +64,7 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
             const flatPlan = DepartmentPlanHelper.buildFlatPlan(depPlan)
 
             // hide rows with empty estimation by default
-            dispatch(setHiddenRows(DepartmentPlanHelper.getRowsWithEmtyPlans(flatPlan)))
+            dispatch(setHiddenRows(DepartmentPlanHelper.getProjectRows(flatPlan, (i => !i.hours))))
             setPlan(flatPlan)
         })
     }, [startDate, endDate, departmentId])

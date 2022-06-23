@@ -1,11 +1,9 @@
-import { Card, Button, CardActions, CardContent, CardHeader, Grid, Typography } from '@mui/material';
+import { Card, Button, CardActions, CardContent, CardHeader, Grid } from '@mui/material';
 import React, { useContext } from 'react'
 import { AppContext } from '../context/AppContext';
 import { useTranslation } from 'react-i18next';
 import { useHttp } from '../hooks/http.hook';
 import { useNavigate } from 'react-router-dom';
-import PeopleIcon from '@mui/icons-material/People';
-import AccountTreeIcon from '@mui/icons-material/AccountTree';
 
 export const Settings: React.FunctionComponent = () => {
   // it's important to use useTranslation hook to re-render the current component when lang changing  

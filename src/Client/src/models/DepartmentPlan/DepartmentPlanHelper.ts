@@ -95,19 +95,19 @@ export class DepartmentPlanHelper {
         return hiddenRows;
     }
 
-    public static getRowsWithEmtyPlans(plan: DepartmentUserPlan[]): number[] {
-        let hiddenRows: number[] = [];
+    public static getProjectRows(plan: DepartmentUserPlan[], predicat: (arg: DepartmentProjectPlan) => boolean): number[] {
+        let rows: number[] = [];
         let idx = 0;
         for (let i = 0; i < plan.length; i++) {
             idx++;
             for (let j = 0; j < plan[i].__children.length; j++) {
-                if (!plan[i].__children[j].hours) {
-                    hiddenRows.push(idx);
+                if (predicat(plan[i].__children[j])) {
+                    rows.push(idx);
                 }
                 idx++;
             }
         }
-        return hiddenRows;
+        return rows;
     }
 
     public static preparePlanFToSendToServer(plan: DepartmentUserPlan[], startDate: Date): DepartmentPlanUserRecordVm[] {
