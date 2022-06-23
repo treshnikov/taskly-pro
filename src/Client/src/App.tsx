@@ -1,6 +1,5 @@
 import './App.css';
 import 'react-toastify/dist/ReactToastify.css';
-
 import { BrowserRouter as Router } from "react-router-dom";
 import { useApp } from './hooks/app.hook';
 import { ToastContainer } from 'react-toastify';
@@ -11,11 +10,37 @@ import { useAppSelector } from './hooks/redux.hook';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { LocalizationProvider } from '@mui/lab';
 import { useEffect, useLayoutEffect } from 'react';
+import { checkboxClasses } from '@mui/material/Checkbox';
 
 function App() {
   const { initLanguage, setEnLang, setRuLang } = useApp()
   const routes = useAppRoutes({})
   const requestsInProgress = useAppSelector(state => state.appReducer.requestsInProgress)
+  const defaultTheme = createTheme({
+    palette: {
+      primary: { main: '#E9E9E9' },
+    },
+    typography: {
+      button: {
+        boxShadow: '',
+        border: "0.2px solid #ccc",
+        color: "#333",
+        textTransform: "none"
+      }
+    },
+    components: {
+      MuiCheckbox: {
+        styleOverrides: {
+          root: {
+            color: "grey ",
+            [`&.${checkboxClasses.checked}`]: {
+              color: 'grey',
+            },
+          }
+        }
+      }
+    }
+  })
 
   useEffect(() => {
     initLanguage()
@@ -23,20 +48,7 @@ function App() {
 
   return (
     <div className="App">
-      <ThemeProvider theme={createTheme({
-        palette: {
-          primary: { main: '#E9E9E9' },
-        },
-        
-        typography: {
-          button: {
-            boxShadow: '',
-            border: "0.2px solid #ccc",
-            color: "#333",
-            textTransform: "none"
-          }
-        }
-      })}>
+      <ThemeProvider theme={defaultTheme}>
         <CssBaseline />
         <AppContext.Provider value={{ setEnLang, setRuLang }}>
           <Router>
