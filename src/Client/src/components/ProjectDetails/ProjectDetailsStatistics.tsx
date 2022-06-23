@@ -153,6 +153,7 @@ export const ProjectDetailsStatistics: React.FunctionComponent = () => {
                 </DialogContent>
                 <DialogActions>
                     <Button
+                        size='small'
                         variant="contained"
                         onClick={e => onClose()}>
                         {t('close')}

@@ -138,6 +138,7 @@ export const ProjectDetailsDepartemntsPlan: React.FunctionComponent<ProjectDetai
                 </DialogContent>
                 <DialogActions>
                     <Button
+                        size='small'
                         variant="contained"
                         onClick={e => onClose()}>
                         {t('close')}

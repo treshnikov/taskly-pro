@@ -25,10 +25,14 @@ function App() {
     <div className="App">
       <ThemeProvider theme={createTheme({
         palette: {
-          primary: { main: '#f3f4f5' },
+          primary: { main: '#E9E9E9' },
         },
+        
         typography: {
           button: {
+            boxShadow: '',
+            border: "0.2px solid #ccc",
+            color: "#333",
             textTransform: "none"
           }
         }

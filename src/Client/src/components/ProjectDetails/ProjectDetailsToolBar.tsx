@@ -193,14 +193,18 @@ export const ProjectDetailsToolBar: React.FunctionComponent<ProjectDetailsToolBa
                                 onChange={e => { dispatch(toggleCompactMode()) }}
                                 size='small' />} />
                         <Button
-                            style={{ display: compactMode ? 'none' : 'inline' }}
-                            variant='text' size='small' startIcon={<ZoomInIcon />}
+                             style={{border: "", color: "rgba(0, 0, 0, 0.87)",  display: compactMode ? 'none' : 'flex' }}
+                            variant='outlined' 
+                            size='small' 
+                            startIcon={<ZoomInIcon />}
                             onClick={e => { dispatch(zoomInGanttChart()) }} >
 
                         </Button>
                         <Button
-                            style={{ display: compactMode ? 'none' : 'inline' }}
-                            variant='text' size='small' startIcon={<ZoomOutIcon />}
+                            style={{border: "", color: "rgba(0, 0, 0, 0.87)",  display: compactMode ? 'none' : 'flex' }}
+                            variant='outlined' 
+                            size='small' 
+                            startIcon={<ZoomOutIcon fontSize="small" />}
                             onClick={e => { dispatch(zoomOutGanttChart()) }} >
                         </Button>
                     </Stack>
