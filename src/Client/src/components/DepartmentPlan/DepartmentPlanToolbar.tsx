@@ -5,7 +5,7 @@ import AddBoxIcon from '@mui/icons-material/AddBox';
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
 import { useTranslation } from "react-i18next";
 import { useHttp } from "../../hooks/http.hook";
-import { RefObject, useState } from "react";
+import { RefObject, useEffect, useState } from "react";
 import HotTable from "@handsontable/react";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux.hook";
 import { setEndDate, setHiddenRows, setStartDate } from "../../redux/departmentPlanSlice";
@@ -13,6 +13,11 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { DepartmentUserPlan } from "../../models/DepartmentPlan/DepartmentPlanClasses";
 import { DepartmentPlanHelper } from "../../models/DepartmentPlan/DepartmentPlanHelper";
 import { toast } from 'react-toastify'
+
+type ProjectSelectItem = {
+    id: string,
+    name: string
+}
 
 export const DepartmentPlanToolbar: React.FunctionComponent<{ hotTableRef: RefObject<HotTable>, departmentName: string, departmentId: string, plan: DepartmentUserPlan[] }> = ({ hotTableRef, departmentName, departmentId, plan }) => {
     const { request } = useHttp()
@@ -23,6 +28,8 @@ export const DepartmentPlanToolbar: React.FunctionComponent<{ hotTableRef: RefOb
     const endDate = useAppSelector(state => state.departmentPlanReducer.endDate)
 
     const [projectFilter, setprojectFilter] = useState<string>('0');
+    const [projectSelectItems, setProjectSelectItems] = useState<ProjectSelectItem[]>([])
+
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 
     const onProjectFilterChanged = (event: SelectChangeEvent) => {
@@ -101,6 +108,26 @@ export const DepartmentPlanToolbar: React.FunctionComponent<{ hotTableRef: RefOb
         }, 100);
     }
 
+    useEffect(() => {
+        // extract list of all projects bounded with the given department
+        if (plan.length > 0 && plan[0].__children.length > 0) {
+            const depProjects = plan[0].__children.map(i => {
+                const p: ProjectSelectItem = {
+                    name: i.project,
+                    id: i.projectId.toString()
+                }
+                return p
+            })
+
+            const allProjectsItem: ProjectSelectItem = {
+                id: '0',
+                name: t('all-projects')
+            }
+
+            setProjectSelectItems([allProjectsItem, ...depProjects])
+        }
+    }, [plan])
+
     return <div style={{ position: "fixed", top: "5em", left: "1em" }}>
         <Grid container>
             <Grid item xs={12}>
@@ -123,7 +150,7 @@ export const DepartmentPlanToolbar: React.FunctionComponent<{ hotTableRef: RefOb
                         onChange={(newValue) => { if (newValue) { dispatch(setEndDate(new Date(newValue))) } }}
                         renderInput={(params) => <TextField sx={{ width: 145 }} size="small" {...params} />}
                     />
-                    <Box sx={{ width: 150 }}>
+                    <Box sx={{ width: 250 }}>
                         <FormControl fullWidth>
                             <InputLabel id="projectLabelId">{t('project')}</InputLabel>
                             <Select
@@ -134,7 +161,17 @@ export const DepartmentPlanToolbar: React.FunctionComponent<{ hotTableRef: RefOb
                                 label={t('project')}
                                 onChange={onProjectFilterChanged}
                             >
-                                <MenuItem value={0}>{t('all-projects')}</MenuItem>
+                                {
+                                    projectSelectItems.map(i => {
+                                        return (
+                                            <MenuItem
+                                                key={"projSelect" + i.id}
+                                                value={i.id}>
+                                                {i.name}
+                                            </MenuItem>
+                                        )
+                                    })
+                                }
                             </Select>
                         </FormControl>
                     </Box>

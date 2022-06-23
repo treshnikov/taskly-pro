@@ -86,13 +86,28 @@ export const Register: React.FunctionComponent = () => {
             {t("register")}
           </Button>
 
-          <Grid container spacing={0}>
-            <Grid item xs={2} >
-              <Link onClick={e => setEnLang()} to={''}>EN&nbsp;</Link>
-              <Link onClick={e => setRuLang()} to={''}>RU&nbsp;</Link>
+          <Grid
+            container
+            spacing={0}>
+            <Grid
+              item
+              xs={2} >
+              <Link
+                onClick={e => setEnLang()} to={''}>
+                EN&nbsp;
+              </Link>
+              <Link
+                onClick={e => setRuLang()} to={''}>
+                RU&nbsp;
+              </Link>
             </Grid>
-            <Grid item xs={10} style={{ textAlign: "right" }}>
-              <Link to='/login'>{t("signin")}
+            <Grid
+              item
+              xs={10}
+              style={{ textAlign: "right" }}>
+              <Link
+                to='/login'>
+                {t("signin")}
               </Link>
             </Grid>
           </Grid>

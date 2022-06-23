@@ -62,6 +62,8 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
             setHeaders(headers)
 
             const flatPlan = DepartmentPlanHelper.buildFlatPlan(depPlan)
+            
+            // hide rows with empty estimation by default
             dispatch(setHiddenRows(DepartmentPlanHelper.getRowsWithEmtyPlans(flatPlan)))
             setPlan(flatPlan)
         })

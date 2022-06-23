@@ -17,9 +17,12 @@ const OpenProjectDetailsButtonRenderer = (props: any) => {
   const navigate = useNavigate()
 
   return (
-    <React.Fragment>
-      <Button variant='text' size='small' onClick={e => { navigate("/projects/" + value) }}>{t('open')}</Button>
-    </React.Fragment>
+    <Button
+      variant='text'
+      size='small'
+      onClick={e => { navigate("/projects/" + value) }}>
+      {t('open')}
+    </Button>
   );
 }
 
@@ -62,9 +65,13 @@ export const Projects: React.FunctionComponent = () => {
     t('start'), t('end'), t('close-date'), t('contract')]
 
   return (
-    <div className='page-container'>
-      <h3>{t('projects')}</h3>
-      <Box sx={{ mb: 1 }}>
+    <div
+      className='page-container'>
+      <h3>
+        {t('projects')}
+      </h3>
+      <Box
+        sx={{ mb: 1 }}>
         <TextField
           size='small'
           autoFocus
@@ -80,7 +87,7 @@ export const Projects: React.FunctionComponent = () => {
         colWidths={[20, 25, 250]}
         fillHandle={false}
         stretchH="all"
-        beforeChange={(changes: CellChange[], source: ChangeSource) : boolean => {return false}}
+        beforeChange={(changes: CellChange[], source: ChangeSource): boolean => { return false }}
         licenseKey='non-commercial-and-evaluation'
       >
         <HotColumn width={55} data={"id"} readOnly>

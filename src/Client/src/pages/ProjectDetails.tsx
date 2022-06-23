@@ -57,10 +57,15 @@ export const ProjectDetails: React.FunctionComponent = () => {
   }, [hotTableRef])
 
   return (
-    <div className='page-container'>
-      <ProjectDetailsToolBar hotTableRef={hotTableRef}></ProjectDetailsToolBar>
+    <div
+      className='page-container'>
+      <ProjectDetailsToolBar
+        hotTableRef={hotTableRef}
+      />
 
-      <div id="hotContainer" style={{ marginTop: "8em" }} >
+      <div
+        id="hotContainer"
+        style={{ marginTop: "8em" }} >
         <HotTable
           id="projectDetailsTable"
           ref={hotTableRef}
@@ -85,29 +90,72 @@ export const ProjectDetails: React.FunctionComponent = () => {
           afterSelection={(row: number, column: number, row2: number, column2: number, preventScrolling: { value: boolean }, selectionLayerLevel: number) => {
             preventScrolling.value = true
           }}
+
           beforeChange={(changes: CellChange[], source: ChangeSource) => {
             dispatch(onTaskAttributeChanged(changes))
             return false
           }}
+
           beforeRowMove={(movedRows: number[], finalIndex: number, dropIndex: number | undefined, movePossible: boolean) => {
             dispatch(onTasksMoved({ movedRows, finalIndex }))
             scrollToRow(finalIndex)
             return false
           }}
+
           afterSelectionEnd={(row: number, column: number, row2: number, column2: number, selectionLayerLevel: number) => {
             dispatch(onRowSelected(row))
           }}
+
           licenseKey='non-commercial-and-evaluation'
         >
-          <HotColumn data={"id"} editor={false} type={"text"} />
-          <HotColumn data={"description"} wordWrap={true} type={"text"} className="ellipsis-text" />
-          <HotColumn data={"comment"} wordWrap={true} className="ellipsis-text" type={"text"} />
-          <HotColumn data={"totalHours"} type={"text"} className='htCenter' readOnly={true} />
-          <HotColumn data={"departmentEstimations"} readOnly renderer={DepartmentsCellRenderer} />
-          <HotColumn data={"startAsStr"} type={"text"} className='htCenter' />
-          <HotColumn data={"endAsStr"} type={"text"} className='htCenter' />
-          <HotColumn data={"departmentEstimations"} key={"ganttColumn"} width={getGanttWidth(ganttChartZoomLevel, projectInfo)} readOnly>
-            <GanttCellRenderer width={getGanttWidth(ganttChartZoomLevel, projectInfo)} startDate={new Date(projectInfo.taskMinDate)} tasks={projectInfo.tasks} hot-renderer></GanttCellRenderer>
+          <HotColumn
+            data={"id"}
+            editor={false}
+            type={"text"}
+          />
+          <HotColumn
+            data={"description"}
+            wordWrap={true}
+            type={"text"}
+            className="ellipsis-text"
+          />
+          <HotColumn
+            data={"comment"}
+            wordWrap={true}
+            className="ellipsis-text"
+            type={"text"}
+          />
+          <HotColumn
+            data={"totalHours"}
+            type={"text"}
+            className='htCenter'
+            readOnly={true}
+          />
+          <HotColumn
+            data={"departmentEstimations"}
+            readOnly
+            renderer={DepartmentsCellRenderer}
+          />
+          <HotColumn
+            data={"startAsStr"}
+            type={"text"}
+            className='htCenter'
+          />
+          <HotColumn
+            data={"endAsStr"}
+            type={"text"} className='htCenter'
+          />
+          <HotColumn
+            data={"departmentEstimations"}
+            key={"ganttColumn"}
+            width={getGanttWidth(ganttChartZoomLevel, projectInfo)}
+            readOnly>
+            <GanttCellRenderer
+              width={getGanttWidth(ganttChartZoomLevel, projectInfo)}
+              startDate={new Date(projectInfo.taskMinDate)}
+              tasks={projectInfo.tasks}
+              hot-renderer
+            />
           </HotColumn>
         </HotTable>
       </div>

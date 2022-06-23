@@ -24,23 +24,35 @@ export const Settings: React.FunctionComponent = () => {
         direction="row"
         alignItems="flex-start">
 
-        <Grid item xs={3}>
-          <Card className='settings-card'>
-            <CardHeader title={t('language') as string} />
+        <Grid
+          item
+          xs={3}>
+          <Card
+            className='settings-card'>
+            <CardHeader
+              title={t('language') as string} />
             <CardContent>
               {t('change-lang')}<br />&nbsp;<br />&nbsp;
             </CardContent>
             <CardActions>
-              <Button variant='contained' onClick={e => { setEnLang() }}>EN</Button>
-              <Button variant='contained' onClick={e => { setRuLang() }}>RU</Button>
+              <Button
+                variant='contained'
+                onClick={e => { setEnLang() }}>EN</Button>
+              <Button
+                variant='contained'
+                onClick={e => { setRuLang() }}>RU</Button>
             </CardActions>
           </Card>
 
         </Grid>
 
-        <Grid item xs={3}>
-          <Card className="settings-card">
-            <CardHeader title={t('users') as string} />
+        <Grid
+          item
+          xs={3}>
+          <Card
+            className="settings-card">
+            <CardHeader
+              title={t('users') as string} />
             <CardContent>
               {t('users-welcome')}<br />&nbsp;<br />&nbsp;
             </CardContent>
