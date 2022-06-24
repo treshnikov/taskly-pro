@@ -32,7 +32,7 @@
 }
 
 .handsontable{
-    z-index: 200;
+    z-index: 100;
 }
 
 .handsontable th {
