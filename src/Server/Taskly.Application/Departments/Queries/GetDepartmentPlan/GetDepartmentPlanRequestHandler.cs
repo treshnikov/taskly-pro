@@ -63,7 +63,7 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentPlan
                     UserId = user.User.Id,
                     UserName = user.User.Name,
                     UserPosition = string.IsNullOrWhiteSpace(user.UserPosition.Ident) ? user.UserPosition.Name : user.UserPosition.Ident,
-                    Rate = user.User.UserDepartments.Count > 0 ? user.User.UserDepartments.Max(i => i.Rate) : 0, 
+                    Rate = user.User.UserDepartments.Count > 0 ? user.User.UserDepartments.Max(i => i.Rate) : 0,
                     Projects = new List<UserProjectPlanVm>()
                 };
 
@@ -76,9 +76,24 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentPlan
                         ProjectShortName = project.ShortName,
                         ProjectStart = project.Start,
                         ProjectEnd = project.End,
+                        TaskTimes = new List<TaskTimeVm>(),
                         Plans = new List<UserProjectWeekPlanVm>()
                     };
 
+                    // todo - this logic can be optimized
+                    // all users have the same set of projects which means we can generate the list of TaskTimeVm only once and then populate it to each user
+                    if (project.Tasks != null)
+                    {
+                        var taskTimes = project.Tasks
+                            .Where(t => (request.Start <= t.Start && request.End >= t.Start) || (request.Start <= t.End && request.End >= t.End));
+                        projectPlan.TaskTimes.AddRange(taskTimes.Select(i => new TaskTimeVm
+                        {
+                            Name = i.Description,
+                            Start = i.Start,
+                            End = i.End
+                        }));
+                    }
+                    
                     var weekIdx = 1;
                     foreach (var week in weeks)
                     {
@@ -90,8 +105,8 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentPlan
 
                         // get hours planned for the given user, project and week
                         var hours = plans.FirstOrDefault(
-                            i => i.UserId == user.User.Id && 
-                            i.ProjectId == project.Id && 
+                            i => i.UserId == user.User.Id &&
+                            i.ProjectId == project.Id &&
                             i.WeekStart == week)?.Hours ?? 0;
 
                         weekPlan.PlannedHours = hours;

@@ -19,6 +19,7 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentPlan
         public DateTime ProjectStart { get; internal set; }
         public DateTime ProjectEnd { get; internal set; }
         public List<UserProjectWeekPlanVm> Plans { get; set; }
+        public List<TaskTimeVm> TaskTimes { get; set; }
     }
 
     public class UserProjectWeekPlanVm
@@ -26,5 +27,12 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentPlan
         public int WeekNumber { get; internal set; }
         public DateTime WeekStart { get; set; }
         public float PlannedHours { get; set; }
+    }
+
+    public class TaskTimeVm
+    {
+        public string? Name { get; set; }
+        public DateTime Start { get; set; }
+        public DateTime End { get; set; }
     }
 }
