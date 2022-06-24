@@ -5,6 +5,7 @@ using Taskly.Application.Departments.Commands.UpdatePlans;
 using Taskly.Application.Departments.Queries;
 using Taskly.Application.Departments.Queries.GetDepartmentPlan;
 using Taskly.Application.Departments.Queries.GetDepartmentsForPlan;
+using Taskly.Application.Departments.Queries.GetDepartmentStatistics;
 using Taskly.Application.Departments.UpdateDepartment;
 using Taskly.WebApi.Models;
 
@@ -32,8 +33,8 @@ namespace Taskly.WebApi.Controllers
             return Ok(res);
         }
 
-        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [HttpGet("forPlan")]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult> GetDepartmentsForPlan()
         {
@@ -41,8 +42,23 @@ namespace Taskly.WebApi.Controllers
             return Ok(res);
         }
 
+        [HttpGet("{id}/{start}/{end}/statistics")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult> GetDepartmentStatistics(Guid id, DateTime start, DateTime end)
+        {
+            var res = await Mediator.Send(new GetDepartmentStatisticsRequest
+            {
+                DepartmentId = id,
+                Start = start,
+                End = end
+            });
+
+            return Ok(res);
+        }
+
         [HttpGet("{id}/{start}/{end}/plan")]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<DepartmentPlanRecordVm[]>> GetDepartmentPlan(Guid id, DateTime start, DateTime end)
         {
@@ -55,8 +71,8 @@ namespace Taskly.WebApi.Controllers
             return Ok(res);
         }
 
-        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [HttpPost("plan")]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<string>> UpdatePlan([FromBody] UpdateDepartmentPlanVm arg)
         {
@@ -65,7 +81,7 @@ namespace Taskly.WebApi.Controllers
                 DepartmentId = arg.DepartmentId,
                 Data = arg.Data
             });
-            
+
             return Ok(new Object());
         }
 
