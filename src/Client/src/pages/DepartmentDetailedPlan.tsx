@@ -21,6 +21,7 @@ const initPlan: DepartmentUserPlan[] = [{
     userPosition: '',
     project: '',
     hours: '',
+    rate: 0,
     __children: [],
 }]
 
@@ -31,7 +32,7 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
     const { request } = useHttp()
     const { t } = useTranslation();
     const staticHeaders = ["Id", t('name'), t('position'), t('hours'), t('project')]
-    const columnWidths = [50, 280, 50, 50, 330]
+    const columnWidths = [50, 280, 70, 50, 330]
     const hotTableRef = useRef<HotTable>(null);
     const navigate = useNavigate()
 

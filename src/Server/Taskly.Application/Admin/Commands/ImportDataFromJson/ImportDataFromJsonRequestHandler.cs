@@ -96,14 +96,19 @@ namespace Taskly.Application.Users
                     var defaultPosition = user.UserDepartments.FirstOrDefault();
                     if (defaultPosition != null)
                     {
-                        user.UserDepartments.Add(new UserDepartment{
+                        user.UserDepartments.Add(new UserDepartment
+                        {
                             Comment = defaultPosition.Comment,
                             DepartmentId = dbDep.Id,
-                            Rate = defaultPosition.Rate,
+                            Rate = planItem.Rate,
                             UserId = user.Id,
                             UserPositionId = defaultPosition.UserPositionId,
                         });
                     }
+                }
+                else
+                {
+                    user.UserDepartments.OrderByDescending(i => i.Rate).First(i => i.DepartmentId == dbDep.Id).Rate = planItem.Rate;
                 }
 
                 foreach (var w in planItem.Weeks)
@@ -169,13 +174,24 @@ namespace Taskly.Application.Users
             var worksheet = workbook.Worksheets.First(i => i.Name == "План");
 
             var userName = "";
+            var userRateAsStr = "";
+            double userRateAsFloat = (double)0;
             var rowIdx = 2;
             while (true)
             {
                 userName = worksheet.Cell(rowIdx, 2).GetValue<string>().Trim();
-                
+                userRateAsStr = worksheet.Cell(rowIdx, 3).GetValue<string>().Trim().Replace(",", ".");
+
                 // user name might contain additional comment after last name
                 userName = string.Join(" ", userName.Split(' ').Take(3)).Trim();
+
+                var ci = (CultureInfo)CultureInfo.CurrentCulture.Clone();
+                ci.NumberFormat.CurrencyDecimalSeparator = ".";
+
+                if (!double.TryParse(userRateAsStr, NumberStyles.Any, ci, out userRateAsFloat))
+                {
+                    userRateAsFloat = (double)0;
+                }
 
                 if (string.IsNullOrWhiteSpace(userName))
                 {
@@ -185,6 +201,7 @@ namespace Taskly.Application.Users
                 var userPlan = new UserPlan
                 {
                     UserName = userName,
+                    Rate = userRateAsFloat,
                     Weeks = new List<WeekPlan>()
                 };
 
@@ -239,10 +256,10 @@ namespace Taskly.Application.Users
 
                         var estAsStr = rec.Split("=")[1].Replace(",", ".");
 
-                        var ci = (CultureInfo)CultureInfo.CurrentCulture.Clone();
-                        ci.NumberFormat.CurrencyDecimalSeparator = ".";
+                        var cultureInfo = (CultureInfo)CultureInfo.CurrentCulture.Clone();
+                        cultureInfo.NumberFormat.CurrencyDecimalSeparator = ".";
 
-                        if (!float.TryParse(estAsStr, NumberStyles.Any, ci, out float est))
+                        if (!float.TryParse(estAsStr, NumberStyles.Any, cultureInfo, out float est))
                         {
                             Log.Logger.Error($"Cannot convert {estAsStr} to float");
                             continue;
@@ -624,7 +641,7 @@ namespace Taskly.Application.Users
                     dbUserDep = new UserDepartment
                     {
                         Id = Guid.NewGuid(),
-                        Rate = 1,
+                        Rate = u.TypeName == "Основная" ? 1 : 0,
                         Department = dbDep,
                         User = dbUser,
                         UserPosition = dpUserPositions.First(i => i.Name == u.title),
@@ -636,7 +653,7 @@ namespace Taskly.Application.Users
                 }
                 else
                 {
-                    dbUserDep.Rate = 1;
+                    dbUserDep.Rate = u.TypeName == "Основная" ? 1 : 0;
                     dbUserDep.UserPosition = dpUserPositions.First(i => i.Name == u.title);
                     dbUserDep.Comment = u.TypeName;
                 }
@@ -991,6 +1008,7 @@ namespace Taskly.Application.Users
     internal class UserPlan
     {
         public string UserName { get; set; }
+        public double Rate { get; set; }
         public List<WeekPlan> Weeks { get; set; }
     }
 

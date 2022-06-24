@@ -46,10 +46,11 @@ export class DepartmentPlanHelper {
             const userRecord: DepartmentUserPlan = {
                 id: "u" + idx.toString(),
                 userName: user.userName,
-                userPosition: user.userPosition,
+                userPosition: user.userPosition + " [" + user.rate + "]",
                 userId: user.userId,
                 project: '',
                 hours: null,
+                rate: user.rate,
                 __children: []
             };
             idx++;
@@ -122,6 +123,7 @@ export class DepartmentPlanHelper {
 
             const userRecord: DepartmentPlanUserRecordVm = {
                 userId: user.userId as string,
+                rate: 0,
                 projects: [],
                 userName: "",
                 userPosition: ""
