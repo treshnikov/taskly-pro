@@ -148,15 +148,23 @@ namespace Taskly.Application.Users
                         }
                         else
                         {
-                            var p = new DepartmentPlan
+                            var proj = dbProjects.FirstOrDefault(i => i.Id == pr.ProjectCode.Value);
+                            if (proj != null)
                             {
-                                DepartmentId = dbDep.Id,
-                                UserId = user.Id,
-                                Hours = pr.Hours,
-                                WeekStart = w.WeekStart,
-                                ProjectId = dbProjects.First(i => i.Id == pr.ProjectCode.Value).Id
-                            };
-                            _dbContext.DepartmentPlans.Add(p);
+                                var p = new DepartmentPlan
+                                {
+                                    DepartmentId = dbDep.Id,
+                                    UserId = user.Id,
+                                    Hours = pr.Hours,
+                                    WeekStart = w.WeekStart,
+                                    ProjectId = proj.Id
+                                };
+                                _dbContext.DepartmentPlans.Add(p);
+                            }
+                            else
+                            {
+                                Log.Logger.Error($"Cannot find project with id={pr.ProjectCode.Value}");
+                            }
                         }
                     }
                 }
