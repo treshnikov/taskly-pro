@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
+using Taskly.Application.Auth.Consts;
 using Taskly.Application.Users;
 
 namespace Taskly.WebApi.Controllers
@@ -14,7 +15,7 @@ namespace Taskly.WebApi.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost("import")]
-        [Authorize]
+        [Authorize(Roles = RoleIdents.Admin)]
         public async Task<ActionResult> ImportUsersAndDepartmentsAsync()
         {
             var request = new ImportDataFromJsonRequest();

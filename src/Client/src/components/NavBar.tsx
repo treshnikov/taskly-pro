@@ -15,6 +15,7 @@ import { UserVm } from '../models/Users/UserVm';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { Logout } from '@mui/icons-material';
 import { useHttp } from '../hooks/http.hook';
+import { index } from 'handsontable/helpers/dom';
 
 export const NavBar: React.FunctionComponent = () => {
   const { t } = useTranslation();
@@ -54,7 +55,8 @@ export const NavBar: React.FunctionComponent = () => {
           boxShadow: "#eeeeee 0px 0px 20px 0px",
           color: "rgb(44, 44, 44)",
           height: "60px",
-          position: "fixed"
+          position: "fixed",
+          zIndex: "150"
         }}>
         <Toolbar >
           <SidebarMenu />

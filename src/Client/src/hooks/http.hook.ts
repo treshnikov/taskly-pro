@@ -4,13 +4,15 @@ import { onSignin, onSignout } from "../redux/authSlice"
 import { useCallback } from 'react'
 import { useAppSelector } from './redux.hook'
 import { onRequestCompleted, onRequestStarted } from '../redux/appSlice'
+import { useTranslation } from 'react-i18next'
 
 export const useHttp = () => {
-    const dispatch = useDispatch();
+    const { t } = useTranslation();
+    const dispatch = useDispatch()
     const jwt = useAppSelector(state => state.authReducer.jwt)
 
     const login = async (data: FormData) => {
-        const json = await request<{ jwt: string }>("/api/v1/auth/token", 'POST', data, []);
+        const json = await request<{ jwt: string }>("/api/v1/auth/token", 'POST', data, [])
         dispatch(onSignin(json.jwt))
     }
 
@@ -27,7 +29,7 @@ export const useHttp = () => {
         preparedHeaders.append("Authorization", `Bearer ${jwt}`)
         headers?.forEach(e => {
             preparedHeaders.append(e.name, e.value)
-        });
+        })
 
         let response
         try {
@@ -42,9 +44,9 @@ export const useHttp = () => {
                 : await fetch(address, { method: method, headers: preparedHeaders, body: preparedBody })
 
         } catch (ex) {
-            const err = ex as Error;
+            const err = ex as Error
             if (err) {
-                toast.error(err.message);
+                toast.error(err.message)
             }
             throw (ex)
         }
@@ -53,20 +55,22 @@ export const useHttp = () => {
         }
 
         if (response.status === 401 || response.status === 403) {
+            toast.error(t('insufficient-privileges'))
+
             // It's supposed that the client shouldn't send requests that bring it to the 401|403 states.
             // Nevertheless, if the client got this it might mean that the token has expired or the client requests a resource that requires higher privileges which means the login procedure must be repeated  
-            dispatch(onSignout())
+            //dispatch(onSignout())
         }
 
         if (response.status === 404) {
-            toast.error(response.statusText);
+            toast.error(response.statusText)
             throw new Error(response.statusText)
         }
 
         const json = await response.json()
 
         if (response.ok) {
-            return json as T;
+            return json as T
         }
 
         // handle error message from server's custom exceptions
@@ -74,7 +78,7 @@ export const useHttp = () => {
         if (json.hasOwnProperty("Error")) {
             errorText += ": " + json.Error
         }
-        toast.error(errorText);
+        toast.error(errorText)
 
         throw new Error(errorText)
     }, [dispatch, jwt])

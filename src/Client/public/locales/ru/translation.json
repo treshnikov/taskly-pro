@@ -77,5 +77,6 @@
     "changes-saved": "Изменения были успешно сохранены",
     "all-projects": "Все проекты",
     "projects-with-estimation": "Проекты с оценкой",
-    "rate": "Ставка"
+    "rate": "Ставка",
+    "insufficient-privileges": "Недостаточно прав для выполнения операции"
 }

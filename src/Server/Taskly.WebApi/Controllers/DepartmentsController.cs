@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Taskly.Application.Auth.Consts;
 using Taskly.Application.Departments.Commands.UpdatePlans;
 using Taskly.Application.Departments.Queries;
 using Taskly.Application.Departments.Queries.GetDepartmentPlan;
@@ -70,6 +72,7 @@ namespace Taskly.WebApi.Controllers
         [HttpPut("updateEnableForPlanning")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [Authorize(Roles = RoleIdents.Admin)]
         public async Task<ActionResult> UpdateEnableForPlanning([FromBody] DepartmentUpdateEnableForPlanningVm arg)
         {
             var res = await Mediator.Send(new UpdateDepartmnetIncludeInWorkPlanRequest { Id = arg.Id, IncludeInWorkPlan = arg.Value });

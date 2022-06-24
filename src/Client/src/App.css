@@ -31,6 +31,10 @@
     color: rgb(33, 43, 54);
 }
 
+.handsontable{
+    z-index: 200;
+}
+
 .handsontable th {
     background-color: rgb(243, 244, 245);
 }
