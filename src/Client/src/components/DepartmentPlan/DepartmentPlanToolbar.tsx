@@ -139,7 +139,12 @@ export const DepartmentPlanToolbar: React.FunctionComponent<DepartmentPlanToolba
                         inputFormat="yyyy-MM-DD"
                         value={startDate}
                         onChange={(newValue) => { if (newValue) { dispatch(setStartDate(new Date(newValue))) } }}
-                        renderInput={(params) => <TextField sx={{ width: 145 }} size="small" {...params} />}
+                        renderInput={(params) =>
+                            <TextField
+                                sx={{ width: 145 }}
+                                size="small"
+                                {...params}
+                            />}
                     />
                     <DatePicker
                         views={['day']}

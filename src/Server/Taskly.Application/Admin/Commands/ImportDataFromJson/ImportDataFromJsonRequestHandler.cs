@@ -208,7 +208,7 @@ namespace Taskly.Application.Users
                                 projCodeAsStr = first;
                             }
                         }
-                        
+
                         if (!int.TryParse(projCodeAsStr, out int projCode))
                         {
                             // handle АДМ, Партнеры, Больичный, Отпуск, etc.
@@ -251,6 +251,7 @@ namespace Taskly.Application.Users
             var path = Directory.GetParent(typeof(ImportDataFromJsonRequestHandler).Assembly.Location)!.FullName;
             var projectTasksFileName = Path.Combine(path, request.ProjectTasksFileName);
             var tasks = ParseTasks(projectTasksFileName);
+            var rand = new Random();
 
             using var transaction = _dbContext.Database.BeginTransaction();
 
@@ -269,12 +270,40 @@ namespace Taskly.Application.Users
 
             foreach (var t in tasks)
             {
-                var dbProject = dbProjects.FirstOrDefault(i => i.Id == t.ProjectId);
+                Project? dbProject = null;
+                if (!t.ProjectId.HasValue)
+                {
+                    dbProject = dbProjects.FirstOrDefault(i => i.Name == t.ProjectName);
+                    if (dbProject == null)
+                    {
+                        dbProject = new Project
+                        {
+                            Id = rand.Next(10_000, 100_000),
+                            Name = t.ProjectName,
+                            ShortName = t.ProjectName,
+                            IsOpened = true,
+                            Type = ProjectType.Internal,
+                            Start = new DateTime(2000, 01, 01),
+                            End = new DateTime(2050, 01, 01),
+                            Contract = t.ProjectName,
+                            Tasks = new List<ProjectTask>()
+                        };
+                        _dbContext.Projects.Add(dbProject);
+                        dbProjects.Add(dbProject);
+                        await _dbContext.SaveChangesAsync(cancellationToken);
+                    }
+                }
+                else
+                {
+                    dbProject = dbProjects.FirstOrDefault(i => i.Id == t.ProjectId);
+                }
+
                 if (dbProject == null)
                 {
-                    //Log.Logger.Warning($"Cannot import tasks for projectId={t.ProjectId}");
+                    Log.Logger.Warning($"Cannot import tasks for projectId={t.ProjectId} {t.ProjectName}");
                     continue;
                 }
+
                 dbProject.Type = t.ProjectType == ProjectType.External && !dbProject.ShortName!.Contains("Внутр.")
                     ? ProjectType.External
                     : ProjectType.Internal;
@@ -329,16 +358,22 @@ namespace Taskly.Application.Users
                             newTask.DepartmentEstimations.Add(depEst);
                         }
 
-                        if (int.TryParse(t.Estimations[positionIdx - 1], out int hours))
+                        var estAsStr = t.Estimations[positionIdx - 1].Replace(",", ".").Split('.')[0];
+                        var ci = (CultureInfo)CultureInfo.CurrentCulture.Clone();
+                        if (float.TryParse(estAsStr, NumberStyles.Any, ci, out float hours))
                         {
-                            depEst.Estimations.Add(new ProjectTaskDepartmentEstimationToUserPosition
+                            if (hours > 0)
                             {
-                                Id = Guid.NewGuid(),
-                                Hours = hours,
-                                ProjectTaskDepartmentEstimation = depEst,
-                                ProjectTaskDepartmentEstimationId = depEst.Id,
-                                UserPosition = dbPosition
-                            });
+                                depEst.Estimations.Add(new ProjectTaskDepartmentEstimationToUserPosition
+                                {
+                                    Id = Guid.NewGuid(),
+                                    //todo float
+                                    Hours = (int)hours,
+                                    ProjectTaskDepartmentEstimation = depEst,
+                                    ProjectTaskDepartmentEstimationId = depEst.Id,
+                                    UserPosition = dbPosition
+                                });
+                            }
                         }
 
                     }
@@ -350,8 +385,6 @@ namespace Taskly.Application.Users
                 newTask.DepartmentEstimations = newTask.DepartmentEstimations.Where(e => e.Estimations.Count > 0).ToList();
                 _dbContext.ProjectTasks.Add(newTask);
 
-
-
                 dbProject.Tasks.Add(newTask);
                 _dbContext.Projects.Update(dbProject);
             }
@@ -362,7 +395,8 @@ namespace Taskly.Application.Users
 
         internal class ProjectTaskInfoXlsx
         {
-            public int ProjectId { get; set; }
+            public int? ProjectId { get; set; }
+            public string? ProjectName { get; set; }
             public ProjectType ProjectType { get; set; }
             public string Description { get; set; }
             public string Comment { get; set; }
@@ -382,17 +416,28 @@ namespace Taskly.Application.Users
             {
                 //Log.Logger.Debug($"#{rowIdx}");
 
-                // project can contains . symbol - 985.1 
+                // project can contain . symbol - for instance, "985.1" 
                 // we need to take only the first part
+                int? projectId = null;
+                string? projectName = string.Empty;
                 var projectIdAsStr = worksheet.Cell(rowIdx, 3).GetValue<string>();
                 projectIdAsStr = projectIdAsStr.Split(".")[0];
-                if (!int.TryParse(projectIdAsStr, out int projectId))
+                if (int.TryParse(projectIdAsStr, out int projectIdParsed))
                 {
                     //Console.WriteLine($"Skip {projectIdAsStr}");
-                    continue;
+                    // continue;
+                    projectId = projectIdParsed;
+                }
+                else
+                {
+                    projectName = projectIdAsStr;
                 }
 
                 var task = worksheet.Cell(rowIdx, 9).GetValue<string>();
+                if (task == "Отпуск")
+                {
+                    task = worksheet.Cell(rowIdx, 8).GetValue<string>();
+                }
 
                 if (string.IsNullOrWhiteSpace(task))
                 {
@@ -422,6 +467,7 @@ namespace Taskly.Application.Users
                 res.Add(new ProjectTaskInfoXlsx
                 {
                     ProjectId = projectId,
+                    ProjectName = projectName,
                     Description = task,
                     Comment = comment,
                     Start = start,
