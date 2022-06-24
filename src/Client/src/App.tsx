@@ -29,10 +29,20 @@ function App() {
       }
     },
     components: {
+      MuiButton:{
+        styleOverrides: {
+          root: {
+            color: "#333",
+            [`&.${checkboxClasses.checked}`]: {
+              color: '#333',
+            },
+          }
+        }
+      },
       MuiCheckbox: {
         styleOverrides: {
           root: {
-            color: "grey ",
+            color: "grey",
             [`&.${checkboxClasses.checked}`]: {
               color: 'grey',
             },

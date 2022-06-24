@@ -36,6 +36,7 @@ export const DepartmentPlans: React.FunctionComponent = () => {
                 {
                     departments.map(d =>
                         <ListItem
+                            style={{height: "45px"}}
                             key={d.id}
                             secondaryAction={
                                 <Button

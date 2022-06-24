@@ -18,8 +18,9 @@ const OpenProjectDetailsButtonRenderer = (props: any) => {
 
   return (
     <Button
-      variant='contained'
+      variant='text'
       size='small'
+      style={{marginLeft: "5px", marginTop: "5px"}}
       onClick={e => { navigate("/projects/" + value) }}>
       {t('open')}
     </Button>

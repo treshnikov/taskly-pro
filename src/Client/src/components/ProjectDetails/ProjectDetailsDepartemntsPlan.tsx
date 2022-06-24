@@ -116,7 +116,7 @@ export const ProjectDetailsDepartemntsPlan: React.FunctionComponent<ProjectDetai
                                                             style={{ maxWidth: "300px" }}
                                                             key={i.id + e.userPositionId}>
                                                             <div
-                                                                style={{ maxHeight: "60px", fontSize: "14px" }}>
+                                                                style={{ height: "50px", fontSize: "14px" }}>
                                                                 {e.userPositionName}:
                                                             </div>
                                                             <TextField
