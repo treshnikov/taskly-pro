@@ -78,7 +78,7 @@ namespace Taskly.Application.Users
             //extract plans from Excel
             List<UserPlan> plans = ExtractPlans(filePath);
 
-            var dbUsers = await _dbContext.Users.AsNoTracking().ToListAsync(cancellationToken);
+            var dbUsers = await _dbContext.Users.Include(i => i.UserDepartments).ToListAsync(cancellationToken);
             var dbProjects = await _dbContext.Projects.AsNoTracking().ToListAsync(cancellationToken);
             foreach (var planItem in plans)
             {
@@ -87,6 +87,23 @@ namespace Taskly.Application.Users
                 {
                     Log.Error($"Cannot find user with name {planItem.UserName}");
                     continue;
+                }
+
+                // check that the user is included in the given department
+                // if they don't then add them to with same position as in the other department
+                if (!user.UserDepartments.Any(i => i.DepartmentId == dbDep.Id))
+                {
+                    var defaultPosition = user.UserDepartments.FirstOrDefault();
+                    if (defaultPosition != null)
+                    {
+                        user.UserDepartments.Add(new UserDepartment{
+                            Comment = defaultPosition.Comment,
+                            DepartmentId = dbDep.Id,
+                            Rate = defaultPosition.Rate,
+                            UserId = user.Id,
+                            UserPositionId = defaultPosition.UserPositionId,
+                        });
+                    }
                 }
 
                 foreach (var w in planItem.Weeks)
@@ -156,6 +173,10 @@ namespace Taskly.Application.Users
             while (true)
             {
                 userName = worksheet.Cell(rowIdx, 2).GetValue<string>().Trim();
+                
+                // user name might contain additional comment after last name
+                userName = string.Join(" ", userName.Split(' ').Take(3)).Trim();
+
                 if (string.IsNullOrWhiteSpace(userName))
                 {
                     break;
