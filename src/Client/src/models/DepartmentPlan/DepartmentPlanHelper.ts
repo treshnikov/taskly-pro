@@ -46,7 +46,7 @@ export class DepartmentPlanHelper {
             const userRecord: DepartmentUserPlan = {
                 id: "u" + idx.toString(),
                 userName: user.userName,
-                userPosition: user.userPosition + " [" + user.rate + "]",
+                userPosition: user.userPosition,
                 userId: user.userId,
                 project: '',
                 hours: null,

@@ -31,8 +31,8 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
 
     const { request } = useHttp()
     const { t } = useTranslation();
-    const staticHeaders = ["Id", t('name'), t('position'), t('hours'), t('project')]
-    const columnWidths = [50, 280, 70, 50, 330]
+    const staticHeaders = ["Id", t('name'), t('position'), t('rate'), t('hours'), t('project')]
+    const columnWidths = [50, 240, 50, 50, 50, 330]
     const hotTableRef = useRef<HotTable>(null);
     const navigate = useNavigate()
 
@@ -165,6 +165,14 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
                     />
                     <HotColumn
                         data={"userPosition"}
+                        className='htCenter'
+                        wordWrap={false}
+                        readOnly
+                        type={"text"}
+                    />
+                    <HotColumn
+                        data={"rate"}
+                        className='htCenter'
                         wordWrap={false}
                         readOnly
                         type={"text"}
@@ -172,6 +180,7 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
                     <HotColumn
                         data={"hours"}
                         type={"text"}
+                        className='htCenter'
                         readOnly
                     />
                     <HotColumn

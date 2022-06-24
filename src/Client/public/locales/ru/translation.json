@@ -76,5 +76,6 @@
     "estimation": "Оценка",
     "changes-saved": "Изменения были успешно сохранены",
     "all-projects": "Все проекты",
-    "projects-with-estimation": "Проекты с оценкой"
+    "projects-with-estimation": "Проекты с оценкой",
+    "rate": "Ставка"
 }
