@@ -51,6 +51,7 @@ export class DepartmentPlanHelper {
                 userId: user.userId,
                 project: '',
                 tooltip: '',
+                weeksAvailabilityMap: [],
                 hours: null,
                 rate: user.rate,
                 __children: []
@@ -63,6 +64,7 @@ export class DepartmentPlanHelper {
                     userPosition: '',
                     hours: null,
                     tooltip: DepartmentPlanHelper.buildTooltip(project.taskTimes),
+                    weeksAvailabilityMap: [],
                     userId: user.userId,
                     projectId: project.projectId,
                     project: project.projectId + ": " + (project.projectShortName ? project.projectShortName : project.projectName)
@@ -71,6 +73,7 @@ export class DepartmentPlanHelper {
 
                 // populate weekX attributes
                 project.plans.forEach(week => {
+                    projectRecord.weeksAvailabilityMap.push(week.isWeekAvailableForPlanning)
                     projectRecord["week" + week.weekNumber.toString()] = week.plannedHours === 0 ? null : week.plannedHours.toString();
                 });
 
@@ -157,7 +160,8 @@ export class DepartmentPlanHelper {
                         projectRecord.plans.push({
                             weekStart: dt.getTime(),
                             weekNumber: weekIdx,
-                            plannedHours: weekHours
+                            plannedHours: weekHours,
+                            isWeekAvailableForPlanning: false
                         })
                     }
                     weekIdx++;
@@ -178,7 +182,7 @@ export class DepartmentPlanHelper {
         }
 
         // find and update changed record
-        let record: DepartmentProjectPlan = { id: '', hours: '', project: '', userPosition: '', userName: '', userId: '', projectId: 0, tooltip: '' }
+        let record: DepartmentProjectPlan = { id: '', hours: '', project: '', userPosition: '', userName: '', userId: '', projectId: 0, tooltip: '', weeksAvailabilityMap: [] }
         const found = plan.some(u => u.__children.some(p => {
             record = p
             return p.id === projectId

@@ -26,6 +26,7 @@ export type DepartmentPlanUserProjectWeekPlanVm = {
     weekNumber: number
     weekStart: number
     plannedHours: number
+    isWeekAvailableForPlanning: boolean
 }
 
 export type DepartmentUserPlan = {
@@ -34,10 +35,11 @@ export type DepartmentUserPlan = {
     userPosition: string
     rate: number
     tooltip: string
+    weeksAvailabilityMap: boolean[]
     project: string
     hours: string | null
     __children: DepartmentProjectPlan[]
-    [weekNumber: string]: string | number | DepartmentProjectPlan[] | null
+    [weekNumber: string]: string | number | DepartmentProjectPlan[] | boolean[] | null
 }
 
 export type DepartmentProjectPlan = {
@@ -47,7 +49,8 @@ export type DepartmentProjectPlan = {
     userId: string
     projectId: number
     tooltip: string
+    weeksAvailabilityMap: boolean[]
     hours: string | null
-    [weekNumber: string]: string | null | number
+    [weekNumber: string]: string | null | number | boolean[]
 }
 

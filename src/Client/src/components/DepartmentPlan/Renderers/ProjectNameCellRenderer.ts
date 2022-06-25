@@ -5,9 +5,11 @@ export const ProjectNameCellRenderer = (instance: Handsontable.Core, td: HTMLTab
     Handsontable.renderers.TextRenderer.apply(this, [instance, td, row, col, prop, value, cellProperties]);
 
     const id = instance.getDataAtCell(row, 0)
-    const tooltip = instance.getDataAtCell(row, 1)
 
+    // render cell with project information
     if (id[0] === 'p') {
+        const tooltip = instance.getDataAtCell(row, 1)
+        
         const text = document.createElement("div")
         text.innerText = value
         text.style.display = 'inline-block'
@@ -18,12 +20,12 @@ export const ProjectNameCellRenderer = (instance: Handsontable.Core, td: HTMLTab
         link.style.display = 'inline-block'
         link.style.cursor = 'pointer'
         link.onclick = () => {
-            const projectId = (value as string).split(':')[0] 
+            const projectId = (value as string).split(':')[0]
             ServicesStorageHelper.navigate(`/projects/${projectId}`)
         }
 
         td.innerText = ''
         td.appendChild(text)
-        td.appendChild(link) 
+        td.appendChild(link)
     }
 }

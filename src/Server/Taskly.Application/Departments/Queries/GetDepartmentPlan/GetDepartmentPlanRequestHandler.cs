@@ -85,7 +85,7 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentPlan
                     if (project.Tasks != null)
                     {
                         var taskTimes = project.Tasks
-                            .Where(t => (request.Start <= t.Start && request.End >= t.Start) || (request.Start <= t.End && request.End >= t.End))
+                            .Where(t => t.DepartmentEstimations.Any(de => de.Department.Id == dep.Id) && ((request.Start <= t.Start && request.End >= t.Start) || (request.Start <= t.End && request.End >= t.End)))
                             .OrderBy(t => t.Start);
                         projectPlan.TaskTimes.AddRange(taskTimes.Select(i => new TaskTimeVm
                         {
@@ -96,19 +96,20 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentPlan
                     }
                     
                     var weekIdx = 1;
-                    foreach (var week in weeks)
+                    foreach (var weekStartDate in weeks)
                     {
                         var weekPlan = new UserProjectWeekPlanVm
                         {
                             WeekNumber = weekIdx,
-                            WeekStart = week
+                            WeekStart = weekStartDate,
+                            IsWeekAvailableForPlanning = projectPlan.TaskTimes.Any(i => i.Start <= weekStartDate && i.End >= weekStartDate)
                         };
 
                         // get hours planned for the given user, project and week
                         var hours = plans.FirstOrDefault(
                             i => i.UserId == user.User.Id &&
                             i.ProjectId == project.Id &&
-                            i.WeekStart == week)?.Hours ?? 0;
+                            i.WeekStart == weekStartDate)?.Hours ?? 0;
 
                         weekPlan.PlannedHours = hours;
                         projectPlan.Plans.Add(weekPlan);

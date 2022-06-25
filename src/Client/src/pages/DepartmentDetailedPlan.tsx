@@ -23,6 +23,7 @@ const initPlan: DepartmentUserPlan[] = [{
     hours: '',
     rate: 0,
     tooltip: '',
+    weeksAvailabilityMap: [],
     __children: [],
 }]
 
@@ -32,17 +33,24 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
 
     const { request } = useHttp()
     const { t } = useTranslation();
-    const staticHeaders = ["Id", "tooltip", t('name'), t('position'), t('rate'), t('hours'), t('project')]
-    const columnWidths = [50, 50, 240, 50, 50, 50, 330]
+    const staticHeaders = ["Id", "tooltip", "weeksAvailabilityMap", t('name'), t('position'), t('rate'), t('hours'), t('project')]
+    const columnWidths = [50, 50, 50, 240, 50, 50, 50, 330]
+    
+    // hidden columns contain information that the renderer requires to display data:
+    // - record id - for example, p110 or u20 - 'p' for nested rows with project information and 'u' for user rows
+    // - tooltip - a tooltip which is set as a title for the div that displays the name of the project in a nested row
+    // - weeks availability map - for example, 111101000000111 - 1 when the week is included in some project task period and 0 in the other case
+    const hiddenColumns = [0, 1, 2]
+    
     const hotTableRef = useRef<HotTable>(null);
     const navigate = useNavigate()
-
-    // workaround for passing a navigate function to ProjectNameCellRenderer that cannot be extended by adding new props without changing the source code of the component
-    ServicesStorageHelper.navigateFunction = (arg: string) => { navigate(arg) }
 
     // unfortunately, we must store the state locally because passing such an amount of records to redux causes low performance even the records will be frozen
     const [plan, setPlan] = useState<DepartmentUserPlan[]>(initPlan)
     const [headers, setHeaders] = useState<string[]>(['', '', '', '', ''])
+
+    // workaround for passing a navigate function to ProjectNameCellRenderer that cannot be extended by adding new props without changing the source code of the component
+    ServicesStorageHelper.navigateFunction = (arg: string) => { navigate(arg) }
 
     const dispatch = useAppDispatch()
     const startDate = useAppSelector(state => state.departmentPlanReducer.startDate)
@@ -105,7 +113,7 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
                     colWidths={columnWidths}
                     viewportColumnRenderingOffset={headers.length}
                     fixedColumnsLeft={staticHeaders.length}
-                    hiddenColumns={{ columns: [0, 1] }}
+                    hiddenColumns={{ columns: hiddenColumns }}
                     hiddenRows={{ rows: hiddenRows }}
                     maxCols={headers.length}
                     renderAllRows={true}
@@ -160,6 +168,9 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
                     />
                     <HotColumn
                         data={"tooltip"}
+                        type={"text"} />
+                    <HotColumn
+                        data={"weeksAvailabilityMap"}
                         type={"text"} />
 
                     <HotColumn

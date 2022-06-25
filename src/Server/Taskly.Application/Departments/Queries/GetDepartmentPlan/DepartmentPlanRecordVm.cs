@@ -1,3 +1,4 @@
+using System.Security.AccessControl;
 using Taskly.Application.Users;
 
 namespace Taskly.Application.Departments.Queries.GetDepartmentPlan
@@ -27,6 +28,7 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentPlan
         public int WeekNumber { get; internal set; }
         public DateTime WeekStart { get; set; }
         public float PlannedHours { get; set; }
+        public bool IsWeekAvailableForPlanning { get; set; }
     }
 
     public class TaskTimeVm

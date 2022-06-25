@@ -3,11 +3,11 @@ import Handsontable from "handsontable";
 export const WeekPlanCellRenderer = (instance: Handsontable.Core, td: HTMLTableCellElement, row: number, col: number, prop: string | number, value: any, cellProperties: Handsontable.CellProperties): void => {
     Handsontable.renderers.TextRenderer.apply(this, [instance, td, row, col, prop, value, cellProperties]);
 
-    const rowId = instance.getDataAtCell(row, 0);
+    const id = instance.getDataAtCell(row, 0);
     td.style.textAlign = 'center'
 
     // rows with user name contain summary info that should not be editable
-    if (rowId[0] === 'u') {
+    if (id[0] === 'u') {
         cellProperties.readOnly = true
         td.style.fontStyle = 'italic'
 
@@ -34,6 +34,19 @@ export const WeekPlanCellRenderer = (instance: Handsontable.Core, td: HTMLTableC
             else {
                 td.style.background = '-webkit-linear-gradient(bottom, #ffffe0aa 100%, white 100%)'
             }
+        }
+    }
+
+    // render cell with project information
+    if (id[0] === 'p') {
+        const weeksAvailabilityMap = instance.getDataAtCell(row, 2)
+        const staticColumnsCount = 8
+        if (weeksAvailabilityMap[col - staticColumnsCount] === true) {
+            td.style.background = '-webkit-linear-gradient(bottom, #ecffebdd 10%, white 10%)'
+        }
+        else {
+            td.style.background = '-webkit-linear-gradient(bottom, #ffccccbb 10%, white 10%)'
+
         }
     }
 }
