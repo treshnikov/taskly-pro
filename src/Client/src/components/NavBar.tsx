@@ -56,7 +56,7 @@ export const NavBar: React.FunctionComponent = () => {
           color: "rgb(44, 44, 44)",
           height: "60px",
           position: "fixed",
-          zIndex: "150"
+          zIndex: "100"
         }}>
         <Toolbar >
           <SidebarMenu />
