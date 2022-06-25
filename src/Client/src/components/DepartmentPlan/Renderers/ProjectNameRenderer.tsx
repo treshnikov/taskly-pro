@@ -1,11 +1,8 @@
-import { useTranslation } from 'react-i18next';
 import { getColor } from '../../../common/getColor';
 
 export const ProjectNameRenderer = (props: any) => {
     const { value } = props
     const valueAsStr = value as string
-
-    const { t } = useTranslation();
 
     if (!value || valueAsStr === "") {
         return <></>

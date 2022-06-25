@@ -1,15 +1,16 @@
 import Handsontable from "handsontable";
 import { ServicesStorageHelper } from "../../../common/servicesStorageHelper";
+import { ID_COLUMN_INDEX, TOOLTIP_COLUMN_INDEX } from "../DepartmentPlanConst";
 
 export const ProjectNameCellRenderer = (instance: Handsontable.Core, td: HTMLTableCellElement, row: number, col: number, prop: string | number, value: any, cellProperties: Handsontable.CellProperties): void => {
     Handsontable.renderers.TextRenderer.apply(this, [instance, td, row, col, prop, value, cellProperties]);
 
-    const id = instance.getDataAtCell(row, 0)
+    const id = instance.getDataAtCell(row, ID_COLUMN_INDEX)
 
     // render cell with project information
     if (id[0] === 'p') {
-        const tooltip = instance.getDataAtCell(row, 1)
-        
+        const tooltip = instance.getDataAtCell(row, TOOLTIP_COLUMN_INDEX)
+
         const text = document.createElement("div")
         text.innerText = value
         text.style.display = 'inline-block'
