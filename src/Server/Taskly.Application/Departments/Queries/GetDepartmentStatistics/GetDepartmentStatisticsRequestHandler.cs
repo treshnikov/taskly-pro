@@ -1,5 +1,6 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Taskly.Application.Common.Time;
 using Taskly.Application.Interfaces;
 
 namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
@@ -14,7 +15,8 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
         }
         public async Task<DepartmentStatisticsVm> Handle(GetDepartmentStatisticsRequest request, CancellationToken cancellationToken)
         {
-            var res = new DepartmentStatisticsVm{
+            var res = new DepartmentStatisticsVm
+            {
                 Projects = new List<ProjectStatVm>()
             };
 
@@ -32,16 +34,17 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
                 .Include(i => i.DepartmentEstimations).ThenInclude(i => i.Department)
                 .AsNoTracking()
                 .Where(t =>
-                        t.DepartmentEstimations.Any(de => de.Department.Id == request.DepartmentId && de.Estimations.Sum(des => des.Hours) > 0) &&
-                        ((t.Start >= request.Start && t.Start <= request.End) || (t.End >= request.Start && t.End <= request.End))
-                    )
+                        ((request.Start >= t.Start && request.Start <= t.End) || (request.Start <= t.Start && request.End >= t.Start)) &&
+                        t.DepartmentEstimations.Any(de => de.Department.Id == request.DepartmentId && de.Estimations.Sum(des => des.Hours) > 0)
+                )
                 .ToListAsync(cancellationToken);
 
             var tasksGroupedByProject = tasks.GroupBy(t => t.Project.ShortName);
             foreach (var taskGroup in tasksGroupedByProject)
             {
                 var proj = taskGroup.Key;
-                var projStat = new ProjectStatVm{
+                var projStat = new ProjectStatVm
+                {
                     Id = 0,
                     Name = proj,
                     PlannedTaskHoursByDepartment = 0,

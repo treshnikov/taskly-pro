@@ -1,5 +1,5 @@
 import Handsontable from "handsontable";
-import { ID_COLUMN_INDEX, RATE_COLUMN_INDEX, STATIC_COLUMNS_COUNT, WEEKS_AVAILABILITY_MAP_COLUMN_INDEX } from "../DepartmentPlanConst";
+import { GOOD_PLANING_TIME_COLOR, ID_COLUMN_INDEX, NOT_ENOUGH_HOURS_PLANNED_COLOR, RATE_COLUMN_INDEX, STATIC_COLUMNS_COUNT, TOO_MANY_HOURS_PLANNED_COLOR, WEEKS_AVAILABILITY_MAP_COLUMN_INDEX, WEEK_HAS_NO_ASSIGNED_PROJECT_TASKS_COLOR } from "../DepartmentPlanConst";
 
 export const WeekPlanCellRenderer = (instance: Handsontable.Core, td: HTMLTableCellElement, row: number, col: number, prop: string | number, value: any, cellProperties: Handsontable.CellProperties): void => {
     Handsontable.renderers.TextRenderer.apply(this, [instance, td, row, col, prop, value, cellProperties]);
@@ -26,14 +26,14 @@ export const WeekPlanCellRenderer = (instance: Handsontable.Core, td: HTMLTableC
 
         td.style.fontWeight = '500'
         if (valueAsFloat === planTime) {
-            td.style.background = '-webkit-linear-gradient(bottom, #ecffebaa 100%, white 100%)'
+            td.style.background = GOOD_PLANING_TIME_COLOR
         }
         else {
             if (valueAsFloat > planTime) {
-                td.style.background = '-webkit-linear-gradient(bottom, #ffcccc88 100%, white 100%)'
+                td.style.background = TOO_MANY_HOURS_PLANNED_COLOR
             }
             else {
-                td.style.background = '-webkit-linear-gradient(bottom, #ffffe0aa 100%, white 100%)'
+                td.style.background = NOT_ENOUGH_HOURS_PLANNED_COLOR
             }
         }
     }
@@ -42,7 +42,7 @@ export const WeekPlanCellRenderer = (instance: Handsontable.Core, td: HTMLTableC
     if (id[0] === 'p') {
         const weeksAvailabilityMap = instance.getDataAtCell(row, WEEKS_AVAILABILITY_MAP_COLUMN_INDEX)
         if (weeksAvailabilityMap[col - STATIC_COLUMNS_COUNT] === false) {
-            td.style.background = '#f3f4f5cc'
+            td.style.background = WEEK_HAS_NO_ASSIGNED_PROJECT_TASKS_COLOR
         }
     }
 }

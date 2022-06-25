@@ -200,7 +200,7 @@ export class DepartmentPlanHelper {
     private static buildTooltip(taskTimes: TaskTimeVm[]): string {
         let res = ''
         taskTimes.forEach((i, idx) => {
-            res += dateToRequestStr(new Date(i.start)) + " - " + dateToRequestStr(new Date(i.end)) + "\t" + i.name
+            res += dateAsShortStrFromNumber(i.start) + " - " + dateAsShortStrFromNumber(i.end) + "\t" + i.name
             if (idx != taskTimes.length - 1) {
                 res += "\r\n"
             }

@@ -1,5 +1,6 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Taskly.Application.Common.Time;
 using Taskly.Application.Interfaces;
 
 namespace Taskly.Application.Departments.Queries.GetDepartmentPlan
@@ -32,10 +33,9 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentPlan
                 .AsNoTracking()
                 .Where(
                     p => p.Tasks.Any(
-                        t =>
-                            request.Start <= t.Start && request.End >= t.Start &&
-                            t.DepartmentEstimations.Any(
-                            de => de.Department.Id == request.DepartmentId && de.Estimations.Sum(des => des.Hours) > 0)))
+                        t => ((request.Start >= t.Start && request.Start <= t.End) || (request.Start <= t.Start && request.End >= t.Start)) &&
+                        t.DepartmentEstimations.Any(de => de.Department.Id == request.DepartmentId && de.Estimations.Sum(des => des.Hours) > 0))
+                )
                 .ToListAsync(cancellationToken);
 
             // laod plans for each employee for each week for each project
@@ -85,7 +85,8 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentPlan
                     if (project.Tasks != null)
                     {
                         var taskTimes = project.Tasks
-                            .Where(t => t.DepartmentEstimations.Any(de => de.Department.Id == dep.Id) && ((request.Start <= t.Start && request.End >= t.Start) || (request.Start <= t.End && request.End >= t.End)))
+                            .Where(t => t.DepartmentEstimations.Any(de => de.Department.Id == dep.Id) &&
+                            ((request.Start <= t.Start && request.End >= t.Start) || (request.Start <= t.End && request.End >= t.End)))
                             .OrderBy(t => t.Start);
                         projectPlan.TaskTimes.AddRange(taskTimes.Select(i => new TaskTimeVm
                         {
@@ -94,7 +95,7 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentPlan
                             End = i.End
                         }));
                     }
-                    
+
                     var weekIdx = 1;
                     foreach (var weekStartDate in weeks)
                     {
@@ -102,7 +103,12 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentPlan
                         {
                             WeekNumber = weekIdx,
                             WeekStart = weekStartDate,
-                            IsWeekAvailableForPlanning = projectPlan.TaskTimes.Any(i => i.Start <= weekStartDate && i.End >= weekStartDate)
+                            IsWeekAvailableForPlanning = projectPlan.TaskTimes.Any(i =>
+                                i.Start <= weekStartDate && i.End >= weekStartDate ||
+                                i.Start <= weekStartDate.AddDays(1) && i.End >= weekStartDate.AddDays(1) ||
+                                i.Start <= weekStartDate.AddDays(2) && i.End >= weekStartDate.AddDays(2) ||
+                                i.Start <= weekStartDate.AddDays(3) && i.End >= weekStartDate.AddDays(3) ||
+                                i.Start <= weekStartDate.AddDays(4) && i.End >= weekStartDate.AddDays(4))
                         };
 
                         // get hours planned for the given user, project and week
