@@ -4,7 +4,7 @@ export const dateAsShortStr = (arg: Date): string => {
         "." + arg.getFullYear()
 }
 
-export const dateTorequestStr = (arg: Date): string => {
+export const dateToRequestStr = (arg: Date): string => {
     return arg.getFullYear() + "-" +
         (arg.getMonth() + 1).toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false }) + "-" +
         arg.getDate().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false })

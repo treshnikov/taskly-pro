@@ -6,12 +6,19 @@ export type DepartmentPlanUserRecordVm = {
     projects: DepartmentPlanUserProjectVm[]
 }
 
+export type TaskTimeVm = {
+    name: string
+    start: number
+    end: number
+}
+
 export type DepartmentPlanUserProjectVm = {
     projectId: number
     projectName: string
     projectShortName: string
     projectStart: number
     projectEnd: number
+    taskTimes: TaskTimeVm[]
     plans: DepartmentPlanUserProjectWeekPlanVm[]
 }
 
@@ -26,6 +33,7 @@ export type DepartmentUserPlan = {
     userName: string
     userPosition: string
     rate: number
+    tooltip: string
     project: string
     hours: string | null
     __children: DepartmentProjectPlan[]
@@ -38,6 +46,7 @@ export type DepartmentProjectPlan = {
     project: string
     userId: string
     projectId: number
+    tooltip: string
     hours: string | null
     [weekNumber: string]: string | null | number
 }

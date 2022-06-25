@@ -85,7 +85,8 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentPlan
                     if (project.Tasks != null)
                     {
                         var taskTimes = project.Tasks
-                            .Where(t => (request.Start <= t.Start && request.End >= t.Start) || (request.Start <= t.End && request.End >= t.End));
+                            .Where(t => (request.Start <= t.Start && request.End >= t.Start) || (request.Start <= t.End && request.End >= t.End))
+                            .OrderBy(t => t.Start);
                         projectPlan.TaskTimes.AddRange(taskTimes.Select(i => new TaskTimeVm
                         {
                             Name = i.Description,

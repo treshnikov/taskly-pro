@@ -4,12 +4,14 @@ import { ServicesStorageHelper } from "../../../common/servicesStorageHelper";
 export const ProjectNameCellRenderer = (instance: Handsontable.Core, td: HTMLTableCellElement, row: number, col: number, prop: string | number, value: any, cellProperties: Handsontable.CellProperties): void => {
     Handsontable.renderers.TextRenderer.apply(this, [instance, td, row, col, prop, value, cellProperties]);
 
-    const rowId = instance.getDataAtCell(row, 0);
+    const id = instance.getDataAtCell(row, 0)
+    const tooltip = instance.getDataAtCell(row, 1)
 
-    if (rowId[0] === 'p') {
+    if (id[0] === 'p') {
         const text = document.createElement("div")
         text.innerText = value
         text.style.display = 'inline-block'
+        text.title = tooltip
 
         const link = document.createElement("div")
         link.innerText = " ..."

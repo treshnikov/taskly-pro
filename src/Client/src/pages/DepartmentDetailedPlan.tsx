@@ -22,6 +22,7 @@ const initPlan: DepartmentUserPlan[] = [{
     project: '',
     hours: '',
     rate: 0,
+    tooltip: '',
     __children: [],
 }]
 
@@ -31,8 +32,8 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
 
     const { request } = useHttp()
     const { t } = useTranslation();
-    const staticHeaders = ["Id", t('name'), t('position'), t('rate'), t('hours'), t('project')]
-    const columnWidths = [50, 240, 50, 50, 50, 330]
+    const staticHeaders = ["Id", "tooltip", t('name'), t('position'), t('rate'), t('hours'), t('project')]
+    const columnWidths = [50, 50, 240, 50, 50, 50, 330]
     const hotTableRef = useRef<HotTable>(null);
     const navigate = useNavigate()
 
@@ -104,7 +105,7 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
                     colWidths={columnWidths}
                     viewportColumnRenderingOffset={headers.length}
                     fixedColumnsLeft={staticHeaders.length}
-                    hiddenColumns={{ columns: [0] }}
+                    hiddenColumns={{ columns: [0, 1] }}
                     hiddenRows={{ rows: hiddenRows }}
                     maxCols={headers.length}
                     renderAllRows={true}
@@ -158,6 +159,10 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
                         type={"text"}
                     />
                     <HotColumn
+                        data={"tooltip"}
+                        type={"text"} />
+
+                    <HotColumn
                         data={"userName"}
                         wordWrap={false}
                         readOnly
@@ -189,6 +194,7 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
                         readOnly
                         renderer={ProjectNameCellRenderer}
                     />
+
                     {
                         headers.slice(staticHeaders.length).map((header, idx) => {
                             return (

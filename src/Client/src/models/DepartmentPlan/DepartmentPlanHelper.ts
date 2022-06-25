@@ -1,4 +1,5 @@
-import { DepartmentUserPlan, DepartmentPlanUserRecordVm, DepartmentProjectPlan, DepartmentPlanUserProjectVm } from "./DepartmentPlanClasses";
+import { dateAsShortStrFromNumber, dateToRequestStr } from "../../common/dateFormatter";
+import { DepartmentUserPlan, DepartmentPlanUserRecordVm, DepartmentProjectPlan, DepartmentPlanUserProjectVm, TaskTimeVm } from "./DepartmentPlanClasses";
 
 
 export class DepartmentPlanHelper {
@@ -49,6 +50,7 @@ export class DepartmentPlanHelper {
                 userPosition: user.userPosition,
                 userId: user.userId,
                 project: '',
+                tooltip: '',
                 hours: null,
                 rate: user.rate,
                 __children: []
@@ -60,6 +62,7 @@ export class DepartmentPlanHelper {
                     id: "p" + idx.toString(),
                     userPosition: '',
                     hours: null,
+                    tooltip: DepartmentPlanHelper.buildTooltip(project.taskTimes),
                     userId: user.userId,
                     projectId: project.projectId,
                     project: project.projectId + ": " + (project.projectShortName ? project.projectShortName : project.projectName)
@@ -133,6 +136,7 @@ export class DepartmentPlanHelper {
                 const projectRecord: DepartmentPlanUserProjectVm = {
                     projectId: project.projectId as number,
                     plans: [],
+                    taskTimes: [],
                     projectName: "",
                     projectShortName: "",
                     projectStart: 0,
@@ -174,7 +178,7 @@ export class DepartmentPlanHelper {
         }
 
         // find and update changed record
-        let record: DepartmentProjectPlan = { id: '', hours: '', project: '', userPosition: '', userName: '', userId: '', projectId: 0 }
+        let record: DepartmentProjectPlan = { id: '', hours: '', project: '', userPosition: '', userName: '', userId: '', projectId: 0, tooltip: '' }
         const found = plan.some(u => u.__children.some(p => {
             record = p
             return p.id === projectId
@@ -188,5 +192,19 @@ export class DepartmentPlanHelper {
 
         return false
     }
+
+    private static buildTooltip(taskTimes: TaskTimeVm[]): string {
+        let res = ''
+        taskTimes.forEach((i, idx) => {
+            res += dateToRequestStr(new Date(i.start)) + " - " + dateToRequestStr(new Date(i.end)) + "\t" + i.name
+            if (idx != taskTimes.length - 1) {
+                res += "\r\n"
+            }
+        })
+
+        return res
+    }
+
 }
+
 
