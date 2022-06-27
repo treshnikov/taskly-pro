@@ -42,9 +42,9 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentPlan
             var plans = await _dbContext.DepartmentPlans
                 .Include(i => i.Project).Include(i => i.User)
                 .AsNoTracking()
-                .Where(i =>
-                    i.DepartmentId == request.DepartmentId &&
-                    i.WeekStart >= request.Start && i.WeekStart <= request.End)
+                .Where(t =>
+                    t.DepartmentId == request.DepartmentId &&
+                    t.WeekStart >= request.Start && t.WeekStart <= request.End)
                 .ToListAsync(cancellationToken);
 
             // add projects that have already been planned before for the given department
@@ -86,7 +86,7 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentPlan
                     {
                         var taskTimes = project.Tasks
                             .Where(t => t.DepartmentEstimations.Any(de => de.Department.Id == dep.Id) &&
-                            ((request.Start <= t.Start && request.End >= t.Start) || (request.Start <= t.End && request.End >= t.End)))
+                             ((request.Start >= t.Start && request.Start <= t.End) || (request.Start <= t.Start && request.End >= t.Start)))
                             .OrderBy(t => t.Start);
                         projectPlan.TaskTimes.AddRange(taskTimes.Select(i => new TaskTimeVm
                         {
