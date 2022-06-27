@@ -3,10 +3,13 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Gri
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { dateAsShortStr, dateToRequestStr } from "../../common/dateFormatter";
+import { formatNumber } from "../../common/numberFormat";
 import { useHttp } from "../../hooks/http.hook";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux.hook";
 import { DepartmentUserPlan } from "../../models/DepartmentPlan/DepartmentPlanClasses";
 import { toggleShowStatistics } from "../../redux/departmentPlanSlice";
+import { StatisticsProjectNameCellRenderer } from "./Renderers/StatisticsProjectNameCellRenderer";
+import { TimeDeltaCellRenderer } from "./Renderers/TimeDeltaCellRenderer";
 
 export type DepartmentPlanStatisticsProps = {
     departmentId: string
@@ -25,6 +28,7 @@ interface ProjectStatisticsVm {
     name: string
     plannedTaskHoursForDepartment: number
     plannedTaskHoursByDepartment: number
+    deltaHours: number
 }
 
 export const DepartmentPlanStatistics: React.FunctionComponent<DepartmentPlanStatisticsProps> = (props) => {
@@ -84,7 +88,7 @@ export const DepartmentPlanStatistics: React.FunctionComponent<DepartmentPlanSta
             <Dialog
                 scroll="paper"
                 maxWidth="lg"
-                PaperProps={{ style: { minHeight: "90%", maxHeight: "90%", minWidth: "90%", maxWidth: "90%" } }}
+                PaperProps={{ style: { minHeight: "90%", maxHeight: "90%", minWidth: "95%", maxWidth: "95%" } }}
                 open={showStatistics}
                 onClose={e => onClose()}
                 aria-labelledby="responsive-dialog-title"
@@ -97,25 +101,21 @@ export const DepartmentPlanStatistics: React.FunctionComponent<DepartmentPlanSta
                 <DialogContent
                     style={{ overflowX: "hidden" }}>
                     <div>
-                        <h4>
-                            {t('statistics')}
+                        <h4 style={{ marginTop: 0 }}>
+                            {t('info')}
                         </h4>
                         <ul>
                             <li>
-                                Период: {dateAsShortStr(props.start)} - {dateAsShortStr(props.end)}
+                                {t('period')}: {t('from')} {dateAsShortStr(props.start)} {t('to')} {dateAsShortStr(props.end)}
                             </li>
                             <li>
-                                Доступное время для планирования: {getEmployeeNumber()} человек / {hoursInWeeks} {t('hour')}
+                                {t('available-time-for-planning')}: {formatNumber(hoursInWeeks)}{t('hour')} ({t('employees')} = {getEmployeeNumber()},  {t('weeks')} = {hoursInWeeks / 40 / getEmployeeNumber()})
                             </li>
                             <li>
-                                Согласно плану проектов, необходимо спланировать: {
-                                    projectStatistics.map(i => i.plannedTaskHoursForDepartment)?.reduce((p, c) => { return p + c })
-                                } {t('hour')}
+                                {t('project-plan-time')}: {formatNumber(projectStatistics.map(i => i.plannedTaskHoursForDepartment)?.reduce((p, c) => { return p + c }))}{t('hour')}
                             </li>
                             <li>
-                                Суммарное время запланированное на отдел: {
-                                    projectStatistics.map(i => i.plannedTaskHoursByDepartment)?.reduce((p, c) => { return p + c })
-                                } {t('hour')}
+                                {t('department-plan-time')}: {formatNumber(projectStatistics.map(i => i.plannedTaskHoursByDepartment)?.reduce((p, c) => { return p + c }))}{t('hour')}
                             </li>
                         </ul>
                         <h4>
@@ -125,7 +125,7 @@ export const DepartmentPlanStatistics: React.FunctionComponent<DepartmentPlanSta
                             style={{ width: "80%" }}
                             columnSorting={true}
                             data={projectStatistics}
-                            colHeaders={["Id", t('project'), t('project-plan-time'), t('department-plan-time')]}
+                            colHeaders={["Id", t('project'), t('project-plan-time') + ", " + t('hour'), t('department-plan-time') + ", " + t('hour'), t('difference') + ", " + t('hour')]}
                             fillHandle={false}
                             manualRowMove={false}
                             manualColumnMove={false}
@@ -134,9 +134,10 @@ export const DepartmentPlanStatistics: React.FunctionComponent<DepartmentPlanSta
                             licenseKey='non-commercial-and-evaluation'
                         >
                             <HotColumn data={"id"} className='htCenter' readOnly type={"text"} />
-                            <HotColumn data={"name"} readOnly type={"text"} />
+                            <HotColumn data={"name"} readOnly renderer={StatisticsProjectNameCellRenderer} />
                             <HotColumn data={"plannedTaskHoursForDepartment"} className='htCenter' readOnly type={"text"} />
                             <HotColumn data={"plannedTaskHoursByDepartment"} className='htCenter' readOnly type={"text"} />
+                            <HotColumn data={"deltaHours"} readOnly renderer={TimeDeltaCellRenderer} />
                         </HotTable>
                     </div>
                 </DialogContent>

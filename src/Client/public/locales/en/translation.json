@@ -79,6 +79,14 @@
     "projects-with-estimation": "Projects with estimation",
     "rate": "Rate",
     "insufficient-privileges": "Insufficient privileges to perform this operation",
-    "project-plan-time": "Time planned for the project, h",
-    "department-plan-time": "Time planned by the department, h"
+    "project-plan-time": "Time planned in the project for the department",
+    "department-plan-time": "Time planned by the department",
+    "info": "Info",
+    "available-time-for-planning": "Available time for planning",
+    "employees": "employees",
+    "weeks": "weeks",
+    "from": "from",
+    "to": "to",
+    "period": "Period",
+    "difference": "Difference"
 }

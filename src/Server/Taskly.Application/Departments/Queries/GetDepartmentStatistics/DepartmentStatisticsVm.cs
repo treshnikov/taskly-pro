@@ -11,5 +11,6 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
         public string Name { get; set; }
         public double PlannedTaskHoursForDepartment { get; set; }
         public double PlannedTaskHoursByDepartment { get; set; }
+        public double DeltaHours { get; set; }
     }
 }

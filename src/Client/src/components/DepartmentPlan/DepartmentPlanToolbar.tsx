@@ -8,7 +8,7 @@ import { useHttp } from "../../hooks/http.hook";
 import { RefObject, useEffect, useState } from "react";
 import HotTable from "@handsontable/react";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux.hook";
-import { setEndDate, setHiddenRows, setStartDate, toggleShowStatistics } from "../../redux/departmentPlanSlice";
+import { setCollapsedRows, setEndDate, setHiddenRows, setStartDate, toggleShowStatistics } from "../../redux/departmentPlanSlice";
 import { DepartmentUserPlan } from "../../models/DepartmentPlan/DepartmentPlanClasses";
 import { DepartmentPlanHelper } from "../../models/DepartmentPlan/DepartmentPlanHelper";
 import { toast } from 'react-toastify'
@@ -34,6 +34,7 @@ export const DepartmentPlanToolbar: React.FunctionComponent<DepartmentPlanToolba
     const dispatch = useAppDispatch()
     const startDate = useAppSelector(state => state.departmentPlanReducer.startDate)
     const endDate = useAppSelector(state => state.departmentPlanReducer.endDate)
+    const collapsedRows = useAppSelector(state => state.departmentPlanReducer.collapsedRows)
 
     const projectsWithEstimation: ProjectSelectItem = { id: 'projects-with-estimation', name: t('projects-with-estimation') }
     const allProjectsItem: ProjectSelectItem = { id: 'all-projects', name: t('all-projects') }
@@ -86,6 +87,7 @@ export const DepartmentPlanToolbar: React.FunctionComponent<DepartmentPlanToolba
         }
         const plugin = hotTableRef.current.hotInstance.getPlugin('nestedRows') as any;
         const collapsedRows: number[] = plugin.collapsingUI.collapsedRows as number[];
+        dispatch(setCollapsedRows(collapsedRows))
         const data = DepartmentPlanHelper.preparePlanFToSendToServer(plan, new Date(startDate));
 
         // using hooks causes render and the table renders all its rows expanded 
@@ -105,13 +107,14 @@ export const DepartmentPlanToolbar: React.FunctionComponent<DepartmentPlanToolba
             return;
         }
         const plugin = hotTableRef.current.hotInstance.getPlugin('nestedRows') as any;
-        const collapsedRows: number[] = plugin.collapsingUI.collapsedRows as number[];
-
+        const currentCollapsedRows: number[] = plugin.collapsingUI.collapsedRows as number[];
+        
+        dispatch(setCollapsedRows(currentCollapsedRows))
         dispatch(toggleShowStatistics())
 
         setTimeout(() => {
-            plugin.collapsingUI.collapseMultipleChildren(collapsedRows);
-        }, 100);
+            plugin.collapsingUI.collapseMultipleChildren(currentCollapsedRows);
+        }, 4000);
     }
 
     const updateHiddenRows = (hiddenRows: number[]) => {
@@ -120,7 +123,7 @@ export const DepartmentPlanToolbar: React.FunctionComponent<DepartmentPlanToolba
         }
         const plugin = hotTableRef.current.hotInstance.getPlugin('nestedRows') as any;
         const collapsedRows: number[] = plugin.collapsingUI.collapsedRows as number[];
-
+        dispatch(setCollapsedRows(collapsedRows))
         dispatch(setHiddenRows(hiddenRows))
 
         setTimeout(() => {

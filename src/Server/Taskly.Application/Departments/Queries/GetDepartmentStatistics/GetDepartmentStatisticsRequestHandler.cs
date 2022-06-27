@@ -53,7 +53,8 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
                         i.ProjectId == projId &&
                         i.DepartmentId == dep.Id &&
                         i.WeekStart >= request.Start && i.WeekStart <= request.End).Sum(i => i.Hours),
-                    PlannedTaskHoursForDepartment = 0
+                    PlannedTaskHoursForDepartment = 0,
+                    DeltaHours = 0
                 };
 
                 foreach (var task in taskGroup)
@@ -67,6 +68,7 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
                     }
                 }
 
+                projStat.DeltaHours = projStat.PlannedTaskHoursForDepartment - projStat.PlannedTaskHoursByDepartment;
                 res.Projects.Add(projStat);
             }
 
