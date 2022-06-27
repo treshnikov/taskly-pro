@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Taskly.Application.Interfaces;
+using Taskly.Domain;
 
 namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
 {
@@ -44,7 +45,7 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
                 var proj = taskGroup.Key;
                 var projStat = new ProjectStatVm
                 {
-                    Id = 0,
+                    Id = tasks.First(i => i.Project.ShortName == proj).ProjectId,
                     Name = proj,
                     PlannedTaskHoursByDepartment = 0,
                     PlannedTaskHoursForDepartment = 0
@@ -56,7 +57,7 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
                     {
                         foreach (var e in de.Estimations)
                         {
-                            projStat.PlannedTaskHoursForDepartment += e.Hours;
+                            projStat.PlannedTaskHoursForDepartment += (int)CalculateAvailableTime(task, request, e.Hours);
                         }
                     }
                 }
@@ -65,6 +66,53 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
             }
 
             return await Task.FromResult(res);
+        }
+
+        private static double CalculateAvailableTime(ProjectTask t, GetDepartmentStatisticsRequest r, int hours)
+        {
+            /*
+                # case 1 - available time equals task to request time 
+                task                        ts|-------------------|te
+                request                             rs|-----|re
+            */
+            if (t.Start <= r.Start && t.End >= r.End)
+            {
+                return hours * ((r.End - r.Start).TotalHours / (t.End - t.Start).TotalHours);
+            }
+
+            /*
+                # case 2 - available time equals to task time
+                task                       			     ts|-------|te
+                request                             rs|-----------------|re
+            */
+            if (t.Start >= r.Start && t.End <= r.End)
+            {
+                return hours;
+            }
+
+            /*
+                # case 3 - available time equals a time segment from request start to task end
+                task                       	   ts|-------|te
+                request                             rs|-----------------|re
+            */
+            if (r.Start >= t.Start && r.Start <= t.End)
+            {
+                return hours * ((t.End - r.Start).TotalHours / (t.End - t.Start).TotalHours);
+            }
+
+            /*
+                # case 4 - available time equals a time segment from task start to request end
+                task                       	   					  ts|-------|te
+                request                             rs|-----------------|re
+            
+            */
+            if (t.Start >= r.Start && t.Start <= r.End)
+            {
+                return hours * ((r.End - t.Start).TotalHours / (t.End - t.Start).TotalHours);
+            }
+
+            throw new Exception($"The app cannot handle time periods overlap {r.Start} - {r.End} / {t.Start} - {t.End}.");
+
         }
     }
 }
