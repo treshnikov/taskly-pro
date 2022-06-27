@@ -1,6 +1,5 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Taskly.Application.Common.Time;
 using Taskly.Application.Interfaces;
 
 namespace Taskly.Application.Departments.Queries.GetDepartmentPlan
@@ -32,8 +31,8 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentPlan
                 .Include(i => i.Tasks).ThenInclude(i => i.DepartmentEstimations).ThenInclude(i => i.Estimations)
                 .AsNoTracking()
                 .Where(
-                    p => p.Tasks.Any(
-                        t => ((request.Start >= t.Start && request.Start <= t.End) || (request.Start <= t.Start && request.End >= t.Start)) &&
+                    p => p.Tasks.Any(t =>
+                        request.Start < t.End && t.Start < request.End &&
                         t.DepartmentEstimations.Any(de => de.Department.Id == request.DepartmentId && de.Estimations.Sum(des => des.Hours) > 0))
                 )
                 .ToListAsync(cancellationToken);
@@ -86,7 +85,7 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentPlan
                     {
                         var taskTimes = project.Tasks
                             .Where(t => t.DepartmentEstimations.Any(de => de.Department.Id == dep.Id) &&
-                             ((request.Start >= t.Start && request.Start <= t.End) || (request.Start <= t.Start && request.End >= t.Start)))
+                             request.Start < t.End && t.Start < request.End)
                             .OrderBy(t => t.Start);
                         projectPlan.TaskTimes.AddRange(taskTimes.Select(i => new TaskTimeVm
                         {
