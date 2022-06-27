@@ -23,12 +23,12 @@ export const departmentPlanSlice = createSlice({
     name: "departmentPlanState",
     initialState: initialState,
     reducers: {
-        setStartDate(state: DepartmentPlanState, action: PayloadAction<Date>) {
-            state.startDate = action.payload.getTime()
+        setStartDate(state: DepartmentPlanState, action: PayloadAction<number>) {
+            state.startDate = action.payload
         },
 
-        setEndDate(state: DepartmentPlanState, action: PayloadAction<Date>) {
-            state.endDate = action.payload.getTime()
+        setEndDate(state: DepartmentPlanState, action: PayloadAction<number>) {
+            state.endDate = action.payload
         },
 
         setHideProjectsWithNoEstimation(state: DepartmentPlanState, action: PayloadAction<boolean>) {

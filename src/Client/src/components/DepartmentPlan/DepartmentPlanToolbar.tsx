@@ -158,7 +158,7 @@ export const DepartmentPlanToolbar: React.FunctionComponent<DepartmentPlanToolba
                             label={t('start')}
                             inputFormat="yyyy-MM-DD"
                             value={startDate}
-                            onChange={(newValue) => { if (newValue) { dispatch(setStartDate(new Date(newValue))) } }}
+                            onChange={(newValue) => { if (newValue) { dispatch(setStartDate(new Date(newValue).getTime())) } }}
                             renderInput={(params) =>
                                 <TextField
                                     sx={{ width: 145 }}
@@ -171,7 +171,7 @@ export const DepartmentPlanToolbar: React.FunctionComponent<DepartmentPlanToolba
                             label={t('end')}
                             inputFormat="yyyy-MM-DD"
                             value={endDate}
-                            onChange={(newValue) => { if (newValue) { dispatch(setEndDate(new Date(newValue))) } }}
+                            onChange={(newValue) => { if (newValue) { dispatch(setEndDate(new Date(newValue).getTime())) } }}
                             renderInput={(params) => <TextField sx={{ width: 145 }} size="small" {...params} />}
                         />
                         <Box sx={{ width: 250 }}>
