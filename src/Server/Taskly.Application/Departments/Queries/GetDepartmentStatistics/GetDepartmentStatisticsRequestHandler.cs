@@ -37,17 +37,22 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
                         request.Start < t.End && t.Start < request.End &&
                         t.DepartmentEstimations.Any(de => de.Department.Id == request.DepartmentId && de.Estimations.Sum(des => des.Hours) > 0)
                 )
+                .OrderBy(i => i.Id)
                 .ToListAsync(cancellationToken);
 
             var tasksGroupedByProject = tasks.GroupBy(t => t.Project.ShortName);
             foreach (var taskGroup in tasksGroupedByProject)
             {
-                var proj = taskGroup.Key;
+                var projShortName = taskGroup.Key;
+                var projId = tasks.First(i => i.Project.ShortName == projShortName).ProjectId;
                 var projStat = new ProjectStatVm
                 {
-                    Id = tasks.First(i => i.Project.ShortName == proj).ProjectId,
-                    Name = proj,
-                    PlannedTaskHoursByDepartment = 0,
+                    Id = projId,
+                    Name = projShortName,
+                    PlannedTaskHoursByDepartment = _dbContext.DepartmentPlans.Where(i =>
+                        i.ProjectId == projId &&
+                        i.DepartmentId == dep.Id &&
+                        i.WeekStart >= request.Start && i.WeekStart <= request.End).Sum(i => i.Hours),
                     PlannedTaskHoursForDepartment = 0
                 };
 

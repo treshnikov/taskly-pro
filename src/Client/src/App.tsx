@@ -80,7 +80,7 @@ function App() {
         draggable
         pauseOnHover />
 
-      <Backdrop sx={{ backgroundColor: 'rgba(248, 248, 249, 0.3)', color: 'silver', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+      <Backdrop sx={{ backgroundColor: 'rgba(248, 248, 249, 0.3)', color: 'silver', zIndex: 999999 }}
         open={requestsInProgress !== 0}>
         <CircularProgress color="inherit" />
       </Backdrop>

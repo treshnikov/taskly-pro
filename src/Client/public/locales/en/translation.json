@@ -78,5 +78,7 @@
     "all-projects": "All projects",
     "projects-with-estimation": "Projects with estimation",
     "rate": "Rate",
-    "insufficient-privileges": "Insufficient privileges to perform this operation"
+    "insufficient-privileges": "Insufficient privileges to perform this operation",
+    "project-plan-time": "Time planned for the project, h",
+    "department-plan-time": "Time planned by the department, h"
 }

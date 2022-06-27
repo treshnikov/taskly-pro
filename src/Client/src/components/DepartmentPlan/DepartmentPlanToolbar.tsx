@@ -8,10 +8,12 @@ import { useHttp } from "../../hooks/http.hook";
 import { RefObject, useEffect, useState } from "react";
 import HotTable from "@handsontable/react";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux.hook";
-import { setEndDate, setHiddenRows, setStartDate } from "../../redux/departmentPlanSlice";
+import { setEndDate, setHiddenRows, setStartDate, toggleShowStatistics } from "../../redux/departmentPlanSlice";
 import { DepartmentUserPlan } from "../../models/DepartmentPlan/DepartmentPlanClasses";
 import { DepartmentPlanHelper } from "../../models/DepartmentPlan/DepartmentPlanHelper";
 import { toast } from 'react-toastify'
+import BarChartIcon from '@mui/icons-material/BarChart';
+import { DepartmentPlanStatistics } from "./DepartmentPlanStatistics";
 
 type ProjectSelectItem = {
     id: string,
@@ -98,6 +100,20 @@ export const DepartmentPlanToolbar: React.FunctionComponent<DepartmentPlanToolba
         plugin.collapsingUI.collapseMultipleChildren(collapsedRows);
     };
 
+    const toogleDepartmentStatisticsForm = () => {
+        if (!hotTableRef || !hotTableRef.current || !hotTableRef.current.hotInstance) {
+            return;
+        }
+        const plugin = hotTableRef.current.hotInstance.getPlugin('nestedRows') as any;
+        const collapsedRows: number[] = plugin.collapsingUI.collapsedRows as number[];
+
+        dispatch(toggleShowStatistics())
+
+        setTimeout(() => {
+            plugin.collapsingUI.collapseMultipleChildren(collapsedRows);
+        }, 100);
+    }
+
     const updateHiddenRows = (hiddenRows: number[]) => {
         if (!hotTableRef || !hotTableRef.current || !hotTableRef.current.hotInstance) {
             return;
@@ -127,90 +143,106 @@ export const DepartmentPlanToolbar: React.FunctionComponent<DepartmentPlanToolba
         }
     }, [plan])
 
-    return <div style={{ position: "fixed", top: "5em", left: "1em" }}>
-        <Grid container>
-            <Grid item xs={12}>
-                <Stack direction={"row"} spacing={1} alignItems={"center"}>
-                    <Typography variant='h6' style={{ maxWidth: "200px", whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden" }}>{departmentName}</Typography>
+    return <div>
+        <div style={{ position: "fixed", top: "5em", left: "1em" }}>
+            <Grid container>
+                <Grid item xs={12}>
+                    <Stack direction={"row"} spacing={1} alignItems={"center"}>
+                        <Typography variant='h6' style={{ maxWidth: "200px", whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden" }}>{departmentName}</Typography>
 
-                    <DatePicker
-                        views={['day']}
-                        label={t('start')}
-                        inputFormat="yyyy-MM-DD"
-                        value={startDate}
-                        onChange={(newValue) => { if (newValue) { dispatch(setStartDate(new Date(newValue))) } }}
-                        renderInput={(params) =>
-                            <TextField
-                                sx={{ width: 145 }}
-                                size="small"
-                                {...params}
-                            />}
-                    />
-                    <DatePicker
-                        views={['day']}
-                        label={t('end')}
-                        inputFormat="yyyy-MM-DD"
-                        value={endDate}
-                        onChange={(newValue) => { if (newValue) { dispatch(setEndDate(new Date(newValue))) } }}
-                        renderInput={(params) => <TextField sx={{ width: 145 }} size="small" {...params} />}
-                    />
-                    <Box sx={{ width: 250 }}>
-                        <FormControl fullWidth>
-                            <InputLabel id="projectLabelId">{t('project')}</InputLabel>
-                            <Select
-                                size="small"
-                                labelId="projectLabelId"
-                                id="demo-simple-select"
-                                value={projectFilter}
-                                label={t('project')}
-                                onChange={onProjectFilterChanged}
-                            >
-                                <MenuItem
-                                    value={projectsWithEstimation.id}>
-                                    {projectsWithEstimation.name}
-                                </MenuItem>
-                                <MenuItem
-                                    value={allProjectsItem.id}>
-                                    {allProjectsItem.name}
-                                </MenuItem>
-                                <Divider />
-                                {
-                                    projectSelectItems.map(i => {
-                                        return (
-                                            <MenuItem
-                                                key={"projSelect" + i.id}
-                                                value={i.id}>
-                                                {i.name}
-                                            </MenuItem>
-                                        )
-                                    })
-                                }
-                            </Select>
-                        </FormControl>
-                    </Box>
-                    <Button
-                        variant="contained"
-                        size="small"
-                        startIcon={<SaveAltIcon />}
-                        onClick={saveChanges}>
-                        {t('save')}
-                    </Button>
+                        <DatePicker
+                            views={['day']}
+                            label={t('start')}
+                            inputFormat="yyyy-MM-DD"
+                            value={startDate}
+                            onChange={(newValue) => { if (newValue) { dispatch(setStartDate(new Date(newValue))) } }}
+                            renderInput={(params) =>
+                                <TextField
+                                    sx={{ width: 145 }}
+                                    size="small"
+                                    {...params}
+                                />}
+                        />
+                        <DatePicker
+                            views={['day']}
+                            label={t('end')}
+                            inputFormat="yyyy-MM-DD"
+                            value={endDate}
+                            onChange={(newValue) => { if (newValue) { dispatch(setEndDate(new Date(newValue))) } }}
+                            renderInput={(params) => <TextField sx={{ width: 145 }} size="small" {...params} />}
+                        />
+                        <Box sx={{ width: 250 }}>
+                            <FormControl fullWidth>
+                                <InputLabel id="projectLabelId">{t('project')}</InputLabel>
+                                <Select
+                                    size="small"
+                                    labelId="projectLabelId"
+                                    id="demo-simple-select"
+                                    value={projectFilter}
+                                    label={t('project')}
+                                    onChange={onProjectFilterChanged}
+                                >
+                                    <MenuItem
+                                        value={projectsWithEstimation.id}>
+                                        {projectsWithEstimation.name}
+                                    </MenuItem>
+                                    <MenuItem
+                                        value={allProjectsItem.id}>
+                                        {allProjectsItem.name}
+                                    </MenuItem>
+                                    <Divider />
+                                    {
+                                        projectSelectItems.map(i => {
+                                            return (
+                                                <MenuItem
+                                                    key={"projSelect" + i.id}
+                                                    value={i.id}>
+                                                    {i.name}
+                                                </MenuItem>
+                                            )
+                                        })
+                                    }
+                                </Select>
+                            </FormControl>
+                        </Box>
+                        <Button
+                            variant="contained"
+                            size="small"
+                            startIcon={<SaveAltIcon />}
+                            onClick={saveChanges}>
+                            {t('save')}
+                        </Button>
 
-                    <Button
-                        variant="contained"
-                        size="small"
-                        startIcon={<AddBoxIcon />}
-                        onClick={e => { expandAllRows() }}>
-                        {t('expand')}
-                    </Button>
+                        <Button
+                            variant="contained"
+                            size="small"
+                            startIcon={<AddBoxIcon />}
+                            onClick={e => { expandAllRows() }}>
+                            {t('expand')}
+                        </Button>
 
-                    <Button variant="contained" size="small" startIcon={<IndeterminateCheckBoxIcon />}
-                        onClick={e => { collapseAllRows() }}>
-                        {t('collapse')}
-                    </Button>
-                </Stack>
+                        <Button variant="contained" size="small" startIcon={<IndeterminateCheckBoxIcon />}
+                            onClick={e => { collapseAllRows() }}>
+                            {t('collapse')}
+                        </Button>
+
+                        <Button
+                            variant='contained'
+                            size='small'
+                            onClick={e => { toogleDepartmentStatisticsForm() }}
+                            startIcon={<BarChartIcon />}>
+                            {t('statistics')}
+                        </Button>
+                    </Stack>
+                </Grid>
             </Grid>
-        </Grid>
+        </div>
+        <DepartmentPlanStatistics 
+            departmentId={departmentId} 
+            departmentName={departmentName} 
+            start={new Date(startDate)} 
+            end={new Date(endDate)} 
+            plan={plan}/>
     </div>
 
 }

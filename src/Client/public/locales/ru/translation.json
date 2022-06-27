@@ -78,5 +78,7 @@
     "all-projects": "Все проекты",
     "projects-with-estimation": "Проекты с оценкой",
     "rate": "Ставка",
-    "insufficient-privileges": "Недостаточно прав для выполнения операции"
+    "insufficient-privileges": "Недостаточно прав для выполнения операции",
+    "project-plan-time": "Время запланированное на отдел, ч",
+    "department-plan-time": "Время запланированное отделом, ч"
 }
