@@ -39,6 +39,8 @@ export const DepartmentPlanStatistics: React.FunctionComponent<DepartmentPlanSta
 
     const [projectStatistics, setProjectStatistics] = useState<ProjectStatisticsVm[]>([])
     const [hoursInWeeks, setHoursInWeeks] = useState<number>(0)
+    const [hoursInProjects, setHoursInProjects] = useState<number>(0)
+    const [hoursInDepartmentPlan, setHoursInDepartmentPlan] = useState<number>(0)
 
     const onClose = () => {
         dispatch(toggleShowStatistics())
@@ -54,30 +56,34 @@ export const DepartmentPlanStatistics: React.FunctionComponent<DepartmentPlanSta
             null,
             [{ name: 'Content-Type', value: 'application/json' }])
             .then(data => {
-                setProjectStatistics((data as DepartmentStatisticsVm).projects)
+                const projStat = (data as DepartmentStatisticsVm).projects
                 calcPlannedHours()
+                setProjectStatistics(projStat)
             })
 
     }, [showStatistics])
+
+    useEffect(() => {
+        calcHoursInDepartmentPlan()
+        calcHoursInProjects()
+    }, [projectStatistics])
 
     const getEmployeeNumber = (): number => {
         return props.plan?.map(i => i.rate)?.reduce((p, c) => { return p + c })
     }
 
-    const getProjectHours = (): number => {
+    const calcHoursInProjects = () => {
         if (projectStatistics && projectStatistics.length > 0) {
-            projectStatistics.map(i => i.plannedTaskHoursForDepartment)?.reduce((p, c) => { return p + c })
+            const hours = projectStatistics.map(i => i.plannedTaskHoursForDepartment)?.reduce((p, c) => { return p + c })
+            setHoursInProjects(hours)
         }
-
-        return 0
     }
 
-    const getDepartmentHours = (): number => {
+    const calcHoursInDepartmentPlan = () => {
         if (projectStatistics && projectStatistics.length > 0) {
-            projectStatistics.map(i => i.plannedTaskHoursByDepartment)?.reduce((p, c) => { return p + c })
+            const hours = projectStatistics.map(i => i.plannedTaskHoursByDepartment)?.reduce((p, c) => { return p + c })
+            setHoursInDepartmentPlan(hours)
         }
-
-        return 0
     }
 
     const calcPlannedHours = () => {
@@ -123,10 +129,10 @@ export const DepartmentPlanStatistics: React.FunctionComponent<DepartmentPlanSta
                                 {t('available-time-for-planning')}: {formatNumber(hoursInWeeks)}{t('hour')} ({t('employees')} = {getEmployeeNumber()},  {t('weeks')} = {hoursInWeeks / 40 / getEmployeeNumber()})
                             </li>
                             <li>
-                                {t('project-plan-time')}: {formatNumber(getProjectHours())}{t('hour')}
+                                {t('project-plan-time')}: {formatNumber(hoursInProjects)}{t('hour')}
                             </li>
                             <li>
-                                {t('department-plan-time')}: {formatNumber(getDepartmentHours())}{t('hour')}
+                                {t('department-plan-time')}: {formatNumber(hoursInDepartmentPlan)}{t('hour')}
                             </li>
                         </ul>
                         <h4>

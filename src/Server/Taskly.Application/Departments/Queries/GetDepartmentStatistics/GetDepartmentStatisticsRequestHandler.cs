@@ -27,7 +27,59 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
                 .AsNoTracking()
                 .FirstAsync(i => i.Id == request.DepartmentId, cancellationToken);
 
-            // get all tasks planned for given timerange for the department
+            // handle all projects and tasks planned for given timerange for the department
+            await HandleHoursInProjects(request, res, dep, cancellationToken);
+
+            // handle estimations for departments
+            // corner case when an estimation was set by the head of the department but the project doesn't contain a task for this estimation
+            await HandleHoursPlannedByDepartment(request, res, dep, cancellationToken);
+
+            // now we can calculate delta between project plan and department plan
+            HandleDelta(res);
+
+            return await Task.FromResult(res);
+        }
+
+        private static void HandleDelta(DepartmentStatisticsVm res)
+        {
+            foreach (var p in res.Projects)
+            {
+                p.DeltaHours = p.PlannedTaskHoursForDepartment - p.PlannedTaskHoursByDepartment;
+            }
+        }
+
+        private async Task HandleHoursPlannedByDepartment(GetDepartmentStatisticsRequest request, DepartmentStatisticsVm res, Department dep, CancellationToken cancellationToken)
+        {
+            var departmentEstimations = _dbContext.DepartmentPlans
+                .AsNoTracking()
+                .Include(i => i.Project)
+                .Where(i =>
+                    i.DepartmentId == dep.Id &&
+                    i.WeekStart >= request.Start && i.WeekStart <= request.End)
+                .ToLookup(i => i.Project.Id, j => j.Hours);
+
+            foreach (var projHours in departmentEstimations)
+            {
+                var projId = projHours.Key;
+                float totalHours = 0;
+                foreach (var hour in projHours)
+                {
+                    totalHours += hour;
+                }
+
+                var resProj = res.Projects.FirstOrDefault(i => i.Id == projId);
+                if (resProj == null)
+                {
+                    var proj = await _dbContext.Projects.AsNoTracking().FirstAsync(i => i.Id == projId, cancellationToken);
+                    resProj = new ProjectStatVm { Id = projId, Name = proj.ShortName, PlannedTaskHoursByDepartment = totalHours, PlannedTaskHoursForDepartment = 0 };
+                    res.Projects.Add(resProj);
+                }
+                resProj.PlannedTaskHoursByDepartment = totalHours;
+            }
+        }
+
+        private async Task HandleHoursInProjects(GetDepartmentStatisticsRequest request, DepartmentStatisticsVm res, Department dep, CancellationToken cancellationToken)
+        {
             var tasks = await _dbContext.ProjectTasks
                 .Include(i => i.Project)
                 .Include(i => i.DepartmentEstimations).ThenInclude(i => i.Estimations)
@@ -49,10 +101,7 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
                 {
                     Id = projId,
                     Name = projShortName,
-                    PlannedTaskHoursByDepartment = _dbContext.DepartmentPlans.Where(i =>
-                        i.ProjectId == projId &&
-                        i.DepartmentId == dep.Id &&
-                        i.WeekStart >= request.Start && i.WeekStart <= request.End).Sum(i => i.Hours),
+                    PlannedTaskHoursByDepartment = 0,
                     PlannedTaskHoursForDepartment = 0,
                     DeltaHours = 0
                 };
@@ -68,11 +117,8 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
                     }
                 }
 
-                projStat.DeltaHours = projStat.PlannedTaskHoursForDepartment - projStat.PlannedTaskHoursByDepartment;
                 res.Projects.Add(projStat);
             }
-
-            return await Task.FromResult(res);
         }
 
         private static double CalculateAvailableTime(ProjectTask t, GetDepartmentStatisticsRequest r, int hours)
