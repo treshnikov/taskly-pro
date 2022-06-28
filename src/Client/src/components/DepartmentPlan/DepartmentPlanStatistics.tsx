@@ -1,5 +1,6 @@
 import HotTable, { HotColumn } from "@handsontable/react";
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Grid, Stack } from "@mui/material"
+import { height } from "@mui/system";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { dateAsShortStr, dateToRequestStr } from "../../common/dateFormatter";
@@ -115,8 +116,7 @@ export const DepartmentPlanStatistics: React.FunctionComponent<DepartmentPlanSta
                     {props.departmentName}. {t('statistics')}
                 </DialogTitle>
                 <Divider />
-                <DialogContent
-                    style={{ overflowX: "hidden" }}>
+                <DialogContent>
                     <div>
                         <h4 style={{ marginTop: 0 }}>
                             {t('info')}
@@ -138,24 +138,28 @@ export const DepartmentPlanStatistics: React.FunctionComponent<DepartmentPlanSta
                         <h4>
                             {t('projects')}
                         </h4>
-                        <HotTable
-                            style={{ width: "80%" }}
-                            columnSorting={true}
-                            data={projectStatistics}
-                            colHeaders={["Id", t('project'), t('project-plan-time') + ", " + t('hour'), t('department-plan-time') + ", " + t('hour'), t('difference') + ", " + t('hour')]}
-                            fillHandle={false}
-                            manualRowMove={false}
-                            manualColumnMove={false}
-                            wordWrap={true}
-                            manualColumnResize={true}
-                            licenseKey='non-commercial-and-evaluation'
-                        >
-                            <HotColumn data={"id"} className='htCenter' readOnly type={"text"} />
-                            <HotColumn data={"name"} readOnly renderer={StatisticsProjectNameCellRenderer} />
-                            <HotColumn data={"plannedTaskHoursForDepartment"} className='htCenter' readOnly type={"numeric"} />
-                            <HotColumn data={"plannedTaskHoursByDepartment"} className='htCenter' readOnly type={"numeric"} />
-                            <HotColumn data={"deltaHours"} readOnly renderer={TimeDeltaCellRenderer} />
-                        </HotTable>
+                        <div style={{overflow: "auto"}}>
+                            <HotTable
+                                columnSorting={true}
+                                data={projectStatistics}
+                                colHeaders={["Id", t('project'), t('project-plan-time') + ", " + t('hour'), t('department-plan-time') + ", " + t('hour'), t('difference') + ", " + t('hour'), '']}
+                                fillHandle={false}
+                                manualRowMove={false}
+                                manualColumnMove={false}
+                                wordWrap={true}
+                                manualColumnResize={true}
+                                stretchH={"last"}
+                                height={"300px"}
+                                licenseKey='non-commercial-and-evaluation'
+                            >
+                                <HotColumn data={"id"} className='htCenter' readOnly type={"text"} />
+                                <HotColumn data={"name"} readOnly renderer={StatisticsProjectNameCellRenderer} />
+                                <HotColumn data={"plannedTaskHoursForDepartment"} className='htCenter' readOnly type={"numeric"} />
+                                <HotColumn data={"plannedTaskHoursByDepartment"} className='htCenter' readOnly type={"numeric"} />
+                                <HotColumn data={"deltaHours"} readOnly renderer={TimeDeltaCellRenderer} />
+                                <HotColumn readOnly />
+                            </HotTable>
+                        </div>
                     </div>
                 </DialogContent>
                 <DialogActions>
