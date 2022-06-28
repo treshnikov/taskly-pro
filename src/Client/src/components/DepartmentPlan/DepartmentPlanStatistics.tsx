@@ -39,8 +39,6 @@ export const DepartmentPlanStatistics: React.FunctionComponent<DepartmentPlanSta
 
     const [projectStatistics, setProjectStatistics] = useState<ProjectStatisticsVm[]>([])
     const [hoursInWeeks, setHoursInWeeks] = useState<number>(0)
-    //const [totalHoursForDepartment, setTotalHoursForDepartment] = useState<number>(0)
-    //const [totalHoursByDepartment, setTotalHoursByDepartment] = useState<number>(0)
 
     const onClose = () => {
         dispatch(toggleShowStatistics())
@@ -55,14 +53,31 @@ export const DepartmentPlanStatistics: React.FunctionComponent<DepartmentPlanSta
             "GET",
             null,
             [{ name: 'Content-Type', value: 'application/json' }])
-            .then(data => setProjectStatistics((data as DepartmentStatisticsVm).projects))
+            .then(data => {
+                setProjectStatistics((data as DepartmentStatisticsVm).projects)
+                calcPlannedHours()
+            })
 
-
-        calcPlannedHours()
     }, [showStatistics])
 
     const getEmployeeNumber = (): number => {
         return props.plan?.map(i => i.rate)?.reduce((p, c) => { return p + c })
+    }
+
+    const getProjectHours = (): number => {
+        if (projectStatistics && projectStatistics.length > 0) {
+            projectStatistics.map(i => i.plannedTaskHoursForDepartment)?.reduce((p, c) => { return p + c })
+        }
+
+        return 0
+    }
+
+    const getDepartmentHours = (): number => {
+        if (projectStatistics && projectStatistics.length > 0) {
+            projectStatistics.map(i => i.plannedTaskHoursByDepartment)?.reduce((p, c) => { return p + c })
+        }
+
+        return 0
     }
 
     const calcPlannedHours = () => {
@@ -77,10 +92,6 @@ export const DepartmentPlanStatistics: React.FunctionComponent<DepartmentPlanSta
         }
 
         setHoursInWeeks(mondaysCount * 8 * 5 * getEmployeeNumber())
-    }
-
-    if (projectStatistics.length === 0) {
-        return <></>
     }
 
     return (
@@ -112,14 +123,14 @@ export const DepartmentPlanStatistics: React.FunctionComponent<DepartmentPlanSta
                                 {t('available-time-for-planning')}: {formatNumber(hoursInWeeks)}{t('hour')} ({t('employees')} = {getEmployeeNumber()},  {t('weeks')} = {hoursInWeeks / 40 / getEmployeeNumber()})
                             </li>
                             <li>
-                                {t('project-plan-time')}: {formatNumber(projectStatistics.map(i => i.plannedTaskHoursForDepartment)?.reduce((p, c) => { return p + c }))}{t('hour')}
+                                {t('project-plan-time')}: {formatNumber(getProjectHours())}{t('hour')}
                             </li>
                             <li>
-                                {t('department-plan-time')}: {formatNumber(projectStatistics.map(i => i.plannedTaskHoursByDepartment)?.reduce((p, c) => { return p + c }))}{t('hour')}
+                                {t('department-plan-time')}: {formatNumber(getDepartmentHours())}{t('hour')}
                             </li>
                         </ul>
                         <h4>
-                            Детализация по проектам
+                            {t('projects')}
                         </h4>
                         <HotTable
                             style={{ width: "80%" }}
