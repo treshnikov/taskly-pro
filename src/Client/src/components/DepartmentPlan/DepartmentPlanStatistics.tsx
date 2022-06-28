@@ -152,8 +152,8 @@ export const DepartmentPlanStatistics: React.FunctionComponent<DepartmentPlanSta
                         >
                             <HotColumn data={"id"} className='htCenter' readOnly type={"text"} />
                             <HotColumn data={"name"} readOnly renderer={StatisticsProjectNameCellRenderer} />
-                            <HotColumn data={"plannedTaskHoursForDepartment"} className='htCenter' readOnly type={"text"} />
-                            <HotColumn data={"plannedTaskHoursByDepartment"} className='htCenter' readOnly type={"text"} />
+                            <HotColumn data={"plannedTaskHoursForDepartment"} className='htCenter' readOnly type={"numeric"} />
+                            <HotColumn data={"plannedTaskHoursByDepartment"} className='htCenter' readOnly type={"numeric"} />
                             <HotColumn data={"deltaHours"} readOnly renderer={TimeDeltaCellRenderer} />
                         </HotTable>
                     </div>

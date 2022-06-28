@@ -1,5 +1,7 @@
+using System.Text;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 using Taskly.Application.Interfaces;
 using Taskly.Domain;
 
@@ -17,7 +19,8 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
         {
             var res = new DepartmentStatisticsVm
             {
-                Projects = new List<ProjectStatVm>()
+                Projects = new List<ProjectStatVm>(),
+                Weeks = new List<ProjectToDepartmentEstimationVm>()
             };
 
             // get department by id
@@ -27,17 +30,93 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
                 .AsNoTracking()
                 .FirstAsync(i => i.Id == request.DepartmentId, cancellationToken);
 
+            var tasks = await _dbContext.ProjectTasks
+                .Include(i => i.Project)
+                .Include(i => i.DepartmentEstimations).ThenInclude(i => i.Estimations).ThenInclude(i => i.UserPosition)
+                .Include(i => i.DepartmentEstimations).ThenInclude(i => i.Department)
+                .AsNoTracking()
+                .Where(t =>
+                        request.Start < t.End && t.Start < request.End &&
+                        t.DepartmentEstimations.Any(de => de.Department.Id == request.DepartmentId && de.Estimations.Sum(des => des.Hours) > 0)
+                )
+                .OrderBy(i => i.Id)
+                .ToListAsync(cancellationToken);
+
+            var plans = await _dbContext.DepartmentPlans
+                .AsNoTracking()
+                .Include(i => i.Project)
+                .Where(i =>
+                    i.DepartmentId == dep.Id &&
+                    i.WeekStart >= request.Start && i.WeekStart <= request.End)
+                .ToListAsync(cancellationToken);
+
+            await FillProjectInfo(request, res, dep, tasks, plans, cancellationToken);
+            FillProjectToDepartmentEstimations(request, res, dep, tasks, plans);
+
+            return await Task.FromResult(res);
+        }
+
+        private static void FillProjectToDepartmentEstimations(GetDepartmentStatisticsRequest request, DepartmentStatisticsVm res, Department dep, List<ProjectTask> tasks, List<DepartmentPlan> plans)
+        {
+            // find first monday
+            var weekStart = request.Start;
+            while (weekStart.DayOfWeek != DayOfWeek.Monday)
+            {
+                weekStart = weekStart.AddDays(1);
+            }
+
+            // iterate through weeks and calculate the sum of planned hours
+            while (weekStart <= request.End)
+            {
+                var estimationVm = new ProjectToDepartmentEstimationVm { WeekStart = weekStart, DepartmentPlannedHours = 0, ProjectPlannedHours = 0 };
+                var hint = new StringBuilder();
+
+                // plan by departments
+                estimationVm.DepartmentPlannedHours = plans.Where(i => i.WeekStart == weekStart).Sum(i => i.Hours);
+
+                // plan in project tasks
+                var tasksGroupedByProjects = tasks.OrderBy(i => i.ProjectId).GroupBy(i => i.ProjectId);
+                foreach (var taskGroup in tasksGroupedByProjects)
+                {
+                    var projId = taskGroup.Key;
+                    double projHours = 0;
+                    foreach (var task in taskGroup)
+                    {
+                        foreach (var de in task.DepartmentEstimations.Where(d => d.Department.Id == dep.Id))
+                        {
+                            foreach (var e in de.Estimations)
+                            {
+                                var hours = CalculateAvailableTime(task.Start, task.End, weekStart, weekStart.AddDays(7), e.Hours);
+                                projHours += hours;
+                                estimationVm.ProjectPlannedHours += hours;
+                            }
+                        }
+                    }
+                    if (projHours > 0)
+                    {
+                        hint.AppendLine($"{projId}: {tasks.First(t => t.ProjectId == projId).Project.ShortName} - {((long)projHours == 0 ? Math.Round(projHours, 1) : (long)projHours)}h");
+                    }
+                }
+
+                estimationVm.ProjectPlannedHours = (long)estimationVm.ProjectPlannedHours;
+                estimationVm.Hint = hint.ToString();
+
+                res.Weeks.Add(estimationVm);
+                weekStart = weekStart.AddDays(7);
+            }
+        }
+
+        private async Task FillProjectInfo(GetDepartmentStatisticsRequest request, DepartmentStatisticsVm res, Department dep, List<ProjectTask> tasks, List<DepartmentPlan> plans, CancellationToken cancellationToken)
+        {
             // handle all projects and tasks planned for given timerange for the department
-            await HandleHoursInProjects(request, res, dep, cancellationToken);
+            await HandleHoursInProjects(request, tasks, res, dep, cancellationToken);
 
             // handle estimations for departments
             // corner case when an estimation was set by the head of the department but the project doesn't contain a task for this estimation
-            await HandleHoursPlannedByDepartment(request, res, dep, cancellationToken);
+            await HandleHoursPlannedByDepartment(request, plans, res, dep, cancellationToken);
 
             // now we can calculate delta between project plan and department plan
             HandleDelta(res);
-
-            return await Task.FromResult(res);
         }
 
         private static void HandleDelta(DepartmentStatisticsVm res)
@@ -48,17 +127,11 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
             }
         }
 
-        private async Task HandleHoursPlannedByDepartment(GetDepartmentStatisticsRequest request, DepartmentStatisticsVm res, Department dep, CancellationToken cancellationToken)
+        private async Task HandleHoursPlannedByDepartment(GetDepartmentStatisticsRequest request, List<DepartmentPlan> departmentEstimations, DepartmentStatisticsVm res, Department dep, CancellationToken cancellationToken)
         {
-            var departmentEstimations = _dbContext.DepartmentPlans
-                .AsNoTracking()
-                .Include(i => i.Project)
-                .Where(i =>
-                    i.DepartmentId == dep.Id &&
-                    i.WeekStart >= request.Start && i.WeekStart <= request.End)
-                .ToLookup(i => i.Project.Id, j => j.Hours);
+            var departmentEstimationsLookup = departmentEstimations.ToLookup(i => i.Project.Id, j => j.Hours);
 
-            foreach (var projHours in departmentEstimations)
+            foreach (var projHours in departmentEstimationsLookup)
             {
                 var projId = projHours.Key;
                 float totalHours = 0;
@@ -74,24 +147,13 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
                     resProj = new ProjectStatVm { Id = projId, Name = proj.ShortName, PlannedTaskHoursByDepartment = totalHours, PlannedTaskHoursForDepartment = 0 };
                     res.Projects.Add(resProj);
                 }
-                resProj.PlannedTaskHoursByDepartment = totalHours;
+
+                resProj.PlannedTaskHoursByDepartment = (long)totalHours;
             }
         }
 
-        private async Task HandleHoursInProjects(GetDepartmentStatisticsRequest request, DepartmentStatisticsVm res, Department dep, CancellationToken cancellationToken)
+        private async Task HandleHoursInProjects(GetDepartmentStatisticsRequest request, List<ProjectTask> tasks, DepartmentStatisticsVm res, Department dep, CancellationToken cancellationToken)
         {
-            var tasks = await _dbContext.ProjectTasks
-                .Include(i => i.Project)
-                .Include(i => i.DepartmentEstimations).ThenInclude(i => i.Estimations)
-                .Include(i => i.DepartmentEstimations).ThenInclude(i => i.Department)
-                .AsNoTracking()
-                .Where(t =>
-                        request.Start < t.End && t.Start < request.End &&
-                        t.DepartmentEstimations.Any(de => de.Department.Id == request.DepartmentId && de.Estimations.Sum(des => des.Hours) > 0)
-                )
-                .OrderBy(i => i.Id)
-                .ToListAsync(cancellationToken);
-
             var tasksGroupedByProject = tasks.GroupBy(t => t.Project.ShortName);
             foreach (var taskGroup in tasksGroupedByProject)
             {
@@ -112,25 +174,26 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
                     {
                         foreach (var e in de.Estimations)
                         {
-                            projStat.PlannedTaskHoursForDepartment += (int)CalculateAvailableTime(task, request, e.Hours);
+                            projStat.PlannedTaskHoursForDepartment += CalculateAvailableTime(task.Start, task.End, request.Start, request.End, e.Hours);
                         }
                     }
                 }
 
+                projStat.PlannedTaskHoursForDepartment = (long)projStat.PlannedTaskHoursForDepartment;
                 res.Projects.Add(projStat);
             }
         }
 
-        private static double CalculateAvailableTime(ProjectTask t, GetDepartmentStatisticsRequest r, int hours)
+        private static double CalculateAvailableTime(DateTime tStart, DateTime tEnd, DateTime rStart, DateTime rEnd, int hours)
         {
             /*
                 # case 1 - available time equals task to request time 
                 task                        ts|-------------------|te
                 request                             rs|-----|re
             */
-            if (t.Start <= r.Start && t.End >= r.End)
+            if (tStart <= rStart && tEnd >= rEnd)
             {
-                return hours * ((r.End - r.Start).TotalHours / (t.End - t.Start).TotalHours);
+                return hours * ((rEnd - rStart).TotalHours / (tEnd - tStart).TotalHours);
             }
 
             /*
@@ -138,7 +201,7 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
                 task                       			     ts|-------|te
                 request                             rs|-----------------|re
             */
-            if (t.Start >= r.Start && t.End <= r.End)
+            if (tStart >= rStart && tEnd <= rEnd)
             {
                 return hours;
             }
@@ -148,9 +211,9 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
                 task                       	   ts|-------|te
                 request                             rs|-----------------|re
             */
-            if (r.Start >= t.Start && r.Start <= t.End)
+            if (rStart >= tStart && rStart <= tEnd)
             {
-                return hours * ((t.End - r.Start).TotalHours / (t.End - t.Start).TotalHours);
+                return hours * ((tEnd - rStart).TotalHours / (tEnd - tStart).TotalHours);
             }
 
             /*
@@ -159,13 +222,12 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
                 request                             rs|-----------------|re
             
             */
-            if (t.Start >= r.Start && t.Start <= r.End)
+            if (tStart >= rStart && tStart <= rEnd)
             {
-                return hours * ((r.End - t.Start).TotalHours / (t.End - t.Start).TotalHours);
+                return hours * ((rEnd - tStart).TotalHours / (tEnd - tStart).TotalHours);
             }
 
-            throw new Exception($"The app cannot handle time periods overlap {r.Start} - {r.End} / {t.Start} - {t.End}.");
-
+            return 0;
         }
     }
 }

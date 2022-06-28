@@ -3,6 +3,15 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
     public class DepartmentStatisticsVm
     {
         public List<ProjectStatVm> Projects { get; set; }
+        public List<ProjectToDepartmentEstimationVm> Weeks { get; set; }
+    }
+
+    public class ProjectToDepartmentEstimationVm
+    {
+        public DateTime WeekStart { get; set; }
+        public double ProjectPlannedHours { get; set; }
+        public double DepartmentPlannedHours { get; set; }
+        public string Hint { get; set; }
     }
 
     public class ProjectStatVm
