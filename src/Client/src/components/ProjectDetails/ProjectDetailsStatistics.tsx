@@ -6,6 +6,7 @@ import { DepartmentsPlan } from "../../models/ProjectDetails/DepartmentsPlan";
 import { toggleShowStatistics } from "../../redux/projectDetailsSlice";
 import { Doughnut } from 'react-chartjs-2';
 import { Chart, ArcElement } from 'chart.js'
+import { formatNumber } from "../../common/numberFormat";
 Chart.register(ArcElement);
 
 export const ProjectDetailsStatistics: React.FunctionComponent = () => {
@@ -72,7 +73,7 @@ export const ProjectDetailsStatistics: React.FunctionComponent = () => {
                         <Grid
                             item
                             xs={7}>
-                            {t('total-planned-hours')}: {project.totalHours}{t('hour')}
+                            {t('total-planned-hours')}: {formatNumber(project.totalHours)}{t('hour')}
                             <ul>
                                 {
                                     plan.depsToHoursRecords.map(i => {
@@ -94,7 +95,7 @@ export const ProjectDetailsStatistics: React.FunctionComponent = () => {
                                                     </span>
                                                     <div
                                                         style={{ display: "inline" }}>
-                                                        {i.name}: {hours}{t('hour')} <p style={{ display: "inline", color: "silver" }}>{percent}%</p>
+                                                        {i.name}: {formatNumber(hours)}{t('hour')} <p style={{ display: "inline", color: "silver" }}>{percent}%</p>
                                                     </div>
                                                 </Stack>
                                             </li>
@@ -132,7 +133,7 @@ export const ProjectDetailsStatistics: React.FunctionComponent = () => {
                                                     </span>
 
                                                     <div style={{ display: "inline" }}>
-                                                        {i.name}: {hours}{t('hour')} <p style={{ display: "inline", color: "silver" }}>{percent}%</p>
+                                                        {i.name}: {formatNumber(hours)}{t('hour')} <p style={{ display: "inline", color: "silver" }}>{percent}%</p>
                                                     </div>
                                                 </Stack>
                                             </li>

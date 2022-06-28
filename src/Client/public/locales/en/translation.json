@@ -88,5 +88,9 @@
     "from": "from",
     "to": "to",
     "period": "Period",
-    "difference": "Difference"
+    "difference": "Difference",
+    "work-planned": "Work planned for the whole week",
+    "not-enoght-hours-planned": "Not enoght hours scheduled",
+    "planned-too-many-hours" : "Planned number of hours exceeding the employee's rate",
+    "no-plan-for-a-week": "The project plan does not contain tasks for the current week"
 }

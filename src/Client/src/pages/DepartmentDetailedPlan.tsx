@@ -14,6 +14,7 @@ import { WeekPlanCellRenderer } from "../components/DepartmentPlan/Renderers/Wee
 import { ProjectNameCellRenderer } from "../components/DepartmentPlan/Renderers/ProjectNameCellRenderer";
 import { ServicesStorageHelper } from "../common/servicesStorageHelper";
 import { setHiddenRows } from "../redux/departmentPlanSlice";
+import { Legend } from "../components/DepartmentPlan/Legend";
 
 const initPlan: DepartmentUserPlan[] = [{
     id: '',
@@ -226,6 +227,7 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
                         })
                     }
                 </HotTable>
+                <Legend />
             </div>
         </div>)
 }

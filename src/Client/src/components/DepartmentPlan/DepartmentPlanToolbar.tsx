@@ -106,11 +106,13 @@ export const DepartmentPlanToolbar: React.FunctionComponent<DepartmentPlanToolba
         if (!hotTableRef || !hotTableRef.current || !hotTableRef.current.hotInstance) {
             return;
         }
+
+        dispatch(toggleShowStatistics())
+
         const plugin = hotTableRef.current.hotInstance.getPlugin('nestedRows') as any;
         const currentCollapsedRows: number[] = plugin.collapsingUI.collapsedRows as number[];
-        
+
         dispatch(setCollapsedRows(currentCollapsedRows))
-        dispatch(toggleShowStatistics())
 
         setTimeout(() => {
             plugin.collapsingUI.collapseMultipleChildren(currentCollapsedRows);
@@ -240,12 +242,12 @@ export const DepartmentPlanToolbar: React.FunctionComponent<DepartmentPlanToolba
                 </Grid>
             </Grid>
         </div>
-        <DepartmentPlanStatistics 
-            departmentId={departmentId} 
-            departmentName={departmentName} 
-            start={new Date(startDate)} 
-            end={new Date(endDate)} 
-            plan={plan}/>
+        <DepartmentPlanStatistics
+            departmentId={departmentId}
+            departmentName={departmentName}
+            start={new Date(startDate)}
+            end={new Date(endDate)}
+            plan={plan} />
     </div>
 
 }

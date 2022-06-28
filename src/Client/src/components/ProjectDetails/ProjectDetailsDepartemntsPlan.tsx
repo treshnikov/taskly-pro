@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector } from "../../hooks/redux.hook";
 import { IProjectTaskVm, ProjectTaskVm, ProjectTaskVmHelper } from "../../models/ProjectDetails/ProjectTaskVm";
 import { changeTask, toggleShowDepartmentsPlan } from "../../redux/projectDetailsSlice";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { formatNumber } from "../../common/numberFormat";
 
 type ProjectDetailsDepartemntsPlanProps = {
 }
@@ -79,7 +80,7 @@ export const ProjectDetailsDepartemntsPlan: React.FunctionComponent<ProjectDetai
             >
                 <DialogTitle
                     id="_showDepartmentsPlan">
-                    #{selectedRowIdx + 1} {task.description} {task.totalHours}{t('hour')}
+                    #{selectedRowIdx + 1} {task.description} {formatNumber(task.totalHours)}{t('hour')}
                 </DialogTitle>
                 <Divider />
                 <DialogContent>
@@ -102,7 +103,7 @@ export const ProjectDetailsDepartemntsPlan: React.FunctionComponent<ProjectDetai
                                         id={"panelheader-content" + idx}
                                     >
                                         <Typography>
-                                            {i.departmentShortName === '' ? i.departmentName : i.departmentShortName}: {i.totalHours}{t('hour')}
+                                            {i.departmentShortName === '' ? i.departmentName : i.departmentShortName}: {formatNumber(i.totalHours)}{t('hour')}
                                         </Typography>
                                     </AccordionSummary>
                                     <AccordionDetails>
