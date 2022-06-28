@@ -20,7 +20,7 @@ export const ProjectDetailsStatistics: React.FunctionComponent = () => {
         cutoutPercentage: 70,
         layout: { padding: 25 },
         legend: {
-            display: true
+            display: "hidden"
         },
         maintainAspectRatio: false,
         responsive: true,

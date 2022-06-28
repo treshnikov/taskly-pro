@@ -32,7 +32,7 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentPlan
                 .AsNoTracking()
                 .Where(
                     p => p.Tasks.Any(t =>
-                        request.Start < t.End && t.Start < request.End &&
+                        request.Start <= t.End && t.Start <= request.End &&
                         t.DepartmentEstimations.Any(de => de.Department.Id == request.DepartmentId && de.Estimations.Sum(des => des.Hours) > 0))
                 )
                 .ToListAsync(cancellationToken);
@@ -85,7 +85,7 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentPlan
                     {
                         var taskTimes = project.Tasks
                             .Where(t => t.DepartmentEstimations.Any(de => de.Department.Id == dep.Id) &&
-                             request.Start < t.End && t.Start < request.End)
+                             request.Start <= t.End && t.Start <= request.End)
                             .OrderBy(t => t.Start);
                         projectPlan.TaskTimes.AddRange(taskTimes.Select(i => new TaskTimeVm
                         {

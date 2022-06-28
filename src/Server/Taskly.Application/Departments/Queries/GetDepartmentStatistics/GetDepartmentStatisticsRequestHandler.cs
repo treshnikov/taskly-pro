@@ -36,7 +36,7 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
                 .Include(i => i.DepartmentEstimations).ThenInclude(i => i.Department)
                 .AsNoTracking()
                 .Where(t =>
-                        request.Start < t.End && t.Start < request.End &&
+                        request.Start <= t.End && t.Start <= request.End &&
                         t.DepartmentEstimations.Any(de => de.Department.Id == request.DepartmentId && de.Estimations.Sum(des => des.Hours) > 0)
                 )
                 .OrderBy(i => i.Id)
@@ -86,7 +86,7 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
                         {
                             foreach (var e in de.Estimations)
                             {
-                                var hours = CalculateAvailableTime(task.Start, task.End, weekStart, weekStart.AddDays(7), e.Hours);
+                                var hours = CalculateAvailableTime(task.Start, task.End, weekStart, weekStart.AddDays(7).AddSeconds(-1), e.Hours);
                                 projHours += hours;
                                 estimationVm.ProjectPlannedHours += hours;
                             }
@@ -174,7 +174,9 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
                     {
                         foreach (var e in de.Estimations)
                         {
-                            projStat.PlannedTaskHoursForDepartment += CalculateAvailableTime(task.Start, task.End, request.Start, request.End, e.Hours);
+                            var hours = CalculateAvailableTime(task.Start, task.End, request.Start, request.End, e.Hours);
+                            projStat.PlannedTaskHoursForDepartment += hours;
+                            //Log.Logger.Warning($"{task.ProjectId}: {task.Project.ShortName} - {e.UserPosition.Ident} / add {hours} from {e.Hours} that were planned for period from {task.Start.ToString("dd.MM.yyyy")} to {task.End.ToString("dd.MM.yyyy")}");
                         }
                     }
                 }

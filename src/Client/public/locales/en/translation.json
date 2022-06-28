@@ -92,5 +92,6 @@
     "work-planned": "Work planned for the whole week",
     "not-enoght-hours-planned": "Not enoght hours scheduled",
     "planned-too-many-hours" : "Planned number of hours exceeding the employee's rate",
-    "no-plan-for-a-week": "The project plan does not contain tasks for the current week"
+    "no-plan-for-a-week": "The project plan does not contain tasks for the current week",
+    "project-to-department-plan-hours": "The ratio of the time planned for the project to the time planned for the work of the department"
 }

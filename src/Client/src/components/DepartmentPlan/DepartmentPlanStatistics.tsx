@@ -1,16 +1,19 @@
-import HotTable, { HotColumn } from "@handsontable/react";
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Grid, Stack } from "@mui/material"
-import { height } from "@mui/system";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider } from "@mui/material"
+import Box from '@mui/material/Box';
+import Tab from '@mui/material/Tab';
+import TabContext from '@mui/lab/TabContext';
+import TabList from '@mui/lab/TabList';
+import TabPanel from '@mui/lab/TabPanel';
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { dateAsShortStr, dateToRequestStr } from "../../common/dateFormatter";
-import { formatNumber } from "../../common/numberFormat";
+import { dateToRequestStr } from "../../common/dateFormatter";
 import { useHttp } from "../../hooks/http.hook";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux.hook";
 import { DepartmentUserPlan } from "../../models/DepartmentPlan/DepartmentPlanClasses";
 import { toggleShowStatistics } from "../../redux/departmentPlanSlice";
-import { StatisticsProjectNameCellRenderer } from "./Renderers/StatisticsProjectNameCellRenderer";
-import { TimeDeltaCellRenderer } from "./Renderers/TimeDeltaCellRenderer";
+import { ProjectPlanToDepartmentPlanBarChart } from "./ProjectPlanToDepartmentPlanBarChart";
+import { StatisticsSummary } from "./StatisticsSummary";
+import { ProjectStatisticsTable } from "./ProjectStatisticsTable";
 
 export type DepartmentPlanStatisticsProps = {
     departmentId: string
@@ -24,7 +27,7 @@ interface DepartmentStatisticsVm {
     projects: ProjectStatisticsVm[]
 }
 
-interface ProjectStatisticsVm {
+export interface ProjectStatisticsVm {
     id: number
     name: string
     plannedTaskHoursForDepartment: number
@@ -34,72 +37,39 @@ interface ProjectStatisticsVm {
 
 export const DepartmentPlanStatistics: React.FunctionComponent<DepartmentPlanStatisticsProps> = (props) => {
     const { t } = useTranslation();
+    const { request } = useHttp()
     const dispatch = useAppDispatch()
     const showStatistics = useAppSelector(state => state.departmentPlanReducer.showStatistics)
-    const { request } = useHttp()
 
     const [projectStatistics, setProjectStatistics] = useState<ProjectStatisticsVm[]>([])
-    const [hoursInWeeks, setHoursInWeeks] = useState<number>(0)
-    const [hoursInProjects, setHoursInProjects] = useState<number>(0)
-    const [hoursInDepartmentPlan, setHoursInDepartmentPlan] = useState<number>(0)
+    const [selectedTab, setSelectedTab] = useState('1');
+
+    const selectedTabChanged = (event: React.SyntheticEvent, newValue: string) => {
+        setSelectedTab(newValue);
+    }
 
     const onClose = () => {
         dispatch(toggleShowStatistics())
     }
+
+    const tabStyle = { border: 0, color: "#373737" }
 
     useEffect(() => {
         if (!showStatistics) {
             return
         }
 
+        setSelectedTab('1')
         request(`/api/v1/departments/${props.departmentId}/${dateToRequestStr(props.start)}/${dateToRequestStr(props.end)}/statistics`,
             "GET",
             null,
             [{ name: 'Content-Type', value: 'application/json' }])
             .then(data => {
                 const projStat = (data as DepartmentStatisticsVm).projects
-                calcPlannedHours()
                 setProjectStatistics(projStat)
             })
 
     }, [showStatistics])
-
-    useEffect(() => {
-        calcHoursInDepartmentPlan()
-        calcHoursInProjects()
-    }, [projectStatistics])
-
-    const getEmployeeNumber = (): number => {
-        return props.plan?.map(i => i.rate)?.reduce((p, c) => { return p + c })
-    }
-
-    const calcHoursInProjects = () => {
-        if (projectStatistics && projectStatistics.length > 0) {
-            const hours = projectStatistics.map(i => i.plannedTaskHoursForDepartment)?.reduce((p, c) => { return p + c })
-            setHoursInProjects(hours)
-        }
-    }
-
-    const calcHoursInDepartmentPlan = () => {
-        if (projectStatistics && projectStatistics.length > 0) {
-            const hours = projectStatistics.map(i => i.plannedTaskHoursByDepartment)?.reduce((p, c) => { return p + c })
-            setHoursInDepartmentPlan(hours)
-        }
-    }
-
-    const calcPlannedHours = () => {
-        let mondaysCount = 0
-        const dt = props.start
-        while (dt < props.end) {
-            if (dt.getDay() === 1) {
-                mondaysCount += 1
-            }
-
-            dt.setDate(dt.getDate() + 1)
-        }
-
-        setHoursInWeeks(mondaysCount * 8 * 5 * getEmployeeNumber())
-    }
 
     return (
         <div>
@@ -109,58 +79,50 @@ export const DepartmentPlanStatistics: React.FunctionComponent<DepartmentPlanSta
                 PaperProps={{ style: { minHeight: "90%", maxHeight: "90%", minWidth: "95%", maxWidth: "95%" } }}
                 open={showStatistics}
                 onClose={e => onClose()}
-                aria-labelledby="responsive-dialog-title"
+                aria-labelledby="depStat"
             >
                 <DialogTitle
-                    id="responsive-dialog-title">
+                    id="depStat">
                     {props.departmentName}. {t('statistics')}
                 </DialogTitle>
                 <Divider />
-                <DialogContent>
-                    <div>
-                        <h4 style={{ marginTop: 0 }}>
-                            {t('info')}
-                        </h4>
-                        <ul>
-                            <li>
-                                {t('period')}: {t('from')} {dateAsShortStr(props.start)} {t('to')} {dateAsShortStr(props.end)}
-                            </li>
-                            <li>
-                                {t('available-time-for-planning')}: {formatNumber(hoursInWeeks)}{t('hour')} ({t('employees')} = {getEmployeeNumber()},  {t('weeks')} = {hoursInWeeks / 40 / getEmployeeNumber()})
-                            </li>
-                            <li>
-                                {t('project-plan-time')}: {formatNumber(hoursInProjects)}{t('hour')}
-                            </li>
-                            <li>
-                                {t('department-plan-time')}: {formatNumber(hoursInDepartmentPlan)}{t('hour')}
-                            </li>
-                        </ul>
-                        <h4>
-                            {t('projects')}
-                        </h4>
-                        <div style={{overflow: "auto"}}>
-                            <HotTable
-                                columnSorting={true}
-                                data={projectStatistics}
-                                colHeaders={["Id", t('project'), t('project-plan-time') + ", " + t('hour'), t('department-plan-time') + ", " + t('hour'), t('difference') + ", " + t('hour'), '']}
-                                fillHandle={false}
-                                manualRowMove={false}
-                                manualColumnMove={false}
-                                wordWrap={true}
-                                manualColumnResize={true}
-                                stretchH={"last"}
-                                height={"300px"}
-                                licenseKey='non-commercial-and-evaluation'
-                            >
-                                <HotColumn data={"id"} className='htCenter' readOnly type={"text"} />
-                                <HotColumn data={"name"} readOnly renderer={StatisticsProjectNameCellRenderer} />
-                                <HotColumn data={"plannedTaskHoursForDepartment"} className='htCenter' readOnly type={"numeric"} />
-                                <HotColumn data={"plannedTaskHoursByDepartment"} className='htCenter' readOnly type={"numeric"} />
-                                <HotColumn data={"deltaHours"} readOnly renderer={TimeDeltaCellRenderer} />
-                                <HotColumn readOnly />
-                            </HotTable>
-                        </div>
-                    </div>
+                <DialogContent
+                    sx={{ padding: 0 }}>
+                    <TabContext
+                        value={selectedTab}>
+                        <Box
+                            sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                            <TabList
+                                onChange={selectedTabChanged}>
+                                <Tab
+                                    label={t('info')}
+                                    style={tabStyle}
+                                    value="1" />
+                                <Tab
+                                    label={t('projects')}
+                                    style={tabStyle}
+                                    value="2" />
+                                <Tab
+                                    label={t('plans')}
+                                    style={tabStyle}
+                                    value="3" />
+                            </TabList>
+                        </Box>
+                        <TabPanel value="1">
+                            <StatisticsSummary
+                                start={props.start}
+                                end={props.end}
+                                plan={props.plan}
+                                projectStatistics={projectStatistics} />
+                        </TabPanel>
+                        <TabPanel value="2">
+                            <ProjectStatisticsTable
+                                projectStatistics={projectStatistics} />
+                        </TabPanel>
+                        <TabPanel value="3">
+                            <ProjectPlanToDepartmentPlanBarChart />
+                        </TabPanel>
+                    </TabContext>
                 </DialogContent>
                 <DialogActions>
                     <Button
@@ -174,4 +136,3 @@ export const DepartmentPlanStatistics: React.FunctionComponent<DepartmentPlanSta
         </div>
     )
 }
-
