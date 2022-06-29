@@ -88,13 +88,13 @@ export const DepartmentPlanStatistics: React.FunctionComponent<DepartmentPlanSta
                                     style={tabStyle}
                                     value="1" />
                                 <Tab
-                                    label={t('projects')}
-                                    style={tabStyle}
-                                    value="2" />
-                                <Tab
                                     label={t('plans')}
                                     style={tabStyle}
                                     value="3" />
+                                <Tab
+                                    label={t('projects')}
+                                    style={tabStyle}
+                                    value="2" />
                             </TabList>
                         </Box>
                         <TabPanel value="1">
@@ -109,8 +109,14 @@ export const DepartmentPlanStatistics: React.FunctionComponent<DepartmentPlanSta
                                 projectStatistics={projectStatistics} />
                         </TabPanel>
                         <TabPanel value="3">
-                            <ProjectPlanToDepartmentPlanBarChart 
-                                weeks={weeksStatistics} 
+                            <ProjectPlanToDepartmentPlanBarChart
+                                kind="projects"
+                                weeks={weeksStatistics}
+                                plan={props.plan} />
+                            <div style={{ height: "50px" }} />
+                            <ProjectPlanToDepartmentPlanBarChart
+                                kind="department"
+                                weeks={weeksStatistics}
                                 plan={props.plan} />
                         </TabPanel>
                     </TabContext>

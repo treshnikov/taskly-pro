@@ -8,6 +8,7 @@ export type WeekStatistics = {
     projectPlannedHours: number
     departmentPlannedHours: number
     projectPlanDetails: ProjectPlanDetailVm[]
+    departmentPlanDetails: ProjectPlanDetailVm[]
 }
 
 export type ProjectPlanDetailVm = {

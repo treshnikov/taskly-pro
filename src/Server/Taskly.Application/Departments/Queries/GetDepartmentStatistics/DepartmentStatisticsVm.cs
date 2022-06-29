@@ -12,6 +12,7 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
         public double ProjectPlannedHours { get; set; }
         public double DepartmentPlannedHours { get; set; }
         public List<ProjectPlanDetailVm> ProjectPlanDetails { get; set; }
+        public List<ProjectPlanDetailVm> DepartmentPlanDetails { get; set; }
     }
 
     public class ProjectPlanDetailVm

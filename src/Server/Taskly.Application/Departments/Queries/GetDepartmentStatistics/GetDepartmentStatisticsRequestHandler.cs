@@ -51,13 +51,15 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
                 .ToListAsync(cancellationToken);
 
             await FillProjectInfo(request, res, dep, tasks, plans, cancellationToken);
-            FillProjectToDepartmentEstimations(request, res, dep, tasks, plans);
+            await FillProjectToDepartmentEstimationsAsync(request, res, dep, tasks, plans, cancellationToken);
 
             return await Task.FromResult(res);
         }
 
-        private static void FillProjectToDepartmentEstimations(GetDepartmentStatisticsRequest request, DepartmentStatisticsVm res, Department dep, List<ProjectTask> tasks, List<DepartmentPlan> plans)
+        private async Task FillProjectToDepartmentEstimationsAsync(GetDepartmentStatisticsRequest request, DepartmentStatisticsVm res, Department dep, List<ProjectTask> tasks, List<DepartmentPlan> plans, CancellationToken cancellationToken)
         {
+            var dbProjects = await _dbContext.Projects.AsNoTracking().ToListAsync(cancellationToken);
+
             // find first monday
             var weekStart = request.Start;
             while (weekStart.DayOfWeek != DayOfWeek.Monday)
@@ -73,11 +75,23 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
                     WeekStart = weekStart,
                     DepartmentPlannedHours = 0,
                     ProjectPlannedHours = 0,
-                    ProjectPlanDetails = new List<ProjectPlanDetailVm>()
+                    ProjectPlanDetails = new List<ProjectPlanDetailVm>(),
+                    DepartmentPlanDetails = new List<ProjectPlanDetailVm>()
                 };
 
                 // plan by departments
                 estimationVm.DepartmentPlannedHours = plans.Where(i => i.WeekStart == weekStart).Sum(i => i.Hours);
+                foreach (var planGroup in plans.Where(i => i.WeekStart == weekStart).GroupBy(p => p.ProjectId))
+                {
+                    var projId = planGroup.Key;
+                    var proj = dbProjects.First(t => t.Id == projId);
+
+                    estimationVm.DepartmentPlanDetails.Add(new ProjectPlanDetailVm
+                    {
+                        ProjectName = $"{projId}: {proj.ShortName ?? proj.Name}",
+                        Hours = planGroup.Sum(i => i.Hours)
+                    });
+                }
 
                 // plan in project tasks
                 var tasksGroupedByProjects = tasks.OrderBy(i => i.ProjectId).GroupBy(i => i.ProjectId);
@@ -100,7 +114,7 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
 
                     if (projHours > 0)
                     {
-                        var proj = tasks.First(t => t.ProjectId == projId).Project;
+                        var proj = dbProjects.First(t => t.Id == projId);
                         estimationVm.ProjectPlanDetails.Add(
                             new ProjectPlanDetailVm
                             {

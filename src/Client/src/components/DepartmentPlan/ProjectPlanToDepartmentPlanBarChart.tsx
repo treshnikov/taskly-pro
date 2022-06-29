@@ -20,9 +20,10 @@ ChartJS.register(
 export type ProjectPlanToDepartmentPlanBarChartProps = {
     weeks: WeekStatistics[]
     plan: DepartmentUserPlan[]
+    kind: "projects" | "department"
 }
 
-export const ProjectPlanToDepartmentPlanBarChart: React.FunctionComponent<ProjectPlanToDepartmentPlanBarChartProps> = ({ weeks, plan }) => {
+export const ProjectPlanToDepartmentPlanBarChart: React.FunctionComponent<ProjectPlanToDepartmentPlanBarChartProps> = ({ weeks, plan, kind }) => {
     const { t } = useTranslation();
     const options = {
         cutoutPercentage: 70,
@@ -51,9 +52,17 @@ export const ProjectPlanToDepartmentPlanBarChart: React.FunctionComponent<Projec
 
         let uniqueProjects: string[] = []
         weeks.forEach(w => {
-            w.projectPlanDetails.forEach(d => {
-                uniqueProjects.push(d.projectName)
-            })
+            if (kind === "projects") {
+                w.projectPlanDetails.forEach(d => {
+                    uniqueProjects.push(d.projectName)
+                })
+            }
+
+            if (kind === "department") {
+                w.departmentPlanDetails.forEach(d => {
+                    uniqueProjects.push(d.projectName)
+                })
+            }
         })
         uniqueProjects = uniqueProjects.filter((v, i, a) => a.indexOf(v) === i)
 
@@ -66,7 +75,9 @@ export const ProjectPlanToDepartmentPlanBarChart: React.FunctionComponent<Projec
             ch.datasets[0].data.push(availableHoursPerWeek)
             uniqueProjects.forEach(p => {
                 const ds = ch.datasets.find(j => j.label === p)
-                const details = w.projectPlanDetails.find(j => j.projectName === p)
+                const details = kind == "projects"
+                    ? w.projectPlanDetails.find(j => j.projectName === p)
+                    : w.departmentPlanDetails.find(j => j.projectName === p)
                 ds?.data.push(details ? details.hours : 0)
             })
 
@@ -82,7 +93,7 @@ export const ProjectPlanToDepartmentPlanBarChart: React.FunctionComponent<Projec
 
     return <div style={{ height: "400px" }}>
         <h4 style={{ marginTop: 0 }}>
-            {t('project-plan-time')}
+            {kind === "projects" ? t('project-plan-time') : t('department-plan-time')}
         </h4>
         <Chart type='bar' options={options} data={chartData as ChartData} />
     </div>
