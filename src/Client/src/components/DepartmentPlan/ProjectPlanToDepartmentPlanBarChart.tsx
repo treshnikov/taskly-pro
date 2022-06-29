@@ -1,20 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ChartType, ChartData, LineElement, PointElement, } from 'chart.js';
-import { Chart } from 'react-chartjs-2';
+import { Chart, ChartData, ChartType, registerables } from 'chart.js';
+import { Chart as ChartJs } from 'react-chartjs-2';
 import { useTranslation } from 'react-i18next';
 import { WeekStatistics } from '../../models/DepartmentPlan/DepartmentPlanStatisticsClasses';
 import { dateAsShortStr } from '../../common/dateFormatter';
 import { DepartmentUserPlan } from '../../models/DepartmentPlan/DepartmentPlanClasses';
 import { getColor } from '../../common/getColor';
 
-ChartJS.register(
-    LinearScale,
-    CategoryScale,
-    PointElement,
-    LineElement,
-    BarElement,
-    Title,
-    Tooltip
+Chart.register(
+    ...registerables
 );
 
 export type ProjectPlanToDepartmentPlanBarChartProps = {
@@ -28,12 +22,13 @@ export const ProjectPlanToDepartmentPlanBarChart: React.FunctionComponent<Projec
     const options = {
         cutoutPercentage: 70,
         layout: { padding: 25 },
-        legend: { display: "hidden" },
+        legend: { display: "" },
         maintainAspectRatio: false,
         responsive: true,
         scales: { x: { stacked: true }, y: { stacked: true } },
         animation: { duration: 0 },
-        responsiveAnimationDuration: 0
+        responsiveAnimationDuration: 0,
+        plugins: { legend: { display: false } }
     }
 
     const [chartData, setChartData] = useState<ChartData<ChartType, number[], string>>()
@@ -48,7 +43,7 @@ export const ProjectPlanToDepartmentPlanBarChart: React.FunctionComponent<Projec
         let ch: ChartData<ChartType, number[], string> = {
             labels: [],
             datasets: [
-                { data: [], animation: false, backgroundColor: 'grey', label: t('available-hours-per-week') + " (" + availableHoursPerWeek + ")", type: 'line', borderWidth: 2, borderColor: 'grey', fill: true, pointRadius: 0 },
+                { data: [], animation: false, backgroundColor: 'grey', label: t('available-hours-per-week') + " (" + availableHoursPerWeek + ")", type: 'line', borderWidth: 2, borderColor: 'grey', fill: false, pointRadius: 0 },
             ]
         }
 
@@ -97,6 +92,6 @@ export const ProjectPlanToDepartmentPlanBarChart: React.FunctionComponent<Projec
         <h4 style={{ marginTop: 0 }}>
             {kind === "projects" ? t('project-plan-time') : t('department-plan-time')}
         </h4>
-        <Chart type='bar' options={options} data={chartData as ChartData} />
+        <ChartJs type='bar' options={options} data={chartData as ChartData} />
     </div>
 } 

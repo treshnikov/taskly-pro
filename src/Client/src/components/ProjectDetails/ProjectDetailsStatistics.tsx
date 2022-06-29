@@ -20,9 +20,8 @@ export const ProjectDetailsStatistics: React.FunctionComponent = () => {
     const options = {
         cutoutPercentage: 70,
         layout: { padding: 25 },
-        legend: {
-            display: "hidden"
-        },
+        legend: { display: "hidden" },
+        plugins: { legend: { display: false } },
         maintainAspectRatio: false,
         responsive: true,
     };
