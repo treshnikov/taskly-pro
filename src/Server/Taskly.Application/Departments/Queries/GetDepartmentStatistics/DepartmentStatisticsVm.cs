@@ -1,3 +1,5 @@
+using Taskly.Domain;
+
 namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
 {
     public class DepartmentStatisticsVm
@@ -25,6 +27,7 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public ProjectType ProjectType { get; set; }
         public double PlannedTaskHoursForDepartment { get; set; }
         public double PlannedTaskHoursByDepartment { get; set; }
         public double DeltaHours { get; set; }

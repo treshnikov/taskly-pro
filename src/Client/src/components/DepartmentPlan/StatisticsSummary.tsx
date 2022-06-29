@@ -12,11 +12,12 @@ export type StatisticsSummaryProps = {
     plan: DepartmentUserPlan[]
 }
 
-export const StatisticsSummary: React.FunctionComponent<StatisticsSummaryProps> = ({start, end, projectStatistics, plan}) => {
+export const StatisticsSummary: React.FunctionComponent<StatisticsSummaryProps> = ({ start, end, projectStatistics, plan }) => {
     const { t } = useTranslation();
     const [hoursInWeeks, setHoursInWeeks] = useState<number>(0)
     const [hoursInProjects, setHoursInProjects] = useState<number>(0)
     const [hoursInDepartmentPlan, setHoursInDepartmentPlan] = useState<number>(0)
+    const [externalProjectsProportion, setExternalProjectsProportion] = useState<number>(0)
 
     const calcHoursInProjects = () => {
         if (projectStatistics && projectStatistics.length > 0) {
@@ -51,10 +52,31 @@ export const StatisticsSummary: React.FunctionComponent<StatisticsSummaryProps> 
         return plan?.map(i => i.rate)?.reduce((p, c) => { return p + c })
     }
 
+    const calsExternalProjectsProportion = () => {
+        if (projectStatistics.length === 0){
+            return
+        }
+        
+        const internal = projectStatistics
+            .filter(i => i.projectType === 0)
+            .map(i => i.plannedTaskHoursForDepartment)
+            .reduce((p, c) => { return p + c })
+
+        const external = projectStatistics
+            .filter(i => i.projectType === 1)
+            .map(i => i.plannedTaskHoursForDepartment)
+            .reduce((p, c) => { return p + c })
+
+        let res = 100 * external / (external + internal)
+        res = Math.round(res * 100) / 100
+        setExternalProjectsProportion(res)
+    }
+
     useEffect(() => {
         calcPlannedHours()
         calcHoursInDepartmentPlan()
         calcHoursInProjects()
+        calsExternalProjectsProportion()
     }, [start, end, plan, projectStatistics])
 
     return <div>
@@ -73,6 +95,9 @@ export const StatisticsSummary: React.FunctionComponent<StatisticsSummaryProps> 
             </li>
             <li>
                 {t('department-plan-time')}: {formatNumber(hoursInDepartmentPlan)}{t('hour')}
+            </li>
+            <li>
+                {t('external-projects-proportion')}: {externalProjectsProportion}%
             </li>
         </ul>
     </div>

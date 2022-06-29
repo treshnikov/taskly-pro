@@ -9,7 +9,7 @@ import { getColor } from '../../common/getColor';
 
 Chart.register(
     ...registerables
-);
+)
 
 export type ProjectPlanToDepartmentPlanBarChartProps = {
     weeks: WeekStatistics[]

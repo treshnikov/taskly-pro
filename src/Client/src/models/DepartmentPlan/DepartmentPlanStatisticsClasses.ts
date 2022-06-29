@@ -19,6 +19,7 @@ export type ProjectPlanDetailVm = {
 export type ProjectStatisticsVm = {
     id: number
     name: string
+    projectType: number
     plannedTaskHoursForDepartment: number
     plannedTaskHoursByDepartment: number
     deltaHours: number

@@ -81,6 +81,8 @@
     "insufficient-privileges": "Insufficient privileges to perform this operation",
     "project-plan-time": "Time planned in projects for the department",
     "department-plan-time": "Time planned by the department",
+    "project-plan-time-br": "Time planned <br/>in projects <br/>for the department",
+    "department-plan-time-br": "Time planned <br/>by the department",
     "info": "Info",
     "available-time-for-planning": "Available time for planning",
     "employees": "employees",
@@ -94,5 +96,7 @@
     "planned-too-many-hours" : "Planned number of hours exceeding the employee's rate",
     "no-plan-for-a-week": "The project plan does not contain tasks for the current week",
     "project-to-department-plan-hours": "The ratio of the time planned for the project to the time planned for the work of the department",
-    "available-hours-per-week": "Available hours per week for planning"
+    "available-hours-per-week": "Available hours per week for planning",
+    "internal": "Internal",
+    "external-projects-proportion": "External projects proportion"
 }
