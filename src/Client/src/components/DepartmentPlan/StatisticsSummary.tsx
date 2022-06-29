@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { dateAsShortStr } from "../../common/dateFormatter";
 import { formatNumber } from "../../common/numberFormat";
 import { DepartmentUserPlan } from "../../models/DepartmentPlan/DepartmentPlanClasses";
-import { ProjectStatisticsVm } from "./DepartmentPlanStatistics";
+import { ProjectStatisticsVm } from "../../models/DepartmentPlan/DepartmentPlanStatisticsClasses";
 
 export type StatisticsSummaryProps = {
     start: Date
@@ -54,7 +54,7 @@ export const StatisticsSummary: React.FunctionComponent<StatisticsSummaryProps> 
         calcPlannedHours()
         calcHoursInDepartmentPlan()
         calcHoursInProjects()
-    }, [props.projectStatistics])
+    }, [props.projectStatistics, props.plan])
 
     return <div>
         <h4 style={{ marginTop: 0 }}>

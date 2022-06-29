@@ -1,6 +1,6 @@
 import HotTable, { HotColumn } from "@handsontable/react"
 import { useTranslation } from "react-i18next"
-import { ProjectStatisticsVm } from "./DepartmentPlanStatistics"
+import { ProjectStatisticsVm } from "../../models/DepartmentPlan/DepartmentPlanStatisticsClasses"
 import { StatisticsProjectNameCellRenderer } from "./Renderers/StatisticsProjectNameCellRenderer"
 import { TimeDeltaCellRenderer } from "./Renderers/TimeDeltaCellRenderer"
 

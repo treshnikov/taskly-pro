@@ -14,6 +14,7 @@ import { toggleShowStatistics } from "../../redux/departmentPlanSlice";
 import { ProjectPlanToDepartmentPlanBarChart } from "./ProjectPlanToDepartmentPlanBarChart";
 import { StatisticsSummary } from "./StatisticsSummary";
 import { ProjectStatisticsTable } from "./ProjectStatisticsTable";
+import { DepartmentStatisticsVm, ProjectStatisticsVm, WeekStatistics as WeekStatistics } from "../../models/DepartmentPlan/DepartmentPlanStatisticsClasses";
 
 export type DepartmentPlanStatisticsProps = {
     departmentId: string
@@ -23,18 +24,6 @@ export type DepartmentPlanStatisticsProps = {
     plan: DepartmentUserPlan[]
 }
 
-interface DepartmentStatisticsVm {
-    projects: ProjectStatisticsVm[]
-}
-
-export interface ProjectStatisticsVm {
-    id: number
-    name: string
-    plannedTaskHoursForDepartment: number
-    plannedTaskHoursByDepartment: number
-    deltaHours: number
-}
-
 export const DepartmentPlanStatistics: React.FunctionComponent<DepartmentPlanStatisticsProps> = (props) => {
     const { t } = useTranslation();
     const { request } = useHttp()
@@ -42,9 +31,10 @@ export const DepartmentPlanStatistics: React.FunctionComponent<DepartmentPlanSta
     const showStatistics = useAppSelector(state => state.departmentPlanReducer.showStatistics)
 
     const [projectStatistics, setProjectStatistics] = useState<ProjectStatisticsVm[]>([])
+    const [weeksStatistics, setWeeksStatistics] = useState<WeekStatistics[]>([])
     const [selectedTab, setSelectedTab] = useState('1');
 
-    const selectedTabChanged = (event: React.SyntheticEvent, newValue: string) => {
+    const selectedTabChanged = (e: React.SyntheticEvent, newValue: string) => {
         setSelectedTab(newValue);
     }
 
@@ -61,12 +51,11 @@ export const DepartmentPlanStatistics: React.FunctionComponent<DepartmentPlanSta
 
         setSelectedTab('1')
         request(`/api/v1/departments/${props.departmentId}/${dateToRequestStr(props.start)}/${dateToRequestStr(props.end)}/statistics`,
-            "GET",
-            null,
-            [{ name: 'Content-Type', value: 'application/json' }])
+            "GET", null, [{ name: 'Content-Type', value: 'application/json' }])
             .then(data => {
-                const projStat = (data as DepartmentStatisticsVm).projects
-                setProjectStatistics(projStat)
+                const statistics = (data as DepartmentStatisticsVm)
+                setProjectStatistics(statistics.projects)
+                setWeeksStatistics(statistics.weeks)
             })
 
     }, [showStatistics])
@@ -120,7 +109,9 @@ export const DepartmentPlanStatistics: React.FunctionComponent<DepartmentPlanSta
                                 projectStatistics={projectStatistics} />
                         </TabPanel>
                         <TabPanel value="3">
-                            <ProjectPlanToDepartmentPlanBarChart />
+                            <ProjectPlanToDepartmentPlanBarChart 
+                                weeks={weeksStatistics} 
+                                plan={props.plan} />
                         </TabPanel>
                     </TabContext>
                 </DialogContent>

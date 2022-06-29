@@ -7,6 +7,7 @@ import { toggleShowStatistics } from "../../redux/projectDetailsSlice";
 import { Doughnut } from 'react-chartjs-2';
 import { Chart, ArcElement } from 'chart.js'
 import { formatNumber } from "../../common/numberFormat";
+
 Chart.register(ArcElement);
 
 export const ProjectDetailsStatistics: React.FunctionComponent = () => {
