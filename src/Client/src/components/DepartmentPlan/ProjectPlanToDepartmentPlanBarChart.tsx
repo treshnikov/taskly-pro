@@ -31,7 +31,9 @@ export const ProjectPlanToDepartmentPlanBarChart: React.FunctionComponent<Projec
         legend: { display: "hidden" },
         maintainAspectRatio: false,
         responsive: true,
-        scales: { x: { stacked: true }, y: { stacked: true } }
+        scales: { x: { stacked: true }, y: { stacked: true } },
+        animation: { duration: 0 },
+        responsiveAnimationDuration: 0
     }
 
     const [chartData, setChartData] = useState<ChartData<ChartType, number[], string>>()
@@ -46,7 +48,7 @@ export const ProjectPlanToDepartmentPlanBarChart: React.FunctionComponent<Projec
         let ch: ChartData<ChartType, number[], string> = {
             labels: [],
             datasets: [
-                { data: [], backgroundColor: 'grey', label: t('available-hours-per-week') + " (" + availableHoursPerWeek + ")", type: 'line', borderWidth: 2, borderColor: 'grey', fill: true, pointRadius: 0 },
+                { data: [], animation: false, backgroundColor: 'grey', label: t('available-hours-per-week') + " (" + availableHoursPerWeek + ")", type: 'line', borderWidth: 2, borderColor: 'grey', fill: true, pointRadius: 0 },
             ]
         }
 
@@ -68,7 +70,7 @@ export const ProjectPlanToDepartmentPlanBarChart: React.FunctionComponent<Projec
 
         // populate datasets
         uniqueProjects.forEach(p => {
-            ch.datasets.push({ data: [], backgroundColor: getColor(p), label: p, type: 'bar', borderColor: "white", stack: 'projPlanStack' })
+            ch.datasets.push({ data: [], backgroundColor: getColor(p), label: p, animation: false, type: 'bar', borderColor: "white", stack: 'projPlanStack' })
         })
 
         weeks.forEach(w => {
