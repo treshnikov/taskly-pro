@@ -68,8 +68,13 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
             // iterate through weeks and calculate the sum of planned hours
             while (weekStart <= request.End)
             {
-                var estimationVm = new ProjectToDepartmentEstimationVm { WeekStart = weekStart, DepartmentPlannedHours = 0, ProjectPlannedHours = 0 };
-                var hint = new StringBuilder();
+                var estimationVm = new ProjectToDepartmentEstimationVm
+                {
+                    WeekStart = weekStart,
+                    DepartmentPlannedHours = 0,
+                    ProjectPlannedHours = 0,
+                    ProjectPlanDetails = new List<ProjectPlanDetailVm>()
+                };
 
                 // plan by departments
                 estimationVm.DepartmentPlannedHours = plans.Where(i => i.WeekStart == weekStart).Sum(i => i.Hours);
@@ -92,15 +97,20 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
                             }
                         }
                     }
+
                     if (projHours > 0)
                     {
-                        hint.AppendLine($"{projId}: {tasks.First(t => t.ProjectId == projId).Project.ShortName} - {((long)projHours == 0 ? Math.Round(projHours, 1) : (long)projHours)}h");
+                        var proj = tasks.First(t => t.ProjectId == projId).Project;
+                        estimationVm.ProjectPlanDetails.Add(
+                            new ProjectPlanDetailVm
+                            {
+                                Hours = ((long)projHours == 0 ? Math.Round(projHours, 1) : (long)projHours),
+                                ProjectName = $"{projId}: {proj.ShortName ?? proj.Name}"
+                            });
                     }
                 }
 
                 estimationVm.ProjectPlannedHours = (long)estimationVm.ProjectPlannedHours;
-                estimationVm.Hint = hint.ToString();
-
                 res.Weeks.Add(estimationVm);
                 weekStart = weekStart.AddDays(7);
             }
@@ -222,7 +232,7 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
                 # case 4 - available time equals a time segment from task start to request end
                 task                       	   					  ts|-------|te
                 request                             rs|-----------------|re
-            
+
             */
             if (tStart >= rStart && tStart <= rEnd)
             {
