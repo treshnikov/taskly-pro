@@ -18,8 +18,8 @@ import { DepartmentStatisticsVm, ProjectStatisticsVm, WeekStatistics as WeekStat
 
 export type DepartmentPlanStatisticsProps = {
     departmentId: string
-    start: Date
-    end: Date
+    start: number
+    end: number
     departmentName: string
     plan: DepartmentUserPlan[]
 }
@@ -50,7 +50,7 @@ export const DepartmentPlanStatistics: React.FunctionComponent<DepartmentPlanSta
         }
 
         setSelectedTab('1')
-        request(`/api/v1/departments/${props.departmentId}/${dateToRequestStr(props.start)}/${dateToRequestStr(props.end)}/statistics`,
+        request(`/api/v1/departments/${props.departmentId}/${dateToRequestStr(new Date(props.start))}/${dateToRequestStr(new Date(props.end))}/statistics`,
             "GET", null, [{ name: 'Content-Type', value: 'application/json' }])
             .then(data => {
                 const statistics = (data as DepartmentStatisticsVm)

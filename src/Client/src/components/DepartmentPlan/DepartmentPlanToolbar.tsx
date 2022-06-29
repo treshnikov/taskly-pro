@@ -245,8 +245,8 @@ export const DepartmentPlanToolbar: React.FunctionComponent<DepartmentPlanToolba
         <DepartmentPlanStatistics
             departmentId={departmentId}
             departmentName={departmentName}
-            start={new Date(startDate)}
-            end={new Date(endDate)}
+            start={startDate}
+            end={endDate}
             plan={plan} />
     </div>
 

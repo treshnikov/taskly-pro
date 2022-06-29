@@ -124,6 +124,8 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
                     }
                 }
 
+                estimationVm.DepartmentPlanDetails = estimationVm.DepartmentPlanDetails.OrderBy(i => i.ProjectName).ToList();
+                estimationVm.ProjectPlanDetails = estimationVm.ProjectPlanDetails.OrderBy(i => i.ProjectName).ToList();
                 estimationVm.ProjectPlannedHours = (long)estimationVm.ProjectPlannedHours;
                 res.Weeks.Add(estimationVm);
                 weekStart = weekStart.AddDays(7);

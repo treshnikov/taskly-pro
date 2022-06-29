@@ -6,36 +6,37 @@ import { DepartmentUserPlan } from "../../models/DepartmentPlan/DepartmentPlanCl
 import { ProjectStatisticsVm } from "../../models/DepartmentPlan/DepartmentPlanStatisticsClasses";
 
 export type StatisticsSummaryProps = {
-    start: Date
-    end: Date
+    start: number
+    end: number
     projectStatistics: ProjectStatisticsVm[]
     plan: DepartmentUserPlan[]
 }
 
-export const StatisticsSummary: React.FunctionComponent<StatisticsSummaryProps> = (props) => {
+export const StatisticsSummary: React.FunctionComponent<StatisticsSummaryProps> = ({start, end, projectStatistics, plan}) => {
     const { t } = useTranslation();
     const [hoursInWeeks, setHoursInWeeks] = useState<number>(0)
     const [hoursInProjects, setHoursInProjects] = useState<number>(0)
     const [hoursInDepartmentPlan, setHoursInDepartmentPlan] = useState<number>(0)
 
     const calcHoursInProjects = () => {
-        if (props.projectStatistics && props.projectStatistics.length > 0) {
-            const hours = props.projectStatistics.map(i => i.plannedTaskHoursForDepartment)?.reduce((p, c) => { return p + c })
+        if (projectStatistics && projectStatistics.length > 0) {
+            const hours = projectStatistics.map(i => i.plannedTaskHoursForDepartment)?.reduce((p, c) => { return p + c })
             setHoursInProjects(hours)
         }
     }
 
     const calcHoursInDepartmentPlan = () => {
-        if (props.projectStatistics && props.projectStatistics.length > 0) {
-            const hours = props.projectStatistics.map(i => i.plannedTaskHoursByDepartment)?.reduce((p, c) => { return p + c })
+        if (projectStatistics && projectStatistics.length > 0) {
+            const hours = projectStatistics.map(i => i.plannedTaskHoursByDepartment)?.reduce((p, c) => { return p + c })
             setHoursInDepartmentPlan(hours)
         }
     }
 
     const calcPlannedHours = () => {
         let mondaysCount = 0
-        const dt = props.start
-        while (dt < props.end) {
+        const dt = new Date(start)
+        const endDate = new Date(end)
+        while (dt < endDate) {
             if (dt.getDay() === 1) {
                 mondaysCount += 1
             }
@@ -47,14 +48,14 @@ export const StatisticsSummary: React.FunctionComponent<StatisticsSummaryProps> 
     }
 
     const getEmployeeNumber = (): number => {
-        return props.plan?.map(i => i.rate)?.reduce((p, c) => { return p + c })
+        return plan?.map(i => i.rate)?.reduce((p, c) => { return p + c })
     }
 
     useEffect(() => {
         calcPlannedHours()
         calcHoursInDepartmentPlan()
         calcHoursInProjects()
-    }, [props.projectStatistics, props.plan])
+    }, [start, end, plan, projectStatistics])
 
     return <div>
         <h4 style={{ marginTop: 0 }}>
@@ -62,7 +63,7 @@ export const StatisticsSummary: React.FunctionComponent<StatisticsSummaryProps> 
         </h4>
         <ul>
             <li>
-                {t('period')}: {t('from')} {dateAsShortStr(props.start)} {t('to')} {dateAsShortStr(props.end)}
+                {t('period')}: {t('from')} {dateAsShortStr(new Date(start))} {t('to')} {dateAsShortStr(new Date(end))}
             </li>
             <li>
                 {t('available-time-for-planning')}: {formatNumber(hoursInWeeks)}{t('hour')} ({t('employees')} = {getEmployeeNumber()},  {t('weeks')} = {hoursInWeeks / 40 / getEmployeeNumber()})
