@@ -17,7 +17,9 @@ export const ProjectStatisticsTable: React.FunctionComponent<ProjectStatisticsTa
 
         <Grid
             container>
-            <Grid xs={8}>
+            <Grid
+                item
+                xs={8}>
                 <div style={{ overflow: "auto" }}>
                     <h4 style={{ marginTop: 0 }}>
                         {t('projects')}
@@ -46,8 +48,10 @@ export const ProjectStatisticsTable: React.FunctionComponent<ProjectStatisticsTa
                 </div>
 
             </Grid>
-            <Grid xs={4}>
-                <div style={{marginLeft: "30px"}}>
+            <Grid
+                item
+                xs={4}>
+                <div style={{ marginLeft: "30px" }}>
                     <h4 style={{ marginTop: 0 }}>
                         {t('estimation')}
                     </h4>

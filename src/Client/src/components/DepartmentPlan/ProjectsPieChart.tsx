@@ -46,7 +46,7 @@ export const ProjectsPieChart: React.FunctionComponent<ProjectsPieChartProps> = 
                     type: 'doughnut',
                     data: [],
                     animation: false,
-                    backgroundColor: projectStatistics.map(i => kind === "common"
+                    backgroundColor: projectStatistics?.map(i => kind === "common"
                         ? getColor(i.name)
                         : i.projectType === 0
                             ? "#ffc300"

@@ -22,7 +22,7 @@ export const StatisticsSummary: React.FunctionComponent<StatisticsSummaryProps> 
 
     const calcHoursInProjects = (): number => {
         if (projectStatistics && projectStatistics.length > 0) {
-            const hours = projectStatistics.map(i => i.plannedTaskHoursForDepartment)?.reduce((p, c) => { return p + c })
+            const hours = projectStatistics.map(i => i.plannedTaskHoursForDepartment)?.reduce((p, c) => { return p + c }, 0)
             setHoursInProjects(hours)
 
             return hours
@@ -33,7 +33,7 @@ export const StatisticsSummary: React.FunctionComponent<StatisticsSummaryProps> 
 
     const calcHoursInDepartmentPlan = () => {
         if (projectStatistics && projectStatistics.length > 0) {
-            const hours = projectStatistics.map(i => i.plannedTaskHoursByDepartment)?.reduce((p, c) => { return p + c })
+            const hours = projectStatistics.map(i => i.plannedTaskHoursByDepartment)?.reduce((p, c) => { return p + c }, 0)
             setHoursInDepartmentPlan(hours)
         }
     }
@@ -57,7 +57,7 @@ export const StatisticsSummary: React.FunctionComponent<StatisticsSummaryProps> 
     }
 
     const getEmployeeNumber = (): number => {
-        return plan?.map(i => i.rate)?.reduce((p, c) => { return p + c })
+        return plan?.map(i => i.rate)?.reduce((p, c) => { return p + c }, 0)
     }
 
     const calsExternalProjectsProportion = () => {
@@ -68,12 +68,12 @@ export const StatisticsSummary: React.FunctionComponent<StatisticsSummaryProps> 
         const internal = projectStatistics
             .filter(i => i.projectType === 0)
             .map(i => i.plannedTaskHoursForDepartment)
-            .reduce((p, c) => { return p + c })
+            .reduce((p, c) => { return p + c }, 0)
 
         const external = projectStatistics
             .filter(i => i.projectType === 1)
             .map(i => i.plannedTaskHoursForDepartment)
-            .reduce((p, c) => { return p + c })
+            .reduce((p, c) => { return p + c }, 0)
 
         let res = 100 * external / (external + internal)
         res = Math.round(res * 100) / 100

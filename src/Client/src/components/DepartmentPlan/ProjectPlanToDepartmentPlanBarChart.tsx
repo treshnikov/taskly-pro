@@ -34,7 +34,7 @@ export const ProjectPlanToDepartmentPlanBarChart: React.FunctionComponent<Projec
     const [chartData, setChartData] = useState<ChartData<ChartType, number[], string>>()
 
     const getAvailableHoursPerWeek = (): number => {
-        const employeeNumber = plan?.map(i => i.rate)?.reduce((p, c) => { return p + c })
+        const employeeNumber = plan?.map(i => i.rate)?.reduce((p, c) => { return p + c }, 0)
         return employeeNumber * 40
     }
 

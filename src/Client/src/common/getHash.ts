@@ -1,4 +1,8 @@
 export function getHash(arg: string): number {
+    if (!arg){
+        return 0
+    }
+
     var hash = 0, i, chr;
     if (arg.length === 0) return hash;
     for (i = 0; i < arg.length; i++) {

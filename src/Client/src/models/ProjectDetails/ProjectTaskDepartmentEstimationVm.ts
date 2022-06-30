@@ -38,6 +38,6 @@ export class ProjectTaskDepartmentEstimationVmHelper {
     }
 
     public static getTotalHours(arg: ProjectTaskDepartmentEstimationVm) {
-        return arg.estimations?.map(i => i.hours).reduce((acc, i) => acc += i, 0);
+        return arg.estimations?.map(i => i.hours).reduce((acc, i) => acc += i, 0)
     }
 }
