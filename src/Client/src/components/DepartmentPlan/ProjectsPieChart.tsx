@@ -1,4 +1,3 @@
-import { useTranslation } from "react-i18next";
 import { ProjectStatisticsVm } from "../../models/DepartmentPlan/DepartmentPlanStatisticsClasses"
 import { Chart, ChartData, ChartType, registerables } from 'chart.js';
 import { Chart as ChartJs } from 'react-chartjs-2';
@@ -15,7 +14,6 @@ type ProjectsPieChartProps = {
 }
 
 export const ProjectsPieChart: React.FunctionComponent<ProjectsPieChartProps> = ({ projectStatistics, kind }) => {
-    const { t } = useTranslation();
     const options = {
         layout: { padding: 0 },
         legend: { display: "" },
@@ -62,7 +60,7 @@ export const ProjectsPieChart: React.FunctionComponent<ProjectsPieChartProps> = 
         })
 
         setChartData(ch)
-    }, [projectStatistics])
+    }, [projectStatistics, kind])
 
     if (!chartData) {
         return <></>

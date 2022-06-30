@@ -72,7 +72,7 @@ export const ProjectPlanToDepartmentPlanBarChart: React.FunctionComponent<Projec
             ch.datasets[0].data.push(availableHoursPerWeek)
             uniqueProjects.forEach(p => {
                 const ds = ch.datasets.find(j => j.label === p)
-                const details = kind == "projects"
+                const details = kind === "projects"
                     ? w.projectPlanDetails.find(j => j.projectName === p)
                     : w.departmentPlanDetails.find(j => j.projectName === p)
                 ds?.data.push(details ? details.hours : 0)

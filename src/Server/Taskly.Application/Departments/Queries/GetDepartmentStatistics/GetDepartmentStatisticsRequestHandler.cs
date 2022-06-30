@@ -170,7 +170,7 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
                 if (resProj == null)
                 {
                     var proj = await _dbContext.Projects.AsNoTracking().FirstAsync(i => i.Id == projId, cancellationToken);
-                    resProj = new ProjectStatVm { Id = projId, ProjectType = proj.Type, Name = proj.ShortName, PlannedTaskHoursByDepartment = totalHours, PlannedTaskHoursForDepartment = 0 };
+                    resProj = new ProjectStatVm { Id = projId, ProjectType = proj.Type, Name = proj.ShortName ?? proj.Name, PlannedTaskHoursByDepartment = totalHours, PlannedTaskHoursForDepartment = 0 };
                     res.Projects.Add(resProj);
                 }
 
