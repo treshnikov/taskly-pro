@@ -180,15 +180,14 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
 
         private async Task HandleHoursInProjects(GetDepartmentStatisticsRequest request, List<ProjectTask> tasks, DepartmentStatisticsVm res, Department dep, CancellationToken cancellationToken)
         {
-            var tasksGroupedByProject = tasks.GroupBy(t => t.Project.ShortName);
+            var tasksGroupedByProject = tasks.GroupBy(t => t.Project.Id);
             foreach (var taskGroup in tasksGroupedByProject)
             {
-                var projShortName = taskGroup.Key;
-                var proj = tasks.First(i => i.Project.ShortName == projShortName).Project;
+                var proj = tasks.First(i => i.ProjectId == taskGroup.Key).Project;
                 var projStat = new ProjectStatVm
                 {
                     Id = proj.Id,
-                    Name = projShortName,
+                    Name = proj.ShortName ?? proj.Name,
                     ProjectType = proj.Type,
                     PlannedTaskHoursByDepartment = 0,
                     PlannedTaskHoursForDepartment = 0,
