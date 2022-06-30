@@ -18,12 +18,17 @@ export const StatisticsSummary: React.FunctionComponent<StatisticsSummaryProps> 
     const [hoursInProjects, setHoursInProjects] = useState<number>(0)
     const [hoursInDepartmentPlan, setHoursInDepartmentPlan] = useState<number>(0)
     const [externalProjectsProportion, setExternalProjectsProportion] = useState<number>(0)
+    const [departmentLoad, setDepartmentLoad] = useState<number>(0)
 
-    const calcHoursInProjects = () => {
+    const calcHoursInProjects = (): number => {
         if (projectStatistics && projectStatistics.length > 0) {
             const hours = projectStatistics.map(i => i.plannedTaskHoursForDepartment)?.reduce((p, c) => { return p + c })
             setHoursInProjects(hours)
+
+            return hours
         }
+
+        return 0
     }
 
     const calcHoursInDepartmentPlan = () => {
@@ -33,7 +38,7 @@ export const StatisticsSummary: React.FunctionComponent<StatisticsSummaryProps> 
         }
     }
 
-    const calcPlannedHours = () => {
+    const calcHoursInWeeks = (): number => {
         let mondaysCount = 0
         const dt = new Date(start)
         const endDate = new Date(end)
@@ -45,7 +50,10 @@ export const StatisticsSummary: React.FunctionComponent<StatisticsSummaryProps> 
             dt.setDate(dt.getDate() + 1)
         }
 
+        const res = mondaysCount * 8 * 5 * getEmployeeNumber()
         setHoursInWeeks(mondaysCount * 8 * 5 * getEmployeeNumber())
+
+        return res
     }
 
     const getEmployeeNumber = (): number => {
@@ -53,10 +61,10 @@ export const StatisticsSummary: React.FunctionComponent<StatisticsSummaryProps> 
     }
 
     const calsExternalProjectsProportion = () => {
-        if (projectStatistics.length === 0){
+        if (projectStatistics.length === 0) {
             return
         }
-        
+
         const internal = projectStatistics
             .filter(i => i.projectType === 0)
             .map(i => i.plannedTaskHoursForDepartment)
@@ -72,11 +80,22 @@ export const StatisticsSummary: React.FunctionComponent<StatisticsSummaryProps> 
         setExternalProjectsProportion(res)
     }
 
+    const calcDepartmentLoad = () => {
+        const weeksHours = calcHoursInWeeks()
+
+        let res = weeksHours === 0
+            ? 0
+            : 100 * calcHoursInProjects() / calcHoursInWeeks()
+        res = Math.round(res * 100) / 100
+        setDepartmentLoad(res)
+    }
+
     useEffect(() => {
-        calcPlannedHours()
+        calcHoursInWeeks()
         calcHoursInDepartmentPlan()
         calcHoursInProjects()
         calsExternalProjectsProportion()
+        calcDepartmentLoad()
     }, [start, end, plan, projectStatistics])
 
     return <div>
@@ -95,6 +114,9 @@ export const StatisticsSummary: React.FunctionComponent<StatisticsSummaryProps> 
             </li>
             <li>
                 {t('department-plan-time')}: {formatNumber(hoursInDepartmentPlan)}{t('hour')}
+            </li>
+            <li>
+                {t('department-load')}: {departmentLoad}%
             </li>
             <li>
                 {t('external-projects-proportion')}: {externalProjectsProportion}%

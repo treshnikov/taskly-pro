@@ -98,5 +98,6 @@
     "project-to-department-plan-hours": "Соотношение времени, запланированного на проект ко времени, запланированному на работы отдела",
     "available-hours-per-week": "Доступные часы в неделю для планирования",
     "internal": "Внутренний",
-    "external-projects-proportion": "Доля внешних проектов"
+    "external-projects-proportion": "Доля внешних проектов",
+    "department-load": "Загрузка отдела"
 }
