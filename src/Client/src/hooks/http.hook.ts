@@ -59,7 +59,7 @@ export const useHttp = () => {
 
             // It's supposed that the client shouldn't send requests that bring it to the 401|403 states.
             // Nevertheless, if the client got this it might mean that the token has expired or the client requests a resource that requires higher privileges which means the login procedure must be repeated  
-            //dispatch(onSignout())
+            dispatch(onSignout())
         }
 
         if (response.status === 404) {
