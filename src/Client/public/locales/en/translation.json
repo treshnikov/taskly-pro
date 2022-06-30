@@ -22,7 +22,7 @@
     "collapse-all": "Collapse all",
     "position": "Position",
     "language": "Language",
-    "import-users-and-departments-records": "Import lis of users and departments from files users.json, departments.json, and projects.json.",
+    "import-users-and-departments-records": "Import users, departments, and projects from files from /import directory.",
     "import": "Import",
     "projects": "Projects",
     "projects-welcome": "List of projects.",

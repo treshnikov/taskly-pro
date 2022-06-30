@@ -22,7 +22,7 @@
     "collapse-all": "Свернуть всё",
     "position": "Должность",
     "language": "Язык",
-    "import-users-and-departments-records": "Импорт списка пользователей и отделов из файлов users.json, departments.json и projects.json.",
+    "import-users-and-departments-records": "Импортируйте пользователей, отделы и проекты из файлов из каталога /import.",
     "import": "Импорт",
     "projects": "Проекты",
     "projects-welcome": "Реестр проектов.",

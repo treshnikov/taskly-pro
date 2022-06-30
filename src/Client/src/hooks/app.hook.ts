@@ -25,7 +25,7 @@ export const useApp = () => {
     const initLanguage = useCallback(() => {
         const lang = localStorage.getItem('lang')
 
-        if (lang === 'en') {
+        if (!lang || lang === 'en') {
             setEnLang()
         }
 
