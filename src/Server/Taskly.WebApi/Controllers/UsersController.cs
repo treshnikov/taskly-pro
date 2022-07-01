@@ -9,14 +9,12 @@ namespace Taskly.WebApi.Controllers
     [Route("api/v{version:apiVersion}/users")]
     public class UserController : BaseController
     {
-        [HttpGet]        
+        [HttpGet]
         //[Authorize(Roles = RoleIdents.Admin)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult> GetUsers()
         {
-            Log.Warning($"User[{UserId}] requests user list.");
-            
             var res = await Mediator.Send(new GetUsersRequest());
             return Ok(res);
         }
@@ -27,7 +25,7 @@ namespace Taskly.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult> GetUser()
         {
-            var res = await Mediator.Send(new GetUserRequest{UserId = UserId});
+            var res = await Mediator.Send(new GetUserRequest { UserId = UserId });
             return Ok(res);
         }
     }

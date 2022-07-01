@@ -141,11 +141,12 @@ namespace Taskly.DAL
 
             var createUser = User (string name, UserPosition pos, Department dep, bool isAdmin) =>
             {
+                var email = name.Split(" ")[0].ToLower() + "@admin.com";
                 var res = new User
                 {
-                    Id = Guid.NewGuid(),
+                    Id = User.GenerateGuid(email),
                     Name = name,
-                    Email = name.Split(" ")[0].ToLower() + "@admin.com",
+                    Email = email,
                     UserDepartments = new List<UserDepartment>{
                     new UserDepartment {
                         Rate = 1,

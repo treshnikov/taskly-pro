@@ -38,8 +38,13 @@ export const NavBar: React.FunctionComponent = () => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const u = await request<UserVm>("/api/v1/users/user")
-      setUser(u as UserVm)
+      try {
+        const u = await request<UserVm>("/api/v1/users/user")
+        setUser(u as UserVm)
+      }
+      catch (e) {
+        logout()
+      }
     }
     fetchUser()
   }, [request])
