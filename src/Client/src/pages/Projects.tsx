@@ -88,6 +88,7 @@ export const Projects: React.FunctionComponent = () => {
         colWidths={[20, 25, 250]}
         fillHandle={false}
         stretchH="all"
+        manualColumnResize={true}
         beforeChange={(changes: CellChange[], source: ChangeSource): boolean => { return false }}
         licenseKey='non-commercial-and-evaluation'
       >

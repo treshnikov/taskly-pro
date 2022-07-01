@@ -208,7 +208,7 @@ namespace Taskly.DAL
             var customer1 = new Customer
             {
                 Id = Guid.NewGuid(),
-                Name = "Mordor Gmbh"
+                Name = "Rivendell Gmbh"
             };
             context.Customers.Add(customer1);
 
