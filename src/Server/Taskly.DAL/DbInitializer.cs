@@ -11,7 +11,14 @@ namespace Taskly.DAL
 
             if (dbHasJustBeenCreated)
             {
-                PopulateDefaultRecords(dbContext);
+                try
+                {
+                    PopulateDefaultRecords(dbContext);
+                }
+                catch (Exception e)
+                {
+                    throw e;
+                }
             }
         }
 
@@ -57,6 +64,8 @@ namespace Taskly.DAL
             context.Departments.Add(qaDep);
             context.Departments.Add(analyticsDep);
             context.Departments.Add(devOpsDep);
+
+            var departments = new[] { itDep, qaDep, analyticsDep, devOpsDep };
 
             var seniorDev = new UserPosition
             {
@@ -134,6 +143,7 @@ namespace Taskly.DAL
             {
                 var res = new User
                 {
+                    Id = Guid.NewGuid(),
                     Name = name,
                     Email = name.Split(" ")[0].ToLower() + "@admin.com",
                     UserDepartments = new List<UserDepartment>{
@@ -176,6 +186,25 @@ namespace Taskly.DAL
             var devOps3 = createUser("Gimli", devOps, devOpsDep, false);
             var devOps4 = createUser("Gollum", junDevOps, devOpsDep, false);
 
+            var users = new List<User>
+            {
+                dev1,
+                dev2,
+                dev3,
+                dev4,
+                qa1,
+                qa2,
+                qa3,
+                qa4,
+                al1,
+                al2,
+                al3,
+                devOps1,
+                devOps2,
+                devOps3,
+                devOps4
+            };
+
             var customer1 = new Customer
             {
                 Id = Guid.NewGuid(),
@@ -187,16 +216,18 @@ namespace Taskly.DAL
 
             var createProject = Project (string name, string shortName) =>
             {
-                var projStart = new DateTime(DateTime.Today.Year, 01, 01).AddDays(rand.Next(0, 365));
-                var task1Start = projStart.AddDays(rand.Next(30, 180));
-                var task2Start = projStart.AddDays(rand.Next(50, 180));
-                var task3Start = projStart.AddDays(rand.Next(80, 180));
-                var task4Start = projStart.AddDays(rand.Next(100, 180));
+                var projStart = new DateTime(DateTime.Today.Year, 01, 01);
+                var task1Start = projStart;
+                var task2Start = task1Start.AddDays(rand.Next(20, 30));
+                var task3Start = task2Start.AddDays(rand.Next(20, 30));
+                var task4Start = task3Start.AddDays(rand.Next(20, 30));
 
                 var project = new Project
                 {
+                    Id = rand.Next(32768),
                     ChiefEngineer = admin,
                     ProjectManager = admin,
+                    Type = ProjectType.External,
                     Company = itDep,
                     Customer = customer1,
                     IsOpened = true,
@@ -331,27 +362,72 @@ namespace Taskly.DAL
                 return project;
             };
 
-            var project1 = createProject("Rings delivery system", "Rings delivery system");
-            var project2 = createProject("Dragon search application", "Dragon search expedition");
-            var project3 = createProject("Sword training system", "Sword training system");
+            var projectNames = new string[] {
+                "A Long-expected Party System",
+                "The Shadow of the Past",
+                "Three is Company",
+                "A Short Cut to Mushrooms",
+                "A Conspiracy Unmasked",
+                "The Old Forest",
+                "In the House of Tom Bombadil",
+                "Fog on the Barrow-downs",
+                "At the Sign of the Prancing Pony",
+                "Strider",
+                "A Knife in the Dark",
+                "Flight to the Ford"
+            };
 
-            var dt = new DateTime(2022, 01, 10);
-            for (int i = 0; i < 28; i++)
+            var projects = new List<Project>();
+            projects.AddRange(projectNames.Select(i => createProject(i, i)));
+
+            foreach (var user in users)
             {
-                var plan = new DepartmentPlan
+                var randomProjects = new List<Project>();
+                while (randomProjects.Count != 3)
                 {
-                    Department = itDep,
-                    DepartmentId = itDep.Id,
-                    Hours = 40,
-                    Project = project1,
-                    ProjectId = project1.Id,
-                    User = admin,
-                    UserId = admin.Id,
-                    WeekStart = dt,
-                };
-                context.DepartmentPlans.Add(plan);
+                    var idx = rand.Next(1, projects.Count) - 1;
+                    var p = projects[idx];
+                    if (!randomProjects.Contains(p))
+                    {
+                        randomProjects.Add(p);
+                    }
+                }
 
-                dt = dt.AddDays(7);
+                var dt = new DateTime(DateTime.Today.Year, 1, 1);
+                var end = new DateTime(DateTime.Today.Year, 12, 31);
+                while (dt.DayOfWeek != DayOfWeek.Monday)
+                {
+                    dt = dt.AddDays(1);
+                }
+
+                while (dt <= end)
+                {
+                    var sumHours = 0;
+                    foreach (var project in randomProjects)
+                    {
+                        var hours = rand.Next(10, 18);
+                        sumHours += hours;
+
+                        if (sumHours > 40)
+                        {
+                            hours -= sumHours - 40;
+                        }
+
+                        var plan = new DepartmentPlan
+                        {
+                            Department = user.UserDepartments.First().Department,
+                            DepartmentId = user.UserDepartments.First().Department.Id,
+                            Hours = hours,
+                            Project = project,
+                            ProjectId = project.Id,
+                            User = user,
+                            UserId = user.Id,
+                            WeekStart = dt,
+                        };
+                        context.DepartmentPlans.Add(plan);
+                    }
+                    dt = dt.AddDays(7);
+                }
             }
 
             context.SaveChanges();
