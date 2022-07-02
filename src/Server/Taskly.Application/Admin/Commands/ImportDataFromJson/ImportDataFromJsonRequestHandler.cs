@@ -991,16 +991,16 @@ namespace Taskly.Application.Users
     /*
     {
         "project_id": 256,
-        "short_name": "РусГидро КГЭС САУ ГА",
+        "short_name": "...",
         "name": "Замена релейных защит, регуляторов, технологической автоматики,  панели управления на микропроцессорные системы САУ гидроагрегатов",
         "opened": "",
-        "company": "НВФ СМС",
+        "company": "...",
         "start_stop_dates": "20.06.2011 - 31.12.2015",
         "close_date": "",
-        "project_manager": "Кашапов Ильяс Динаратович",
-        "lead_engineer": "Аболмасов Виктор Иванович",
-        "customer": "Камская ГЭС, ОАО",
-        "contract": "№ 222/11 от 03.06.2011 г."
+        "project_manager": "...",
+        "lead_engineer": "...",
+        "customer": "...",
+        "contract": "..."
     }
     */
     internal class ProjectJson

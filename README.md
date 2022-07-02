@@ -1,9 +1,10 @@
 # Overview
-Taskly is a pet project that was created to cover two main goals - to use React in a production-ready app and improve my current employer's work-planning processes.
+Taskly is a pet project that I developed to cover the needs of my employer's project planning processes.
 
-As for work planning, here we have two main stages:
+There are two main stages:
  - A "bird view" project plan that is used by the project managers to plan a large set of projects within 10-20 big tasks per project. Each project task has its description, time period, and estimations for each company's department.
-- Department plan - is a weekly working plan for each week for the department. The heads of departments have to keep this plan up updated this plan according to the available working hours of department employees and the project's tasks that were planned in the previous step by project managers.
+- Department plan - contains the weekly plan of a certain department for each employee. The heads of departments have to keep their department plans updated according to the project's tasks (that were planned in the previous step by project managers), and the available working hours of department employees.
+
 ![](https://github.com/treshnikov/taskly-pro/blob/main/img/Taskly.png)
 
 ## Technologies
