@@ -1,9 +1,18 @@
 # Overview
-Taskly is a pet project that I developed to cover the needs of my employer's project planning processes.
+Taskly is a pet project that was developed to cover the needs of project planning processes for my employer.
 
 There are two main stages:
  - A "bird view" project plan that is used by the project managers to plan a large set of projects within 10-20 big tasks per project. Each project task has its description, time period, and estimations for each company's department.
 - Department plan - contains the weekly plan of a certain department for each employee. The heads of departments have to keep their department plans updated according to the project's tasks (that were planned in the previous step by project managers), and the available working hours of department employees.
+
+As a result, project managers and department heads get a tool that provides the following features:
+- Planning project tasks, including work estimation for each department, qualification of employees, and available time ranges.
+- Scheduling work by week for each department's employee.
+- Showing all projects that contain work for the department.
+- Visualizing project tasks according to their estimation and dates in the weekly plan.
+- Highlighting weeks where a certain department cannot complete all scheduled tasks due to overload. 
+- Comparing planned hours in project with a working plan of the department.
+- Calculation of the load of the department and the required number of employees to perform the work on time.
 
 ![](https://github.com/treshnikov/taskly-pro/blob/main/img/Taskly.png)
 
