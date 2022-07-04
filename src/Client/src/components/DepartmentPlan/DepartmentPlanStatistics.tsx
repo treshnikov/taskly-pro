@@ -52,7 +52,7 @@ export const DepartmentPlanStatistics: React.FunctionComponent<DepartmentPlanSta
 
         setSelectedTab('1')
         request(`/api/v1/departments/${props.departmentId}/${dateToRequestStr(new Date(props.start))}/${dateToRequestStr(new Date(props.end))}/statistics`,
-            "GET", null, [{ name: 'Content-Type', value: 'application/json' }])
+            "GET", null, [{ name: 'Content-Type', value: 'application/json' }], false)
             .then(data => {
                 const statistics = (data as DepartmentStatisticsVm)
                 setProjectStatistics(statistics.projects)

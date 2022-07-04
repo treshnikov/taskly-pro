@@ -6,8 +6,7 @@ export type DepartmentPlanState = {
     endDate: number,
     hideProjectsWithNoEstimation: boolean,
     hiddenRows: number[],
-    showStatistics: boolean,
-    collapsedRows: number[]
+    showStatistics: boolean
 };
 
 const initialState: DepartmentPlanState = {
@@ -15,8 +14,7 @@ const initialState: DepartmentPlanState = {
     endDate: new Date(new Date().getFullYear(), 11, 31).getTime(),
     hideProjectsWithNoEstimation: true,
     hiddenRows: [],
-    showStatistics: false,
-    collapsedRows: []
+    showStatistics: false
 }
 
 export const departmentPlanSlice = createSlice({
@@ -41,15 +39,10 @@ export const departmentPlanSlice = createSlice({
 
         toggleShowStatistics(state: DepartmentPlanState) {
             state.showStatistics = !state.showStatistics
-        },
-
-        setCollapsedRows(state: DepartmentPlanState, action: PayloadAction<number[]>) {
-            state.collapsedRows = action.payload
-        },
-
+        }
     }
 });
 
-export const { setStartDate, setEndDate, setHideProjectsWithNoEstimation, setHiddenRows, setCollapsedRows, toggleShowStatistics } = departmentPlanSlice.actions;
+export const { setStartDate, setEndDate, setHideProjectsWithNoEstimation, setHiddenRows, toggleShowStatistics } = departmentPlanSlice.actions;
 export const departmentPlan = (state: RootState) => state.appReducer;
 export default departmentPlanSlice.reducer

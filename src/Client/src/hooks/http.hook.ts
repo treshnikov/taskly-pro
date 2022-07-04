@@ -23,7 +23,8 @@ export const useHttp = () => {
     const request = useCallback(async<T>(address: string,
         method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE" = "GET",
         body: any = null,
-        headers: { name: string, value: string }[] = []) => {
+        headers: { name: string, value: string }[] = [],
+        showSpinner: boolean = true) => {
 
         const preparedHeaders = new Headers()
         preparedHeaders.append("Authorization", `Bearer ${jwt}`)
@@ -33,12 +34,14 @@ export const useHttp = () => {
 
         let response
         try {
-            dispatch(onRequestStarted())
-            
-            const preparedBody = body instanceof FormData 
+            if (showSpinner) {
+                dispatch(onRequestStarted())
+            }
+
+            const preparedBody = body instanceof FormData
                 ? body
-                : JSON.stringify(body) 
-            
+                : JSON.stringify(body)
+
             response = method === "GET"
                 ? await fetch(address, { method: method, headers: preparedHeaders })
                 : await fetch(address, { method: method, headers: preparedHeaders, body: preparedBody })
@@ -51,7 +54,9 @@ export const useHttp = () => {
             throw (ex)
         }
         finally {
-            dispatch(onRequestCompleted())
+            if (showSpinner) {
+                dispatch(onRequestCompleted())
+            }
         }
 
         if (response.status === 401 || response.status === 403) {
