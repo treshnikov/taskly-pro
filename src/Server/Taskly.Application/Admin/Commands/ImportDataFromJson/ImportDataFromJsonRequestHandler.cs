@@ -749,7 +749,7 @@ namespace Taskly.Application.Users
                 {
                     newUsers.Add(new User
                     {
-                        Id = User.GenerateGuid(u.email),
+                        Id = Guid.NewGuid(),
                         Name = userName,
                         Password = BCrypt.Net.BCrypt.HashPassword(DefaultPasswordForNewUsers),
                         Email = u.email

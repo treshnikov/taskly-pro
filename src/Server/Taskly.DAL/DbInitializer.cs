@@ -144,7 +144,7 @@ namespace Taskly.DAL
                 var email = name.Split(" ")[0].ToLower() + "@admin.com";
                 var res = new User
                 {
-                    Id = User.GenerateGuid(email),
+                    Id = Guid.NewGuid(),
                     Name = name,
                     Email = email,
                     UserDepartments = new List<UserDepartment>{
