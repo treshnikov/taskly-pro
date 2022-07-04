@@ -33,7 +33,7 @@ export const useHttp = () => {
 
         let response
         try {
-            dispatch(onRequestStarted())
+            //dispatch(onRequestStarted())
             
             const preparedBody = body instanceof FormData 
                 ? body
@@ -51,7 +51,7 @@ export const useHttp = () => {
             throw (ex)
         }
         finally {
-            dispatch(onRequestCompleted())
+            //dispatch(onRequestCompleted())
         }
 
         if (response.status === 401 || response.status === 403) {
@@ -81,7 +81,7 @@ export const useHttp = () => {
         toast.error(errorText)
 
         throw new Error(errorText)
-    }, [dispatch, jwt])
+    }, [jwt])
 
     return { login, logout, request }
 }
