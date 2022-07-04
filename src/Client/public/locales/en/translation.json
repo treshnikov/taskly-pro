@@ -99,5 +99,6 @@
     "available-hours-per-week": "Available hours per week for planning",
     "internal": "Internal",
     "external-projects-proportion": "External projects proportion",
-    "department-load": "Department load"
+    "department-load": "Department load",
+    "error-loading-user": "Cannot load information about the user, please try login again"
 }

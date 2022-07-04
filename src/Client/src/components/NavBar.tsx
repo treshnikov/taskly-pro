@@ -16,6 +16,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { Logout } from '@mui/icons-material';
 import { useHttp } from '../hooks/http.hook';
 import { index } from 'handsontable/helpers/dom';
+import { toast } from 'react-toastify';
 
 export const NavBar: React.FunctionComponent = () => {
   const { t } = useTranslation();
@@ -39,10 +40,11 @@ export const NavBar: React.FunctionComponent = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const u = await request<UserVm>("/api/v1/users/user")
+        const u = await request<UserVm>("/api/v1/users/user", "GET", null, [], false, false)
         setUser(u as UserVm)
       }
       catch (e) {
+        toast.error(t('error-loading-user'))
         logout()
       }
     }

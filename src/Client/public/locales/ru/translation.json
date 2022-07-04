@@ -99,5 +99,6 @@
     "available-hours-per-week": "Доступные часы в неделю для планирования",
     "internal": "Внутренний",
     "external-projects-proportion": "Доля внешних проектов",
-    "department-load": "Загрузка отдела"
+    "department-load": "Загрузка отдела",
+    "error-loading-user": "Ошибка загрузки инофрмации о пользователе, попробуйте повторно войти в систему"
 }

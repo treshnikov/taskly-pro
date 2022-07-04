@@ -24,7 +24,8 @@ export const useHttp = () => {
         method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE" = "GET",
         body: any = null,
         headers: { name: string, value: string }[] = [],
-        showSpinner: boolean = true) => {
+        showSpinner: boolean = true,
+        showToasts: boolean = true) => {
 
         const preparedHeaders = new Headers()
         preparedHeaders.append("Authorization", `Bearer ${jwt}`)
@@ -48,7 +49,7 @@ export const useHttp = () => {
 
         } catch (ex) {
             const err = ex as Error
-            if (err) {
+            if (err && showToasts) {
                 toast.error(err.message)
             }
             throw (ex)
@@ -60,7 +61,9 @@ export const useHttp = () => {
         }
 
         if (response.status === 401 || response.status === 403) {
-            toast.error(t('insufficient-privileges'))
+            if (showToasts) {
+                toast.error(t('insufficient-privileges'))
+            }
 
             // It's supposed that the client shouldn't send requests that bring it to the 401|403 states.
             // Nevertheless, if the client got this it might mean that the token has expired or the client requests a resource that requires higher privileges which means the login procedure must be repeated  
@@ -68,7 +71,10 @@ export const useHttp = () => {
         }
 
         if (response.status === 404) {
-            toast.error(response.statusText)
+            if (showToasts) {
+                toast.error(response.statusText)
+            }
+
             throw new Error(response.statusText)
         }
 
@@ -83,8 +89,10 @@ export const useHttp = () => {
         if (json.hasOwnProperty("Error")) {
             errorText += ": " + json.Error
         }
-        toast.error(errorText)
 
+        if (showToasts) {
+            toast.error(errorText)
+        }
         throw new Error(errorText)
     }, [dispatch, jwt])
 
