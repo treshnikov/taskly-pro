@@ -1,11 +1,8 @@
 import { createContext } from 'react'
 
-type SetLangFunc = () => void;
-const setLangMock = () => { };
-
 class AppContextClass {
-  setEnLang: SetLangFunc = setLangMock
-  setRuLang: SetLangFunc = setLangMock
+  setEnLang: () => void = () => { }
+  setRuLang: () => void = () => { }
 }
 
 const context = new AppContextClass();
