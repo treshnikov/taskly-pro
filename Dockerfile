@@ -1,3 +1,11 @@
+# By default, the docker image runs the app with SQLite DB located in the container. 
+# It's suitable for testing purposes but for production please use Docker volumes or 
+# modify the app code in order to store data in PostgreSQL or other DB externally.
+
+# Script snippets for building an image and launching a container
+# docker build --progress=plain -t taskly-pro . 
+# docker run -it --rm -p 6001:6001 --name taskly-pro taskly-pro
+
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 
 # install nodejs
@@ -40,6 +48,3 @@ ENV ASPNETCORE_URLS=""
 
 WORKDIR /app
 ENTRYPOINT ["dotnet", "Taskly.WebApi.dll"]
-
-# docker build --progress=plain -t taskly-pro . 
-# docker run -it --rm -p 6001:6001 --name taskly-pro taskly-pro
