@@ -3,7 +3,7 @@ using Taskly.Domain;
 
 namespace Taskly.DAL
 {
-    public class DbInitializer
+    public static class DbInitializer
     {
         public static void Initialize(TasklyDbContext dbContext)
         {
@@ -17,12 +17,12 @@ namespace Taskly.DAL
                 }
                 catch (Exception e)
                 {
-                    throw e;
+                    throw;
                 }
             }
         }
 
-        private static void PopulateDefaultRecords(TasklyDbContext context)
+        public static void PopulateDefaultRecords(TasklyDbContext context)
         {
             var itDep = new Department
             {

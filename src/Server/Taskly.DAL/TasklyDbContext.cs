@@ -7,7 +7,6 @@ namespace Taskly.DAL
 {
     public class TasklyDbContext : DbContext, ITasklyDbContext
     {
-        public DbSet<Note> Notes { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<Department> Departments { get; set; }
