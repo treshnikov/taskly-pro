@@ -22,4 +22,8 @@
     <ProjectReference Include="..\Taskly.DAL\Taskly.DAL.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="../Taskly.Tests/Integration/Taskly.IntegrationTests.csproj" />
+  </ItemGroup>
+
 </Project>

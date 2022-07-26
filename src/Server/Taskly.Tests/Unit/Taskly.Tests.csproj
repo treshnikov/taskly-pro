@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Taskly.DAL\Taskly.DAL.csproj" />
+    <ProjectReference Include="..\..\Taskly.DAL\Taskly.DAL.csproj" />
   </ItemGroup>
 
 </Project>

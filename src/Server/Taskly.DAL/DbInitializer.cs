@@ -5,11 +5,11 @@ namespace Taskly.DAL
 {
     public static class DbInitializer
     {
-        public static void Initialize(TasklyDbContext dbContext)
+        public static void Initialize(TasklyDbContext dbContext, bool force = false)
         {
             var dbHasJustBeenCreated = dbContext.Database.EnsureCreated();
 
-            if (dbHasJustBeenCreated)
+            if (force || dbHasJustBeenCreated)
             {
                 try
                 {
