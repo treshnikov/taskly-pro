@@ -13,6 +13,7 @@ namespace Taskly.WebApi.Controllers
 {
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/departments")]
+    [Authorize]
     public class DepartmentsController : BaseController
     {
         [HttpGet]

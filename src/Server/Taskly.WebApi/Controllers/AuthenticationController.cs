@@ -23,9 +23,9 @@ namespace Taskly.WebApi.Controllers
         {
             var res = await Mediator.Send(request);
 
-            return Ok(new {jwt = res});
+            return Ok(new { jwt = res });
         }
-        
+
         [HttpPost("login")]
         [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -42,7 +42,7 @@ namespace Taskly.WebApi.Controllers
         }
 
         [HttpPost("logout")]
-        [AllowAnonymous]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult> Logout()

@@ -7,6 +7,7 @@ namespace Taskly.WebApi.Controllers
 {
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/users")]
+    [Authorize]
     public class UserController : BaseController
     {
         [HttpGet]

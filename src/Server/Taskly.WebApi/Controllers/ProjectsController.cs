@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Taskly.Application.Projects;
 using Taskly.Application.Projects.Commands.AddNewTask;
 using Taskly.Application.Projects.Commands.DeleteTask;
@@ -10,6 +11,7 @@ namespace Taskly.WebApi.Controllers
 {
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/projects")]
+    [Authorize]
     public class ProjectsController : BaseController
     {
         [HttpGet]        
