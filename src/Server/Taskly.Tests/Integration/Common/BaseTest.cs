@@ -1,42 +1,12 @@
-using System.Net;
-using Taskly.Application.Users;
-using Taskly.WebApi;
-using Xunit;
+using System.Text.Json;
 
 namespace Taskly.IntegrationTests;
 
 public class BaseTest
 {
-    private HttpClient? _httpClient = null;
-    protected HttpClient HttpClient
+    protected static HttpContent JsonBody(object arg)
     {
-        get
-        {
-            if (_httpClient == null)
-            {
-                var webHost = new CustomWebApplicationFactory<Startup>();
-                _httpClient = webHost.CreateClient();
-
-                var getTokenFormData = new FormUrlEncodedContent(new[]
-                {
-                    new KeyValuePair<string, string>("Email", "admin@admin.com"),
-                    new KeyValuePair<string, string>("Password", "admin")
-                });
-
-                var response = _httpClient.PostAsync("api/v1/auth/token", getTokenFormData).GetAwaiter().GetResult();
-                var tokenAsStr = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-                var token = System.Text.Json.JsonSerializer.Deserialize<JwtVm>(tokenAsStr);
-                _httpClient.DefaultRequestHeaders.Add("authorization", $"Bearer {token?.jwt}");
-
-            }
-
-            return _httpClient;
-        }
+        var json = JsonSerializer.Serialize(arg, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+        return new StringContent(json, System.Text.Encoding.UTF8, "application/json");
     }
 }
-
-internal class JwtVm
-{
-    public string jwt { get; set; }
-}
-

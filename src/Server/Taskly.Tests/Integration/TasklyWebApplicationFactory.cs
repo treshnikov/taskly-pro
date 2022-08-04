@@ -7,7 +7,7 @@ using Taskly.DAL;
 
 namespace Taskly.IntegrationTests;
 
-public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup> where TStartup : class
+public class TasklyWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup> where TStartup : class
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
@@ -25,7 +25,7 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
             {
                 var serviceProvider = scope.ServiceProvider;
                 var context = serviceProvider.GetRequiredService<TasklyDbContext>();
-                var logger = serviceProvider.GetRequiredService<ILogger<CustomWebApplicationFactory<TStartup>>>();
+                var logger = serviceProvider.GetRequiredService<ILogger<TasklyWebApplicationFactory<TStartup>>>();
                 context.Database.EnsureCreated();
 
                 try
