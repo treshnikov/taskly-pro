@@ -6,9 +6,6 @@ namespace Taskly.Application.Users
     {
         public ImportDataFromIntranetRequestValidator()
         {
-            RuleFor(i => i.UsersFileName).NotEmpty();
-            RuleFor(i => i.ProjectsFileName).NotEmpty();
-            RuleFor(i => i.ProjectTasksFileName).NotEmpty();
         }
     }
 }

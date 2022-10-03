@@ -122,10 +122,19 @@ export const Settings: React.FunctionComponent = () => {
                 size='small'
                 variant='contained'
                 onClick={async e => {
-                  await request<ImportResult>("/api/v1/admin/import", 'POST')
+                  await request<ImportResult>("/api/v1/admin/importFromIntranet", 'POST')
                   toast.success(t('import-completed'))
                 }}>
-                {t('import')}
+                {t('import-from-intranet')}
+              </Button>
+              <Button
+                size='small'
+                variant='contained'
+                onClick={async e => {
+                  await request<ImportResult>("/api/v1/admin/importFromSharepoint", 'POST')
+                  toast.success(t('import-completed'))
+                }}>
+                {t('import-from-sharepoint')}
               </Button>
             </CardActions>
           </Card>

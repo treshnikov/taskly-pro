@@ -22,7 +22,7 @@
     "collapse-all": "Свернуть всё",
     "position": "Должность",
     "language": "Язык",
-    "import-users-and-departments-records": "Импортируйте пользователей, отделы и проекты из файлов из каталога /import.",
+    "import-users-and-departments-records": "Импортируйте пользователей, отделы и проекты и планы из файлов Sharepoint и из БД Интранет.",
     "import": "Импорт",
     "projects": "Проекты",
     "projects-welcome": "Реестр проектов.",
@@ -101,5 +101,8 @@
     "external-projects-proportion": "Доля внешних проектов",
     "department-load": "Загрузка отдела",
     "error-loading-user": "Ошибка загрузки инофрмации о пользователе, попробуйте повторно войти в систему",
-    "import-completed": "Импорт был завершен успешно."
+    "import-completed": "Импорт был завершен успешно.",
+    "import-from-sharepoint": "Импортировать из файлов Sharepoint",
+    "import-from-intranet": "Импортировать из Intranet"
+
 }

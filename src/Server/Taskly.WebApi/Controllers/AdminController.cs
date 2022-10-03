@@ -19,11 +19,20 @@ namespace Taskly.WebApi.Controllers
             _intranetDbConnectionSettings = intranetDbConnectionSettings;
         }
 
-        [HttpPost("import")]
+        [HttpPost("importFromIntranet")]
         [Authorize(Roles = RoleIdents.Admin)]
-        public async Task<ActionResult> ImportUsersAndDepartmentsAsync()
+        public async Task<ActionResult> ImportFromIntranetAsync()
         {
             var request = new ImportDataFromIntranetRequest(_intranetDbConnectionSettings.Value);
+            await Mediator.Send(request);
+            return Ok(new ImportResult());
+        }
+
+        [HttpPost("importFromSharepoint")]
+        [Authorize(Roles = RoleIdents.Admin)]
+        public async Task<ActionResult> ImportFromSharepointAsync()
+        {
+            var request = new ImportDataFromSharepointRequest();
             await Mediator.Send(request);
             return Ok(new ImportResult());
         }

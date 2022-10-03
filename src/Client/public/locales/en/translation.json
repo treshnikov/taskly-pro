@@ -22,7 +22,7 @@
     "collapse-all": "Collapse all",
     "position": "Position",
     "language": "Language",
-    "import-users-and-departments-records": "Import users, departments, and projects from files from /import directory.",
+    "import-users-and-departments-records": "Import users, departments, and projects plans from Sharepoint files and from the Intrenet DB.",
     "import": "Import",
     "projects": "Projects",
     "projects-welcome": "List of projects.",
@@ -101,5 +101,7 @@
     "external-projects-proportion": "External projects proportion",
     "department-load": "Department load",
     "error-loading-user": "Cannot load information about the user, please try login again",
-    "import-completed": "Data have been imported."
+    "import-completed": "Data have been imported.",
+    "import-from-sharepoint": "Import from Sharepoint",
+    "import-from-intranet": "Import from Intranet"
 }
