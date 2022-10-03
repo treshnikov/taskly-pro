@@ -15,32 +15,32 @@ namespace Taskly.Application.Users
         {
             try
             {
-                var intranetDbConnectionSettings = request.IntranetDbConnectionSettings;
-                var iDepartments = await IntranetReader.LoadDepartmentsFromIntranetDbAsync(request.IntranetDbConnectionSettings, cancellationToken);
-                var iUsers = await IntranetReader.LoadUsersFromIntranetDbAsync(request.IntranetDbConnectionSettings, cancellationToken);
-                var iProjects = await IntranetReader.LoadProjectsFromIntranetDbAsync(request.IntranetDbConnectionSettings, cancellationToken);
+                var iReader = new IntranetReader(request.IntranetDbConnectionSettings);
+                var iDepartments = await iReader.LoadDepartmentsFromIntranetDbAsync(cancellationToken);
+                var iUsers = await iReader.LoadUsersFromIntranetDbAsync(cancellationToken);
+                var iProjects = await iReader.LoadProjectsFromIntranetDbAsync(cancellationToken);
 
-                var sharepointHelper = new IntranetMerger(_dbContext);
-                await sharepointHelper.UpdateUsers(iUsers, cancellationToken);
-                await sharepointHelper.UpdateUserPositions(iUsers, cancellationToken);
-                await sharepointHelper.UpdateDepartments(iDepartments, cancellationToken);
-                await sharepointHelper.UpdateUserDepartmentLinks(iUsers, iDepartments, cancellationToken);
-                await sharepointHelper.UpdateProjects(iProjects, cancellationToken);
+                var iMerger = new IntranetMerger(_dbContext);
+                await iMerger.UpdateUsers(iUsers, cancellationToken);
+                await iMerger.UpdateUserPositions(iUsers, cancellationToken);
+                await iMerger.UpdateDepartments(iDepartments, cancellationToken);
+                await iMerger.UpdateUserDepartmentLinks(iUsers, iDepartments, cancellationToken);
+                await iMerger.UpdateProjects(iProjects, cancellationToken);
 
-                var projectTasksMerger = new SharepointProjectTasksMerger(_dbContext);
-                await projectTasksMerger.UpdateProjectTasks(request.ProjectTasksFileName, cancellationToken);
+                var sharepointTasksMerger = new SharepointProjectTasksMerger(_dbContext);
+                await sharepointTasksMerger.UpdateProjectTasks(request.ProjectTasksFileName, cancellationToken);
 
-                var projectPlanMerger = new SharepointProjectPlanMerger(_dbContext);
-                await projectPlanMerger.UpdateProjectPlan("import/ОП ДС.XLSX", 244, cancellationToken);
-                await projectPlanMerger.UpdateProjectPlan("import/ОП_АС.xlsx", 245, cancellationToken);
-                await projectPlanMerger.UpdateProjectPlan("import/АСУТПвН.xlsx", 243, cancellationToken);
-                await projectPlanMerger.UpdateProjectPlan("import/АСУТПвЭ.xlsx", 242, cancellationToken);
-                await projectPlanMerger.UpdateProjectPlan("import/ИБ_и_ОСР.XLSX", 233, cancellationToken);
-                await projectPlanMerger.UpdateProjectPlan("import/ПРСУ.XLSX", 176, cancellationToken);
-                await projectPlanMerger.UpdateProjectPlan("import/СУПП.xlsx", 234, cancellationToken);
-                await projectPlanMerger.UpdateProjectPlan("import/ЭМУ.xlsx", 179, cancellationToken);
-                await projectPlanMerger.UpdateProjectPlan("import/ЭТЛ.xlsx", 177, cancellationToken);
-                await projectPlanMerger.UpdateProjectPlan("import/ЭТО.xlsx", 178, cancellationToken);
+                var sharepointPlanMerger = new SharepointProjectPlanMerger(_dbContext);
+                await sharepointPlanMerger.UpdateProjectPlan("import/ОП ДС.XLSX", 244, cancellationToken);
+                await sharepointPlanMerger.UpdateProjectPlan("import/ОП_АС.xlsx", 245, cancellationToken);
+                await sharepointPlanMerger.UpdateProjectPlan("import/АСУТПвН.xlsx", 243, cancellationToken);
+                await sharepointPlanMerger.UpdateProjectPlan("import/АСУТПвЭ.xlsx", 242, cancellationToken);
+                await sharepointPlanMerger.UpdateProjectPlan("import/ИБ_и_ОСР.XLSX", 233, cancellationToken);
+                await sharepointPlanMerger.UpdateProjectPlan("import/ПРСУ.XLSX", 176, cancellationToken);
+                await sharepointPlanMerger.UpdateProjectPlan("import/СУПП.xlsx", 234, cancellationToken);
+                await sharepointPlanMerger.UpdateProjectPlan("import/ЭМУ.xlsx", 179, cancellationToken);
+                await sharepointPlanMerger.UpdateProjectPlan("import/ЭТЛ.xlsx", 177, cancellationToken);
+                await sharepointPlanMerger.UpdateProjectPlan("import/ЭТО.xlsx", 178, cancellationToken);
 
                 return Unit.Value;
             }

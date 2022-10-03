@@ -3,9 +3,15 @@ using MySqlConnector;
 
 namespace Taskly.Application.Users
 {
-    public static class IntranetReader
+    public class IntranetReader
     {
-        public static async Task<IntranetProject[]> LoadProjectsFromIntranetDbAsync(IntranetDbConnectionSettings intranetDbConnectionSettings, CancellationToken cancellationToken)
+        private readonly IntranetDbConnectionSettings intranetDbConnectionSettings;
+
+        public IntranetReader(IntranetDbConnectionSettings intranetDbConnectionSettings)
+        {
+            this.intranetDbConnectionSettings = intranetDbConnectionSettings;
+        }
+        public async Task<IntranetProject[]> LoadProjectsFromIntranetDbAsync(CancellationToken cancellationToken)
         {
             var res = new List<IntranetProject>();
 
@@ -56,7 +62,7 @@ namespace Taskly.Application.Users
             return res.ToArray();
         }
 
-        public static async Task<IntranetUser[]> LoadUsersFromIntranetDbAsync(IntranetDbConnectionSettings intranetDbConnectionSettings, CancellationToken cancellationToken)
+        public async Task<IntranetUser[]> LoadUsersFromIntranetDbAsync(CancellationToken cancellationToken)
         {
             var res = new List<IntranetUser>();
 
@@ -112,7 +118,7 @@ namespace Taskly.Application.Users
             return res.ToArray();
         }
 
-        public static async Task<IntranetDepartment[]> LoadDepartmentsFromIntranetDbAsync(IntranetDbConnectionSettings intranetDbConnectionSettings, CancellationToken cancellationToken)
+        public async Task<IntranetDepartment[]> LoadDepartmentsFromIntranetDbAsync(CancellationToken cancellationToken)
         {
             var res = new List<IntranetDepartment>();
             var builder = new MySqlConnectionStringBuilder
