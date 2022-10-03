@@ -1,6 +1,6 @@
 namespace Taskly.Application.Users
 {
-    internal class IntranetProject
+    public class IntranetProject
     {
         public int Id { get; set; }
         public string ShortName { get; set; }

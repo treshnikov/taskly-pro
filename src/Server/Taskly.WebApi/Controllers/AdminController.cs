@@ -23,7 +23,7 @@ namespace Taskly.WebApi.Controllers
         [Authorize(Roles = RoleIdents.Admin)]
         public async Task<ActionResult> ImportUsersAndDepartmentsAsync()
         {
-            var request = new ImportDataFromJsonRequest(_intranetDbConnectionSettings.Value);
+            var request = new ImportDataFromIntranetRequest(_intranetDbConnectionSettings.Value);
             await Mediator.Send(request);
             return Ok(new ImportResult());
         }

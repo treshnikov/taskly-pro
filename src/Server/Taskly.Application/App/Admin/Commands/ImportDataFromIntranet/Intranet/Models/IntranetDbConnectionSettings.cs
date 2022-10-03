@@ -1,5 +1,3 @@
-using Taskly.Application.Departments.Queries.GetDepartmentPlan;
-
 namespace Taskly.Application.Users;
 
 public class IntranetDbConnectionSettings

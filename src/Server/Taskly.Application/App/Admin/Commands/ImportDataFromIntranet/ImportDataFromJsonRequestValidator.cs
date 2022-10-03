@@ -2,9 +2,9 @@ using FluentValidation;
 
 namespace Taskly.Application.Users
 {
-    public class ImportDataFromJsonRequestValidator : AbstractValidator<ImportDataFromJsonRequest>
+    public class ImportDataFromIntranetRequestValidator : AbstractValidator<ImportDataFromIntranetRequest>
     {
-        public ImportDataFromJsonRequestValidator()
+        public ImportDataFromIntranetRequestValidator()
         {
             RuleFor(i => i.UsersFileName).NotEmpty();
             RuleFor(i => i.ProjectsFileName).NotEmpty();
