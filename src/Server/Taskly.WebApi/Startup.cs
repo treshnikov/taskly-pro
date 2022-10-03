@@ -15,6 +15,8 @@ using System.Text;
 using Serilog;
 using Taskly.WebApi.Common;
 using Microsoft.AspNetCore.Http.Json;
+using Taskly.WebApi.Models;
+using Taskly.Application.Users;
 
 namespace Taskly.WebApi;
 
@@ -39,6 +41,9 @@ public class Startup
             opt.JsonSerializerOptions.Converters.Add(new DateTimeToNumberJsonConverter());
             opt.JsonSerializerOptions.Converters.Add(new DateTimeNullableToNumberJsonConverter());
         });
+
+        // IntranetDb connection config
+        services.Configure<IntranetDbConnectionSettings>(Configuration.GetSection(nameof(IntranetDbConnectionSettings)));
 
         services.AddCors(options =>
         {
@@ -79,9 +84,6 @@ public class Startup
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration["JwtToken"])),
                         ValidateIssuerSigningKey = true,
                     };
-
-
-
                 });
 
         services.AddVersionedApiExplorer(opttions =>

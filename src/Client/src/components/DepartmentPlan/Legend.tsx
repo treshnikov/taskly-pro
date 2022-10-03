@@ -20,7 +20,7 @@ export const Legend: React.FunctionComponent = () => {
     }
 
     return <>
-        <Stack direction={"row"} paddingTop={1} paddingRight={1} spacing={1} alignContent={"center"} alignItems={"center"}>
+        <Stack direction={"row"} position={"fixed"} paddingTop={1} paddingRight={1} spacing={1} alignContent={"center"} alignItems={"center"}>
 
             <div
                 style={getLegendStyle(GOOD_PLANING_TIME_COLOR)}>

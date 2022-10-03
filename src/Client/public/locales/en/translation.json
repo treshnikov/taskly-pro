@@ -100,5 +100,6 @@
     "internal": "Internal",
     "external-projects-proportion": "External projects proportion",
     "department-load": "Department load",
-    "error-loading-user": "Cannot load information about the user, please try login again"
+    "error-loading-user": "Cannot load information about the user, please try login again",
+    "import-completed": "Data have been imported."
 }

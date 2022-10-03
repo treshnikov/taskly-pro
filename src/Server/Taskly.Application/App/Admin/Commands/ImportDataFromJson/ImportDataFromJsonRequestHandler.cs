@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 /*
     Warning: code below is quite messy, it considers a very special format that is only used by my current employer. 
     A universal importer is not considered in this project. 
@@ -13,6 +14,7 @@ using Taskly.Domain;
 using Serilog;
 using System.Globalization;
 using ClosedXML.Excel;
+using MySqlConnector;
 
 namespace Taskly.Application.Users
 {
@@ -29,12 +31,33 @@ namespace Taskly.Application.Users
         {
             try
             {
-                Extract(request, out DepartmentJson[] deps, out UserJson[] users, out ProjectJson[] projects);
+                var intranetDbConnectionSettings = request.IntranetDbConnectionSettings;
+                var builder = new MySqlConnectionStringBuilder
+                {
+                    Server = intranetDbConnectionSettings.Host,
+                    Database = intranetDbConnectionSettings.DbName,
+                    UserID = intranetDbConnectionSettings.User,
+                    Password = intranetDbConnectionSettings.Password,
+                    Port = intranetDbConnectionSettings.Port,
+                    SslMode = MySqlSslMode.Disabled
+                };
+
+                using var intranetDbConnection = new MySqlConnection(builder.ConnectionString);
+                await intranetDbConnection.OpenAsync(cancellationToken);
+
+                var departments = await LoadDepartmentsFromIntranetDbAsync(intranetDbConnection, cancellationToken);
+                var users = await LoadUsersFromIntranetDbAsync(intranetDbConnection, cancellationToken);
+                var projects = await LoadProjectsFromIntranetDbAsync(intranetDbConnection, cancellationToken);
+
+                //await ExtractAsync(request, out DepartmentJson[] deps, out UserJson[] users, out ProjectJson[] projects);
+
+                //todo
+                return Unit.Value;
 
                 await UpdateUsers(users, cancellationToken);
                 await UpdateUserPositions(users, cancellationToken);
-                await UpdateDepartments(deps, cancellationToken);
-                await UpdateUserDepartmentLinks(users, deps, cancellationToken);
+                await UpdateDepartments(departments, cancellationToken);
+                await UpdateUserDepartmentLinks(users, departments, cancellationToken);
                 await UpdateProjects(projects, cancellationToken);
                 await UpdateProjectTasks(request, cancellationToken);
 
@@ -57,6 +80,62 @@ namespace Taskly.Application.Users
                 throw;
             }
 
+        }
+
+        private async Task<ProjectJson[]> LoadProjectsFromIntranetDbAsync(MySqlConnection conn, CancellationToken cancellationToken)
+        {
+            var res = new List<ProjectJson>();
+
+            using var command = conn.CreateCommand();
+            command.CommandText = "SELECT prj_project_ID, project_code, project_name, open, company_ID, date_from, date_to, date_to_fact, manager_ID, gip_ID, customer_ID, dogovor, internal FROM prj_reestr;";
+
+            using var reader = await command.ExecuteReaderAsync(cancellationToken);
+            while (await reader.ReadAsync(cancellationToken))
+            {
+                res.Add(new ProjectJson
+                {
+                    project_id =
+
+                    id = reader.GetInt32("user_id"),
+                    firstname = reader.GetString("firstname"),
+                    middlename = reader.GetString("middlename"),
+                    lastname = reader.GetString("lastname"),
+                    email = reader.GetString("cb_internalemail"),
+                    DepartmentId = reader.GetInt32("cb_departament_fact")
+                });
+            }
+
+            return res.ToArray();
+        }
+
+        private static async Task<UserJson[]> LoadUsersFromIntranetDbAsync(MySqlConnection conn, CancellationToken cancellationToken)
+        {
+            var res = new List<UserJson>();
+
+            using var command = conn.CreateCommand();
+            var sql =
+                "SELECT u.user_id, p.Title, u.firstname, u.middlename, u.lastname, u2.email, u.cb_departament_fact FROM jos_comprofiler u " +
+                "join sms_position p on u.user_id = p.UserID and u.cb_departament_fact = p.DepartmentID " +
+                "join jos_users u2 on u2.id = u.user_id " +
+                "where u2.email is not null and u2.email <> '' "; 
+
+            command.CommandText = sql;
+
+            using var reader = await command.ExecuteReaderAsync(cancellationToken);
+            while (await reader.ReadAsync(cancellationToken))
+            {
+                res.Add(new UserJson
+                {
+                    id = reader.GetInt32("user_id"),
+                    firstname = reader.GetString("firstname"),
+                    middlename = reader.GetString("middlename"),
+                    lastname = reader.GetString("lastname"),
+                    email = reader.GetString("cb_internalemail"),
+                    DepartmentId = reader.GetInt32("cb_departament_fact")
+                });
+            }
+
+            return res.ToArray();
         }
 
         private async Task UpdateProjectPlan(string fileName, int departmentCode, CancellationToken cancellationToken)
@@ -873,37 +952,55 @@ namespace Taskly.Application.Users
             return null;
         }
 
-        private void Extract(ImportDataFromJsonRequest request, out DepartmentJson[] deps, out UserJson[] users, out ProjectJson[] projects)
+        // private async Task ExtractAsync(ImportDataFromJsonRequest request, out DepartmentJson[] deps, out UserJson[] users, out ProjectJson[] projects)
+        // {
+        //     var path = Directory.GetParent(typeof(ImportDataFromJsonRequestHandler).Assembly.Location)!.FullName;
+        //     var usersFileName = Path.Combine(path, request.UsersFileName);
+        //     var projectsFileName = Path.Combine(path, request.ProjectsFileName);
+        //     var projectTasksFileName = Path.Combine(path, request.ProjectTasksFileName);
+
+        //     if (!File.Exists(usersFileName))
+        //     {
+        //         throw new NotFoundException($"Cannot find {usersFileName}");
+        //     }
+
+        //     if (!File.Exists(projectsFileName))
+        //     {
+        //         throw new NotFoundException($"Cannot find {projectsFileName}");
+        //     }
+
+        //     if (!File.Exists(projectTasksFileName))
+        //     {
+        //         throw new NotFoundException($"Cannot find {projectTasksFileName}");
+        //     }
+
+        //     //deps = JsonSerializer.Deserialize<DepartmentJson[]>(File.ReadAllText(departmentFileName));
+        //     deps = await LoadDepartmentsFromIntranetDbAsync(request.IntranetDbConnectionSettings);
+        //     users = JsonSerializer.Deserialize<UserJson[]>(File.ReadAllText(usersFileName));
+        //     projects = JsonSerializer.Deserialize<ProjectJson[]>(File.ReadAllText(projectsFileName));
+        // }
+
+        private static async Task<DepartmentJson[]> LoadDepartmentsFromIntranetDbAsync(MySqlConnection conn, CancellationToken cancellationToken)
         {
-            var path = Directory.GetParent(typeof(ImportDataFromJsonRequestHandler).Assembly.Location)!.FullName;
-            var departmentFileName = Path.Combine(path, request.DepartmentsFileName);
-            var usersFileName = Path.Combine(path, request.UsersFileName);
-            var projectsFileName = Path.Combine(path, request.ProjectsFileName);
-            var projectTasksFileName = Path.Combine(path, request.ProjectTasksFileName);
+            var res = new List<DepartmentJson>();
 
-            if (!File.Exists(departmentFileName))
+            using var command = conn.CreateCommand();
+            command.CommandText = "SELECT name, prj_company_ID, parent, order_number, short_name FROM prj_company;";
+
+            using var reader = await command.ExecuteReaderAsync(cancellationToken);
+            while (await reader.ReadAsync(cancellationToken))
             {
-                throw new NotFoundException($"Cannot find {departmentFileName}");
+                res.Add(new DepartmentJson
+                {
+                    name = reader.GetString("name"),
+                    prj_company_ID = reader.GetInt32("prj_company_ID"),
+                    parent = reader["parent"] == DBNull.Value ? null : reader.GetInt32("parent"),
+                    order_number = reader.GetInt32("order_number"),
+                    short_name = reader.GetString("short_name")
+                });
             }
 
-            if (!File.Exists(usersFileName))
-            {
-                throw new NotFoundException($"Cannot find {usersFileName}");
-            }
-
-            if (!File.Exists(projectsFileName))
-            {
-                throw new NotFoundException($"Cannot find {projectsFileName}");
-            }
-
-            if (!File.Exists(projectTasksFileName))
-            {
-                throw new NotFoundException($"Cannot find {projectTasksFileName}");
-            }
-
-            deps = JsonSerializer.Deserialize<DepartmentJson[]>(File.ReadAllText(departmentFileName));
-            users = JsonSerializer.Deserialize<UserJson[]>(File.ReadAllText(usersFileName));
-            projects = JsonSerializer.Deserialize<ProjectJson[]>(File.ReadAllText(projectsFileName));
+            return res.ToArray();
         }
 
         /// <summary>
@@ -982,10 +1079,7 @@ namespace Taskly.Application.Users
         public string middlename { get; set; }
         public string lastname { get; set; }
         public string email { get; set; }
-        public string title { get; set; }
-        public string TypeName { get; set; }
-        public string name { get; set; }
-        public int? DepartmentId { get; set; }
+        public int DepartmentId { get; set; }
     }
 
     /*

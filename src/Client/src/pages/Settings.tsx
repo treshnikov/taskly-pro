@@ -4,6 +4,8 @@ import { AppContext } from '../context/AppContext';
 import { useTranslation } from 'react-i18next';
 import { useHttp } from '../hooks/http.hook';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify'
+import { ImportResult } from '../models/Settings/ImportResult';
 
 export const Settings: React.FunctionComponent = () => {
   // it's important to use useTranslation hook to re-render the current component when lang changing  
@@ -119,7 +121,10 @@ export const Settings: React.FunctionComponent = () => {
               <Button
                 size='small'
                 variant='contained'
-                onClick={async e => { await request<{ msg: string }>("/api/v1/admin/import", 'POST') }}>
+                onClick={async e => {
+                  await request<ImportResult>("/api/v1/admin/import", 'POST')
+                  toast.success(t('import-completed'))
+                }}>
                 {t('import')}
               </Button>
             </CardActions>
