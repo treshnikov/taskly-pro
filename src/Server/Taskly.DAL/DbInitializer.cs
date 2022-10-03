@@ -151,7 +151,6 @@ namespace Taskly.DAL
                     new UserDepartment {
                         Rate = 1,
                         Department = dep,
-                        Comment = pos.Ident,
                         UserPosition = pos
                     }
                 },

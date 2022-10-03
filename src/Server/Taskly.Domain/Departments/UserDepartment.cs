@@ -4,8 +4,6 @@ namespace Taskly.Domain
     {
         public Guid Id { get; set; }
         public double Rate { get; set; }
-        public string Comment { get; set; }
-
         public Guid UserId { get; set; }
         public Guid DepartmentId { get; set; }
         public Guid UserPositionId { get; set; }

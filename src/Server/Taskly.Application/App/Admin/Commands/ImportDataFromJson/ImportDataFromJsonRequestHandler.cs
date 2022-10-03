@@ -1,14 +1,11 @@
-using System.Collections.Concurrent;
 /*
     Warning: code below is quite messy, it considers a very special format that is only used by my current employer. 
     A universal importer is not considered in this project. 
     Please eliminate this part of the code and add support for your format if needed. 
 */
 
-using System.Text.Json;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Taskly.Application.Common.Exceptions;
 using Taskly.Application.Interfaces;
 using Taskly.Domain;
 using Serilog;
@@ -45,20 +42,19 @@ namespace Taskly.Application.Users
                 using var intranetDbConnection = new MySqlConnection(builder.ConnectionString);
                 await intranetDbConnection.OpenAsync(cancellationToken);
 
-                var departments = await LoadDepartmentsFromIntranetDbAsync(intranetDbConnection, cancellationToken);
-                var users = await LoadUsersFromIntranetDbAsync(intranetDbConnection, cancellationToken);
-                var projects = await LoadProjectsFromIntranetDbAsync(intranetDbConnection, cancellationToken);
+                var iDepartments = await LoadDepartmentsFromIntranetDbAsync(intranetDbConnection, cancellationToken);
+                var iUsers = await LoadUsersFromIntranetDbAsync(intranetDbConnection, cancellationToken);
+                var iProjects = await LoadProjectsFromIntranetDbAsync(intranetDbConnection, cancellationToken);
 
-                //await ExtractAsync(request, out DepartmentJson[] deps, out UserJson[] users, out ProjectJson[] projects);
+                await UpdateUsers(iUsers, cancellationToken);
+                await UpdateUserPositions(iUsers, cancellationToken);
+                await UpdateDepartments(iDepartments, cancellationToken);
+                await UpdateUserDepartmentLinks(iUsers, iDepartments, cancellationToken);
+                await UpdateProjects(iProjects, cancellationToken);
 
                 //todo
                 return Unit.Value;
 
-                await UpdateUsers(users, cancellationToken);
-                await UpdateUserPositions(users, cancellationToken);
-                await UpdateDepartments(departments, cancellationToken);
-                await UpdateUserDepartmentLinks(users, departments, cancellationToken);
-                await UpdateProjects(projects, cancellationToken);
                 await UpdateProjectTasks(request, cancellationToken);
 
                 await UpdateProjectPlan("import/ОП ДС.XLSX", 244, cancellationToken);
@@ -82,56 +78,81 @@ namespace Taskly.Application.Users
 
         }
 
-        private async Task<ProjectJson[]> LoadProjectsFromIntranetDbAsync(MySqlConnection conn, CancellationToken cancellationToken)
+        private async Task<IntranetProject[]> LoadProjectsFromIntranetDbAsync(MySqlConnection conn, CancellationToken cancellationToken)
         {
-            var res = new List<ProjectJson>();
+            var res = new List<IntranetProject>();
 
             using var command = conn.CreateCommand();
-            command.CommandText = "SELECT prj_project_ID, project_code, project_name, open, company_ID, date_from, date_to, date_to_fact, manager_ID, gip_ID, customer_ID, dogovor, internal FROM prj_reestr;";
+            command.CommandText =
+                "SELECT c.display_name, u2.name as gip_name, u2.email as gip_email, u.name as manager_name, u.email as manager_email, p.prj_project_ID, p.project_code, p.project_name, p.open, p.company_ID, p.date_from, p.date_to, p.date_to_fact, p.manager_ID, p.gip_ID, p.customer_ID, p.dogovor, p.internal FROM prj_reestr p  " +
+                "join jos_users u on u.id = p.manager_ID " +
+                "join jos_users u2 on u2.id = p.gip_ID " +
+                "join civicrm_contact c on c.id = p.customer_ID ";
 
             using var reader = await command.ExecuteReaderAsync(cancellationToken);
             while (await reader.ReadAsync(cancellationToken))
             {
-                res.Add(new ProjectJson
+                res.Add(new IntranetProject
                 {
-                    project_id =
+                    Id = reader.GetInt32("prj_project_ID"),
+                    ShortName = reader.GetString("project_code"),
+                    Name = reader.GetString("project_name"),
+                    Opened = reader.GetInt32("open") == 1,
+                    DepartmentId = reader.GetInt32("company_ID"),
+                    Start = reader.GetDateTime("date_from"),
+                    End = reader.GetDateTime("date_to"),
+                    CloseDate = reader["date_to_fact"] == DBNull.Value ? null : reader.GetDateTime("date_to_fact"),
+                    ManagerId = reader["manager_ID"] == DBNull.Value ? null : reader.GetInt32("manager_ID"),
+                    LeadEngineerId = reader["gip_ID"] == DBNull.Value ? null : reader.GetInt32("gip_ID"),
+                    CustomerName = reader.GetString("display_name"),
+                    Contract = reader.GetString("dogovor"),
+                    Internal = reader.GetInt32("internal") == 1,
+                    ManagerEmail = reader["manager_email"] == DBNull.Value ? null : reader.GetString("manager_email"),
+                    LeadEngineerEmail = reader["gip_email"] == DBNull.Value ? null : reader.GetString("gip_email")
 
-                    id = reader.GetInt32("user_id"),
-                    firstname = reader.GetString("firstname"),
-                    middlename = reader.GetString("middlename"),
-                    lastname = reader.GetString("lastname"),
-                    email = reader.GetString("cb_internalemail"),
-                    DepartmentId = reader.GetInt32("cb_departament_fact")
                 });
             }
 
             return res.ToArray();
         }
 
-        private static async Task<UserJson[]> LoadUsersFromIntranetDbAsync(MySqlConnection conn, CancellationToken cancellationToken)
+        private static async Task<IntranetUser[]> LoadUsersFromIntranetDbAsync(MySqlConnection conn, CancellationToken cancellationToken)
         {
-            var res = new List<UserJson>();
+            var res = new List<IntranetUser>();
 
             using var command = conn.CreateCommand();
             var sql =
-                "SELECT u.user_id, p.Title, u.firstname, u.middlename, u.lastname, u2.email, u.cb_departament_fact FROM jos_comprofiler u " +
+                "SELECT u.cb_effectiverate, u.user_id, p.Title, u.firstname, u.middlename, u.lastname, u2.email, u.cb_departament_fact FROM jos_comprofiler u " +
                 "join sms_position p on u.user_id = p.UserID and u.cb_departament_fact = p.DepartmentID " +
                 "join jos_users u2 on u2.id = u.user_id " +
-                "where u2.email is not null and u2.email <> '' "; 
+                "where u2.email is not null and u2.email <> '' ";
 
             command.CommandText = sql;
 
             using var reader = await command.ExecuteReaderAsync(cancellationToken);
             while (await reader.ReadAsync(cancellationToken))
             {
-                res.Add(new UserJson
+                var userRateAsStr = reader["cb_effectiverate"] == DBNull.Value
+                    ? ""
+                    : reader.GetString("cb_effectiverate").Replace(",", ".");
+
+                var ci = (CultureInfo)CultureInfo.CurrentCulture.Clone();
+                ci.NumberFormat.CurrencyDecimalSeparator = ".";
+                if (!double.TryParse(userRateAsStr, NumberStyles.Any, ci, out double userRateAsFloat))
                 {
-                    id = reader.GetInt32("user_id"),
-                    firstname = reader.GetString("firstname"),
-                    middlename = reader.GetString("middlename"),
-                    lastname = reader.GetString("lastname"),
-                    email = reader.GetString("cb_internalemail"),
-                    DepartmentId = reader.GetInt32("cb_departament_fact")
+                    userRateAsFloat = 0;
+                }
+
+                res.Add(new IntranetUser
+                {
+                    Id = reader.GetInt32("user_id"),
+                    FirstName = reader.GetString("firstname"),
+                    MiddleName = reader.GetString("middlename"),
+                    LastName = reader.GetString("lastname"),
+                    Email = reader.GetString("email"),
+                    DepartmentId = reader.GetInt32("cb_departament_fact"),
+                    Title = reader.GetString("Title"),
+                    TimeRate = userRateAsFloat
                 });
             }
 
@@ -182,7 +203,6 @@ namespace Taskly.Application.Users
                     {
                         user.UserDepartments.Add(new UserDepartment
                         {
-                            Comment = defaultPosition.Comment,
                             DepartmentId = dbDep.Id,
                             Rate = planItem.Rate,
                             UserId = user.Id,
@@ -624,7 +644,7 @@ namespace Taskly.Application.Users
                                     : ProjectType.External;
         }
 
-        private async Task UpdateProjects(ProjectJson[] projects, CancellationToken cancellationToken)
+        private async Task UpdateProjects(IntranetProject[] projects, CancellationToken cancellationToken)
         {
             using var transaction = _dbContext.Database.BeginTransaction();
 
@@ -638,28 +658,25 @@ namespace Taskly.Application.Users
             {
                 //Log.Logger.Debug($"Handle project ${JsonSerializer.Serialize(p)}");
 
-                var dbProject = dbProjects.FirstOrDefault(i => i.Id == p.project_id);
-                var newProject = newProjects.FirstOrDefault(i => i.Id == p.project_id);
+                var dbProject = dbProjects.FirstOrDefault(i => i.Id == p.Id);
+                var newProject = newProjects.FirstOrDefault(i => i.Id == p.Id);
 
-                var company = dbDeps.FirstOrDefault(i => i.Name == p.company);
-                var start = DateTime.ParseExact(p.start_stop_dates.Split(" ")[0], "dd.MM.yyyy", CultureInfo.InvariantCulture);
-                var end = DateTime.ParseExact(p.start_stop_dates.Split(" ")[2], "dd.MM.yyyy", CultureInfo.InvariantCulture);
-                DateTime? closeDate = string.IsNullOrWhiteSpace(p.close_date) ? null : DateTime.ParseExact(p.close_date, "dd.MM.yyyy", CultureInfo.InvariantCulture);
-                var pm = dbUsers.FirstOrDefault(i => i.Name == p.project_manager);
-                var lead = dbUsers.FirstOrDefault(i => i.Name == p.lead_engineer);
-                var isOpened = !string.IsNullOrWhiteSpace(p.opened) && (p.opened.ToLower() == "да");
-                var customer = dbCustomers.FirstOrDefault(i => i.Name == p.customer);
+                var company = dbDeps.FirstOrDefault(i => i.Code == p.DepartmentId);
+                var pm = dbUsers.FirstOrDefault(i => i.Email == p.ManagerEmail);
+                var lead = dbUsers.FirstOrDefault(i => i.Email == p.LeadEngineerEmail);
+                var isOpened = p.Opened;
+                var customer = dbCustomers.FirstOrDefault(i => i.Name == p.CustomerName);
                 if (customer == null)
                 {
                     customer = new Customer
                     {
-                        Name = p.customer
+                        Name = p.CustomerName
                     };
                     dbCustomers.Add(customer);
                     _dbContext.Customers.Add(customer);
                 }
 
-                var projectType = p.short_name.Contains("Внутр.")
+                var projectType = p.Internal
                     ? ProjectType.Internal
                     : ProjectType.External;
 
@@ -667,35 +684,35 @@ namespace Taskly.Application.Users
                 {
                     newProjects.Add(new Project
                     {
-                        Id = p.project_id,
-                        ShortName = p.short_name,
-                        Name = p.name,
+                        Id = p.Id,
+                        ShortName = p.ShortName,
+                        Name = p.Name,
                         IsOpened = isOpened,
                         Company = company,
-                        Start = start,
-                        End = end,
+                        Start = p.Start,
+                        End = p.End,
                         Type = projectType,
-                        CloseDate = closeDate,
+                        CloseDate = p.CloseDate,
                         ProjectManager = pm,
                         ChiefEngineer = lead,
                         Customer = customer,
-                        Contract = p.contract
+                        Contract = p.Contract
                     });
                 }
                 else
                 {
-                    dbProject.ShortName = p.short_name;
-                    dbProject.Name = p.name;
+                    dbProject.ShortName = p.ShortName;
+                    dbProject.Name = p.Name;
                     dbProject.IsOpened = isOpened;
                     dbProject.Company = company;
-                    dbProject.Start = start;
-                    dbProject.End = end;
-                    dbProject.CloseDate = closeDate;
+                    dbProject.Start = p.Start;
+                    dbProject.End = p.End;
+                    dbProject.CloseDate = p.CloseDate;
                     dbProject.ProjectManager = pm;
                     dbProject.ChiefEngineer = lead;
                     dbProject.Customer = customer;
                     dbProject.Type = projectType;
-                    dbProject.Contract = p.contract;
+                    dbProject.Contract = p.Contract;
 
                     _dbContext.Projects.Update(dbProject);
                 }
@@ -705,7 +722,7 @@ namespace Taskly.Application.Users
             transaction.Commit();
         }
 
-        private async Task UpdateUserDepartmentLinks(UserJson[] users, DepartmentJson[] deps, CancellationToken cancellationToken)
+        private async Task UpdateUserDepartmentLinks(IntranetUser[] users, IntranetDepartment[] deps, CancellationToken cancellationToken)
         {
             using var transaction = _dbContext.Database.BeginTransaction();
 
@@ -714,13 +731,8 @@ namespace Taskly.Application.Users
             var dpUserPositions = await _dbContext.UserePositions.ToListAsync(cancellationToken);
             foreach (var u in users)
             {
-                if (!u.DepartmentId.HasValue)
-                {
-                    continue;
-                }
-
                 //Log.Logger.Debug($"Handle {u.lastname}");
-                var dbUser = dbUsers.First(i => i.Email == u.email);
+                var dbUser = dbUsers.First(i => i.Email == u.Email);
                 var dbDep = dbDeps.First(i => i.Code == u.DepartmentId);
                 if (dbUser.UserDepartments == null)
                 {
@@ -733,11 +745,10 @@ namespace Taskly.Application.Users
                     dbUserDep = new UserDepartment
                     {
                         Id = Guid.NewGuid(),
-                        Rate = u.TypeName == "Основная" ? 1 : 0,
+                        Rate = u.TimeRate,
                         Department = dbDep,
                         User = dbUser,
-                        UserPosition = dpUserPositions.First(i => i.Name == u.title),
-                        Comment = u.TypeName
+                        UserPosition = dpUserPositions.First(i => i.Name == u.Title),
                     };
 
                     _dbContext.UserDepartments.Add(dbUserDep);
@@ -745,9 +756,8 @@ namespace Taskly.Application.Users
                 }
                 else
                 {
-                    dbUserDep.Rate = u.TypeName == "Основная" ? 1 : 0;
-                    dbUserDep.UserPosition = dpUserPositions.First(i => i.Name == u.title);
-                    dbUserDep.Comment = u.TypeName;
+                    dbUserDep.Rate = u.TimeRate;
+                    dbUserDep.UserPosition = dpUserPositions.First(i => i.Name == u.Title);
                 }
 
                 _dbContext.Users.Update(dbUser);
@@ -756,7 +766,7 @@ namespace Taskly.Application.Users
             transaction.Commit();
         }
 
-        private async Task UpdateDepartments(DepartmentJson[] deps, CancellationToken cancellationToken)
+        private async Task UpdateDepartments(IntranetDepartment[] deps, CancellationToken cancellationToken)
         {
             var depsForPlanning = new int[] { 141, 244, 245, 234, 176, 232, 233, 242, 243, 177, 198, 199, 178, 179, 239 };
             using var transaction = _dbContext.Database.BeginTransaction();
@@ -765,28 +775,28 @@ namespace Taskly.Application.Users
             var newDeps = new List<Domain.Department>();
             foreach (var d in deps)
             {
-                var dbDep = dbDeps.FirstOrDefault(i => i.Code == d.prj_company_ID);
-                var newDep = newDeps.FirstOrDefault(i => i.Code == d.prj_company_ID);
+                var dbDep = dbDeps.FirstOrDefault(i => i.Code == d.Id);
+                var newDep = newDeps.FirstOrDefault(i => i.Code == d.Id);
                 if (dbDep == null && newDep == null)
                 {
                     //Log.Logger.Debug($"Handle {d.name} with parent = {d.parent}");
                     newDeps.Add(new Domain.Department
                     {
                         Id = Guid.NewGuid(),
-                        Code = d.prj_company_ID,
-                        Name = d.name,
-                        OrderNumber = d.order_number,
-                        ShortName = d.short_name,
-                        IncludeInWorkPlan = depsForPlanning.Contains(d.prj_company_ID)
+                        Code = d.Id,
+                        Name = d.Name,
+                        OrderNumber = d.OrderNumber,
+                        ShortName = d.ShortName,
+                        IncludeInWorkPlan = depsForPlanning.Contains(d.Id)
                     });
                 }
                 else
                 {
                     if (dbDep != null)
                     {
-                        dbDep.ShortName = d.short_name;
-                        dbDep.OrderNumber = d.order_number;
-                        dbDep.IncludeInWorkPlan = depsForPlanning.Contains(d.prj_company_ID);
+                        dbDep.ShortName = d.ShortName;
+                        dbDep.OrderNumber = d.OrderNumber;
+                        dbDep.IncludeInWorkPlan = depsForPlanning.Contains(d.Id);
 
                         _dbContext.Departments.Update(dbDep);
                     }
@@ -799,13 +809,13 @@ namespace Taskly.Application.Users
             dbDeps = await _dbContext.Departments.ToListAsync(cancellationToken);
             foreach (var d in deps)
             {
-                if (!d.parent.HasValue)
+                if (!d.ParentId.HasValue)
                 {
                     continue;
                 }
 
-                var dpDep = dbDeps.First(i => i.Code == d.prj_company_ID);
-                dpDep.ParentDepartment = dbDeps.First(i => i.Code == d.parent);
+                var dpDep = dbDeps.First(i => i.Code == d.Id);
+                dpDep.ParentDepartment = dbDeps.First(i => i.Code == d.ParentId);
                 _dbContext.Departments.Update(dpDep);
             }
             await _dbContext.SaveChangesAsync(cancellationToken);
@@ -813,7 +823,7 @@ namespace Taskly.Application.Users
             transaction.Commit();
         }
 
-        private async Task UpdateUsers(UserJson[] users, CancellationToken cancellationToken)
+        private async Task UpdateUsers(IntranetUser[] users, CancellationToken cancellationToken)
         {
             using var transaction = _dbContext.Database.BeginTransaction();
 
@@ -821,9 +831,9 @@ namespace Taskly.Application.Users
             var newUsers = new List<User>();
             foreach (var u in users)
             {
-                var userName = $"{u.lastname} {u.firstname} {u.middlename}";
-                var dbUser = dbUsers.FirstOrDefault(i => i.Email == u.email && i.Name == userName);
-                var newUser = newUsers.FirstOrDefault(i => i.Email == u.email && i.Name == userName);
+                var userName = $"{u.LastName} {u.FirstName} {u.MiddleName}";
+                var dbUser = dbUsers.FirstOrDefault(i => i.Email == u.Email && i.Name == userName);
+                var newUser = newUsers.FirstOrDefault(i => i.Email == u.Email && i.Name == userName);
                 if (dbUser == null && newUser == null)
                 {
                     newUsers.Add(new User
@@ -831,7 +841,7 @@ namespace Taskly.Application.Users
                         Id = Guid.NewGuid(),
                         Name = userName,
                         Password = BCrypt.Net.BCrypt.HashPassword(DefaultPasswordForNewUsers),
-                        Email = u.email
+                        Email = u.Email
                     });
                 }
             }
@@ -840,7 +850,7 @@ namespace Taskly.Application.Users
             transaction.Commit();
         }
 
-        private async Task UpdateUserPositions(UserJson[] users, CancellationToken cancellationToken)
+        private async Task UpdateUserPositions(IntranetUser[] users, CancellationToken cancellationToken)
         {
             using var transaction = _dbContext.Database.BeginTransaction();
 
@@ -848,15 +858,15 @@ namespace Taskly.Application.Users
             var newUserPositions = new List<UserPosition>();
             foreach (var u in users)
             {
-                var dbUserPosition = dbUserPositions.FirstOrDefault(i => i.Name == u.title);
-                var newUserPosition = newUserPositions.FirstOrDefault(i => i.Name == u.title);
+                var dbUserPosition = dbUserPositions.FirstOrDefault(i => i.Name == u.Title);
+                var newUserPosition = newUserPositions.FirstOrDefault(i => i.Name == u.Title);
                 if (dbUserPosition == null && newUserPosition == null)
                 {
                     newUserPositions.Add(new UserPosition
                     {
                         Id = Guid.NewGuid(),
-                        Name = u.title,
-                        Ident = ConvertTitleToIdent(u.title)
+                        Name = u.Title,
+                        Ident = ConvertTitleToIdent(u.Title)
                     });
                 }
             }
@@ -952,37 +962,9 @@ namespace Taskly.Application.Users
             return null;
         }
 
-        // private async Task ExtractAsync(ImportDataFromJsonRequest request, out DepartmentJson[] deps, out UserJson[] users, out ProjectJson[] projects)
-        // {
-        //     var path = Directory.GetParent(typeof(ImportDataFromJsonRequestHandler).Assembly.Location)!.FullName;
-        //     var usersFileName = Path.Combine(path, request.UsersFileName);
-        //     var projectsFileName = Path.Combine(path, request.ProjectsFileName);
-        //     var projectTasksFileName = Path.Combine(path, request.ProjectTasksFileName);
-
-        //     if (!File.Exists(usersFileName))
-        //     {
-        //         throw new NotFoundException($"Cannot find {usersFileName}");
-        //     }
-
-        //     if (!File.Exists(projectsFileName))
-        //     {
-        //         throw new NotFoundException($"Cannot find {projectsFileName}");
-        //     }
-
-        //     if (!File.Exists(projectTasksFileName))
-        //     {
-        //         throw new NotFoundException($"Cannot find {projectTasksFileName}");
-        //     }
-
-        //     //deps = JsonSerializer.Deserialize<DepartmentJson[]>(File.ReadAllText(departmentFileName));
-        //     deps = await LoadDepartmentsFromIntranetDbAsync(request.IntranetDbConnectionSettings);
-        //     users = JsonSerializer.Deserialize<UserJson[]>(File.ReadAllText(usersFileName));
-        //     projects = JsonSerializer.Deserialize<ProjectJson[]>(File.ReadAllText(projectsFileName));
-        // }
-
-        private static async Task<DepartmentJson[]> LoadDepartmentsFromIntranetDbAsync(MySqlConnection conn, CancellationToken cancellationToken)
+        private static async Task<IntranetDepartment[]> LoadDepartmentsFromIntranetDbAsync(MySqlConnection conn, CancellationToken cancellationToken)
         {
-            var res = new List<DepartmentJson>();
+            var res = new List<IntranetDepartment>();
 
             using var command = conn.CreateCommand();
             command.CommandText = "SELECT name, prj_company_ID, parent, order_number, short_name FROM prj_company;";
@@ -990,13 +972,13 @@ namespace Taskly.Application.Users
             using var reader = await command.ExecuteReaderAsync(cancellationToken);
             while (await reader.ReadAsync(cancellationToken))
             {
-                res.Add(new DepartmentJson
+                res.Add(new IntranetDepartment
                 {
-                    name = reader.GetString("name"),
-                    prj_company_ID = reader.GetInt32("prj_company_ID"),
-                    parent = reader["parent"] == DBNull.Value ? null : reader.GetInt32("parent"),
-                    order_number = reader.GetInt32("order_number"),
-                    short_name = reader.GetString("short_name")
+                    Id = reader.GetInt32("prj_company_ID"),
+                    ParentId = reader["parent"] == DBNull.Value ? null : reader.GetInt32("parent"),
+                    Name = reader.GetString("name"),
+                    ShortName = reader.GetString("short_name"),
+                    OrderNumber = reader.GetInt32("order_number")
                 });
             }
 
@@ -1039,77 +1021,6 @@ namespace Taskly.Application.Users
             "239",
                 "Главный специалист", "Ведущий инженер", "Инженер 1 категории", "Инженер 2 категории", "Инженер 3 категории", "Техник", "Заместитель главного инженера по проектам-начальник отдела"
                     };
-    }
-
-    /*
-        { 
-        "prj_company_ID":136,
-        "name":"Отдел по работе с клиентами",
-        "order_number":151,
-        "parent":189,
-        "short_name":""
-        }
-    */
-    public class DepartmentJson
-    {
-        public int prj_company_ID { get; set; }
-        public string name { get; set; }
-        public int order_number { get; set; }
-        public int? parent { get; set; }
-        public string short_name { get; set; }
-    }
-
-    /*
-        { 
-        "id":532,
-        "firstname":"Александр",
-        "middlename":"Сергеевич",
-        "lastname":"...",
-        "email":"....",
-        "title":"Ведущий эксперт",
-        "TypeName":"Основная",
-        "name":"Служба внедрения",
-        "DepartmentId":15
-        }
-    */
-    internal class UserJson
-    {
-        public int id { get; set; }
-        public string firstname { get; set; }
-        public string middlename { get; set; }
-        public string lastname { get; set; }
-        public string email { get; set; }
-        public int DepartmentId { get; set; }
-    }
-
-    /*
-    {
-        "project_id": 256,
-        "short_name": "...",
-        "name": "Замена релейных защит, регуляторов, технологической автоматики,  панели управления на микропроцессорные системы САУ гидроагрегатов",
-        "opened": "",
-        "company": "...",
-        "start_stop_dates": "20.06.2011 - 31.12.2015",
-        "close_date": "",
-        "project_manager": "...",
-        "lead_engineer": "...",
-        "customer": "...",
-        "contract": "..."
-    }
-    */
-    internal class ProjectJson
-    {
-        public int project_id { get; set; }
-        public string short_name { get; set; }
-        public string name { get; set; }
-        public string opened { get; set; }
-        public string? company { get; set; }
-        public string start_stop_dates { get; set; }
-        public string? close_date { get; set; }
-        public string? project_manager { get; set; }
-        public string? lead_engineer { get; set; }
-        public string? customer { get; set; }
-        public string? contract { get; set; }
     }
 
     internal class UserPlan
