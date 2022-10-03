@@ -31,9 +31,9 @@ namespace Taskly.Application.Users
             using var command = conn.CreateCommand();
             command.CommandText =
                 "SELECT c.display_name, u2.name as gip_name, u2.email as gip_email, u.name as manager_name, u.email as manager_email, p.prj_project_ID, p.project_code, p.project_name, p.open, p.company_ID, p.date_from, p.date_to, p.date_to_fact, p.manager_ID, p.gip_ID, p.customer_ID, p.dogovor, p.internal FROM prj_reestr p  " +
-                "join jos_users u on u.id = p.manager_ID " +
-                "join jos_users u2 on u2.id = p.gip_ID " +
-                "join civicrm_contact c on c.id = p.customer_ID ";
+                "left join jos_users u on u.id = p.manager_ID " +
+                "left join jos_users u2 on u2.id = p.gip_ID " +
+                "left join civicrm_contact c on c.id = p.customer_ID ";
 
             using var reader = await command.ExecuteReaderAsync(cancellationToken);
             while (await reader.ReadAsync(cancellationToken))
@@ -50,7 +50,7 @@ namespace Taskly.Application.Users
                     CloseDate = reader["date_to_fact"] == DBNull.Value ? null : reader.GetDateTime("date_to_fact"),
                     ManagerId = reader["manager_ID"] == DBNull.Value ? null : reader.GetInt32("manager_ID"),
                     LeadEngineerId = reader["gip_ID"] == DBNull.Value ? null : reader.GetInt32("gip_ID"),
-                    CustomerName = reader.GetString("display_name"),
+                    CustomerName = reader["display_name"] == DBNull.Value ? "---" : reader.GetString("display_name"),
                     Contract = reader.GetString("dogovor"),
                     Internal = reader.GetInt32("internal") == 1,
                     ManagerEmail = reader["manager_email"] == DBNull.Value ? null : reader.GetString("manager_email"),
@@ -82,8 +82,8 @@ namespace Taskly.Application.Users
             using var command = conn.CreateCommand();
             var sql =
                 "SELECT u.cb_effectiverate, u.user_id, p.Title, u.firstname, u.middlename, u.lastname, u2.email, u.cb_departament_fact FROM jos_comprofiler u " +
-                "join sms_position p on u.user_id = p.UserID and u.cb_departament_fact = p.DepartmentID " +
-                "join jos_users u2 on u2.id = u.user_id " +
+                "left join sms_position p on u.user_id = p.UserID and u.cb_departament_fact = p.DepartmentID " +
+                "left join jos_users u2 on u2.id = u.user_id " +
                 "where u2.email is not null and u2.email <> '' ";
 
             command.CommandText = sql;
@@ -106,11 +106,11 @@ namespace Taskly.Application.Users
                 {
                     Id = reader.GetInt32("user_id"),
                     FirstName = reader.GetString("firstname"),
-                    MiddleName = reader.GetString("middlename"),
+                    MiddleName = reader["middlename"] == DBNull.Value ? string.Empty : reader.GetString("middlename"),
                     LastName = reader.GetString("lastname"),
                     Email = reader.GetString("email"),
                     DepartmentId = reader.GetInt32("cb_departament_fact"),
-                    Title = reader.GetString("Title"),
+                    Title = reader["Title"] == DBNull.Value ? string.Empty : reader.GetString("Title"),
                     TimeRate = userRateAsFloat
                 });
             }
