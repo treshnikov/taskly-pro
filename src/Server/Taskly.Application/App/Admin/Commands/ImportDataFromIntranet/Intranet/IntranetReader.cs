@@ -22,7 +22,9 @@ namespace Taskly.Application.Users
                 UserID = intranetDbConnectionSettings.User,
                 Password = intranetDbConnectionSettings.Password,
                 Port = intranetDbConnectionSettings.Port,
-                SslMode = MySqlSslMode.Disabled
+                SslMode = MySqlSslMode.Disabled,
+                AllowZeroDateTime = true,
+                ConvertZeroDateTime = true 
             };
 
             using var conn = new MySqlConnection(builder.ConnectionString);
@@ -45,8 +47,8 @@ namespace Taskly.Application.Users
                     Name = reader.GetString("project_name"),
                     Opened = reader.GetInt32("open") == 1,
                     DepartmentId = reader.GetInt32("company_ID"),
-                    Start = reader.GetDateTime("date_from"),
-                    End = reader.GetDateTime("date_to"),
+                    Start = reader["date_from"] == DBNull.Value ? DateTime.Now : reader.GetDateTime("date_from"),
+                    End = reader["date_to"] == DBNull.Value ? new DateTime(2999, 01, 01) : reader.GetDateTime("date_to"),
                     CloseDate = reader["date_to_fact"] == DBNull.Value ? null : reader.GetDateTime("date_to_fact"),
                     ManagerId = reader["manager_ID"] == DBNull.Value ? null : reader.GetInt32("manager_ID"),
                     LeadEngineerId = reader["gip_ID"] == DBNull.Value ? null : reader.GetInt32("gip_ID"),
@@ -73,7 +75,8 @@ namespace Taskly.Application.Users
                 UserID = intranetDbConnectionSettings.User,
                 Password = intranetDbConnectionSettings.Password,
                 Port = intranetDbConnectionSettings.Port,
-                SslMode = MySqlSslMode.Disabled
+                SslMode = MySqlSslMode.Disabled,
+                AllowZeroDateTime = true
             };
 
             using var conn = new MySqlConnection(builder.ConnectionString);
@@ -81,7 +84,7 @@ namespace Taskly.Application.Users
 
             using var command = conn.CreateCommand();
             var sql =
-                "SELECT u.cb_effectiverate, u.user_id, p.Title, u.firstname, u.middlename, u.lastname, u2.email, u.cb_departament_fact FROM jos_comprofiler u " +
+                "SELECT (isnull(u.cb_workfinish) or (u.cb_workfinish = '0000-00-00') or (u.cb_workfinish > now())) as isEmployee, u.cb_effectiverate, u.user_id, p.Title, u.firstname, u.middlename, u.lastname, u2.email, u.cb_departament_fact FROM jos_comprofiler u " +
                 "left join sms_position p on u.user_id = p.UserID and u.cb_departament_fact = p.DepartmentID " +
                 "left join jos_users u2 on u2.id = u.user_id " +
                 "where u2.email is not null and u2.email <> '' ";
@@ -101,6 +104,8 @@ namespace Taskly.Application.Users
                 {
                     userRateAsFloat = 0;
                 }
+                var isEmployee = reader.GetInt32("isEmployee");
+                userRateAsFloat *= isEmployee;
 
                 res.Add(new IntranetUser
                 {
@@ -128,7 +133,8 @@ namespace Taskly.Application.Users
                 UserID = intranetDbConnectionSettings.User,
                 Password = intranetDbConnectionSettings.Password,
                 Port = intranetDbConnectionSettings.Port,
-                SslMode = MySqlSslMode.Disabled
+                SslMode = MySqlSslMode.Disabled,
+                AllowZeroDateTime = true
             };
 
             using var conn = new MySqlConnection(builder.ConnectionString);

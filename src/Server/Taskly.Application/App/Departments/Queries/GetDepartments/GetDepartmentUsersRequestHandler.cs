@@ -50,7 +50,7 @@ namespace Taskly.Application.Departments.Queries
                 parentVm.Children!.Add(newDepVm);
 
                 // add users
-                foreach (var u in users.Where(u => u.UserDepartments.Any(uu => uu.DepartmentId == newDepVm.Id)).OrderBy(u => u.Name))
+                foreach (var u in users.Where(u => u.UserDepartments.Any(uu => uu.DepartmentId == newDepVm.Id && uu.Rate > 0)).OrderBy(u => u.Name))
                 {
                     var userVm = new DepartmentUserVm
                     {
