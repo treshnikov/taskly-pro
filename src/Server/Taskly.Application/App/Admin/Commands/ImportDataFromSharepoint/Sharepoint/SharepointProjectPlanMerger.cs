@@ -11,7 +11,7 @@ namespace Taskly.Application.Users
     {
         private readonly ITasklyDbContext _dbContext;
 
-        public SharepointProjectPlanMerger(ITasklyDbContext dbContext) 
+        public SharepointProjectPlanMerger(ITasklyDbContext dbContext)
         {
             _dbContext = dbContext;
         }
@@ -38,7 +38,7 @@ namespace Taskly.Application.Users
             await _dbContext.SaveChangesAsync(cancellationToken);
 
             //extract plans from Excel
-            List<SharepointUserPlan> plans = ExtractPlans(filePath);
+            var plans = ExtractPlans(filePath);
 
             var dbUsers = await _dbContext.Users.Include(i => i.UserDepartments).ToListAsync(cancellationToken);
             var dbProjects = await _dbContext.Projects.AsNoTracking().ToListAsync(cancellationToken);
@@ -47,30 +47,18 @@ namespace Taskly.Application.Users
                 var user = dbUsers.FirstOrDefault(i => i.Name == planItem.UserName);
                 if (user == null)
                 {
-                    Log.Error($"Cannot find user with name {planItem.UserName}");
+                    Log.Error($"Cannot find user by name {planItem.UserName}");
                     continue;
                 }
 
-                // check that the user is included in the given department
-                // if they don't then add them to with same position as in the other department
-                if (!user.UserDepartments.Any(i => i.DepartmentId == dbDep.Id))
-                {
-                    var defaultPosition = user.UserDepartments.FirstOrDefault();
-                    if (defaultPosition != null)
-                    {
-                        user.UserDepartments.Add(new UserDepartment
-                        {
-                            DepartmentId = dbDep.Id,
-                            Rate = planItem.Rate,
-                            UserId = user.Id,
-                            UserPositionId = defaultPosition.UserPositionId,
-                        });
-                    }
-                }
-                else
-                {
-                    user.UserDepartments.OrderByDescending(i => i.Rate).First(i => i.DepartmentId == dbDep.Id).Rate = planItem.Rate;
-                }
+                // overwrite user position to the curent department because
+                // xlsx files has more relevant information about user-departmnet links
+                user.UserDepartments = user.UserDepartments.Take(1).ToList();
+                var userPosition = user.UserDepartments.First();
+                userPosition.Rate = planItem.Rate;
+                userPosition.DepartmentId = dbDep.Id;
+                _dbContext.Users.Update(user);
+                _dbContext.UserDepartments.Update(userPosition);
 
                 foreach (var w in planItem.Weeks)
                 {
@@ -135,7 +123,7 @@ namespace Taskly.Application.Users
             transaction.Commit();
         }
 
-        private List<SharepointUserPlan> ExtractPlans(string filePath)
+        private static List<SharepointUserPlan> ExtractPlans(string filePath)
         {
             var res = new List<SharepointUserPlan>();
 

@@ -23,6 +23,7 @@ namespace Taskly.Application.Users
                 .Users
                 .Include(u => u.UserDepartments).ThenInclude(u => u.Department)
                 .Include(u => u.UserDepartments).ThenInclude(u => u.UserPosition)
+                .Where(u => u.UserDepartments.Any(ud => ud.Rate > 0))
                 .AsNoTracking()
                 .OrderBy(u => u.Name)
                 .Select(u => UserVm.FromUser(u))
