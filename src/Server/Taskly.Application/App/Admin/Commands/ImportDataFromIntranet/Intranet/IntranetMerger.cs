@@ -93,6 +93,25 @@ namespace Taskly.Application.Users
             transaction.Commit();
         }
 
+        public async Task UpdateCalendar(CalendarDay[] iNonWorkingDays, CancellationToken cancellationToken)
+        {
+            using var transaction = _dbContext.Database.BeginTransaction();
+
+            var days = await _dbContext.Calendar.ToListAsync(cancellationToken);
+            foreach (var day in days)
+            {
+                _dbContext.Calendar.Remove(day);
+            }
+
+            foreach (var day in iNonWorkingDays)
+            {
+                _dbContext.Calendar.Add(day);
+            }
+
+            await _dbContext.SaveChangesAsync(cancellationToken);
+            transaction.Commit();
+        }
+
         public async Task UpdateUserDepartmentLinks(IntranetUser[] users, IntranetDepartment[] deps, CancellationToken cancellationToken)
         {
             using var transaction = _dbContext.Database.BeginTransaction();
@@ -332,6 +351,6 @@ namespace Taskly.Application.Users
 
             return null;
         }
-        
+
     }
 }

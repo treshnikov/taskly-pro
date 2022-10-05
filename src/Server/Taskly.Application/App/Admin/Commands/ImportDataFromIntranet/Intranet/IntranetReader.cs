@@ -1,5 +1,6 @@
 using System.Globalization;
 using MySqlConnector;
+using Taskly.Domain;
 
 namespace Taskly.Application.Users
 {
@@ -24,7 +25,7 @@ namespace Taskly.Application.Users
                 Port = intranetDbConnectionSettings.Port,
                 SslMode = MySqlSslMode.Disabled,
                 AllowZeroDateTime = true,
-                ConvertZeroDateTime = true 
+                ConvertZeroDateTime = true
             };
 
             using var conn = new MySqlConnection(builder.ConnectionString);
@@ -158,6 +159,49 @@ namespace Taskly.Application.Users
 
             return res.ToArray();
         }
+        public async Task<CalendarDay[]> LoadCalendarFromIntranetDbAsync(CancellationToken cancellationToken)
+        {
+            var res = new List<CalendarDay>();
 
+            var builder = new MySqlConnectionStringBuilder
+            {
+                Server = intranetDbConnectionSettings.Host,
+                Database = intranetDbConnectionSettings.DbName,
+                UserID = intranetDbConnectionSettings.User,
+                Password = intranetDbConnectionSettings.Password,
+                Port = intranetDbConnectionSettings.Port,
+                SslMode = MySqlSslMode.Disabled,
+            };
+
+            using var conn = new MySqlConnection(builder.ConnectionString);
+            await conn.OpenAsync(cancellationToken);
+
+            using var command = conn.CreateCommand();
+            var sql =
+                "SELECT distinct date, day_type_id as type FROM intranet.marks_calendar where day_type_id in (1, 6) and employee_ID is null order by date desc";
+
+            command.CommandText = sql;
+            using var reader = await command.ExecuteReaderAsync(cancellationToken);
+            while (await reader.ReadAsync(cancellationToken))
+            {
+                var dayTypeId = reader.GetInt32("type");
+                var dayType = CalendarDayType.None;
+
+                dayType = dayTypeId switch
+                {
+                    1 => CalendarDayType.Holiday,
+                    6 => CalendarDayType.HalfHoliday,
+                    _ => throw new Exception($"Cannot import non working day from an Intranet DB with type = {dayTypeId}"),
+                };
+
+                res.Add(new CalendarDay
+                {
+                    Date = reader.GetDateTime("date"),
+                    DayType = dayType
+                });
+            }
+
+            return res.ToArray();
+        }
     }
 }
