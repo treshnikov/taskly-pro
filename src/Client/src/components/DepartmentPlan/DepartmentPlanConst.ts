@@ -1,8 +1,9 @@
 export const ID_COLUMN_INDEX: number = 0
 export const TOOLTIP_COLUMN_INDEX: number = 1
 export const WEEKS_AVAILABILITY_MAP_COLUMN_INDEX: number = 2
-export const RATE_COLUMN_INDEX: number = 5
-export const STATIC_COLUMNS_COUNT: number = 8
+export const WEEKS_HOURS_SHOULD_BE_PLANNED_MAP_COLUMN_INDEX: number = 3
+export const RATE_COLUMN_INDEX: number = 6
+export const STATIC_COLUMNS_COUNT: number = 9
 
 export const GOOD_PLANING_TIME_COLOR: string = "#ecffebaa"
 export const TOO_MANY_HOURS_PLANNED_COLOR: string = "#ffcccc88"

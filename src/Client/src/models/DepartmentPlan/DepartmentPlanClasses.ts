@@ -4,6 +4,12 @@ export type DepartmentPlanUserRecordVm = {
     userName: string
     userPosition: string
     projects: DepartmentPlanUserProjectVm[]
+    weeks: WeekInfoVm[]
+}
+
+export type WeekInfoVm = {
+    monday: number
+    hoursAvailableForPlanning: number
 }
 
 export type TaskTimeVm = {
@@ -36,10 +42,11 @@ export type DepartmentUserPlan = {
     rate: number
     tooltip: string
     weeksAvailabilityMap: boolean[]
+    hoursShouldBePlannedByWeek: number[]
     project: string
     hours: string | null
     __children: DepartmentProjectPlan[]
-    [weekNumber: string]: string | number | DepartmentProjectPlan[] | boolean[] | null
+    [weekNumber: string]: string | number | DepartmentProjectPlan[] | boolean[] | number[] | null
 }
 
 export type DepartmentProjectPlan = {

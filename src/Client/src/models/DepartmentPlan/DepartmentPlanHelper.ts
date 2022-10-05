@@ -42,7 +42,7 @@ export class DepartmentPlanHelper {
     public static buildFlatPlan(arg: DepartmentPlanUserRecordVm[]): DepartmentUserPlan[] {
         const res: DepartmentUserPlan[] = [];
         let idx = 1;
-
+ 
         arg.forEach(user => {
             const userRecord: DepartmentUserPlan = {
                 id: "u" + idx.toString(),
@@ -52,6 +52,7 @@ export class DepartmentPlanHelper {
                 project: '',
                 tooltip: '',
                 weeksAvailabilityMap: [],
+                hoursShouldBePlannedByWeek: user.weeks.map(w => w.hoursAvailableForPlanning),
                 hours: null,
                 rate: user.rate,
                 __children: []
@@ -131,6 +132,7 @@ export class DepartmentPlanHelper {
                 userId: user.userId as string,
                 rate: 0,
                 projects: [],
+                weeks: [],
                 userName: "",
                 userPosition: ""
             };
@@ -149,7 +151,7 @@ export class DepartmentPlanHelper {
                 let weekIdx = 1;
                 while ((project as any).hasOwnProperty("week" + weekIdx.toString())) {
                     const weekIdent = "week" + weekIdx.toString();
-
+            
                     const hoursAsString = project[weekIdent];
                     if (hoursAsString && hoursAsString !== "") {
                         const weekHours = parseFloat(hoursAsString as string);

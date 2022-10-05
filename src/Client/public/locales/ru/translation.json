@@ -103,6 +103,7 @@
     "error-loading-user": "Ошибка загрузки инофрмации о пользователе, попробуйте повторно войти в систему",
     "import-completed": "Импорт был завершен успешно.",
     "import-from-sharepoint": "Импортировать из файлов Sharepoint",
-    "import-from-intranet": "Импортировать из Intranet"
+    "import-from-intranet": "Импортировать из Intranet",
+    "should-be-planned": "Должно быть запланировано "
 
 }

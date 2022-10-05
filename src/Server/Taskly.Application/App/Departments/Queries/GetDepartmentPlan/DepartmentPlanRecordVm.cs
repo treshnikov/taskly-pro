@@ -10,6 +10,13 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentPlan
         public string UserPosition { get; set; }
         public double Rate { get; set; }
         public List<UserProjectPlanVm> Projects { get; set; }
+        public List<WeekInfoVm> Weeks { get; set; }
+    }
+
+    public class WeekInfoVm
+    {
+        public DateTime Monday { get; set; }
+        public double HoursAvailableForPlanning { get; set; }
     }
 
     public class UserProjectPlanVm
@@ -27,7 +34,7 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentPlan
     {
         public int WeekNumber { get; internal set; }
         public DateTime WeekStart { get; set; }
-        public float PlannedHours { get; set; }
+        public double PlannedHours { get; set; }
         public bool IsWeekAvailableForPlanning { get; set; }
     }
 

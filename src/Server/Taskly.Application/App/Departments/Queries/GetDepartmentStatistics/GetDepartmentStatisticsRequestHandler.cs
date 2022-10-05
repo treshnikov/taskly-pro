@@ -160,7 +160,7 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
             foreach (var projHours in departmentEstimationsLookup)
             {
                 var projId = projHours.Key;
-                float totalHours = 0;
+                double totalHours = 0;
                 foreach (var hour in projHours)
                 {
                     totalHours += hour;

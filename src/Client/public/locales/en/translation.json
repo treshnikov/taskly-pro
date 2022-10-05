@@ -103,5 +103,6 @@
     "error-loading-user": "Cannot load information about the user, please try login again",
     "import-completed": "Data have been imported.",
     "import-from-sharepoint": "Import from Sharepoint",
-    "import-from-intranet": "Import from Intranet"
+    "import-from-intranet": "Import from Intranet",
+    "should-be-planned": "Shoud be planned "
 }

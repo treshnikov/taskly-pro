@@ -3,7 +3,7 @@ namespace Taskly.Domain
     public class DepartmentPlan
     {
         public Guid Id { get; set; }
-        public float Hours { get; set; }
+        public double Hours { get; set; }
         public DateTime WeekStart { get; set; }
 
         public Guid UserId { get; set; }
