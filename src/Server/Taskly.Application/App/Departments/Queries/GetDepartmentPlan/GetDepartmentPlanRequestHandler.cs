@@ -177,6 +177,11 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentPlan
 
                 day.HoursAvailableForPlanning *= user.Rate;
 
+                if (user.User.QuitDate is not null && dt >= user.User.QuitDate)
+                {
+                    day.HoursAvailableForPlanning = 0;
+                }
+
                 res.Add(day);
                 dt = dt.AddDays(7);
             }
