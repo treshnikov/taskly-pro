@@ -231,8 +231,13 @@ namespace Taskly.Application.Users
                         Id = Guid.NewGuid(),
                         Name = userName,
                         Password = BCrypt.Net.BCrypt.HashPassword(DefaultPasswordForNewUsers),
-                        Email = u.Email
+                        Email = u.Email,
+                        QuitDate = u.QuitDate
                     });
+                }
+                else if (dbUser != null)
+                {
+                    dbUser.QuitDate = u.QuitDate;
                 }
             }
             _dbContext.Users.AddRange(newUsers);

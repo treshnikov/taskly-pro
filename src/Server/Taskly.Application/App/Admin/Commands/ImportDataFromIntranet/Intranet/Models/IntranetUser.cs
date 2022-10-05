@@ -10,6 +10,7 @@ namespace Taskly.Application.Users
         public int DepartmentId { get; set; }
         public string Title { get; set; }
         public double TimeRate { get; set; }
+        public DateTime? QuitDate { get; set; }
     }
 
 }
