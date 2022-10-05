@@ -26,7 +26,9 @@ namespace Taskly.Application.Departments.Queries
             List<Domain.User> users = new List<Domain.User>();
             if (request.IncludeUsers)
             {
-                users = await _dbContext.Users.Include(u => u.UserDepartments).ThenInclude(u => u.UserPosition).AsNoTracking().ToListAsync(cancellationToken: cancellationToken);
+                users = await _dbContext.Users
+                    .Include(u => u.UserDepartments).ThenInclude(u => u.UserPosition)
+                    .AsNoTracking().ToListAsync(cancellationToken: cancellationToken);
             }
             HandleDepartment(null, root, deps, users);
 
@@ -50,7 +52,7 @@ namespace Taskly.Application.Departments.Queries
                 parentVm.Children!.Add(newDepVm);
 
                 // add users
-                foreach (var u in users.Where(u => u.UserDepartments.Any(uu => uu.DepartmentId == newDepVm.Id && uu.Rate > 0)).OrderBy(u => u.Name))
+                foreach (var u in users.Where(u => u.WorksInTheCompany() && u.UserDepartments.Any(uu => uu.DepartmentId == newDepVm.Id)).OrderBy(u => u.Name))
                 {
                     var userVm = new DepartmentUserVm
                     {

@@ -140,7 +140,7 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentPlan
 
             // show work plan only for users who works or who had quit but has some planned time
             res = res.Where(
-                    u => users.First(j => j.UserId == u.UserId).Rate > 0 ||
+                    u => users.First(j => j.UserId == u.UserId).User.WorksInTheCompany() ||
                     u.Projects.Any(p => p.Plans.Sum(i => i.PlannedHours) > 0)).ToList();
 
             return res.OrderBy(i => i.UserPosition).ToArray();

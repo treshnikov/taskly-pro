@@ -55,7 +55,7 @@ namespace Taskly.Application.Users
                 // xlsx files has more relevant information about user-departmnet links
                 user.UserDepartments = user.UserDepartments.Take(1).ToList();
                 var userPosition = user.UserDepartments.First();
-                userPosition.Rate = planItem.Rate;
+                //userPosition.Rate = planItem.Rate;
                 userPosition.DepartmentId = dbDep.Id;
                 _dbContext.Users.Update(user);
                 _dbContext.UserDepartments.Update(userPosition);

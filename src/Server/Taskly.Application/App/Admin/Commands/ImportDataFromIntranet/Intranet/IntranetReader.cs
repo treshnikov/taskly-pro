@@ -106,9 +106,7 @@ namespace Taskly.Application.Users
                 {
                     userRateAsFloat = 0;
                 }
-                var isEmployee = reader.GetInt32("isEmployee");
-                userRateAsFloat *= isEmployee;
-
+                
                 var quitDate = reader.GetDateTime("cb_workfinish");
 
                 res.Add(new IntranetUser
