@@ -1,4 +1,7 @@
-import { dateAsShortStrFromNumber, dateToRequestStr } from "../../common/dateFormatter";
+import { isDefined } from "handsontable/helpers";
+import { use } from "i18next";
+import { dateAsShortStr, dateAsShortStrFromNumber, dateToRequestStr } from "../../common/dateFormatter";
+import { ServicesStorageHelper } from "../../common/servicesStorageHelper";
 import { DepartmentUserPlan, DepartmentPlanUserRecordVm, DepartmentProjectPlan, DepartmentPlanUserProjectVm, TaskTimeVm } from "./DepartmentPlanClasses";
 
 
@@ -42,11 +45,16 @@ export class DepartmentPlanHelper {
     public static buildFlatPlan(arg: DepartmentPlanUserRecordVm[]): DepartmentUserPlan[] {
         const res: DepartmentUserPlan[] = [];
         let idx = 1;
- 
+
         arg.forEach(user => {
+
+            const userName = user.userName + (user.quitDate == null || user.quitDate <= 0
+                ? ''
+                : ' (' + (ServicesStorageHelper.t('quit') + ' ' + dateAsShortStr(new Date(user.quitDate))) + ')') 
+
             const userRecord: DepartmentUserPlan = {
                 id: "u" + idx.toString(),
-                userName: user.userName,
+                userName: userName,
                 userPosition: user.userPosition,
                 userId: user.userId,
                 project: '',
@@ -131,6 +139,7 @@ export class DepartmentPlanHelper {
             const userRecord: DepartmentPlanUserRecordVm = {
                 userId: user.userId as string,
                 rate: 0,
+                quitDate: 0,
                 projects: [],
                 weeks: [],
                 userName: "",
@@ -151,7 +160,7 @@ export class DepartmentPlanHelper {
                 let weekIdx = 1;
                 while ((project as any).hasOwnProperty("week" + weekIdx.toString())) {
                     const weekIdent = "week" + weekIdx.toString();
-            
+
                     const hoursAsString = project[weekIdent];
                     if (hoursAsString && hoursAsString !== "") {
                         const weekHours = parseFloat(hoursAsString as string);

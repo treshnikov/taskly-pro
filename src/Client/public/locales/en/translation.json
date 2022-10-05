@@ -104,5 +104,6 @@
     "import-completed": "Data have been imported.",
     "import-from-sharepoint": "Import from Sharepoint",
     "import-from-intranet": "Import from Intranet",
-    "should-be-planned": "Shoud be planned "
+    "should-be-planned": "Shoud be planned ",
+    "quit": "quit"
 }

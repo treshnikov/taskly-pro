@@ -9,6 +9,7 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentPlan
         public string UserName { get; set; }
         public string UserPosition { get; set; }
         public double Rate { get; set; }
+        public DateTime? QuitDate { get; set; }
         public List<UserProjectPlanVm> Projects { get; set; }
         public List<WeekInfoVm> Weeks { get; set; }
     }

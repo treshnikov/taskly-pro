@@ -2,6 +2,7 @@ export type DepartmentPlanUserRecordVm = {
     userId: string
     rate: number
     userName: string
+    quitDate: number
     userPosition: string
     projects: DepartmentPlanUserProjectVm[]
     weeks: WeekInfoVm[]

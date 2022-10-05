@@ -68,6 +68,7 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentPlan
                 {
                     UserId = user.User.Id,
                     UserName = user.User.Name,
+                    QuitDate = user.User.QuitDate,
                     UserPosition = string.IsNullOrWhiteSpace(user.UserPosition.Ident) ? user.UserPosition.Name : user.UserPosition.Ident,
                     Rate = user.User.UserDepartments.Count > 0 ? user.User.UserDepartments.Max(i => i.Rate) : 0,
                     Projects = new List<UserProjectPlanVm>(),

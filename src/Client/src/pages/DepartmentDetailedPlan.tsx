@@ -23,6 +23,7 @@ const initPlan: DepartmentUserPlan[] = [{
     project: '',
     hours: '',
     rate: 0,
+    quitDate: 0,
     tooltip: '',
     weeksAvailabilityMap: [],
     hoursShouldBePlannedByWeek: [],
