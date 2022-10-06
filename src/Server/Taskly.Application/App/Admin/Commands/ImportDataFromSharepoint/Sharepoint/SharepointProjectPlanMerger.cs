@@ -62,8 +62,9 @@ namespace Taskly.Application.Users
                 user.UserDepartments.Add(new UserDepartment{
                     DepartmentId = dbDep.Id,
                     Department = dbDep,
-                    //Rate = planItem.Rate,
-                    Rate = defaultPosition.Rate,
+
+                    // take a max possible rate because in Excel files some time the information can be newer than in the Intranet DB
+                    Rate = Math.Max(planItem.Rate, defaultPosition.Rate),
                     User = user,
                     UserId = user.Id,
                     UserPosition = defaultPosition.UserPosition,

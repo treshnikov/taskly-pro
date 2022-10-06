@@ -105,6 +105,7 @@
     "import-from-sharepoint": "Импортировать из файлов Sharepoint",
     "import-from-intranet": "Импортировать из Intranet",
     "should-be-planned": "Должно быть запланировано ",
-    "quit": "уволился"
+    "quit": "уволился",
+    "hired": "Нанят "
 
 }
