@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Taskly.Application.Departments.Queries.GetDepartmentPlan;
 using Taskly.Application.Interfaces;
 using Taskly.Domain;
@@ -7,10 +8,32 @@ namespace Taskly.Application.Calendar;
 public class CalendarService : ICalendarService
 {
     private readonly IEnumerable<CalendarDay> _calendar;
+    private readonly ITasklyDbContext _dbContext;
 
     public CalendarService(ITasklyDbContext dbContext)
     {
+        _dbContext = dbContext;
         _calendar = dbContext.Calendar.ToList();
+    }
+
+    public async Task<double> GetAvailableHoursForPlanningForDepartmentAsync(Guid departmentId, DateTime start, DateTime end, CancellationToken cancellationToken)
+    {
+        var res = 0.0;
+        var users = await _dbContext
+            .Users
+            .Include(d => d.UserDepartments)
+            .Where(u => u.UserDepartments.Any(ud => ud.DepartmentId == departmentId))
+            .ToListAsync(cancellationToken);
+
+        foreach (var user in users)
+        {
+            // take a department with max work rate because user can work in multiple departments
+            var ud = user.UserDepartments.OrderByDescending(i => i.Rate).First();
+            var availableHoursForPlanning = GetWeeksInfo(ud, start, end).Select(i => i.HoursAvailableForPlanning).Sum();
+            res += availableHoursForPlanning;
+        }
+
+        return res;
     }
 
     public IEnumerable<WeekInfoVm> GetWeeksInfo(UserDepartment user, DateTime start, DateTime end)
@@ -19,7 +42,8 @@ public class CalendarService : ICalendarService
 
         // get non-working days to calculate how many working hours should be planned
         // todo handle sick days
-        var nonWorkingDays = _calendar.Where(i => i.Date >= start && i.Date <= end)
+        var nonWorkingDays = _calendar
+            .Where(i => i.Date >= start && i.Date <= end)
             .ToDictionary(i => i.Date, i => i.DayType);
 
         var dt = start;

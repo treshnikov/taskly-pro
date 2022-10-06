@@ -1,6 +1,17 @@
 export type DepartmentStatisticsVm = {
     projects: ProjectStatisticsVm[]
     weeks: WeekStatistics[]
+    summary: DepartmentStatisticsSummary
+}
+
+export type DepartmentStatisticsSummary = {
+    start: number
+    end: number
+    availableHoursForPlanning: number
+    hoursPlannedForDepartment: number
+    hoursPlannedByHeadOfDepartment: number
+    workLoadPercentage: number
+    externalProjectsRateInPercentage: number
 }
 
 export type WeekStatistics = {

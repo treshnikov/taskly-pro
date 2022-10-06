@@ -14,7 +14,7 @@ import { toggleShowStatistics } from "../../redux/departmentPlanSlice";
 import { ProjectPlanToDepartmentPlanBarChart } from "./ProjectPlanToDepartmentPlanBarChart";
 import { StatisticsSummary } from "./StatisticsSummary";
 import { ProjectStatisticsTable } from "./ProjectStatisticsTable";
-import { DepartmentStatisticsVm, ProjectStatisticsVm, WeekStatistics as WeekStatistics } from "../../models/DepartmentPlan/DepartmentPlanStatisticsClasses";
+import { DepartmentStatisticsSummary, DepartmentStatisticsVm, ProjectStatisticsVm, WeekStatistics as WeekStatistics } from "../../models/DepartmentPlan/DepartmentPlanStatisticsClasses";
 import { ProjectsPieChart } from "./ProjectsPieChart";
 
 export type DepartmentPlanStatisticsProps = {
@@ -34,6 +34,7 @@ export const DepartmentPlanStatistics: React.FunctionComponent<DepartmentPlanSta
     const [projectStatistics, setProjectStatistics] = useState<ProjectStatisticsVm[]>([])
     const [weeksStatistics, setWeeksStatistics] = useState<WeekStatistics[]>([])
     const [selectedTab, setSelectedTab] = useState('1');
+    const [statisticsSummary, setStatisticSummary] = useState<DepartmentStatisticsSummary>({start: 0, end: 0, availableHoursForPlanning: 0, hoursPlannedForDepartment: 0, hoursPlannedByHeadOfDepartment: 0, workLoadPercentage: 0, externalProjectsRateInPercentage: 0})
 
     const selectedTabChanged = (e: React.SyntheticEvent, newValue: string) => {
         setSelectedTab(newValue);
@@ -57,6 +58,7 @@ export const DepartmentPlanStatistics: React.FunctionComponent<DepartmentPlanSta
                 const statistics = (data as DepartmentStatisticsVm)
                 setProjectStatistics(statistics.projects)
                 setWeeksStatistics(statistics.weeks)
+                setStatisticSummary(statistics.summary)
             })
 
     }, [showStatistics])
@@ -100,10 +102,8 @@ export const DepartmentPlanStatistics: React.FunctionComponent<DepartmentPlanSta
                         </Box>
                         <TabPanel value="1">
                             <StatisticsSummary
-                                start={props.start}
-                                end={props.end}
-                                plan={props.plan}
-                                projectStatistics={projectStatistics} />
+                                summary={statisticsSummary}
+                            />
                         </TabPanel>
                         <TabPanel value="2">
                             <ProjectStatisticsTable

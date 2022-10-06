@@ -2,6 +2,7 @@ using System.Text;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using Taskly.Application.Calendar;
 using Taskly.Application.Interfaces;
 using Taskly.Domain;
 
@@ -10,10 +11,12 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
     public class GetDepartmentStatisticsRequestHandler : IRequestHandler<GetDepartmentStatisticsRequest, DepartmentStatisticsVm>
     {
         private readonly ITasklyDbContext _dbContext;
+        private readonly ICalendarService _calendarService;
 
-        public GetDepartmentStatisticsRequestHandler(ITasklyDbContext dbContext)
+        public GetDepartmentStatisticsRequestHandler(ITasklyDbContext dbContext, ICalendarService calendarService)
         {
             _dbContext = dbContext;
+            _calendarService = calendarService;
         }
         public async Task<DepartmentStatisticsVm> Handle(GetDepartmentStatisticsRequest request, CancellationToken cancellationToken)
         {
@@ -53,16 +56,23 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
 
             await FillProjectInfo(request, res, dep, tasks, plans, cancellationToken);
             await FillProjectToDepartmentEstimationsAsync(request, res, dep, tasks, plans, cancellationToken);
-            FillSummary(request, res);
+            await FillSummary(request, res, cancellationToken);
 
             return await Task.FromResult(res);
         }
 
-        private void FillSummary(GetDepartmentStatisticsRequest request, DepartmentStatisticsVm res)
+        private async Task FillSummary(GetDepartmentStatisticsRequest request, DepartmentStatisticsVm res, CancellationToken cancellationToken)
         {
             res.Summary.Start = request.Start;
             res.Summary.End = request.End;
-            //res.Summary.AvailableHoursForPlanning = ...
+            res.Summary.AvailableHoursForPlanning = await _calendarService.GetAvailableHoursForPlanningForDepartmentAsync(request.DepartmentId, request.Start, request.End, cancellationToken);
+            res.Summary.HoursPlannedForDepartment = res.Projects.Select(i => i.PlannedTaskHoursForDepartment).Sum();
+            res.Summary.HoursPlannedByHeadOfDepartment = res.Projects.Select(i => i.PlannedTaskHoursByDepartment).Sum();
+            res.Summary.WorkLoadPercentage = Math.Round(100 * res.Summary.HoursPlannedForDepartment / res.Summary.AvailableHoursForPlanning, 2);
+
+            var externalProjectsHours = res.Projects.Where(p => p.ProjectType == ProjectType.External).Select(i => i.PlannedTaskHoursForDepartment).Sum();
+            var internalProjectsHours = res.Projects.Where(p => p.ProjectType == ProjectType.Internal).Select(i => i.PlannedTaskHoursForDepartment).Sum();
+            res.Summary.ExternalProjectsRateInPercentage = Math.Round(100 * externalProjectsHours / (internalProjectsHours + externalProjectsHours), 2);
         }
 
         private async Task FillProjectToDepartmentEstimationsAsync(GetDepartmentStatisticsRequest request, DepartmentStatisticsVm res, Department dep, List<ProjectTask> tasks, List<DepartmentPlan> plans, CancellationToken cancellationToken)
