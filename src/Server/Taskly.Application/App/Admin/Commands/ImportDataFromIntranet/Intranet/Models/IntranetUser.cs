@@ -11,6 +11,7 @@ namespace Taskly.Application.Users
         public string Title { get; set; }
         public double TimeRate { get; set; }
         public DateTime? QuitDate { get; set; }
+        public DateTime HiringDate { get; set; }
     }
 
 }

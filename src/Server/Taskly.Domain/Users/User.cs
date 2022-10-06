@@ -9,6 +9,7 @@ namespace Taskly.Domain
         public string Name { get; set; }
         public string Password { get; set; }
         public string? Email { get; set; }
+        public DateTime HiringDate { get; set; }
         public DateTime? QuitDate { get; set; }
         public ICollection<Role> Roles { get; set; }
         public ICollection<UserDepartment> UserDepartments { get; set; }

@@ -1,6 +1,3 @@
-using System.Security.AccessControl;
-using Taskly.Application.Users;
-
 namespace Taskly.Application.Departments.Queries.GetDepartmentPlan
 {
     public class DepartmentPlanRecordVm

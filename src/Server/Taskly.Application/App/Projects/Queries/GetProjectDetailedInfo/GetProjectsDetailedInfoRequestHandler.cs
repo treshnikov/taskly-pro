@@ -33,7 +33,7 @@ namespace Taskly.Application.Projects
             var deps = await _dbContext.Departments.AsNoTracking().Include(u => u.UserDepartments).ThenInclude(u => u.UserPosition).ToListAsync(cancellationToken);
 
             ProjectHelper.AddDefaultDepartments(project, deps);
-            await ProjectHelper.AddDefaultDepartmentPositionsToEstimationsVms(project, deps, cancellationToken);
+            ProjectHelper.AddDefaultDepartmentPositionsToEstimationsVms(project, deps, cancellationToken);
             project.Tasks = project.Tasks.OrderBy(i => i.Start).ToArray();
 
             return ProjectDetailedInfoVm.From(project);

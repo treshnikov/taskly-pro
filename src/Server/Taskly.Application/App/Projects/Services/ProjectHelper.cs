@@ -26,7 +26,7 @@ namespace Taskly.Application.Projects
             }
         }
 
-        public static async Task AddDefaultDepartmentPositionsToEstimationsVms(Project project, List<Domain.Department> deps, CancellationToken cancellationToken)
+        public static void AddDefaultDepartmentPositionsToEstimationsVms(Project project, List<Department> deps, CancellationToken cancellationToken)
         {
             var depToUserPositions = GetExistingDepartmentPositions(deps);
 

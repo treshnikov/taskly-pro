@@ -86,7 +86,7 @@ namespace Taskly.Application.Users
 
             using var command = conn.CreateCommand();
             var sql =
-                "SELECT u.cb_workfinish, (isnull(u.cb_workfinish) or (u.cb_workfinish = '0000-00-00') or (u.cb_workfinish > now())) as isEmployee, u.cb_effectiverate, u.user_id, p.Title, u.firstname, u.middlename, u.lastname, u2.email, u.cb_departament_fact FROM jos_comprofiler u " +
+                "SELECT u.cb_workentry, u.cb_workfinish, (isnull(u.cb_workfinish) or (u.cb_workfinish = '0000-00-00') or (u.cb_workfinish > now())) as isEmployee, u.cb_effectiverate, u.user_id, p.Title, u.firstname, u.middlename, u.lastname, u2.email, u.cb_departament_fact FROM jos_comprofiler u " +
                 "left join sms_position p on u.user_id = p.UserID and u.cb_departament_fact = p.DepartmentID " +
                 "left join jos_users u2 on u2.id = u.user_id " +
                 "where u2.email is not null and u2.email <> '' ";
@@ -106,8 +106,9 @@ namespace Taskly.Application.Users
                 {
                     userRateAsFloat = 0;
                 }
-                
+
                 var quitDate = reader.GetDateTime("cb_workfinish");
+                var hiringdDate = reader.GetDateTime("cb_workentry");
 
                 res.Add(new IntranetUser
                 {
@@ -119,7 +120,8 @@ namespace Taskly.Application.Users
                     DepartmentId = reader.GetInt32("cb_departament_fact"),
                     Title = reader["Title"] == DBNull.Value ? string.Empty : reader.GetString("Title"),
                     TimeRate = userRateAsFloat,
-                    QuitDate = quitDate == DateTime.MinValue ? null : quitDate
+                    QuitDate = quitDate == DateTime.MinValue ? null : quitDate,
+                    HiringDate = hiringdDate
                 });
             }
 

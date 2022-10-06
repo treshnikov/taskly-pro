@@ -232,11 +232,13 @@ namespace Taskly.Application.Users
                         Name = userName,
                         Password = BCrypt.Net.BCrypt.HashPassword(DefaultPasswordForNewUsers),
                         Email = u.Email,
+                        HiringDate = u.HiringDate,
                         QuitDate = u.QuitDate
                     });
                 }
                 else if (dbUser != null)
                 {
+                    dbUser.HiringDate = u.HiringDate;
                     dbUser.QuitDate = u.QuitDate;
                 }
             }
