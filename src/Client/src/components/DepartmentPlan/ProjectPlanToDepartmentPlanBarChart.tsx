@@ -39,11 +39,12 @@ export const ProjectPlanToDepartmentPlanBarChart: React.FunctionComponent<Projec
     }
 
     useEffect(() => {
-        const availableHoursPerWeek = getAvailableHoursPerWeek()
         let ch: ChartData<ChartType, number[], string> = {
             labels: [],
             datasets: [
-                { data: [], animation: false, backgroundColor: 'grey', label: t('available-hours-per-week') + " (" + availableHoursPerWeek + ")", type: 'line', borderWidth: 2, borderColor: 'grey', fill: false, pointRadius: 0 },
+                { data: [], animation: false, backgroundColor: 'black ', 
+                label: t('available-hours-per-week'), 
+                type: 'line', borderWidth: 3, borderColor: 'black', fill: false, pointRadius: 0, stepped: true },
             ]
         }
 
@@ -69,7 +70,7 @@ export const ProjectPlanToDepartmentPlanBarChart: React.FunctionComponent<Projec
         })
 
         weeks.forEach(w => {
-            ch.datasets[0].data.push(availableHoursPerWeek)
+            ch.datasets[0].data.push(w.departmentAvailableHours)
             uniqueProjects.forEach(p => {
                 const ds = ch.datasets.find(j => j.label === p)
                 const details = kind === "projects"

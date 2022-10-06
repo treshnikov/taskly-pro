@@ -36,6 +36,39 @@ public class CalendarService : ICalendarService
         return res;
     }
 
+    public async Task<double[]> GetAvailableHoursForPlanningForDepartmentByWeeksAsync(Guid departmentId, DateTime start, DateTime end, CancellationToken cancellationToken)
+    {
+        var res = new List<double>();
+        
+        var users = await _dbContext
+            .Users
+            .Include(d => d.UserDepartments)
+            .Where(u => u.UserDepartments.Any(ud => ud.DepartmentId == departmentId))
+            .ToListAsync(cancellationToken);
+
+        foreach (var user in users)
+        {
+            // take a department with max work rate because user can work in multiple departments
+            var ud = user.UserDepartments.OrderByDescending(i => i.Rate).First();
+            var userWeeks = GetWeeksInfo(ud, start, end);
+
+            if (res.Count == 0)
+            {
+                res.AddRange(Enumerable.Repeat<double>(0, userWeeks.Count()));
+            }
+
+            var idx = 0;
+            foreach (var week in userWeeks)
+            {
+                res[idx] += week.HoursAvailableForPlanning;
+
+                idx++;
+            }
+        }
+
+        return res.ToArray();
+    }
+
     public IEnumerable<WeekInfoVm> GetWeeksInfo(UserDepartment user, DateTime start, DateTime end)
     {
         var res = new List<WeekInfoVm>();

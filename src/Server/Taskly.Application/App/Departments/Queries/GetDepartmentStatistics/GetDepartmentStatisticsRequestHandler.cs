@@ -1,7 +1,5 @@
-using System.Text;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Serilog;
 using Taskly.Application.Calendar;
 using Taskly.Application.Interfaces;
 using Taskly.Domain;
@@ -78,6 +76,7 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
         private async Task FillProjectToDepartmentEstimationsAsync(GetDepartmentStatisticsRequest request, DepartmentStatisticsVm res, Department dep, List<ProjectTask> tasks, List<DepartmentPlan> plans, CancellationToken cancellationToken)
         {
             var dbProjects = await _dbContext.Projects.AsNoTracking().ToListAsync(cancellationToken);
+            var departmentAvailableHours = await _calendarService.GetAvailableHoursForPlanningForDepartmentByWeeksAsync(request.DepartmentId, request.Start, request.End, cancellationToken);
 
             // find first monday
             var weekStart = request.Start;
@@ -87,6 +86,7 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
             }
 
             // iterate through weeks and calculate the sum of planned hours
+            var weekIdx = 0;
             while (weekStart <= request.End)
             {
                 var estimationVm = new ProjectToDepartmentEstimationVm
@@ -94,6 +94,7 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
                     WeekStart = weekStart,
                     DepartmentPlannedHours = 0,
                     ProjectPlannedHours = 0,
+                    DepartmentAvailableHours = departmentAvailableHours[weekIdx],
                     ProjectPlanDetails = new List<ProjectPlanDetailVm>(),
                     DepartmentPlanDetails = new List<ProjectPlanDetailVm>()
                 };
@@ -148,6 +149,8 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
                 estimationVm.ProjectPlannedHours = (long)estimationVm.ProjectPlannedHours;
                 res.Weeks.Add(estimationVm);
                 weekStart = weekStart.AddDays(7);
+
+                weekIdx++;
             }
         }
 

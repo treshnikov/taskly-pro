@@ -25,6 +25,7 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
         public DateTime WeekStart { get; set; }
         public double ProjectPlannedHours { get; set; }
         public double DepartmentPlannedHours { get; set; }
+        public double DepartmentAvailableHours { get; set; }
         public List<ProjectPlanDetailVm> ProjectPlanDetails { get; set; }
         public List<ProjectPlanDetailVm> DepartmentPlanDetails { get; set; }
     }
