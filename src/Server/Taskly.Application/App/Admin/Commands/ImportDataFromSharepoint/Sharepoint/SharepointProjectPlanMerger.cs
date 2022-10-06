@@ -40,7 +40,11 @@ namespace Taskly.Application.Users
             //extract plans from Excel
             var plans = ExtractPlans(filePath);
 
-            var dbUsers = await _dbContext.Users.Include(i => i.UserDepartments).ToListAsync(cancellationToken);
+            var dbUsers = await _dbContext.Users
+                .Include(i => i.UserDepartments).ThenInclude(i => i.Department)
+                .Include(i => i.UserDepartments).ThenInclude(i => i.UserPosition)
+                .ToListAsync(cancellationToken);
+                
             var dbProjects = await _dbContext.Projects.AsNoTracking().ToListAsync(cancellationToken);
             foreach (var planItem in plans)
             {
@@ -53,12 +57,18 @@ namespace Taskly.Application.Users
 
                 // overwrite user position to the curent department because
                 // xlsx files has more relevant information about user-departmnet links
-                user.UserDepartments = user.UserDepartments.Take(1).ToList();
-                var userPosition = user.UserDepartments.First();
-                //userPosition.Rate = planItem.Rate;
-                userPosition.DepartmentId = dbDep.Id;
-                _dbContext.Users.Update(user);
-                _dbContext.UserDepartments.Update(userPosition);
+                var defaultPosition = user.UserDepartments.First(); 
+                user.UserDepartments.Clear();
+                user.UserDepartments.Add(new UserDepartment{
+                    DepartmentId = dbDep.Id,
+                    Department = dbDep,
+                    //Rate = planItem.Rate,
+                    Rate = defaultPosition.Rate,
+                    User = user,
+                    UserId = user.Id,
+                    UserPosition = defaultPosition.UserPosition,
+                    UserPositionId = defaultPosition.Id
+                });
 
                 foreach (var w in planItem.Weeks)
                 {
