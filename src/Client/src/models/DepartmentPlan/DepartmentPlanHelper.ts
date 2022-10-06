@@ -140,6 +140,7 @@ export class DepartmentPlanHelper {
                 userId: user.userId as string,
                 rate: 0,
                 quitDate: 0,
+                hiringDate: 0,
                 projects: [],
                 weeks: [],
                 userName: "",

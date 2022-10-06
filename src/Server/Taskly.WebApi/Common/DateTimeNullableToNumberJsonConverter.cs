@@ -7,6 +7,9 @@ namespace Taskly.WebApi.Common
     {
         public override DateTime? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
+            if(reader.TryGetInt64(out long x))
+               return DateTime.UnixEpoch.AddMilliseconds(x);
+
             var dateAsStr = reader.GetString();
             if (string.IsNullOrWhiteSpace(dateAsStr))
             {
