@@ -9,7 +9,7 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentPlan
         public DateTime? QuitDate { get; set; }
         public DateTime HiringDate { get; set; }
         public List<UserProjectPlanVm> Projects { get; set; }
-        public List<WeekInfoVm> Weeks { get; set; }
+        public IEnumerable<WeekInfoVm> Weeks { get; set; }
     }
 
     public class WeekInfoVm

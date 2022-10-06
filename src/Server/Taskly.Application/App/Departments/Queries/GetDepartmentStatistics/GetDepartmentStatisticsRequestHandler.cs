@@ -20,7 +20,8 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
             var res = new DepartmentStatisticsVm
             {
                 Projects = new List<ProjectStatVm>(),
-                Weeks = new List<ProjectToDepartmentEstimationVm>()
+                Weeks = new List<ProjectToDepartmentEstimationVm>(),
+                Summary = new DepartmentStatisticsSummaryVm()
             };
 
             // get department by id
@@ -52,8 +53,16 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
 
             await FillProjectInfo(request, res, dep, tasks, plans, cancellationToken);
             await FillProjectToDepartmentEstimationsAsync(request, res, dep, tasks, plans, cancellationToken);
+            FillSummary(request, res);
 
             return await Task.FromResult(res);
+        }
+
+        private void FillSummary(GetDepartmentStatisticsRequest request, DepartmentStatisticsVm res)
+        {
+            res.Summary.Start = request.Start;
+            res.Summary.End = request.End;
+            //res.Summary.AvailableHoursForPlanning = ...
         }
 
         private async Task FillProjectToDepartmentEstimationsAsync(GetDepartmentStatisticsRequest request, DepartmentStatisticsVm res, Department dep, List<ProjectTask> tasks, List<DepartmentPlan> plans, CancellationToken cancellationToken)

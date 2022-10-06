@@ -1,6 +1,7 @@
 using System.Linq;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Taskly.Application.Calendar;
 using Taskly.Application.Interfaces;
 using Taskly.Domain;
 
@@ -9,9 +10,11 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentPlan
     public class GetDepartmentPlanRequestHandler : IRequestHandler<GetDepartmentPlanRequest, DepartmentPlanRecordVm[]>
     {
         private readonly ITasklyDbContext _dbContext;
-        public GetDepartmentPlanRequestHandler(ITasklyDbContext dbContext)
+        private readonly ICalendarService _calendarService;
+        public GetDepartmentPlanRequestHandler(ITasklyDbContext dbContext, ICalendarService calendarService)
         {
             _dbContext = dbContext;
+            _calendarService = calendarService;
         }
         public async Task<DepartmentPlanRecordVm[]> Handle(GetDepartmentPlanRequest request, CancellationToken cancellationToken)
         {
@@ -53,16 +56,11 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentPlan
             projects.AddRange(plannedProjects);
             projects = projects.DistinctBy(i => i.Id).OrderBy(i => i.Id).ToList();
 
-            // get non-working days to calculate how many working hours should be planned
-            // todo handle sick days
-            var nonWorkingDays = await _dbContext.Calendar.Where(i => i.Date >= request.Start && i.Date <= request.End)
-                .ToDictionaryAsync(i => i.Date, i => i.DayType, cancellationToken);
-
             // compose view model
             foreach (var user in users)
             {
                 // build a list of weeks according to start and end dates            
-                var weeks = BuildWeeks(user, request.Start, request.End, nonWorkingDays);
+                var weeks = _calendarService.GetWeeksInfo(user, request.Start, request.End);
 
                 var vm = new DepartmentPlanRecordVm
                 {
@@ -146,49 +144,6 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentPlan
                     u.Projects.Any(p => p.Plans.Sum(i => i.PlannedHours) > 0)).ToList();
 
             return res.OrderBy(i => i.UserPosition).ToArray();
-        }
-
-        private static List<WeekInfoVm> BuildWeeks(UserDepartment user, DateTime start, DateTime end, Dictionary<DateTime, CalendarDayType> nonWorkingDays)
-        {
-            var res = new List<WeekInfoVm>();
-
-            var dt = start;
-            while (dt.DayOfWeek != DayOfWeek.Monday)
-            {
-                dt = dt.AddDays(1);
-            }
-
-            while (dt <= end)
-            {
-                var day = new WeekInfoVm
-                {
-                    Monday = dt,
-                    HoursAvailableForPlanning = 40
-                };
-
-                if (nonWorkingDays.ContainsKey(dt))
-                {
-                    switch (nonWorkingDays[dt])
-                    {
-                        case CalendarDayType.Holiday: day.HoursAvailableForPlanning -= 8; break;
-                        case CalendarDayType.HalfHoliday: day.HoursAvailableForPlanning -= 1; break;
-                        default: break;
-                    }
-                }
-
-                day.HoursAvailableForPlanning *= user.Rate;
-
-                if (user.User.HiringDate > dt || 
-                    (user.User.QuitDate is not null && dt >= user.User.QuitDate))
-                {
-                    day.HoursAvailableForPlanning = 0;
-                }
-
-                res.Add(day);
-                dt = dt.AddDays(7);
-            }
-
-            return res;
         }
     }
 }
