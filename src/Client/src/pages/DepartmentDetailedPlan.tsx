@@ -125,7 +125,7 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
                     hiddenColumns={{ columns: hiddenColumns }}
                     hiddenRows={{ rows: hiddenRows }}
                     maxCols={headers.length}
-                    renderAllRows={true}
+                    //renderAllRows={true}
                     columnSorting={false}
                     rowHeaders={true}
                     nestedRows={true}
