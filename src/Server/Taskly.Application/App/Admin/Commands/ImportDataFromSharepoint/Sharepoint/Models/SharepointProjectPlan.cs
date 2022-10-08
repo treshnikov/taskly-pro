@@ -4,7 +4,7 @@ namespace Taskly.Application.Users
     {
         public int? ProjectCode { get; set; }
         public string ProjectName { get; set; }
-        public float Hours { get; set; }
+        public double Hours { get; set; }
     }
 
 }

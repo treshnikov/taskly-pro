@@ -9,6 +9,8 @@ namespace Taskly.Application.Users
 {
     public class SharepointProjectTasksMerger
     {
+        private const bool IgnoreHolidays = true;
+
         public SharepointProjectTasksMerger(ITasklyDbContext dbContext)
         {
             _dbContext = dbContext;
@@ -178,6 +180,11 @@ namespace Taskly.Application.Users
                 int? projectId = null;
                 string? projectName = string.Empty;
                 var projectIdAsStr = worksheet.Cell(rowIdx, 3).GetValue<string>();
+                if (IgnoreHolidays && string.Equals("отпуск", projectIdAsStr.ToLower().Trim()))
+                {
+                    continue;
+                }
+
                 projectIdAsStr = projectIdAsStr.Split(".")[0];
                 if (int.TryParse(projectIdAsStr, out int projectIdParsed))
                 {

@@ -9,6 +9,8 @@ namespace Taskly.Application.Users
 {
     public class SharepointProjectPlanMerger
     {
+        private const bool IgnoreHolidays = true;
+
         private readonly ITasklyDbContext _dbContext;
 
         public SharepointProjectPlanMerger(ITasklyDbContext dbContext)
@@ -44,7 +46,7 @@ namespace Taskly.Application.Users
                 .Include(i => i.UserDepartments).ThenInclude(i => i.Department)
                 .Include(i => i.UserDepartments).ThenInclude(i => i.UserPosition)
                 .ToListAsync(cancellationToken);
-                
+
             var dbProjects = await _dbContext.Projects.AsNoTracking().ToListAsync(cancellationToken);
             foreach (var planItem in plans)
             {
@@ -57,9 +59,10 @@ namespace Taskly.Application.Users
 
                 // overwrite user position to the curent department because
                 // xlsx files has more relevant information about user-departmnet links
-                var defaultPosition = user.UserDepartments.First(); 
+                var defaultPosition = user.UserDepartments.First();
                 user.UserDepartments.Clear();
-                user.UserDepartments.Add(new UserDepartment{
+                user.UserDepartments.Add(new UserDepartment
+                {
                     DepartmentId = dbDep.Id,
                     Department = dbDep,
 
@@ -134,7 +137,7 @@ namespace Taskly.Application.Users
             transaction.Commit();
         }
 
-        private static List<SharepointUserPlan> ExtractPlans(string filePath)
+        private List<SharepointUserPlan> ExtractPlans(string filePath)
         {
             var res = new List<SharepointUserPlan>();
 
@@ -205,6 +208,11 @@ namespace Taskly.Application.Users
 
                         var projCodeAsStr = rec.Split("=")[0].Replace("#", string.Empty).Replace("№", string.Empty);
 
+                        if (IgnoreHolidays && projCodeAsStr.ToLower().Contains("отпуск"))
+                        {
+                            continue;
+                        }
+
                         // special cases when code of the project contains extra symbols after the dot char, for instance, 923.2  
                         if (projCodeAsStr.Contains('.'))
                         {
@@ -234,7 +242,6 @@ namespace Taskly.Application.Users
                         }
                         weekPlan.Projects.Add(new SharepointProjectPlan
                         {
-                            //todo - add coefficent depending on user position
                             Hours = est * 40,
                             ProjectName = projCodeAsStr,
                             ProjectCode = projCode > 0 ? projCode : null
