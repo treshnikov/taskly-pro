@@ -1,8 +1,6 @@
-import { isDefined } from "handsontable/helpers";
-import { use } from "i18next";
-import { dateAsShortStr, dateAsShortStrFromNumber, dateToRequestStr } from "../../common/dateFormatter";
+import { dateAsShortStr } from "../../common/dateFormatter";
 import { ServicesStorageHelper } from "../../common/servicesStorageHelper";
-import { DepartmentUserPlan, DepartmentPlanUserRecordVm, DepartmentProjectPlan, DepartmentPlanUserProjectVm, TaskTimeVm } from "./DepartmentPlanClasses";
+import { DepartmentUserPlan, DepartmentPlanUserRecordVm, DepartmentProjectPlan, TaskPlanVm } from "./DepartmentPlanClasses";
 
 
 export class DepartmentPlanHelper {
@@ -67,21 +65,23 @@ export class DepartmentPlanHelper {
             };
             idx++;
 
-            user.projects.forEach(project => {
+            user.tasks.forEach(task => {
                 const projectRecord: DepartmentProjectPlan = {
                     id: "p" + idx.toString(),
                     userPosition: '',
                     hours: null,
-                    tooltip: DepartmentPlanHelper.buildTooltip(project.taskTimes),
                     weeksAvailabilityMap: [],
                     userId: user.userId,
-                    projectId: project.projectId,
-                    project: project.projectId + ": " + (project.projectShortName ? project.projectShortName : project.projectName)
-                };
-                idx++;
+                    projectId: task.projectId,
+                    projectTaskId: task.projectTaskId,
+                    taskName: task.taskName,
+                    project: task.projectId + ": " + (task.projectShortName ? task.projectShortName : task.projectName) + " - " + task.taskName
+                }
+
+                idx++
 
                 // populate weekX attributes
-                project.plans.forEach(week => {
+                task.plans.forEach(week => {
                     projectRecord.weeksAvailabilityMap.push(week.isWeekAvailableForPlanning)
                     projectRecord["week" + week.weekNumber.toString()] = week.plannedHours === 0 ? null : week.plannedHours.toString();
                 });
@@ -141,28 +141,29 @@ export class DepartmentPlanHelper {
                 rate: 0,
                 quitDate: 0,
                 hiringDate: 0,
-                projects: [],
+                tasks: [],
                 weeks: [],
                 userName: "",
                 userPosition: ""
             };
 
-            user.__children.forEach(project => {
-                const projectRecord: DepartmentPlanUserProjectVm = {
-                    projectId: project.projectId as number,
+            user.__children.forEach(task => {
+                const projectRecord: TaskPlanVm = {
+                    projectId: task.projectId as number,
                     plans: [],
-                    taskTimes: [],
                     projectName: "",
                     projectShortName: "",
-                    projectStart: 0,
-                    projectEnd: 0
+                    taskStart: 0,
+                    taskEnd: 0,
+                    taskName: "",
+                    projectTaskId: task.projectTaskId
                 };
 
                 let weekIdx = 1;
-                while ((project as any).hasOwnProperty("week" + weekIdx.toString())) {
+                while ((task as any).hasOwnProperty("week" + weekIdx.toString())) {
                     const weekIdent = "week" + weekIdx.toString();
 
-                    const hoursAsString = project[weekIdent];
+                    const hoursAsString = task[weekIdent];
                     if (hoursAsString && hoursAsString !== "") {
                         const weekHours = parseFloat(hoursAsString as string);
 
@@ -179,7 +180,7 @@ export class DepartmentPlanHelper {
                     weekIdx++;
                 }
 
-                userRecord.projects.push(projectRecord);
+                userRecord.tasks.push(projectRecord);
             }
             )
             res.push(userRecord);
@@ -194,7 +195,7 @@ export class DepartmentPlanHelper {
         }
 
         // find and update changed record
-        let record: DepartmentProjectPlan = { id: '', hours: '', project: '', userPosition: '', userName: '', userId: '', projectId: 0, tooltip: '', weeksAvailabilityMap: [] }
+        let record: DepartmentProjectPlan = { id: '', hours: '', project: '', userPosition: '', userName: '', userId: '', projectId: 0, tooltip: '', weeksAvailabilityMap: [], projectTaskId: '', taskName: '' }
         const found = plan.some(u => u.__children.some(p => {
             record = p
             return p.id === projectId
@@ -208,19 +209,6 @@ export class DepartmentPlanHelper {
 
         return false
     }
-
-    private static buildTooltip(taskTimes: TaskTimeVm[]): string {
-        let res = ''
-        taskTimes.forEach((i, idx) => {
-            res += dateAsShortStrFromNumber(i.start) + " - " + dateAsShortStrFromNumber(i.end) + "\t" + i.name
-            if (idx != taskTimes.length - 1) {
-                res += "\r\n"
-            }
-        })
-
-        return res
-    }
-
 }
 
 

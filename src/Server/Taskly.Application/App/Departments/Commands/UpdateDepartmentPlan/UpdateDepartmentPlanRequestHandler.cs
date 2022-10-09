@@ -23,7 +23,7 @@ namespace Taskly.Application.Departments.Commands.UpdatePlans
 
             foreach (var usr in request.Data)
             {
-                foreach (var proj in usr.Projects)
+                foreach (var proj in usr.Tasks)
                 {
                     foreach (var week in proj.Plans)
                     {
@@ -31,7 +31,7 @@ namespace Taskly.Application.Departments.Commands.UpdatePlans
                         {
                             DepartmentId = dep.Id,
                             UserId = usr.UserId,
-                            ProjectId = proj.ProjectId,
+                            ProjectTaskId = proj.ProjectTaskId,
                             WeekStart = week.WeekStart,
                             Hours = week.PlannedHours
                         };

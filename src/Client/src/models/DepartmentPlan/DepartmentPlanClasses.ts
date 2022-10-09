@@ -1,11 +1,11 @@
 export type DepartmentPlanUserRecordVm = {
     userId: string
-    rate: number
     userName: string
+    userPosition: string
+    rate: number
     quitDate: number
     hiringDate: number
-    userPosition: string
-    projects: DepartmentPlanUserProjectVm[]
+    tasks: TaskPlanVm[]
     weeks: WeekInfoVm[]
 }
 
@@ -14,19 +14,14 @@ export type WeekInfoVm = {
     hoursAvailableForPlanning: number
 }
 
-export type TaskTimeVm = {
-    name: string
-    start: number
-    end: number
-}
-
-export type DepartmentPlanUserProjectVm = {
+export type TaskPlanVm = {
     projectId: number
+    projectTaskId: string
     projectName: string
     projectShortName: string
-    projectStart: number
-    projectEnd: number
-    taskTimes: TaskTimeVm[]
+    taskName: string
+    taskStart: number
+    taskEnd: number
     plans: DepartmentPlanUserProjectWeekPlanVm[]
 }
 
@@ -57,7 +52,8 @@ export type DepartmentProjectPlan = {
     project: string
     userId: string
     projectId: number
-    tooltip: string
+    projectTaskId: string
+    taskName: string
     weeksAvailabilityMap: boolean[]
     hours: string | null
     [weekNumber: string]: string | null | number | boolean[]

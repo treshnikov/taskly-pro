@@ -18,132 +18,129 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentPlan
         }
         public async Task<DepartmentPlanRecordVm[]> Handle(GetDepartmentPlanRequest request, CancellationToken cancellationToken)
         {
-            var res = new List<DepartmentPlanRecordVm>();
-
-            // get department by id
-            var dep = await _dbContext.Departments
-                .Include(d => d.UserDepartments).ThenInclude(d => d.UserPosition)
-                .Include(d => d.UserDepartments).ThenInclude(d => d.User)
-                .AsNoTracking()
-                .FirstAsync(i => i.Id == request.DepartmentId, cancellationToken);
-
-            // get users of the department
-            var users = dep.UserDepartments;
-
-            // get projects that have any estimation for the given department
-            var projects = await _dbContext.Projects
-                .Include(i => i.Tasks).ThenInclude(i => i.DepartmentEstimations).ThenInclude(i => i.Department)
-                .Include(i => i.Tasks).ThenInclude(i => i.DepartmentEstimations).ThenInclude(i => i.Estimations)
-                .AsNoTracking()
-                .Where(
-                    p => p.Tasks.Any(t =>
-                        request.Start <= t.End && t.Start <= request.End &&
-                        t.DepartmentEstimations.Any(de => de.Department.Id == request.DepartmentId && de.Estimations.Sum(des => des.Hours) > 0))
-                )
-                .ToListAsync(cancellationToken);
-
-            // laod plans for each employee for each week for each project
-            var plans = await _dbContext.DepartmentPlans
-                .Include(i => i.Project).Include(i => i.User)
-                .AsNoTracking()
-                .Where(t =>
-                    t.DepartmentId == request.DepartmentId &&
-                    t.WeekStart >= request.Start && t.WeekStart <= request.End)
-                .ToListAsync(cancellationToken);
-
-            // add projects that have already been planned before for the given department
-            var plannedProjects = plans.Select(i => i.Project).ToList();
-            projects.AddRange(plannedProjects);
-            projects = projects.DistinctBy(i => i.Id).OrderBy(i => i.Id).ToList();
-
-            // compose view model
-            foreach (var user in users)
+            try
             {
-                // build a list of weeks according to start and end dates            
-                var weeks = _calendarService.GetWeeksInfo(user, request.Start, request.End);
+                var res = new List<DepartmentPlanRecordVm>();
 
-                var vm = new DepartmentPlanRecordVm
-                {
-                    UserId = user.User.Id,
-                    UserName = user.User.Name,
-                    QuitDate = user.User.QuitDate,
-                    HiringDate = user.User.HiringDate,
-                    UserPosition = string.IsNullOrWhiteSpace(user.UserPosition.Ident) ? user.UserPosition.Name : user.UserPosition.Ident,
-                    Rate = user.User.UserDepartments.Count > 0 ? user.User.UserDepartments.Max(i => i.Rate) : 0,
-                    Projects = new List<UserProjectPlanVm>(),
-                    Weeks = weeks
-                };
+                // get department by id
+                var dep = await _dbContext.Departments
+                    .Include(d => d.UserDepartments).ThenInclude(d => d.UserPosition)
+                    .Include(d => d.UserDepartments).ThenInclude(d => d.User)
+                    .AsNoTracking()
+                    .FirstAsync(i => i.Id == request.DepartmentId, cancellationToken);
 
-                foreach (var project in projects)
+                // get users of the department
+                var users = dep.UserDepartments;
+
+                // get project tasks that have any estimation for the given department
+                var tasks = await _dbContext.ProjectTasks
+                    .Include(i => i.Project)
+                    .Include(i => i.DepartmentEstimations).ThenInclude(i => i.Department)
+                    .Include(i => i.DepartmentEstimations).ThenInclude(i => i.Estimations)
+                    //.Include(i => i.DepartmentEstimations).ThenInclude(i => i.ProjectTask).ThenInclude(i => i.Project)
+                    .AsNoTracking()
+                    .Where(
+                        t =>
+                            request.Start <= t.End && t.Start <= request.End &&
+                            t.DepartmentEstimations.Any(de => de.Department.Id == request.DepartmentId && de.Estimations.Sum(des => des.Hours) > 0)
+                    )
+                    .ToListAsync(cancellationToken);
+
+                // laod plans for each employee for each week for each project task
+                var plans = await _dbContext.DepartmentPlans
+                    .Include(i => i.ProjectTask).ThenInclude(i => i.Project)
+                    .Include(i => i.User)
+                    .AsNoTracking()
+                    .Where(t =>
+                        t.DepartmentId == request.DepartmentId &&
+                        t.WeekStart >= request.Start && t.WeekStart <= request.End)
+                    .ToListAsync(cancellationToken);
+
+                var plannedTasks = plans.Select(i => i.ProjectTask);
+
+                // add project tasks that have already been planned before for the given department
+                tasks.AddRange(plannedTasks);
+                tasks = tasks.DistinctBy(i => i.Id).OrderBy(i => i.ProjectId).ToList();
+
+                // compose view model
+                foreach (var user in users)
                 {
-                    var projectPlan = new UserProjectPlanVm
+                    // build a list of weeks according to start and end dates            
+                    var weeks = _calendarService.GetWeeksInfo(user, request.Start, request.End);
+
+                    var vm = new DepartmentPlanRecordVm
                     {
-                        ProjectId = project.Id,
-                        ProjectName = project.Name,
-                        ProjectShortName = project.ShortName,
-                        ProjectStart = project.Start,
-                        ProjectEnd = project.End,
-                        TaskTimes = new List<TaskTimeVm>(),
-                        Plans = new List<UserProjectWeekPlanVm>()
+                        UserId = user.User.Id,
+                        UserName = user.User.Name,
+                        QuitDate = user.User.QuitDate,
+                        HiringDate = user.User.HiringDate,
+                        UserPosition = string.IsNullOrWhiteSpace(user.UserPosition.Ident) ? user.UserPosition.Name : user.UserPosition.Ident,
+                        Rate = user.User.UserDepartments.Count > 0 ? user.User.UserDepartments.Max(i => i.Rate) : 0,
+                        Tasks = new List<TaskPlanVm>(),
+                        Weeks = weeks
                     };
 
-                    // todo - this logic can be optimized
-                    // all users have the same set of projects which means we can generate the list of TaskTimeVm only once and then populate it to each user
-                    if (project.Tasks != null)
+                    foreach (var task in tasks)
                     {
-                        var taskTimes = project.Tasks
-                            .Where(t => t.DepartmentEstimations.Any(de => de.Department.Id == dep.Id) &&
-                             request.Start <= t.End && t.Start <= request.End)
-                            .OrderBy(t => t.Start);
-                        projectPlan.TaskTimes.AddRange(taskTimes.Select(i => new TaskTimeVm
+                        var taskPlan = new TaskPlanVm
                         {
-                            Name = i.Description,
-                            Start = i.Start,
-                            End = i.End
-                        }));
-                    }
-
-                    var weekIdx = 1;
-                    foreach (var week in weeks)
-                    {
-                        var weekPlan = new UserProjectWeekPlanVm
-                        {
-                            WeekNumber = weekIdx,
-                            WeekStart = week.Monday,
-                            IsWeekAvailableForPlanning = projectPlan.TaskTimes.Any(i =>
-                                i.Start <= week.Monday && i.End >= week.Monday ||
-                                i.Start <= week.Monday.AddDays(1) && i.End >= week.Monday.AddDays(1) ||
-                                i.Start <= week.Monday.AddDays(2) && i.End >= week.Monday.AddDays(2) ||
-                                i.Start <= week.Monday.AddDays(3) && i.End >= week.Monday.AddDays(3) ||
-                                i.Start <= week.Monday.AddDays(4) && i.End >= week.Monday.AddDays(4))
+                            ProjectTaskId = task.Id,
+                            ProjectName = task.Project.Name,
+                            ProjectShortName = task.Project.ShortName,
+                            TaskStart = task.Start,
+                            TaskEnd = task.End,
+                            Plans = new List<UserProjectWeekPlanVm>(),
+                            TaskName = task.Description,
+                            ProjectId = task.ProjectId
                         };
 
-                        // get hours planned for the given user, project and week
-                        var hours = plans.FirstOrDefault(
-                            i => i.UserId == user.User.Id &&
-                            i.ProjectId == project.Id &&
-                            i.WeekStart == week.Monday)?.Hours ?? 0;
+                        var weekIdx = 1;
+                        foreach (var week in weeks)
+                        {
+                            var weekPlan = new UserProjectWeekPlanVm
+                            {
+                                WeekNumber = weekIdx,
+                                WeekStart = week.Monday,
+                                IsWeekAvailableForPlanning =
+                                    task.Start <= week.Monday && task.End >= week.Monday ||
+                                    task.Start <= week.Monday.AddDays(1) && task.End >= week.Monday.AddDays(1) ||
+                                    task.Start <= week.Monday.AddDays(2) && task.End >= week.Monday.AddDays(2) ||
+                                    task.Start <= week.Monday.AddDays(3) && task.End >= week.Monday.AddDays(3) ||
+                                    task.Start <= week.Monday.AddDays(4) && task.End >= week.Monday.AddDays(4)
+                            };
 
-                        weekPlan.PlannedHours = hours;
+                            // get hours planned for the given user, project task and week
+                            var hours = plans.FirstOrDefault(t =>
+                                t.UserId == user.User.Id &&
+                                t.ProjectTaskId == task.Id &&
+                                t.WeekStart == week.Monday)?.Hours ?? 0;
 
-                        projectPlan.Plans.Add(weekPlan);
+                            weekPlan.PlannedHours = hours;
 
-                        weekIdx++;
+                            taskPlan.Plans.Add(weekPlan);
+
+                            weekIdx++;
+                        }
+
+                        //projectPlan.Plans = projectPlan.Plans.Where(p => p.PlannedHours > 0).ToList();
+                        vm.Tasks.Add(taskPlan);
                     }
 
-                    //projectPlan.Plans = projectPlan.Plans.Where(p => p.PlannedHours > 0).ToList();
-                    vm.Projects.Add(projectPlan);
+                    res.Add(vm);
                 }
 
-                res.Add(vm);
+                // show work plan only for users who works or who had quit but has some planned time
+                res = res.Where(
+                        u => users.First(j => j.UserId == u.UserId).User.WorksInTheCompany() ||
+                        u.Tasks.Any(p => p.Plans.Sum(i => i.PlannedHours) > 0)).ToList();
+
+                return res.OrderBy(i => i.UserPosition).ToArray();
+            }
+            catch (Exception ex)
+            {
+                throw;
             }
 
-            // show work plan only for users who works or who had quit but has some planned time
-            res = res.Where(
-                    u => users.First(j => j.UserId == u.UserId).User.WorksInTheCompany() ||
-                    u.Projects.Any(p => p.Plans.Sum(i => i.PlannedHours) > 0)).ToList();
-
-            return res.OrderBy(i => i.UserPosition).ToArray();
         }
     }
 }

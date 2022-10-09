@@ -69,11 +69,11 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
     useEffect(() => {
         request<DepartmentPlanUserRecordVm[]>(`/api/v1/departments/${departmentId}/${moment(startDate).format("YYYY-MM-DD")}/${moment(endDate).format("YYYY-MM-DD")}/plan`, 'GET').then(depPlan => {
             let headers: string[] = [...staticHeaders]
-            const weekCount = (depPlan.length > 0 && depPlan[0].projects.length > 0)
-                ? depPlan[0].projects[0].plans.length
+            const weekCount = (depPlan.length > 0 && depPlan[0].tasks.length > 0)
+                ? depPlan[0].tasks[0].plans.length
                 : 0
             headers = headers.concat(Array.from(Array(weekCount).keys()).map(i => {
-                const dt = new Date(depPlan[0].projects[0].plans[i].weekStart)
+                const dt = new Date(depPlan[0].tasks[0].plans[i].weekStart)
                 return dateAsShortStrWithShortYear(dt)
             }
             ))

@@ -46,7 +46,7 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
 
             var plans = await _dbContext.DepartmentPlans
                 .AsNoTracking()
-                .Include(i => i.Project)
+                .Include(i => i.ProjectTask)
                 .Where(i =>
                     i.DepartmentId == dep.Id &&
                     i.WeekStart >= request.Start && i.WeekStart <= request.End)
@@ -101,7 +101,7 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
 
                 // plan by departments
                 estimationVm.DepartmentPlannedHours = plans.Where(i => i.WeekStart == weekStart).Sum(i => i.Hours);
-                foreach (var planGroup in plans.Where(i => i.WeekStart == weekStart).GroupBy(p => p.ProjectId))
+                foreach (var planGroup in plans.Where(i => i.WeekStart == weekStart).GroupBy(p => p.ProjectTask.ProjectId))
                 {
                     var projId = planGroup.Key;
                     var proj = dbProjects.First(t => t.Id == projId);
@@ -177,7 +177,7 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
 
         private async Task HandleHoursPlannedByDepartment(GetDepartmentStatisticsRequest request, List<DepartmentPlan> departmentEstimations, DepartmentStatisticsVm res, Department dep, CancellationToken cancellationToken)
         {
-            var departmentEstimationsLookup = departmentEstimations.ToLookup(i => i.Project.Id, j => j.Hours);
+            var departmentEstimationsLookup = departmentEstimations.ToLookup(i => i.ProjectTask.ProjectId, j => j.Hours);
 
             foreach (var projHours in departmentEstimationsLookup)
             {

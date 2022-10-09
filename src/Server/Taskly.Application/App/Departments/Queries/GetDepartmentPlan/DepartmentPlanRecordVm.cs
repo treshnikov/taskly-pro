@@ -8,7 +8,7 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentPlan
         public double Rate { get; set; }
         public DateTime? QuitDate { get; set; }
         public DateTime HiringDate { get; set; }
-        public List<UserProjectPlanVm> Projects { get; set; }
+        public List<TaskPlanVm> Tasks { get; set; }
         public IEnumerable<WeekInfoVm> Weeks { get; set; }
     }
 
@@ -18,15 +18,16 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentPlan
         public double HoursAvailableForPlanning { get; set; }
     }
 
-    public class UserProjectPlanVm
+    public class TaskPlanVm
     {
         public int ProjectId { get; set; }
+        public Guid ProjectTaskId { get; set; }
         public string ProjectName { get; set; }
         public string ProjectShortName { get; set; }
-        public DateTime ProjectStart { get; internal set; }
-        public DateTime ProjectEnd { get; internal set; }
+        public string TaskName { get; set; }
+        public DateTime TaskStart { get; internal set; }
+        public DateTime TaskEnd { get; internal set; }
         public List<UserProjectWeekPlanVm> Plans { get; set; }
-        public List<TaskTimeVm> TaskTimes { get; set; }
     }
 
     public class UserProjectWeekPlanVm
@@ -35,12 +36,5 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentPlan
         public DateTime WeekStart { get; set; }
         public double PlannedHours { get; set; }
         public bool IsWeekAvailableForPlanning { get; set; }
-    }
-
-    public class TaskTimeVm
-    {
-        public string? Name { get; set; }
-        public DateTime Start { get; set; }
-        public DateTime End { get; set; }
     }
 }

@@ -47,7 +47,10 @@ namespace Taskly.Application.Users
                 .Include(i => i.UserDepartments).ThenInclude(i => i.UserPosition)
                 .ToListAsync(cancellationToken);
 
-            var dbProjects = await _dbContext.Projects.AsNoTracking().ToListAsync(cancellationToken);
+            var dbProjects = await _dbContext.Projects
+                .Include(p => p.Tasks)
+                .ToListAsync(cancellationToken);
+
             foreach (var planItem in plans)
             {
                 var user = dbUsers.FirstOrDefault(i => i.Name == planItem.UserName);
@@ -74,61 +77,58 @@ namespace Taskly.Application.Users
                     UserPositionId = defaultPosition.Id
                 });
 
-                foreach (var w in planItem.Weeks)
+                foreach (var week in planItem.Weeks)
                 {
-                    foreach (var pr in w.Projects)
+                    foreach (var projectFromExcel in week.Projects)
                     {
-                        if (!pr.ProjectCode.HasValue)
-                        {
-                            // create a new project
-                            var projectWithNoCode = await _dbContext.Projects.FirstOrDefaultAsync(i => i.Name == pr.ProjectName, cancellationToken);
-                            if (projectWithNoCode == null)
-                            {
-                                projectWithNoCode = new Project
-                                {
-                                    Name = pr.ProjectName,
-                                    ShortName = pr.ProjectName,
-                                    Type = ProjectType.Internal,
-                                    Start = new DateTime(2000, 01, 01),
-                                    End = new DateTime(3000, 01, 01),
-                                    IsOpened = true,
-                                    Contract = "",
-                                    Tasks = new List<ProjectTask>()
-                                };
-                                _dbContext.Projects.Add(projectWithNoCode);
-                                await _dbContext.SaveChangesAsync(cancellationToken);
-                            }
+                        Project? project = !projectFromExcel.ProjectCode.HasValue
+                            ? dbProjects.FirstOrDefault(p => p.Name == projectFromExcel.ProjectName)
+                            : dbProjects.FirstOrDefault(p => p.Id == projectFromExcel.ProjectCode.Value);
 
-                            var p = new DepartmentPlan
-                            {
-                                DepartmentId = dbDep.Id,
-                                UserId = user.Id,
-                                Hours = pr.Hours,
-                                WeekStart = w.WeekStart,
-                                Project = projectWithNoCode
-                            };
-                            _dbContext.DepartmentPlans.Add(p);
-                        }
-                        else
+                        if (project == null)
                         {
-                            var proj = dbProjects.FirstOrDefault(i => i.Id == pr.ProjectCode.Value);
-                            if (proj != null)
+                            project = new Project
                             {
-                                var p = new DepartmentPlan
-                                {
-                                    DepartmentId = dbDep.Id,
-                                    UserId = user.Id,
-                                    Hours = pr.Hours,
-                                    WeekStart = w.WeekStart,
-                                    ProjectId = proj.Id
-                                };
-                                _dbContext.DepartmentPlans.Add(p);
-                            }
-                            else
-                            {
-                                Log.Logger.Error($"Cannot find project with id={pr.ProjectCode.Value}");
-                            }
+                                Name = projectFromExcel.ProjectName,
+                                ShortName = projectFromExcel.ProjectName,
+                                Type = ProjectType.Internal,
+                                Start = new DateTime(2000, 01, 01),
+                                End = new DateTime(3000, 01, 01),
+                                IsOpened = true,
+                                Contract = "",
+                                Tasks = new List<ProjectTask>()
+                            };
+
+                            _dbContext.Projects.Add(project);
+                            await _dbContext.SaveChangesAsync(cancellationToken);
                         }
+
+                        if (project.Tasks == null || project.Tasks.Count == 0)
+                        {
+                            project.Tasks = new List<ProjectTask>
+                            {
+                                new ProjectTask {
+                                    Id = Guid.NewGuid(),
+                                    Description = projectFromExcel.ProjectName,
+                                    Start = new DateTime(DateTime.Today.Year, 01, 01),
+                                    End = new DateTime(DateTime.Today.Year + 1, 01, 01),
+                                    DepartmentEstimations = new List<ProjectTaskDepartmentEstimation>()
+                                }
+                            };
+                        }
+
+                        var tasksToAssign = project.Tasks.Where(t => t.Start >= week.WeekStart).ToList();
+                        var dp = new DepartmentPlan
+                        {
+                            DepartmentId = dbDep.Id,
+                            UserId = user.Id,
+                            Hours = projectFromExcel.Hours,
+                            WeekStart = week.WeekStart,
+                            ProjectTaskId = tasksToAssign.Count == 0
+                                ? project.Tasks.First().Id
+                                : tasksToAssign.OrderBy(t => t.Start).First().Id,
+                        };
+                        _dbContext.DepartmentPlans.Add(dp);
                     }
                 }
             }
