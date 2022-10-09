@@ -259,12 +259,13 @@ namespace Taskly.Application.Users
                         if (record != null)
                         {
                             record.Hours += est * 40;
+                            record.Hours = Math.Round(record.Hours, 2);
                         }
                         else
                         {
                             weekPlan.Projects.Add(new SharepointProjectPlan
                             {
-                                Hours = est * 40,
+                                Hours = Math.Round(est * 40, 2),
                                 ProjectName = projCodeAsStr,
                                 ProjectCode = projCode > 0 ? projCode : null
                             });

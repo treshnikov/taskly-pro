@@ -37,7 +37,7 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
     const { request } = useHttp()
     const { t } = useTranslation();
     const staticHeaders = ["Id", "tooltip", "weeksAvailabilityMap", "hoursShouldBePlannedByWeek", t('name'), t('position'), t('rate'), t('hours'), t('project')]
-    const columnWidths = [50, 50, 50, 50, 240, 50, 50, 50, 330]
+    const columnWidths = [50, 50, 50, 50, 320, 50, 50, 50, 330]
 
     // workaround for passing a navigate and translate functions to CellRenderers that cannot be extended by adding new props without changing the source code of the component
     ServicesStorageHelper.navigateFunction = (arg: string) => { navigate(arg) }
@@ -224,6 +224,7 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
                     <HotColumn
                         data={"project"}
                         type={"text"}
+                        wordWrap={false}
                         readOnly
                         renderer={ProjectNameCellRenderer}
                     />

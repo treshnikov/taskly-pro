@@ -102,17 +102,19 @@ export const DepartmentPlanToolbar: React.FunctionComponent<DepartmentPlanToolba
     useEffect(() => {
         // extract list of all projects bounded with the given department
         if (plan.length > 0 && plan[0].__children.length > 0) {
-            const depProjects = plan[0].__children.map(i => {
-                
-                const p: ProjectSelectItem = {
-                    name: i.project,
-                    id: i.projectTaskId.toString()
-                }
-                
-                return p
-            })
+            let res: ProjectSelectItem[] = []
 
-            setProjectSelectItems(depProjects)
+            for (let i = 0; i < plan[0].__children.length; i++) {
+                const el = plan[0].__children[i];
+                const projName = el.project.substring(0, el.project.indexOf(" - "))
+
+                if (!res.find(i => i.name === projName)) {
+                    res.push({ id: el.projectId.toString(), name: projName })
+                }
+
+            }
+
+            setProjectSelectItems(res)
         }
     }, [plan])
 

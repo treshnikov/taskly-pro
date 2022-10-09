@@ -66,6 +66,8 @@ export class DepartmentPlanHelper {
             idx++;
 
             user.tasks.forEach(task => {
+                const name = task.projectId + ": " + (task.projectShortName ? task.projectShortName : task.projectName) + " - " + task.taskName;
+                const tooltip = name + "\r\n" + dateAsShortStrFromNumber(task.taskStart) + " - " + dateAsShortStrFromNumber(task.taskEnd) + "]"
                 const projectRecord: DepartmentProjectPlan = {
                     id: "p" + idx.toString(),
                     userPosition: '',
@@ -73,10 +75,10 @@ export class DepartmentPlanHelper {
                     weeksAvailabilityMap: [],
                     userId: user.userId,
                     projectId: task.projectId,
-                    tooltip: dateAsShortStrFromNumber(task.taskStart) + " - " + dateAsShortStrFromNumber(task.taskEnd) + "]",
+                    tooltip: tooltip,
                     projectTaskId: task.projectTaskId,
                     taskName: task.taskName,
-                    project: task.projectId + ": " + (task.projectShortName ? task.projectShortName : task.projectName) + " - " + task.taskName
+                    project: name
                 }
 
                 idx++
