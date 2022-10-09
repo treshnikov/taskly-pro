@@ -49,6 +49,7 @@ namespace Taskly.Application.Users
 
             var dbProjects = await _dbContext.Projects
                 .Include(p => p.Tasks)
+                    .ThenInclude(i => i.DepartmentEstimations).ThenInclude(i => i.Department)
                 .ToListAsync(cancellationToken);
 
             foreach (var planItem in plans)
@@ -117,16 +118,28 @@ namespace Taskly.Application.Users
                             };
                         }
 
-                        var tasksToAssign = project.Tasks.Where(t => t.Start >= week.WeekStart).ToList();
+                        var tasksToAssign = project.Tasks
+                            .Where(t =>
+                                t.DepartmentEstimations.Any(de => de.Department.Id == dbDep.Id) &&
+                                t.Start >= week.WeekStart)
+                            .OrderBy(t => t.Start)
+                            .ToList();
+
+                        var projectTask = tasksToAssign.Count == 0
+                                ? project.Tasks.First()
+                                : tasksToAssign.First();
+
                         var dp = new DepartmentPlan
                         {
+                            Id = Guid.NewGuid(),
+                            User = user,
+                            ProjectTask = projectTask,
                             DepartmentId = dbDep.Id,
                             UserId = user.Id,
                             Hours = projectFromExcel.Hours,
                             WeekStart = week.WeekStart,
-                            ProjectTaskId = tasksToAssign.Count == 0
-                                ? project.Tasks.First().Id
-                                : tasksToAssign.OrderBy(t => t.Start).First().Id,
+                            Department = dbDep,
+                            ProjectTaskId = projectTask.Id,
                         };
                         _dbContext.DepartmentPlans.Add(dp);
                     }

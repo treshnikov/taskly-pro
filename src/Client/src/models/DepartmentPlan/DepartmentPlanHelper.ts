@@ -1,4 +1,4 @@
-import { dateAsShortStr } from "../../common/dateFormatter";
+import { dateAsShortStr, dateAsShortStrFromNumber } from "../../common/dateFormatter";
 import { ServicesStorageHelper } from "../../common/servicesStorageHelper";
 import { DepartmentUserPlan, DepartmentPlanUserRecordVm, DepartmentProjectPlan, TaskPlanVm } from "./DepartmentPlanClasses";
 
@@ -48,7 +48,7 @@ export class DepartmentPlanHelper {
 
             const userName = user.userName + (user.quitDate == null || user.quitDate <= 0
                 ? ''
-                : ' (' + (ServicesStorageHelper.t('quit') + ' ' + dateAsShortStr(new Date(user.quitDate))) + ')') 
+                : ' (' + (ServicesStorageHelper.t('quit') + ' ' + dateAsShortStr(new Date(user.quitDate))) + ')')
 
             const userRecord: DepartmentUserPlan = {
                 id: "u" + idx.toString(),
@@ -73,6 +73,7 @@ export class DepartmentPlanHelper {
                     weeksAvailabilityMap: [],
                     userId: user.userId,
                     projectId: task.projectId,
+                    tooltip: dateAsShortStrFromNumber(task.taskStart) + " - " + dateAsShortStrFromNumber(task.taskEnd) + "]",
                     projectTaskId: task.projectTaskId,
                     taskName: task.taskName,
                     project: task.projectId + ": " + (task.projectShortName ? task.projectShortName : task.projectName) + " - " + task.taskName
