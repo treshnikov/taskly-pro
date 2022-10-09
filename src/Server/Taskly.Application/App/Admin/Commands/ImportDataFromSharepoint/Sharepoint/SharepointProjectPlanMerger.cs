@@ -253,12 +253,22 @@ namespace Taskly.Application.Users
                             Log.Logger.Error($"Cannot convert {estAsStr} to float");
                             continue;
                         }
-                        weekPlan.Projects.Add(new SharepointProjectPlan
+
+                        // check if one cell in Excel has two records for the same project
+                        var record = weekPlan.Projects.FirstOrDefault(i => i.ProjectName == projCodeAsStr);
+                        if (record != null)
                         {
-                            Hours = est * 40,
-                            ProjectName = projCodeAsStr,
-                            ProjectCode = projCode > 0 ? projCode : null
-                        });
+                            record.Hours += est * 40;
+                        }
+                        else
+                        {
+                            weekPlan.Projects.Add(new SharepointProjectPlan
+                            {
+                                Hours = est * 40,
+                                ProjectName = projCodeAsStr,
+                                ProjectCode = projCode > 0 ? projCode : null
+                            });
+                        }
                     }
 
                     userPlan.Weeks.Add(weekPlan);

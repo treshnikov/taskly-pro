@@ -55,6 +55,7 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentPlan
                         t.DepartmentId == request.DepartmentId &&
                         t.WeekStart >= request.Start && t.WeekStart <= request.End)
                     .ToListAsync(cancellationToken);
+                var plansDict = plans.ToDictionary(i => (i.UserId, i.ProjectTaskId, i.WeekStart), i => i.Hours);
 
                 var plannedTasks = plans.Select(i => i.ProjectTask);
 
@@ -110,11 +111,7 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentPlan
                             };
 
                             // get hours planned for the given user, project task and week
-                            var hours = plans.FirstOrDefault(t =>
-                                t.UserId == user.User.Id &&
-                                t.ProjectTaskId == task.Id &&
-                                t.WeekStart == week.Monday)?.Hours ?? 0;
-
+                            plansDict.TryGetValue((user.UserId, task.Id, week.Monday), out double hours);
                             weekPlan.PlannedHours = hours;
 
                             taskPlan.Plans.Add(weekPlan);

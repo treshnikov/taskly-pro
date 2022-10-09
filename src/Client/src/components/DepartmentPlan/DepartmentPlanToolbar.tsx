@@ -103,10 +103,12 @@ export const DepartmentPlanToolbar: React.FunctionComponent<DepartmentPlanToolba
         // extract list of all projects bounded with the given department
         if (plan.length > 0 && plan[0].__children.length > 0) {
             const depProjects = plan[0].__children.map(i => {
+                
                 const p: ProjectSelectItem = {
                     name: i.project,
-                    id: i.projectId.toString()
+                    id: i.projectTaskId.toString()
                 }
+                
                 return p
             })
 
