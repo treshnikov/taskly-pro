@@ -121,12 +121,12 @@ namespace Taskly.Application.Users
                         var tasksToAssign = project.Tasks
                             .Where(t =>
                                 t.DepartmentEstimations.Any(de => de.Department.Id == dbDep.Id) &&
-                                t.Start >= week.WeekStart)
+                                t.End >= week.WeekStart)
                             .OrderBy(t => t.Start)
                             .ToList();
 
                         var projectTask = tasksToAssign.Count == 0
-                                ? project.Tasks.First()
+                                ? project.Tasks.OrderByDescending(t => t.End).First()
                                 : tasksToAssign.First();
 
                         var dp = new DepartmentPlan
