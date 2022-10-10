@@ -83,8 +83,16 @@ public class CalendarService : ICalendarService
         // get non-working days to calculate how many working hours should be planned
         // todo handle sick days
         var nonWorkingDays = _calendar
-            .Where(i => i.Date >= start && i.Date <= end)
+            .Where(i =>
+                (i.DayType == CalendarDayType.Holiday || i.DayType == CalendarDayType.HalfHoliday) &&
+                i.Date >= start && i.Date <= end)
             .ToDictionary(i => i.Date, i => i.DayType);
+
+        var workDays = new HashSet<DateTime>(_calendar
+            .Where(i =>
+                i.DayType == CalendarDayType.WorkDay &&
+                i.Date >= start && i.Date <= end)
+            .Select(i => i.Date));
 
         var dt = start;
         while (dt.DayOfWeek != DayOfWeek.Monday)
@@ -102,34 +110,46 @@ public class CalendarService : ICalendarService
 
             // todo handle working weekends
             var monday = weekInfo.Monday;
-            var daysOfWeek = new List<DateTime>{
+            var workDaysOfWeek = new List<DateTime>{
                 monday, monday.AddDays(1), monday.AddDays(2), monday.AddDays(3), monday.AddDays(4)
             };
+            var weekends = new List<DateTime>{
+                monday.AddDays(5), monday.AddDays(6)
+            };
 
-            foreach (var day in daysOfWeek)
+            foreach (var workDay in workDaysOfWeek)
             {
-                if (day == new DateTime(2022, 07, 04))
-                {
-                    var x = 5;
-                }
-
                 // vacations
-                if (_vacations.Contains(new Tuple<Guid, DateTime>(userDep.User.Id, dt)))
+                if (_vacations.Contains(new Tuple<Guid, DateTime>(userDep.User.Id, workDay)))
                 {
                     weekInfo.HoursAvailableForPlanning -= 8;
                 }
 
                 // handle holidays
-                else if (nonWorkingDays.ContainsKey(day))
+                else if (nonWorkingDays.ContainsKey(workDay))
                 {
-                    switch (nonWorkingDays[day])
+                    switch (nonWorkingDays[workDay])
                     {
                         case CalendarDayType.Holiday: weekInfo.HoursAvailableForPlanning -= 8; break;
                         case CalendarDayType.HalfHoliday: weekInfo.HoursAvailableForPlanning -= 1; break;
                         default: break;
                     }
                 }
+            }
 
+            foreach (var weekend in weekends)
+            {
+                // vacations
+                if (_vacations.Contains(new Tuple<Guid, DateTime>(userDep.User.Id, weekend)))
+                {
+                    continue;
+                }
+
+                // handle work days on weekends
+                else if (workDays.Contains(weekend))
+                {
+                    weekInfo.HoursAvailableForPlanning += 8;
+                }
             }
 
             weekInfo.HoursAvailableForPlanning *= userDep.Rate;

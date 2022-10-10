@@ -182,7 +182,7 @@ namespace Taskly.Application.Users
 
             using var command = conn.CreateCommand();
             var sql =
-                "SELECT distinct date, day_type_id as type FROM intranet.marks_calendar where day_type_id in (1, 6) and employee_ID is null order by date desc";
+                "SELECT distinct date, day_type_id as type FROM intranet.marks_calendar where day_type_id in (0, 1, 6) and employee_ID is null order by date desc";
 
             command.CommandText = sql;
             using var reader = await command.ExecuteReaderAsync(cancellationToken);
@@ -195,6 +195,7 @@ namespace Taskly.Application.Users
                 {
                     1 => CalendarDayType.Holiday,
                     6 => CalendarDayType.HalfHoliday,
+                    0 => CalendarDayType.WorkDay,
                     _ => throw new Exception($"Cannot import non working day from an Intranet DB with type = {dayTypeId}"),
                 };
 

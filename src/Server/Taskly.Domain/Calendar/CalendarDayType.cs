@@ -4,5 +4,6 @@ public enum CalendarDayType
 {
     None = 0,
     Holiday = 1,
-    HalfHoliday = 2
+    HalfHoliday = 2,
+    WorkDay = 3,
 }
