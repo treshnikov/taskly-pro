@@ -67,7 +67,7 @@ export class DepartmentPlanHelper {
 
             user.tasks.forEach(task => {
                 const name = task.projectId + ": " + (task.projectShortName ? task.projectShortName : task.projectName) + " - " + task.taskName;
-                const tooltip = name + "\r\n" + dateAsShortStrFromNumber(task.taskStart) + " - " + dateAsShortStrFromNumber(task.taskEnd) + "]"
+                const tooltip = name + "\r\n\r\n" + dateAsShortStrFromNumber(task.taskStart) + " - " + dateAsShortStrFromNumber(task.taskEnd)
                 const projectRecord: DepartmentProjectPlan = {
                     id: "p" + idx.toString(),
                     userPosition: '',

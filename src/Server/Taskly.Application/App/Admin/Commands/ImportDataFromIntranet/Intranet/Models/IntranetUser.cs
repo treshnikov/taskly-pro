@@ -13,5 +13,4 @@ namespace Taskly.Application.Users
         public DateTime? QuitDate { get; set; }
         public DateTime HiringDate { get; set; }
     }
-
 }

@@ -12,7 +12,7 @@ namespace Taskly.Application.Users
         {
             this.intranetDbConnectionSettings = intranetDbConnectionSettings;
         }
-        public async Task<IntranetProject[]> LoadProjectsFromIntranetDbAsync(CancellationToken cancellationToken)
+        public async Task<IntranetProject[]> LoadProjectsAsync(CancellationToken cancellationToken)
         {
             var res = new List<IntranetProject>();
 
@@ -65,7 +65,7 @@ namespace Taskly.Application.Users
             return res.ToArray();
         }
 
-        public async Task<IntranetUser[]> LoadUsersFromIntranetDbAsync(CancellationToken cancellationToken)
+        public async Task<IntranetUser[]> LoadUsersAsync(CancellationToken cancellationToken)
         {
             var res = new List<IntranetUser>();
 
@@ -128,7 +128,7 @@ namespace Taskly.Application.Users
             return res.ToArray();
         }
 
-        public async Task<IntranetDepartment[]> LoadDepartmentsFromIntranetDbAsync(CancellationToken cancellationToken)
+        public async Task<IntranetDepartment[]> LoadDepartmentsAsync(CancellationToken cancellationToken)
         {
             var res = new List<IntranetDepartment>();
             var builder = new MySqlConnectionStringBuilder
@@ -163,7 +163,7 @@ namespace Taskly.Application.Users
 
             return res.ToArray();
         }
-        public async Task<CalendarDay[]> LoadCalendarFromIntranetDbAsync(CancellationToken cancellationToken)
+        public async Task<CalendarDay[]> LoadCalendarAsync(CancellationToken cancellationToken)
         {
             var res = new List<CalendarDay>();
 
@@ -202,6 +202,45 @@ namespace Taskly.Application.Users
                 {
                     Date = reader.GetDateTime("date"),
                     DayType = dayType
+                });
+            }
+
+            return res.ToArray();
+        }
+
+        public async Task<IntranetUserVacation[]> LoadVacationsAsync(CancellationToken cancellationToken)
+        {
+            var res = new List<IntranetUserVacation>();
+
+            var builder = new MySqlConnectionStringBuilder
+            {
+                Server = intranetDbConnectionSettings.Host,
+                Database = intranetDbConnectionSettings.DbName,
+                UserID = intranetDbConnectionSettings.User,
+                Password = intranetDbConnectionSettings.Password,
+                Port = intranetDbConnectionSettings.Port,
+                SslMode = MySqlSslMode.Disabled,
+            };
+
+            using var conn = new MySqlConnection(builder.ConnectionString);
+            await conn.OpenAsync(cancellationToken);
+
+            using var command = conn.CreateCommand();
+            var sql =
+                "select u.email, e.date " +
+                "from marks_calendar e " +
+                "join jos_users u on u.id = e.employee_ID " +
+                "where u.email <> '' and e.employee_ID is not null and e.day_type_ID = 2 " +
+                "order by e.date";
+
+            command.CommandText = sql;
+            using var reader = await command.ExecuteReaderAsync(cancellationToken);
+            while (await reader.ReadAsync(cancellationToken))
+            {
+                res.Add(new IntranetUserVacation
+                {
+                    Email = reader.GetString("email"),
+                    Date = reader.GetDateTime("date"),
                 });
             }
 

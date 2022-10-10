@@ -93,6 +93,40 @@ namespace Taskly.Application.Users
             transaction.Commit();
         }
 
+        public async Task UpdateVacations(IntranetUserVacation[] iVacations, CancellationToken cancellationToken)
+        {
+            using var transaction = _dbContext.Database.BeginTransaction();
+
+            var days = await _dbContext.Vacations.ToListAsync(cancellationToken);
+            foreach (var day in days)
+            {
+                _dbContext.Vacations.Remove(day);
+            }
+
+            var dbUsers = await _dbContext.Users.ToListAsync(cancellationToken);
+            var dbUsersDict = dbUsers.ToLookup(i => i.Email, i => i);
+
+            foreach (var rec in iVacations)
+            {
+                // as it turned out multiple records of users with the same email might exist in the intranet DB 
+                if (dbUsersDict.Contains(rec.Email))
+                {
+                    var user = dbUsersDict[rec.Email].First();
+                    _dbContext.Vacations.Add(new VacationDay
+                    {
+                        Id = Guid.NewGuid(),
+                        Date = rec.Date,
+                        User = user,
+                        UserId = user.Id
+                    });
+                }
+
+            }
+
+            await _dbContext.SaveChangesAsync(cancellationToken);
+            transaction.Commit();
+        }
+
         public async Task UpdateCalendar(CalendarDay[] iNonWorkingDays, CancellationToken cancellationToken)
         {
             using var transaction = _dbContext.Database.BeginTransaction();

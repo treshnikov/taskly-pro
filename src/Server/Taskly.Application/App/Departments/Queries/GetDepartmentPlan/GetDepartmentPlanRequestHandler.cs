@@ -67,7 +67,7 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentPlan
                 foreach (var user in users)
                 {
                     // build a list of weeks according to start and end dates            
-                    var weeks = _calendarService.GetWeeksInfo(user, request.Start, request.End);
+                    var weeks = _calendarService.GetUserWorkingHours(user, request.Start, request.End);
 
                     var vm = new DepartmentPlanRecordVm
                     {

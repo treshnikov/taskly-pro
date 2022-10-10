@@ -18,6 +18,7 @@ namespace Taskly.DAL
         public DbSet<UserPosition> UserePositions { get; set; }
         public DbSet<ProjectTaskDepartmentEstimationToUserPosition> ProjectTaskDepartmentEstimationToUserPosition { get; set; }
         public DbSet<CalendarDay> Calendar { get; set; }
+        public DbSet<VacationDay> Vacations { get; set; }
         public TasklyDbContext(DbContextOptions<TasklyDbContext> options) : base(options)
         {
         }
@@ -36,6 +37,7 @@ namespace Taskly.DAL
             builder.ApplyConfiguration(new UserPositionConfiguration());
             builder.ApplyConfiguration(new ProjectTaskDepartmentEstimationToUserPositionConfiguration());
             builder.ApplyConfiguration(new CalendarDayConfiguration());
+            builder.ApplyConfiguration(new VacationDayConfiguration());
             base.OnModelCreating(builder);
         }
 

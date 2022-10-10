@@ -16,10 +16,11 @@ namespace Taskly.Application.Users
             try
             {
                 var iReader = new IntranetReader(request.IntranetDbConnectionSettings);
-                var iDepartments = await iReader.LoadDepartmentsFromIntranetDbAsync(cancellationToken);
-                var iUsers = await iReader.LoadUsersFromIntranetDbAsync(cancellationToken);
-                var iProjects = await iReader.LoadProjectsFromIntranetDbAsync(cancellationToken);
-                var iNonWorkingDays = await iReader.LoadCalendarFromIntranetDbAsync(cancellationToken);
+                var iDepartments = await iReader.LoadDepartmentsAsync(cancellationToken);
+                var iUsers = await iReader.LoadUsersAsync(cancellationToken);
+                var iProjects = await iReader.LoadProjectsAsync(cancellationToken);
+                var iNonWorkingDays = await iReader.LoadCalendarAsync(cancellationToken);
+                var iVacations = await iReader.LoadVacationsAsync(cancellationToken);
 
                 var iMerger = new IntranetMerger(_dbContext);
                 await iMerger.UpdateUsers(iUsers, cancellationToken);
@@ -28,6 +29,7 @@ namespace Taskly.Application.Users
                 await iMerger.UpdateUserDepartmentLinks(iUsers, iDepartments, cancellationToken);
                 await iMerger.UpdateProjects(iProjects, cancellationToken);
                 await iMerger.UpdateCalendar(iNonWorkingDays, cancellationToken);
+                await iMerger.UpdateVacations(iVacations, cancellationToken);
 
                 return Unit.Value;
             }

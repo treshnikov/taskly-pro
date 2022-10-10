@@ -63,7 +63,7 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
         {
             res.Summary.Start = request.Start;
             res.Summary.End = request.End;
-            res.Summary.AvailableHoursForPlanning = await _calendarService.GetAvailableHoursForPlanningForDepartmentAsync(request.DepartmentId, request.Start, request.End, cancellationToken);
+            res.Summary.AvailableHoursForPlanning = await _calendarService.GetSumOfDepartmentWorkingHoursAsync(request.DepartmentId, request.Start, request.End, cancellationToken);
             res.Summary.HoursPlannedForDepartment = res.Projects.Select(i => i.PlannedTaskHoursForDepartment).Sum();
             res.Summary.HoursPlannedByHeadOfDepartment = res.Projects.Select(i => i.PlannedTaskHoursByDepartment).Sum();
             res.Summary.WorkLoadPercentage = Math.Round(100 * res.Summary.HoursPlannedForDepartment / res.Summary.AvailableHoursForPlanning, 2);
@@ -76,7 +76,10 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
         private async Task FillProjectToDepartmentEstimationsAsync(GetDepartmentStatisticsRequest request, DepartmentStatisticsVm res, Department dep, List<ProjectTask> tasks, List<DepartmentPlan> plans, CancellationToken cancellationToken)
         {
             var dbProjects = await _dbContext.Projects.AsNoTracking().ToListAsync(cancellationToken);
-            var departmentAvailableHours = await _calendarService.GetAvailableHoursForPlanningForDepartmentByWeeksAsync(request.DepartmentId, request.Start, request.End, cancellationToken);
+            var departmentAvailableHours = 
+                (await _calendarService.GetDepartmentWorkingHoursAsync(request.DepartmentId, request.Start, request.End, cancellationToken))
+                .ToDictionary(i => i.Monday, i => i.HoursAvailableForPlanning);
+
 
             // find first monday
             var weekStart = request.Start;
@@ -94,7 +97,7 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
                     WeekStart = weekStart,
                     DepartmentPlannedHours = 0,
                     ProjectPlannedHours = 0,
-                    DepartmentAvailableHours = departmentAvailableHours[weekIdx],
+                    DepartmentAvailableHours = departmentAvailableHours[weekStart],
                     ProjectPlanDetails = new List<ProjectPlanDetailVm>(),
                     DepartmentPlanDetails = new List<ProjectPlanDetailVm>()
                 };

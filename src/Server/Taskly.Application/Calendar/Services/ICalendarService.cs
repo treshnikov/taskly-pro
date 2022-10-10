@@ -5,7 +5,7 @@ namespace Taskly.Application.Calendar;
 
 public interface ICalendarService
 {
-    IEnumerable<WeekInfoVm> GetWeeksInfo(UserDepartment user, DateTime start, DateTime end);
-    Task<double> GetAvailableHoursForPlanningForDepartmentAsync(Guid departmentId, DateTime start, DateTime end, CancellationToken cancellationToken);
-    Task<double[]> GetAvailableHoursForPlanningForDepartmentByWeeksAsync(Guid departmentId, DateTime start, DateTime end, CancellationToken cancellationToken);
+    IEnumerable<WeekInfoVm> GetUserWorkingHours(UserDepartment user, DateTime start, DateTime end);
+    Task<IEnumerable<WeekInfoVm>> GetDepartmentWorkingHoursAsync(Guid departmentId, DateTime start, DateTime end, CancellationToken cancellationToken);
+    Task<double> GetSumOfDepartmentWorkingHoursAsync(Guid departmentId, DateTime start, DateTime end, CancellationToken cancellationToken);
 }

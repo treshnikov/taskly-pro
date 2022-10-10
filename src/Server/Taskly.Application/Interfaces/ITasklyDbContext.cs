@@ -18,6 +18,7 @@ namespace Taskly.Application.Interfaces
         DbSet<ProjectTask> ProjectTasks { get; set; }
         DbSet<ProjectTaskDepartmentEstimationToUserPosition> ProjectTaskDepartmentEstimationToUserPosition { get; set; }
         DbSet<CalendarDay> Calendar { get; set; }
+        DbSet<VacationDay> Vacations { get; set; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }

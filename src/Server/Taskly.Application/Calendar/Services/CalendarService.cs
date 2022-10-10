@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Taskly.Application.Departments.Queries.GetDepartmentPlan;
 using Taskly.Application.Interfaces;
@@ -8,15 +9,17 @@ namespace Taskly.Application.Calendar;
 public class CalendarService : ICalendarService
 {
     private readonly IEnumerable<CalendarDay> _calendar;
+    private readonly HashSet<Tuple<Guid, DateTime>> _vacations;
     private readonly ITasklyDbContext _dbContext;
 
     public CalendarService(ITasklyDbContext dbContext)
     {
         _dbContext = dbContext;
         _calendar = dbContext.Calendar.ToList();
+        _vacations = new HashSet<Tuple<Guid, DateTime>>(_dbContext.Vacations.Select(i => new Tuple<Guid, DateTime>(i.UserId, i.Date)));
     }
 
-    public async Task<double> GetAvailableHoursForPlanningForDepartmentAsync(Guid departmentId, DateTime start, DateTime end, CancellationToken cancellationToken)
+    public async Task<double> GetSumOfDepartmentWorkingHoursAsync(Guid departmentId, DateTime start, DateTime end, CancellationToken cancellationToken)
     {
         var res = 0.0;
         var users = await _dbContext
@@ -29,17 +32,17 @@ public class CalendarService : ICalendarService
         {
             // take a department with max work rate because user can work in multiple departments
             var ud = user.UserDepartments.OrderByDescending(i => i.Rate).First();
-            var availableHoursForPlanning = GetWeeksInfo(ud, start, end).Select(i => i.HoursAvailableForPlanning).Sum();
+            var availableHoursForPlanning = GetUserWorkingHours(ud, start, end).Select(i => i.HoursAvailableForPlanning).Sum();
             res += availableHoursForPlanning;
         }
 
         return res;
     }
 
-    public async Task<double[]> GetAvailableHoursForPlanningForDepartmentByWeeksAsync(Guid departmentId, DateTime start, DateTime end, CancellationToken cancellationToken)
+    public async Task<IEnumerable<WeekInfoVm>> GetDepartmentWorkingHoursAsync(Guid departmentId, DateTime start, DateTime end, CancellationToken cancellationToken)
     {
-        var res = new List<double>();
-        
+        var res = new List<WeekInfoVm>();
+
         var users = await _dbContext
             .Users
             .Include(d => d.UserDepartments)
@@ -50,26 +53,29 @@ public class CalendarService : ICalendarService
         {
             // take a department with max work rate because user can work in multiple departments
             var ud = user.UserDepartments.OrderByDescending(i => i.Rate).First();
-            var userWeeks = GetWeeksInfo(ud, start, end);
+            var userWeeks = GetUserWorkingHours(ud, start, end);
 
             if (res.Count == 0)
             {
-                res.AddRange(Enumerable.Repeat<double>(0, userWeeks.Count()));
+                foreach (var w in userWeeks)
+                {
+                    res.Add(new WeekInfoVm { Monday = w.Monday, HoursAvailableForPlanning = 0 });
+                }
             }
 
             var idx = 0;
             foreach (var week in userWeeks)
             {
-                res[idx] += week.HoursAvailableForPlanning;
+                res[idx].HoursAvailableForPlanning += week.HoursAvailableForPlanning;
 
                 idx++;
             }
         }
 
-        return res.ToArray();
+        return res;
     }
 
-    public IEnumerable<WeekInfoVm> GetWeeksInfo(UserDepartment user, DateTime start, DateTime end)
+    public IEnumerable<WeekInfoVm> GetUserWorkingHours(UserDepartment userDep, DateTime start, DateTime end)
     {
         var res = new List<WeekInfoVm>();
 
@@ -87,31 +93,53 @@ public class CalendarService : ICalendarService
 
         while (dt <= end)
         {
-            var day = new WeekInfoVm
+            var weekInfo = new WeekInfoVm
             {
                 Monday = dt,
                 HoursAvailableForPlanning = 40
             };
 
-            if (nonWorkingDays.ContainsKey(dt))
+            // todo handle working weekends
+            var monday = weekInfo.Monday;
+            var daysOfWeek = new List<DateTime>{
+                monday, monday.AddDays(1), monday.AddDays(2), monday.AddDays(3), monday.AddDays(4)
+            };
+
+            foreach (var day in daysOfWeek)
             {
-                switch (nonWorkingDays[dt])
+                if (day == new DateTime(2022, 07, 04))
                 {
-                    case CalendarDayType.Holiday: day.HoursAvailableForPlanning -= 8; break;
-                    case CalendarDayType.HalfHoliday: day.HoursAvailableForPlanning -= 1; break;
-                    default: break;
+                    var x = 5;
                 }
+
+                // vacations
+                if (_vacations.Contains(new Tuple<Guid, DateTime>(userDep.User.Id, dt)))
+                {
+                    weekInfo.HoursAvailableForPlanning -= 8;
+                }
+
+                // handle holidays
+                else if (nonWorkingDays.ContainsKey(day))
+                {
+                    switch (nonWorkingDays[day])
+                    {
+                        case CalendarDayType.Holiday: weekInfo.HoursAvailableForPlanning -= 8; break;
+                        case CalendarDayType.HalfHoliday: weekInfo.HoursAvailableForPlanning -= 1; break;
+                        default: break;
+                    }
+                }
+
             }
 
-            day.HoursAvailableForPlanning *= user.Rate;
+            weekInfo.HoursAvailableForPlanning *= userDep.Rate;
 
-            if (user.User.HiringDate > dt ||
-                (user.User.QuitDate is not null && dt >= user.User.QuitDate))
+            if (userDep.User.HiringDate > dt ||
+                (userDep.User.QuitDate is not null && dt >= userDep.User.QuitDate))
             {
-                day.HoursAvailableForPlanning = 0;
+                weekInfo.HoursAvailableForPlanning = 0;
             }
 
-            res.Add(day);
+            res.Add(weekInfo);
             dt = dt.AddDays(7);
         }
 
