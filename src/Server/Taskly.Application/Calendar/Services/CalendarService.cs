@@ -202,7 +202,9 @@ public class CalendarService : ICalendarService
             .AsNoTracking()
             .ToListAsync(cancellationToken);
 
-        var dbUser = _dbContext.Users.First(u => u.Name == userName);
+        // todo - replace userName to user Id
+        var name = string.Join(" ", userName.Split(' ').Take(3));
+        var dbUser = _dbContext.Users.First(u => u.Name == name);
 
         var vacations = await _dbContext
             .Vacations
