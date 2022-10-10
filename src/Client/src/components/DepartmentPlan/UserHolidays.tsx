@@ -1,10 +1,11 @@
-import { LocalizationProvider, StaticDatePicker } from "@mui/lab"
-import { TextField, TextFieldProps } from "@mui/material"
-import { JSXElementConstructor, ReactElement, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
+import { CalendarDayType, DayInfoVm } from "../../models/DepartmentPlan/DepartmentPlanClasses"
+import { HOLIDAY_COLOR } from "./DepartmentPlanConst"
 
 export type UserHolidaysProps = {
-    start: Date
-    end: Date
+    start: number
+    end: number
+    days: DayInfoVm[]
 }
 
 export const UserHolidays: React.FunctionComponent<UserHolidaysProps> = (props) => {
@@ -13,19 +14,37 @@ export const UserHolidays: React.FunctionComponent<UserHolidaysProps> = (props) 
     const daysInLine = 6 * 7 - 5
     const days = ["пн", "вт", "ср", "чт", "пт", "сб", "вс"]
     const months = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"]
+    const [holidays, setHolidays] = useState<Set<Date>>(new Set<Date>())
 
     useEffect(() => {
         // extract years
-        let dt = props.start
+        const startDate = new Date(props.start)
+        const endDate = new Date(props.end)
+        let dt = startDate
         let years: Set<number> = new Set<number>()
-        while (dt < props.end) {
+        while (dt < endDate) {
             years.add(dt.getFullYear())
             dt.setDate(dt.getDate() + 1)
         }
-
-        // calculate years to show
         setYears([...years])
-    }, [])
+
+        setHolidays(new Set<Date>(
+                props.days.filter(i => i.dayType === CalendarDayType.Holiday).map(i => new Date(i.date))))
+
+        console.log(holidays)
+    }, [props.days])
+
+    const getCellBackground = (date: Date): string => {
+        if (holidays.has(date)) {
+
+            console.log(date, "выходной")
+            return HOLIDAY_COLOR
+        }
+
+        console.log(date, "не выходной")
+
+        return ''
+    }
 
     return <>
         {
@@ -61,8 +80,14 @@ export const UserHolidays: React.FunctionComponent<UserHolidaysProps> = (props) 
                                                         date.setDate(date.getDate() + 1)
                                                     }
 
+                                                    if (dateToDisplay === '') {
+                                                        return <td></td>
+                                                    }
+
                                                     return (
-                                                        <td key={year + "_" + monthIdx + "_" + dIdx + "_td"}>
+                                                        <td
+                                                            style={{ background: getCellBackground(date) }}
+                                                            key={year + "_" + monthIdx + "_" + dIdx + "_td"}>
                                                             {
                                                                 dateToDisplay
                                                             }

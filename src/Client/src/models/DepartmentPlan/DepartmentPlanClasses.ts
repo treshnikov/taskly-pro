@@ -59,3 +59,15 @@ export type DepartmentProjectPlan = {
     [weekNumber: string]: string | null | number | boolean[]
 }
 
+export enum CalendarDayType {
+    None = 0,
+    Holiday = 1,
+    HalfHoliday = 2,
+    WorkDay = 3,
+    Vacation = 4
+}
+
+export type DayInfoVm = {
+    date: number
+    dayType: CalendarDayType
+}

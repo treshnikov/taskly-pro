@@ -1,3 +1,5 @@
+using Taskly.Application.Calendar;
+
 namespace Taskly.Application.Departments.Queries.GetDepartmentPlan
 {
     public class DepartmentPlanRecordVm
@@ -9,13 +11,7 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentPlan
         public DateTime? QuitDate { get; set; }
         public DateTime HiringDate { get; set; }
         public List<TaskPlanVm> Tasks { get; set; }
-        public IEnumerable<WeekInfoVm> Weeks { get; set; }
-    }
-
-    public class WeekInfoVm
-    {
-        public DateTime Monday { get; set; }
-        public double HoursAvailableForPlanning { get; set; }
+        public IEnumerable<WeekInfo> Weeks { get; set; }
     }
 
     public class TaskPlanVm

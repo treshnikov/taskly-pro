@@ -29,5 +29,15 @@ namespace Taskly.WebApi.Controllers
             var res = await Mediator.Send(new GetUserRequest { UserId = UserId });
             return Ok(res);
         }
+
+        [HttpGet("{userName}/days/{start}/{end}")]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult> GetUserDays(string userName, DateTime start, DateTime end)
+        {
+            var res = await Mediator.Send(new GetUserHolidaysRequest { UserName = userName, Start = start, End = end });
+            return Ok(res);
+        }
     }
 }

@@ -7,4 +7,5 @@ namespace Taskly.Application.Users
     {
         public Guid UserId { get; set; }
     }
+
 }

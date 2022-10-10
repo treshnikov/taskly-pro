@@ -40,9 +40,9 @@ public class CalendarService : ICalendarService
         return res;
     }
 
-    public async Task<IEnumerable<WeekInfoVm>> GetDepartmentWorkingHoursAsync(Guid departmentId, DateTime start, DateTime end, CancellationToken cancellationToken)
+    public async Task<IEnumerable<WeekInfo>> GetDepartmentWorkingHoursAsync(Guid departmentId, DateTime start, DateTime end, CancellationToken cancellationToken)
     {
-        var res = new List<WeekInfoVm>();
+        var res = new List<WeekInfo>();
 
         var users = await _dbContext
             .Users
@@ -60,7 +60,7 @@ public class CalendarService : ICalendarService
             {
                 foreach (var w in userWeeks)
                 {
-                    res.Add(new WeekInfoVm { Monday = w.Monday, HoursAvailableForPlanning = 0 });
+                    res.Add(new WeekInfo { Monday = w.Monday, HoursAvailableForPlanning = 0 });
                 }
             }
 
@@ -76,9 +76,9 @@ public class CalendarService : ICalendarService
         return res;
     }
 
-    public IEnumerable<WeekInfoVm> GetUserWorkingHours(UserDepartment userDep, DateTime start, DateTime end)
+    public IEnumerable<WeekInfo> GetUserWorkingHours(UserDepartment userDep, DateTime start, DateTime end)
     {
-        var res = new List<WeekInfoVm>();
+        var res = new List<WeekInfo>();
 
         // get non-working days to calculate how many working hours should be planned
         // todo handle sick days
@@ -102,7 +102,7 @@ public class CalendarService : ICalendarService
 
         while (dt <= end)
         {
-            var weekInfo = new WeekInfoVm
+            var weekInfo = new WeekInfo
             {
                 Monday = dt,
                 HoursAvailableForPlanning = 40
@@ -191,5 +191,35 @@ public class CalendarService : ICalendarService
         }
 
         return res;
+    }
+
+    public async Task<IEnumerable<DayInfo>> GetUserDaysInfoAsync(string userName, DateTime start, DateTime end, CancellationToken cancellationToken)
+    {
+        var res = new List<DayInfo>();
+        var days = await _dbContext
+            .Calendar
+            .Where(i => i.Date >= start && i.Date <= end)
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
+
+        var dbUser = _dbContext.Users.First(u => u.Name == userName);
+
+        var holidays = await _dbContext
+            .Vacations
+            .Where(i => i.UserId == dbUser.Id && i.Date >= start && i.Date <= end)
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
+
+        //todo - possible add day type for vacation, at the moment it is marked as a holiday
+        foreach (var h in holidays)
+        {
+            var day = days.FirstOrDefault(d => d.Date == h.Date);
+            if (day != null)
+            {
+                day.DayType = CalendarDayType.Vacation;
+            }
+        }
+
+        return days.Select(i => new DayInfo { Date = i.Date, DayType = i.DayType });
     }
 }

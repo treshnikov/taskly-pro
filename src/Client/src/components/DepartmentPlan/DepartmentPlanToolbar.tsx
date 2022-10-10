@@ -219,7 +219,8 @@ export const DepartmentPlanToolbar: React.FunctionComponent<DepartmentPlanToolba
             start={startDate}
             end={endDate}
             plan={plan} />
-        <UserInfo start={new Date(startDate)} end={new Date(endDate)}></UserInfo>
+
+        <UserInfo start={startDate} end={endDate} />
     </div>
 
 }

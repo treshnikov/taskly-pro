@@ -9,7 +9,7 @@ import { useTranslation } from "react-i18next";
 import { dateToRequestStr } from "../../common/dateFormatter";
 import { useHttp } from "../../hooks/http.hook";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux.hook";
-import { DepartmentUserPlan } from "../../models/DepartmentPlan/DepartmentPlanClasses";
+import { DayInfoVm, DepartmentUserPlan } from "../../models/DepartmentPlan/DepartmentPlanClasses";
 import { toggleShowStatistics, toggleShowUserHolidays } from "../../redux/departmentPlanSlice";
 import { ProjectPlanToDepartmentPlanBarChart } from "./ProjectPlanToDepartmentPlanBarChart";
 import { StatisticsSummary } from "./StatisticsSummary";
@@ -18,8 +18,8 @@ import { DepartmentStatisticsSummary, DepartmentStatisticsVm, ProjectStatisticsV
 import { UserHolidays } from "./UserHolidays";
 
 export type UserInfoProps = {
-    start: Date
-    end: Date
+    start: number
+    end: number
 }
 
 export const UserInfo: React.FunctionComponent<UserInfoProps> = (props) => {
@@ -28,6 +28,7 @@ export const UserInfo: React.FunctionComponent<UserInfoProps> = (props) => {
     const dispatch = useAppDispatch()
     const showUserHolidays = useAppSelector(state => state.departmentPlanReducer.showUserHolidays)
     const showUserHolidaysUserName = useAppSelector(state => state.departmentPlanReducer.showUserHolidaysUserName)
+    const [days, setDays] = useState<DayInfoVm[]>([])
     const [selectedTab, setSelectedTab] = useState('10');
 
     const tabStyle = { border: 0, color: "#373737" }
@@ -45,14 +46,11 @@ export const UserInfo: React.FunctionComponent<UserInfoProps> = (props) => {
             return
         }
 
-        // request(`/api/v1/departments/${props.departmentId}/${dateToRequestStr(new Date(props.start))}/${dateToRequestStr(new Date(props.end))}/statistics`,
-        //     "GET", null, [{ name: 'Content-Type', value: 'application/json' }], false)
-        //     .then(data => {
-        //         const statistics = (data as DepartmentStatisticsVm)
-        //         setProjectStatistics(statistics.projects)
-        //         setWeeksStatistics(statistics.weeks)
-        //         setStatisticSummary(statistics.summary)
-        //     })
+        request<DayInfoVm[]>(`/api/v1/users/${showUserHolidaysUserName}/days/${dateToRequestStr(new Date(props.start))}/${dateToRequestStr(new Date(props.end))}`,
+            "GET", null, [{ name: 'Content-Type', value: 'application/json' }], false)
+            .then(data => {
+                setDays(data)
+            })
 
     }, [showUserHolidays])
 
@@ -88,7 +86,8 @@ export const UserInfo: React.FunctionComponent<UserInfoProps> = (props) => {
                         <TabPanel value="10">
                             <UserHolidays
                                 start={props.start}
-                                end={props.end} />
+                                end={props.end}
+                                days={days} />
                         </TabPanel>
                     </TabContext>
                 </DialogContent>
