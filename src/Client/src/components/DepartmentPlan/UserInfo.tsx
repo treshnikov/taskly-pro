@@ -17,7 +17,12 @@ import { ProjectStatisticsTable } from "./ProjectStatisticsTable";
 import { DepartmentStatisticsSummary, DepartmentStatisticsVm, ProjectStatisticsVm, WeekStatistics as WeekStatistics } from "../../models/DepartmentPlan/DepartmentPlanStatisticsClasses";
 import { UserHolidays } from "./UserHolidays";
 
-export const UserInfo: React.FunctionComponent = (props) => {
+export type UserInfoProps = {
+    start: Date
+    end: Date
+}
+
+export const UserInfo: React.FunctionComponent<UserInfoProps> = (props) => {
     const { t } = useTranslation();
     const { request } = useHttp()
     const dispatch = useAppDispatch()
@@ -26,7 +31,7 @@ export const UserInfo: React.FunctionComponent = (props) => {
     const [selectedTab, setSelectedTab] = useState('1');
 
     const tabStyle = { border: 0, color: "#373737" }
-    
+
     const selectedTabChanged = (e: React.SyntheticEvent, newValue: string) => {
         setSelectedTab(newValue);
     }
@@ -81,7 +86,9 @@ export const UserInfo: React.FunctionComponent = (props) => {
                             </TabList>
                         </Box>
                         <TabPanel value="1">
-                            <UserHolidays></UserHolidays>
+                            <UserHolidays
+                                start={props.start}
+                                end={props.end} />
                         </TabPanel>
                     </TabContext>
                 </DialogContent>
