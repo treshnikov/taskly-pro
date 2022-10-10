@@ -17,6 +17,8 @@ using Taskly.WebApi.Common;
 using Microsoft.AspNetCore.Http.Json;
 using Taskly.WebApi.Models;
 using Taskly.Application.Users;
+using Microsoft.AspNetCore.ResponseCompression;
+using System.IO.Compression;
 
 namespace Taskly.WebApi;
 
@@ -36,6 +38,9 @@ public class Startup
 
         services.AddApplication();
         services.AddPersistence(Configuration);
+
+        services.AddResponseCompression();
+
         services.AddControllers().AddJsonOptions(opt =>
         {
             opt.JsonSerializerOptions.Converters.Add(new DateTimeToNumberJsonConverter());
@@ -129,6 +134,7 @@ public class Startup
         app.UseAuthentication();
         app.UseAuthorization();
         app.UseApiVersioning();
+        app.UseResponseCompression();
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
