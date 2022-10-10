@@ -1,6 +1,7 @@
 import { Table, TableCell, TableHead } from "@mui/material"
 import { useCallback } from "react"
 import { useEffect, useState } from "react"
+import { useTranslation } from "react-i18next"
 import { CalendarDayType, DayInfoVm } from "../../models/DepartmentPlan/DepartmentPlanClasses"
 import { GOOD_PLANING_TIME_COLOR, HOLIDAY_COLOR, VACATION_COLOR } from "./DepartmentPlanConst"
 
@@ -11,11 +12,12 @@ export type UserHolidaysProps = {
 }
 
 export const UserHolidays: React.FunctionComponent<UserHolidaysProps> = (props) => {
+    const { t } = useTranslation();
     const [years, setYears] = useState<number[]>([])
 
     const daysInLine = 6 * 7 - 5
-    const days = ["пн", "вт", "ср", "чт", "пт", "сб", "вс"]
-    const months = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"]
+    const days = t('week-days').split(',')
+    const months = t('months').split(',')
 
     useEffect(() => {
         // extract years

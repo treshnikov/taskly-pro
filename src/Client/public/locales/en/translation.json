@@ -108,5 +108,7 @@
     "quit": "quit",
     "hired": "Hired",
     "department-vactaions-time": "Sum of vacation hours",
-    "non-working-days": "Non working days"
+    "non-working-days": "Non working days",
+    "week-days": "Mon,Tue,Wed,Thurs,Fri,Sat,Sun",
+    "months": "January,February,March,April,May,June,July,August,September,October,November,December"
 }
