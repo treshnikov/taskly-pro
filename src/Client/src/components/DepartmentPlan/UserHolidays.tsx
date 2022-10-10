@@ -1,3 +1,4 @@
+import { Table, TableCell, TableHead } from "@mui/material"
 import { useCallback } from "react"
 import { useEffect, useState } from "react"
 import { CalendarDayType, DayInfoVm } from "../../models/DepartmentPlan/DepartmentPlanClasses"
@@ -34,8 +35,12 @@ export const UserHolidays: React.FunctionComponent<UserHolidaysProps> = (props) 
         return {
             color: day === 5 || day === 6
                 ? "red"
-                : "black"
+                : "black",
         }
+    }
+
+    const tableStyle = {
+        fontSize: "13px",
     }
 
     const getCellBackgroundStyle = (date: Date) => {
@@ -44,15 +49,15 @@ export const UserHolidays: React.FunctionComponent<UserHolidaysProps> = (props) 
         const isVacation = dayInfo && dayInfo.dayType === CalendarDayType.Vacation
 
         return {
-            color: 
-                isHoliday 
-                    ? HOLIDAY_COLOR 
+            color:
+                isHoliday
+                    ? HOLIDAY_COLOR
                     : isVacation
                         ? VACATION_COLOR
                         : '',
             background: isVacation ? GOOD_PLANING_TIME_COLOR : '',
             textAlign: "center" as const,
-            fontWeight: isHoliday || isVacation ? "bold" : ''
+            fontWeight: isHoliday || isVacation ? "bold" : '',
         }
     }
 
@@ -61,10 +66,10 @@ export const UserHolidays: React.FunctionComponent<UserHolidaysProps> = (props) 
             years.map(year =>
                 <div key={year + "_scope"}>
                     <h3>{year}</h3>
-                    <table style={{fontSize: "13px"}}>
-                        <thead>
+                    <Table style={tableStyle} cellPadding={1} cellSpacing={0}>
+                        <TableHead>
                             <tr>
-                                <th></th>
+                                <TableCell></TableCell>
                                 {[...Array(daysInLine).keys()].map((w, wIdx) =>
                                     <th key={year + "_" + wIdx + "_th"}
                                         style={getThStyle(wIdx % 7)}>
@@ -72,21 +77,21 @@ export const UserHolidays: React.FunctionComponent<UserHolidaysProps> = (props) 
                                     </th>
                                 )}
                             </tr>
-                        </thead>
+                        </TableHead>
                         <tbody key={year + "_tbody"}>
                             {
                                 months.map((month, monthIdx) => {
                                     let date = new Date(Date.UTC(year, monthIdx, 1))
                                     return (
                                         <tr key={year + "_" + monthIdx + "_tr"}>
-                                            <td key={year + "_" + monthIdx + "_tr_monthName"}>{month}</td>
+                                            <td style={tableStyle} key={year + "_" + monthIdx + "_tr_monthName"}>{month}</td>
                                             {
                                                 [...Array(daysInLine).keys()].map((d, dIdx) => {
                                                     const dayOfWeek = (dIdx + 1) % 7
 
                                                     let dateToDisplay = ''
                                                     let styles = {}
-                                                    
+
                                                     if (date.getMonth() === monthIdx && date.getDay() === dayOfWeek) {
                                                         dateToDisplay = date.getDate().toString()
                                                         styles = getCellBackgroundStyle(date)
@@ -94,7 +99,7 @@ export const UserHolidays: React.FunctionComponent<UserHolidaysProps> = (props) 
                                                     }
 
                                                     if (dateToDisplay === '') {
-                                                        return <td key={year + "_" + monthIdx + "_" + dIdx + "_td"}> </td>
+                                                        return <td style={tableStyle} key={year + "_" + monthIdx + "_" + dIdx + "_td"}> </td>
                                                     }
 
                                                     return (
@@ -114,7 +119,7 @@ export const UserHolidays: React.FunctionComponent<UserHolidaysProps> = (props) 
                                 })
                             }
                         </tbody>
-                    </table>
+                    </Table>
                 </div>
             )
         }
