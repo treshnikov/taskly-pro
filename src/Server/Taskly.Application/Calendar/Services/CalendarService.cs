@@ -204,17 +204,20 @@ public class CalendarService : ICalendarService
 
         var dbUser = _dbContext.Users.First(u => u.Name == userName);
 
-        var holidays = await _dbContext
+        var vacations = await _dbContext
             .Vacations
             .Where(i => i.UserId == dbUser.Id && i.Date >= start && i.Date <= end)
             .AsNoTracking()
             .ToListAsync(cancellationToken);
 
-        //todo - possible add day type for vacation, at the moment it is marked as a holiday
-        foreach (var h in holidays)
+        foreach (var v in vacations)
         {
-            var day = days.FirstOrDefault(d => d.Date == h.Date);
-            if (day != null)
+            var day = days.FirstOrDefault(d => d.Date == v.Date);
+            if (day == null)
+            {
+                days.Add(new CalendarDay { Date = v.Date, DayType = CalendarDayType.Vacation });
+            }
+            else
             {
                 day.DayType = CalendarDayType.Vacation;
             }

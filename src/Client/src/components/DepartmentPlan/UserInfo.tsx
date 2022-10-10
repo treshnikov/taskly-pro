@@ -9,12 +9,8 @@ import { useTranslation } from "react-i18next";
 import { dateToRequestStr } from "../../common/dateFormatter";
 import { useHttp } from "../../hooks/http.hook";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux.hook";
-import { DayInfoVm, DepartmentUserPlan } from "../../models/DepartmentPlan/DepartmentPlanClasses";
-import { toggleShowStatistics, toggleShowUserHolidays } from "../../redux/departmentPlanSlice";
-import { ProjectPlanToDepartmentPlanBarChart } from "./ProjectPlanToDepartmentPlanBarChart";
-import { StatisticsSummary } from "./StatisticsSummary";
-import { ProjectStatisticsTable } from "./ProjectStatisticsTable";
-import { DepartmentStatisticsSummary, DepartmentStatisticsVm, ProjectStatisticsVm, WeekStatistics as WeekStatistics } from "../../models/DepartmentPlan/DepartmentPlanStatisticsClasses";
+import { DayInfoVm } from "../../models/DepartmentPlan/DepartmentPlanClasses";
+import { toggleShowUserHolidays } from "../../redux/departmentPlanSlice";
 import { UserHolidays } from "./UserHolidays";
 
 export type UserInfoProps = {
@@ -62,10 +58,10 @@ export const UserInfo: React.FunctionComponent<UserInfoProps> = (props) => {
                 PaperProps={{ style: { minHeight: "90%", maxHeight: "90%", minWidth: "95%", maxWidth: "95%" } }}
                 open={showUserHolidays}
                 onClose={e => onClose()}
-                aria-labelledby="usrHolidays"
+                aria-labelledby="usrHolidays_"
             >
                 <DialogTitle
-                    id="usrHolidays">
+                    id="usrHolidays_">
                     {showUserHolidaysUserName}
                 </DialogTitle>
                 <Divider />

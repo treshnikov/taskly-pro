@@ -1,6 +1,7 @@
+import { useCallback } from "react"
 import { useEffect, useState } from "react"
 import { CalendarDayType, DayInfoVm } from "../../models/DepartmentPlan/DepartmentPlanClasses"
-import { HOLIDAY_COLOR } from "./DepartmentPlanConst"
+import { GOOD_PLANING_TIME_COLOR, HOLIDAY_COLOR, VACATION_COLOR } from "./DepartmentPlanConst"
 
 export type UserHolidaysProps = {
     start: number
@@ -14,7 +15,6 @@ export const UserHolidays: React.FunctionComponent<UserHolidaysProps> = (props) 
     const daysInLine = 6 * 7 - 5
     const days = ["пн", "вт", "ср", "чт", "пт", "сб", "вс"]
     const months = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"]
-    const [holidays, setHolidays] = useState<Set<Date>>(new Set<Date>())
 
     useEffect(() => {
         // extract years
@@ -28,22 +28,32 @@ export const UserHolidays: React.FunctionComponent<UserHolidaysProps> = (props) 
         }
         setYears([...years])
 
-        setHolidays(new Set<Date>(
-                props.days.filter(i => i.dayType === CalendarDayType.Holiday).map(i => new Date(i.date))))
-
-        console.log(holidays)
     }, [props.days])
 
-    const getCellBackground = (date: Date): string => {
-        if (holidays.has(date)) {
-
-            console.log(date, "выходной")
-            return HOLIDAY_COLOR
+    const getThStyle = (day: number) => {
+        return {
+            color: day === 5 || day === 6
+                ? "red"
+                : "black"
         }
+    }
 
-        console.log(date, "не выходной")
+    const getCellBackgroundStyle = (date: Date) => {
+        const dayInfo = props.days.find(d => d.date === date.getTime())
+        const isHoliday = dayInfo && dayInfo.dayType === CalendarDayType.Holiday
+        const isVacation = dayInfo && dayInfo.dayType === CalendarDayType.Vacation
 
-        return ''
+        return {
+            color: 
+                isHoliday 
+                    ? HOLIDAY_COLOR 
+                    : isVacation
+                        ? VACATION_COLOR
+                        : '',
+            background: isVacation ? GOOD_PLANING_TIME_COLOR : '',
+            textAlign: "center" as const,
+            fontWeight: isHoliday || isVacation ? "bold" : ''
+        }
     }
 
     return <>
@@ -51,21 +61,22 @@ export const UserHolidays: React.FunctionComponent<UserHolidaysProps> = (props) 
             years.map(year =>
                 <div key={year + "_scope"}>
                     <h3>{year}</h3>
-                    <table>
+                    <table style={{fontSize: "13px"}}>
                         <thead>
                             <tr>
                                 <th></th>
                                 {[...Array(daysInLine).keys()].map((w, wIdx) =>
-                                    <th key={year + "_" + wIdx + "_th"}>
+                                    <th key={year + "_" + wIdx + "_th"}
+                                        style={getThStyle(wIdx % 7)}>
                                         {days[wIdx % 7]}
                                     </th>
                                 )}
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody key={year + "_tbody"}>
                             {
                                 months.map((month, monthIdx) => {
-                                    let date = new Date(year, monthIdx, 1)
+                                    let date = new Date(Date.UTC(year, monthIdx, 1))
                                     return (
                                         <tr key={year + "_" + monthIdx + "_tr"}>
                                             <td key={year + "_" + monthIdx + "_tr_monthName"}>{month}</td>
@@ -74,19 +85,21 @@ export const UserHolidays: React.FunctionComponent<UserHolidaysProps> = (props) 
                                                     const dayOfWeek = (dIdx + 1) % 7
 
                                                     let dateToDisplay = ''
-
+                                                    let styles = {}
+                                                    
                                                     if (date.getMonth() === monthIdx && date.getDay() === dayOfWeek) {
                                                         dateToDisplay = date.getDate().toString()
+                                                        styles = getCellBackgroundStyle(date)
                                                         date.setDate(date.getDate() + 1)
                                                     }
 
                                                     if (dateToDisplay === '') {
-                                                        return <td></td>
+                                                        return <td key={year + "_" + monthIdx + "_" + dIdx + "_td"}> </td>
                                                     }
 
                                                     return (
                                                         <td
-                                                            style={{ background: getCellBackground(date) }}
+                                                            style={styles}
                                                             key={year + "_" + monthIdx + "_" + dIdx + "_td"}>
                                                             {
                                                                 dateToDisplay

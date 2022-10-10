@@ -17,7 +17,6 @@ export const UserNameCellRenderer = (instance: Handsontable.Core, td: HTMLTableC
         link.style.display = 'inline-block'
         link.style.cursor = 'pointer'
         link.onclick = () => {
-            console.log(value)
             ServicesStorageHelper.dispatch(toggleShowUserHolidays(value))
         }
 
