@@ -28,7 +28,7 @@ export const UserInfo: React.FunctionComponent<UserInfoProps> = (props) => {
     const dispatch = useAppDispatch()
     const showUserHolidays = useAppSelector(state => state.departmentPlanReducer.showUserHolidays)
     const showUserHolidaysUserName = useAppSelector(state => state.departmentPlanReducer.showUserHolidaysUserName)
-    const [selectedTab, setSelectedTab] = useState('1');
+    const [selectedTab, setSelectedTab] = useState('10');
 
     const tabStyle = { border: 0, color: "#373737" }
 
@@ -82,10 +82,10 @@ export const UserInfo: React.FunctionComponent<UserInfoProps> = (props) => {
                                 <Tab
                                     label={t('non-working-days')}
                                     style={tabStyle}
-                                    value="1" />
+                                    value="10" />
                             </TabList>
                         </Box>
-                        <TabPanel value="1">
+                        <TabPanel value="10">
                             <UserHolidays
                                 start={props.start}
                                 end={props.end} />
