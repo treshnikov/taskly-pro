@@ -14,6 +14,7 @@ import { DepartmentPlanHelper } from "../../models/DepartmentPlan/DepartmentPlan
 import { toast } from 'react-toastify'
 import BarChartIcon from '@mui/icons-material/BarChart';
 import { DepartmentPlanStatistics } from "./DepartmentPlanStatistics";
+import { UserInfo } from "./UserInfo";
 
 type ProjectSelectItem = {
     id: string,
@@ -218,6 +219,7 @@ export const DepartmentPlanToolbar: React.FunctionComponent<DepartmentPlanToolba
             start={startDate}
             end={endDate}
             plan={plan} />
+        <UserInfo></UserInfo>
     </div>
 
 }

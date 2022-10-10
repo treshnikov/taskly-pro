@@ -15,6 +15,7 @@ import { ProjectNameCellRenderer } from "../components/DepartmentPlan/Renderers/
 import { ServicesStorageHelper } from "../common/servicesStorageHelper";
 import { setHiddenRows } from "../redux/departmentPlanSlice";
 import { Legend } from "../components/DepartmentPlan/Legend";
+import { UserNameCellRenderer } from "../components/DepartmentPlan/Renderers/UserNameCellRenderer";
 
 const initPlan: DepartmentUserPlan[] = [{
     id: '',
@@ -200,6 +201,7 @@ export const DepartmentDetailedPlan: React.FunctionComponent = () => {
                         wordWrap={false}
                         readOnly
                         type={"text"}
+                        renderer={UserNameCellRenderer}
                     />
                     <HotColumn
                         data={"userPosition"}

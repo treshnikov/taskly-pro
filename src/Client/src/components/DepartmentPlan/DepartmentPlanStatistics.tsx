@@ -15,7 +15,6 @@ import { ProjectPlanToDepartmentPlanBarChart } from "./ProjectPlanToDepartmentPl
 import { StatisticsSummary } from "./StatisticsSummary";
 import { ProjectStatisticsTable } from "./ProjectStatisticsTable";
 import { DepartmentStatisticsSummary, DepartmentStatisticsVm, ProjectStatisticsVm, WeekStatistics as WeekStatistics } from "../../models/DepartmentPlan/DepartmentPlanStatisticsClasses";
-import { ProjectsPieChart } from "./ProjectsPieChart";
 
 export type DepartmentPlanStatisticsProps = {
     departmentId: string

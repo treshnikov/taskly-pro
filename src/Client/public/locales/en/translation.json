@@ -107,5 +107,6 @@
     "should-be-planned": "Shoud be planned ",
     "quit": "quit",
     "hired": "Hired",
-    "department-vactaions-time": "Sum of vacation hours"
+    "department-vactaions-time": "Sum of vacation hours",
+    "non-working-days": "Non working days"
 }
