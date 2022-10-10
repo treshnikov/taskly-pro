@@ -34,7 +34,7 @@ export const DepartmentPlanStatistics: React.FunctionComponent<DepartmentPlanSta
     const [projectStatistics, setProjectStatistics] = useState<ProjectStatisticsVm[]>([])
     const [weeksStatistics, setWeeksStatistics] = useState<WeekStatistics[]>([])
     const [selectedTab, setSelectedTab] = useState('1');
-    const [statisticsSummary, setStatisticSummary] = useState<DepartmentStatisticsSummary>({start: 0, end: 0, availableHoursForPlanning: 0, hoursPlannedForDepartment: 0, hoursPlannedByHeadOfDepartment: 0, workLoadPercentage: 0, externalProjectsRateInPercentage: 0})
+    const [statisticsSummary, setStatisticSummary] = useState<DepartmentStatisticsSummary>({start: 0, end: 0, availableHoursForPlanning: 0, hoursPlannedForDepartment: 0, hoursPlannedByHeadOfDepartment: 0, workLoadPercentage: 0, externalProjectsRateInPercentage: 0, sumOfVacationHours: 0})
 
     const selectedTabChanged = (e: React.SyntheticEvent, newValue: string) => {
         setSelectedTab(newValue);

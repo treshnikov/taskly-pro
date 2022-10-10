@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Taskly.Application.Departments.Queries.GetDepartmentPlan;
@@ -141,6 +142,32 @@ public class CalendarService : ICalendarService
 
             res.Add(weekInfo);
             dt = dt.AddDays(7);
+        }
+
+        return res;
+    }
+
+    public async Task<double> GetSumOfDepartmentHolidaysHoursAsync(Guid departmentId, DateTime start, DateTime end, CancellationToken cancellationToken)
+    {
+        var res = 0.0;
+        var users = await _dbContext
+            .Users
+            .Include(d => d.UserDepartments)
+            .Where(u => u.UserDepartments.Any(ud => ud.DepartmentId == departmentId))
+            .ToListAsync(cancellationToken);
+
+        var dt = start;
+        while (dt < end)
+        {
+            foreach (var user in users)
+            {
+                var rate = user.UserDepartments.OrderByDescending(i => i.Rate).First().Rate;
+                if (_vacations.Contains(new Tuple<Guid, DateTime>(user.Id, dt)))
+                {
+                    res += 8 * rate;
+                }
+            }
+            dt = dt.AddDays(1);
         }
 
         return res;

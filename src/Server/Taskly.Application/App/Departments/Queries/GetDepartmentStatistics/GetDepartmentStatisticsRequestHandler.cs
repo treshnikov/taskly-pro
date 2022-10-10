@@ -67,6 +67,7 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
             res.Summary.HoursPlannedForDepartment = res.Projects.Select(i => i.PlannedTaskHoursForDepartment).Sum();
             res.Summary.HoursPlannedByHeadOfDepartment = res.Projects.Select(i => i.PlannedTaskHoursByDepartment).Sum();
             res.Summary.WorkLoadPercentage = Math.Round(100 * res.Summary.HoursPlannedForDepartment / res.Summary.AvailableHoursForPlanning, 2);
+            res.Summary.SumOfVacationHours = await _calendarService.GetSumOfDepartmentHolidaysHoursAsync(request.DepartmentId, request.Start, request.End, cancellationToken);
 
             var externalProjectsHours = res.Projects.Where(p => p.ProjectType == ProjectType.External).Select(i => i.PlannedTaskHoursForDepartment).Sum();
             var internalProjectsHours = res.Projects.Where(p => p.ProjectType == ProjectType.Internal).Select(i => i.PlannedTaskHoursForDepartment).Sum();

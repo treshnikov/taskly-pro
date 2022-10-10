@@ -16,6 +16,7 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
         public double AvailableHoursForPlanning { get; set; }
         public double HoursPlannedForDepartment { get; set; }
         public double HoursPlannedByHeadOfDepartment { get; set; }
+        public double SumOfVacationHours { get; set; }
         public double WorkLoadPercentage { get; set; }
         public double ExternalProjectsRateInPercentage { get; set; }
     }

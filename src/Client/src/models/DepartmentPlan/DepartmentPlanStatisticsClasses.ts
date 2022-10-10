@@ -9,6 +9,7 @@ export type DepartmentStatisticsSummary = {
     end: number
     availableHoursForPlanning: number
     hoursPlannedForDepartment: number
+    sumOfVacationHours: number
     hoursPlannedByHeadOfDepartment: number
     workLoadPercentage: number
     externalProjectsRateInPercentage: number
