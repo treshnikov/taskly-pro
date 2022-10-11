@@ -42,7 +42,15 @@ export const UserInfo: React.FunctionComponent<UserInfoProps> = (props) => {
             return
         }
 
-        request<DayInfoVm[]>(`/api/v1/users/${showUserHolidaysUserName}/days/${dateToRequestStr(new Date(props.start))}/${dateToRequestStr(new Date(props.end))}`,
+        const startDate = new Date(props.start)
+        startDate.setMonth(0)
+        startDate.setDate(1)
+        
+        const endDate = new Date(props.end)
+        endDate.setMonth(11)
+        endDate.setDate(31)
+
+        request<DayInfoVm[]>(`/api/v1/users/${showUserHolidaysUserName}/days/${dateToRequestStr(startDate)}/${dateToRequestStr(endDate)}`,
             "GET", null, [{ name: 'Content-Type', value: 'application/json' }], false)
             .then(data => {
                 setDays(data)
