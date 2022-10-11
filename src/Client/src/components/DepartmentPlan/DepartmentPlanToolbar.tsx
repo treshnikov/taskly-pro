@@ -35,6 +35,7 @@ export const DepartmentPlanToolbar: React.FunctionComponent<DepartmentPlanToolba
     const dispatch = useAppDispatch()
     const startDate = useAppSelector(state => state.departmentPlanReducer.startDate)
     const endDate = useAppSelector(state => state.departmentPlanReducer.endDate)
+    const collapsedRows = useAppSelector(state => state.departmentPlanReducer.collapsedRows)
 
     const projectsWithEstimation: ProjectSelectItem = { id: 'projects-with-estimation', name: t('projects-with-estimation') }
     const allProjectsItem: ProjectSelectItem = { id: 'all-projects', name: t('all-projects') }
@@ -97,6 +98,12 @@ export const DepartmentPlanToolbar: React.FunctionComponent<DepartmentPlanToolba
     }
 
     const updateHiddenRows = (hiddenRows: number[]) => {
+        storeCollapsedRows()
+        dispatch(setHiddenRows(hiddenRows))
+        restoreCollapsedRows()
+    }
+
+    const storeCollapsedRows = () => {
         // using hooks causes render and the table renders all its rows expanded 
         // even if they were collapsed previously  
         // this fact brings us to a need to save and restore collapsed rows
@@ -106,12 +113,37 @@ export const DepartmentPlanToolbar: React.FunctionComponent<DepartmentPlanToolba
         const plugin = hotTableRef.current.hotInstance.getPlugin('nestedRows') as any;
         const collapsedRows: number[] = plugin.collapsingUI.collapsedRows as number[];
         dispatch(setCollapsedRows(collapsedRows))
+    }
 
-        dispatch(setHiddenRows(hiddenRows))
+    const restoreCollapsedRows = (milliseconds: number = 500) => {
+        if (!hotTableRef || !hotTableRef.current || !hotTableRef.current.hotInstance) {
+            return;
+        }
 
+        const plugin = hotTableRef.current.hotInstance.getPlugin('nestedRows') as any;
         setTimeout(() => {
             plugin.collapsingUI.collapseMultipleChildren(collapsedRows);
-        }, 500);
+        }, milliseconds);
+    }
+
+    const onStartDateChanged = (newValue: number | null | undefined, keyboardInputValue?: string) => {
+        if (!newValue) {
+            return
+        }
+
+        storeCollapsedRows()
+        dispatch(setStartDate(new Date(newValue).getTime()))
+        restoreCollapsedRows(2000)
+    }
+
+    const onEndDateChanged = (newValue: number | null | undefined, keyboardInputValue?: string) => {
+        if (!newValue) {
+            return
+        }
+
+        storeCollapsedRows()
+        dispatch(setEndDate(new Date(newValue).getTime()))
+        restoreCollapsedRows(2000)
     }
 
     useEffect(() => {
@@ -145,7 +177,7 @@ export const DepartmentPlanToolbar: React.FunctionComponent<DepartmentPlanToolba
                             label={t('start')}
                             inputFormat="yyyy-MM-DD"
                             value={startDate}
-                            onChange={(newValue) => { if (newValue) { dispatch(setStartDate(new Date(newValue).getTime())) } }}
+                            onChange={onStartDateChanged}
                             renderInput={(params) =>
                                 <TextField
                                     sx={{ width: 145 }}
@@ -158,7 +190,7 @@ export const DepartmentPlanToolbar: React.FunctionComponent<DepartmentPlanToolba
                             label={t('end')}
                             inputFormat="yyyy-MM-DD"
                             value={endDate}
-                            onChange={(newValue) => { if (newValue) { dispatch(setEndDate(new Date(newValue).getTime())) } }}
+                            onChange={onEndDateChanged}
                             renderInput={(params) => <TextField sx={{ width: 145 }} size="small" {...params} />}
                         />
                         <Box sx={{ width: 250 }}>
