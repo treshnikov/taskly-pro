@@ -35,7 +35,6 @@ export const DepartmentPlanToolbar: React.FunctionComponent<DepartmentPlanToolba
     const dispatch = useAppDispatch()
     const startDate = useAppSelector(state => state.departmentPlanReducer.startDate)
     const endDate = useAppSelector(state => state.departmentPlanReducer.endDate)
-    const collapsedRows = useAppSelector(state => state.departmentPlanReducer.collapsedRows)
 
     const projectsWithEstimation: ProjectSelectItem = { id: 'projects-with-estimation', name: t('projects-with-estimation') }
     const allProjectsItem: ProjectSelectItem = { id: 'all-projects', name: t('all-projects') }
@@ -98,24 +97,26 @@ export const DepartmentPlanToolbar: React.FunctionComponent<DepartmentPlanToolba
     }
 
     const updateHiddenRows = (hiddenRows: number[]) => {
-        storeCollapsedRows()
+        const collapsedRows = storeCollapsedRows()
         dispatch(setHiddenRows(hiddenRows))
-        restoreCollapsedRows()
+        restoreCollapsedRows(collapsedRows)
     }
 
-    const storeCollapsedRows = () => {
+    const storeCollapsedRows = () : number[] => {
         // using hooks causes render and the table renders all its rows expanded 
         // even if they were collapsed previously  
         // this fact brings us to a need to save and restore collapsed rows
         if (!hotTableRef || !hotTableRef.current || !hotTableRef.current.hotInstance) {
-            return;
+            return []
         }
         const plugin = hotTableRef.current.hotInstance.getPlugin('nestedRows') as any;
         const collapsedRows: number[] = plugin.collapsingUI.collapsedRows as number[];
         dispatch(setCollapsedRows(collapsedRows))
+
+        return collapsedRows
     }
 
-    const restoreCollapsedRows = (milliseconds: number = 500) => {
+    const restoreCollapsedRows = (collapsedRows: number[], milliseconds: number = 500) => {
         if (!hotTableRef || !hotTableRef.current || !hotTableRef.current.hotInstance) {
             return;
         }
@@ -131,9 +132,7 @@ export const DepartmentPlanToolbar: React.FunctionComponent<DepartmentPlanToolba
             return
         }
 
-        storeCollapsedRows()
         dispatch(setStartDate(new Date(newValue).getTime()))
-        restoreCollapsedRows(2000)
     }
 
     const onEndDateChanged = (newValue: number | null | undefined, keyboardInputValue?: string) => {
@@ -141,9 +140,7 @@ export const DepartmentPlanToolbar: React.FunctionComponent<DepartmentPlanToolba
             return
         }
 
-        storeCollapsedRows()
         dispatch(setEndDate(new Date(newValue).getTime()))
-        restoreCollapsedRows(2000)
     }
 
     useEffect(() => {
