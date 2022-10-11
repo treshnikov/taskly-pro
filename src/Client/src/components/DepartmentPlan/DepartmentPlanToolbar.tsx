@@ -8,7 +8,7 @@ import { useHttp } from "../../hooks/http.hook";
 import { RefObject, useEffect, useState } from "react";
 import HotTable from "@handsontable/react";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux.hook";
-import { setEndDate, setHiddenRows, setStartDate, toggleShowStatistics } from "../../redux/departmentPlanSlice";
+import { setCollapsedRows, setEndDate, setHiddenRows, setStartDate, toggleShowStatistics } from "../../redux/departmentPlanSlice";
 import { DepartmentUserPlan } from "../../models/DepartmentPlan/DepartmentPlanClasses";
 import { DepartmentPlanHelper } from "../../models/DepartmentPlan/DepartmentPlanHelper";
 import { toast } from 'react-toastify'
@@ -97,7 +97,21 @@ export const DepartmentPlanToolbar: React.FunctionComponent<DepartmentPlanToolba
     }
 
     const updateHiddenRows = (hiddenRows: number[]) => {
+        // using hooks causes render and the table renders all its rows expanded 
+        // even if they were collapsed previously  
+        // this fact brings us to a need to save and restore collapsed rows
+        if (!hotTableRef || !hotTableRef.current || !hotTableRef.current.hotInstance) {
+            return;
+        }
+        const plugin = hotTableRef.current.hotInstance.getPlugin('nestedRows') as any;
+        const collapsedRows: number[] = plugin.collapsingUI.collapsedRows as number[];
+        dispatch(setCollapsedRows(collapsedRows))
+
         dispatch(setHiddenRows(hiddenRows))
+
+        setTimeout(() => {
+            plugin.collapsingUI.collapseMultipleChildren(collapsedRows);
+        }, 500);
     }
 
     useEffect(() => {
