@@ -248,6 +248,7 @@ namespace Taskly.Application.Users
         {
             return projectTypeAsStr == "Внутр." ||
                                     projectTypeAsStr == "Отпуск" ||
+                                    projectTypeAsStr == "ВИ" ||
                                     projectTypeAsStr == "Серт." ||
                                     projectTypeAsStr == "Внутр.1" ||
                                     projectTypeAsStr == "Обучение" ||

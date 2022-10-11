@@ -36,8 +36,6 @@ namespace Taskly.Application.Users
             {
                 throw;
             }
-
-
         }
     }
 }

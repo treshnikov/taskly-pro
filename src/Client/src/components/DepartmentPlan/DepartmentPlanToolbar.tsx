@@ -149,13 +149,13 @@ export const DepartmentPlanToolbar: React.FunctionComponent<DepartmentPlanToolba
                         />
                         <Box sx={{ width: 250 }}>
                             <FormControl fullWidth>
-                                <InputLabel id="projectLabelId">{t('project')}</InputLabel>
+                                <InputLabel id="projectLabelId">{t('task')}</InputLabel>
                                 <Select
                                     size="small"
                                     labelId="projectLabelId"
                                     id="demo-simple-select"
                                     value={projectFilter}
-                                    label={t('project')}
+                                    label={t('task')}
                                     onChange={onProjectFilterChanged}
                                 >
                                     <MenuItem

@@ -100,6 +100,7 @@ namespace Taskly.Application.Users
                                 Tasks = new List<ProjectTask>()
                             };
 
+                            dbProjects.Add(project);
                             _dbContext.Projects.Add(project);
                             await _dbContext.SaveChangesAsync(cancellationToken);
                         }

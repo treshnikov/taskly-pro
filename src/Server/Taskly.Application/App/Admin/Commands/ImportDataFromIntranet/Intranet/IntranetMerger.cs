@@ -19,18 +19,15 @@ namespace Taskly.Application.Users
         {
             using var transaction = _dbContext.Database.BeginTransaction();
 
-            var dbProjects = _dbContext.Projects.ToList();
             var dbUsers = _dbContext.Users.ToList();
             var dbCustomers = _dbContext.Customers.ToList();
             var dbDeps = _dbContext.Departments.ToList();
 
-            var newProjects = new List<Project>();
             foreach (var p in projects)
             {
                 //Log.Logger.Debug($"Handle project ${JsonSerializer.Serialize(p)}");
 
-                var dbProject = dbProjects.FirstOrDefault(i => i.Id == p.Id);
-                var newProject = newProjects.FirstOrDefault(i => i.Id == p.Id);
+                var dbProject = _dbContext.Projects.FirstOrDefault(i => i.Id == p.Id);
 
                 var company = dbDeps.FirstOrDefault(i => i.Code == p.DepartmentId);
                 var pm = dbUsers.FirstOrDefault(i => i.Email == p.ManagerEmail);
@@ -51,9 +48,9 @@ namespace Taskly.Application.Users
                     ? ProjectType.Internal
                     : ProjectType.External;
 
-                if (dbProject == null && newProject == null)
+                if (dbProject == null)
                 {
-                    newProjects.Add(new Project
+                    var newProject = new Project
                     {
                         Id = p.Id,
                         ShortName = p.ShortName,
@@ -68,7 +65,9 @@ namespace Taskly.Application.Users
                         ChiefEngineer = lead,
                         Customer = customer,
                         Contract = p.Contract
-                    });
+                    };
+
+                    _dbContext.Projects.Add(newProject);
                 }
                 else
                 {
@@ -84,11 +83,8 @@ namespace Taskly.Application.Users
                     dbProject.Customer = customer;
                     dbProject.Type = projectType;
                     dbProject.Contract = p.Contract;
-
-                    _dbContext.Projects.Update(dbProject);
                 }
             }
-            _dbContext.Projects.AddRange(newProjects);
             await _dbContext.SaveChangesAsync(cancellationToken);
             transaction.Commit();
         }
