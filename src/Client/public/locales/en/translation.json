@@ -110,5 +110,8 @@
     "department-vactaions-time": "Sum of vacation hours",
     "non-working-days": "Non working days",
     "week-days": "Mon,Tue,Wed,Thurs,Fri,Sat,Sun",
-    "months": "January,February,March,April,May,June,July,August,September,October,November,December"
+    "months": "January,February,March,April,May,June,July,August,September,October,November,December",
+    "week-summary": "Week summary",
+    "week-summary-welcome": "Department working plans report.",
+    "report": "Report"
 }

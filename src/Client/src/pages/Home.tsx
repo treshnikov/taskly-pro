@@ -5,6 +5,7 @@ import { t } from 'i18next';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import SettingsIcon from '@mui/icons-material/Settings';
 import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
+import GradingIcon from '@mui/icons-material/Grading';
 
 export const Home: React.FunctionComponent = () => {
   const navigate = useNavigate()
@@ -69,15 +70,30 @@ export const Home: React.FunctionComponent = () => {
           </Card>
         </Grid>
 
-      </Grid>
+        <Grid item xs={3}>
+          <Card
+            className="home-card">
+            <CardContent>
+              <Typography
+                variant="h5"
+                component="div">
+                <GradingIcon />&nbsp;{t('week-summary') as string}
+              </Typography>
+              <Typography
+                variant="body2">
+                <>{t('week-summary-welcome')}</><br />&nbsp;
+              </Typography>
+            </CardContent>
+            <CardActions>
+              <Button
+                size='small'
+                variant='contained'
+                onClick={e => { navigate("/weekSummary") }}>{t('report') as string}
+              </Button>
+            </CardActions>
+          </Card>
+        </Grid>
 
-      <Grid
-        container
-        spacing={2}
-        padding={2}
-        direction="row"
-        alignItems="flex-start"
-      >
       </Grid>
 
       <Grid
