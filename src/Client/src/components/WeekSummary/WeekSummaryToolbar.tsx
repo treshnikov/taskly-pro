@@ -7,10 +7,14 @@ import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import { dateAsShortStr } from "../../common/dateFormatter";
 import moment from "moment";
 
-export const WeekSummaryToolbar: React.FunctionComponent = (props) => {
+export type WeekSummaryProps = {
+    week: Date,
+    setWeek: (arg: Date) => void
+}
+
+export const WeekSummaryToolbar: React.FunctionComponent<WeekSummaryProps> = ({week, setWeek}) => {
     const { request } = useHttp()
     const { t } = useTranslation()
-    const [week, setWeek] = useState<Date>()
 
     const onWeekChanged = (direction: number) => {
         if (!week)
@@ -23,25 +27,6 @@ export const WeekSummaryToolbar: React.FunctionComponent = (props) => {
 
         setWeek(dt)
     }
-
-    useEffect(() => {
-        // get nearest monday
-        let dt = new Date()
-        while (dt.getDay() !== 1) {
-            dt.setDate(dt.getDate() - 1)
-        }
-        setWeek(dt)
-    }, [])
-
-    useEffect(() => {
-        if (!week)
-        {
-            return
-        }
-
-        // fetch week summary
-    }, [week])
-
 
     if (!week)
     {

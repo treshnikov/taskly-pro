@@ -51,7 +51,7 @@ export const UserInfo: React.FunctionComponent<UserInfoProps> = (props) => {
         endDate.setDate(31)
 
         request<DayInfoVm[]>(`/api/v1/users/${showUserHolidaysUserName}/days/${dateToRequestStr(startDate)}/${dateToRequestStr(endDate)}`,
-            "GET", null, [{ name: 'Content-Type', value: 'application/json' }], false)
+            "GET", null, [{ name: 'Content-Type', value: 'application/json' }])
             .then(data => {
                 setDays(data)
             })
