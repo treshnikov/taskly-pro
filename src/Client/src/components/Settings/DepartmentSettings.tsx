@@ -1,9 +1,5 @@
-import TreeView from '@mui/lab/TreeView';
-import TreeItem from '@mui/lab/TreeItem';
 import { Button, Checkbox, Stack, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import React, { useEffect, useState } from 'react';
 import { DepartmentUserVm } from '../../models/Users/DepartmentUserVm';
 import { useHttp } from '../../hooks/http.hook';
@@ -11,7 +7,6 @@ import { useHttp } from '../../hooks/http.hook';
 export const DepartmentSettings: React.FunctionComponent = () => {
     const { request } = useHttp()
     const [department, setDepartments] = useState<DepartmentUserVm>(new DepartmentUserVm())
-    const [expanded, setExpanded] = useState<string[]>([])
     const { t } = useTranslation();
 
     useEffect(() => {
@@ -23,31 +18,25 @@ export const DepartmentSettings: React.FunctionComponent = () => {
         fetchDepartments()
     }, [request])
 
-    useEffect(() => {
-        setExpanded([department.id])
-    }, [department])
-
     const setDepartmentIncludeInWorkPlan = async (id: string, val: boolean) => {
         await request("/api/v1/departments/updateEnableForPlanning", "PUT",
             { id: id, value: val }, [{ name: 'Content-Type', value: 'application/json' }])
     }
 
-    const renderTree = (node: DepartmentUserVm) => (
-        <TreeItem
-            key={node.id}
-            nodeId={node.id}
-            label={
+    const renderTree = (node: DepartmentUserVm, level: number) => (
+        <div key={node.id} style={{display: "flex", flexDirection: "column"}}>
+        {
                 node.type === 0
                     ? (<>
-                        <Typography>
+                        <Typography marginLeft={2*level}>
                             <Checkbox
                                 checked={node.includeInWorkPlan}
                                 onClick={e => {
                                     node.includeInWorkPlan = !node.includeInWorkPlan
                                     // to force rerender
-                                    //setDepartments({ ...department })
+                                    setDepartments({ ...department })
                                     setDepartmentIncludeInWorkPlan(node.id, node.includeInWorkPlan)
-                                    e.stopPropagation()
+                                    //e.stopPropagation()
                                 }}
                             /> {node.name}
                         </Typography>
@@ -59,38 +48,15 @@ export const DepartmentSettings: React.FunctionComponent = () => {
                         </Typography>
 
                     </>)
-            }>
+            }
+
             {
                 Array.isArray(node.children) && node.children.some(i => i.type === 0)
-                    ? node.children.map((node) => renderTree(node))
+                    ? node.children.map((node) => renderTree(node, level + 1))
                     : null
             }
-        </TreeItem >
+        </div >
     );
-
-    const handleToggle = (event: React.SyntheticEvent, nodeIds: string[]) => {
-        setExpanded(nodeIds);
-    };
-
-    const expandAll = () => {
-        let neweExpanded: string[] = []
-
-        function trace(current: DepartmentUserVm, neweExpanded: string[]) {
-            if (!current)
-                return
-
-            neweExpanded.push(current.id)
-            if (!current.children)
-                return
-
-            current.children.forEach(c => {
-                trace(c, neweExpanded)
-            });
-        }
-
-        trace(department, neweExpanded)
-        setExpanded(neweExpanded)
-    }
 
     return (
         <div
@@ -102,25 +68,8 @@ export const DepartmentSettings: React.FunctionComponent = () => {
                 spacing={1}
                 paddingBottom={1}
                 direction="row">
-                <Button
-                    onClick={e => { expandAll() }}
-                    variant='contained'>{t('expand-all')}
-                </Button>
-                <Button
-                    onClick={e => { setExpanded([]) }}
-                    variant='contained'>{t('collapse-all')}
-                </Button>
             </Stack>
-            <TreeView
-                aria-label="rich object"
-                expanded={expanded}
-                onNodeToggle={handleToggle}
-                defaultCollapseIcon={<ChevronRightIcon />}
-                defaultExpandIcon={<ExpandMoreIcon />}
-                sx={{ flexGrow: 1, overflowY: 'auto' }}
-            >
-                {renderTree(department)}
-            </TreeView>
+            {renderTree(department, 0)}
         </div>
     );
 }
