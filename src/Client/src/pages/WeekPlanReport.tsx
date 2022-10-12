@@ -1,20 +1,21 @@
 import { useEffect, useState } from "react"
 import { dateAsShortStrFromNumber, dateToRequestStr } from "../common/dateFormatter"
-import { WeekSummaryToolbar } from "../components/WeekSummary/WeekSummaryToolbar"
+import { WeekPlanReportToolbar } from "../components/WeekPlanReport/WeekPlanReportToolbar"
 import { useHttp } from "../hooks/http.hook"
-import { WeekSummaryReportVm } from "../models/Reports/WeekSummaryClasses"
+import { WeekPlanReportVm } from "../models/Reports/WeekPlanReportClasses"
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material"
-import zIndex from "@mui/material/styles/zIndex"
+import { useTranslation } from "react-i18next"
 
-export const WeekSummary: React.FunctionComponent = () => {
+export const WeekPlanReport: React.FunctionComponent = () => {
     const { request } = useHttp()
+    const { t } = useTranslation();
     const [week, setWeek] = useState<Date>()
-    const [reportData, setReportData] = useState<WeekSummaryReportVm>()
+    const [reportData, setReportData] = useState<WeekPlanReportVm>()
 
     useEffect(() => {
         // get nearest monday
@@ -31,19 +32,23 @@ export const WeekSummary: React.FunctionComponent = () => {
             return
         }
 
-        request<WeekSummaryReportVm>(`/api/v1/reports/week-summary/${dateToRequestStr(week)}`,
+        request<WeekPlanReportVm>(`/api/v1/reports/week-plan/${dateToRequestStr(week)}`,
             "GET", null, [{ name: 'Content-Type', value: 'application/json' }])
             .then(data => {
                 setReportData(data)
             })
     }, [week])
 
+    const tdStyle = {
+        border: "none"
+    }
+
     if (!week || !reportData) {
         return <></>
     }
 
     return <div className='page-container'>
-        <WeekSummaryToolbar week={week} setWeek={setWeek} />
+        <WeekPlanReportToolbar week={week} setWeek={setWeek} />
         <div
             style={{ marginTop: "8em" }}>
             {
@@ -57,14 +62,14 @@ export const WeekSummary: React.FunctionComponent = () => {
                     </AccordionSummary>
                     <AccordionDetails>
                         <TableContainer component={Paper}>
-                            <Table>
+                            <Table size="small">
                                 <TableHead>
                                     <TableRow>
                                         <TableCell width={300}>
-                                            <b>User</b>
+                                            <b>{t('employee')}</b>
                                         </TableCell>
                                         <TableCell width={100}>
-                                            <b>Rate</b>
+                                            <b>{t('rate')}</b>
                                         </TableCell>
                                         <TableCell>
                                         </TableCell>
@@ -82,29 +87,29 @@ export const WeekSummary: React.FunctionComponent = () => {
                                                             <Table size="small">
                                                                 <TableHead>
                                                                     <TableRow>
-                                                                        <TableCell>
-                                                                            <b>Task</b>
+                                                                        <TableCell style={tdStyle}>
+                                                                            <b>{t('task')}</b>
                                                                         </TableCell>
-                                                                        <TableCell>
-                                                                            <b>Estimation</b>
+                                                                        <TableCell style={tdStyle}>
+                                                                            <b>{t('hours')}</b>
                                                                         </TableCell>
-                                                                        <TableCell>
-                                                                            <b>Tasks dates</b>
+                                                                        <TableCell style={tdStyle}>
+                                                                            <b>{t('start')} - {t('end')}</b>
                                                                         </TableCell>
                                                                     </TableRow>
                                                                 </TableHead>
                                                                 <tbody>
                                                                     {
                                                                         u.plans.map(p => <TableRow key={u.name + p.taskName}>
-                                                                            <TableCell width={600} >
+                                                                            <TableCell width={600} style={tdStyle}>
                                                                                 <div
                                                                                     title={p.taskName} 
                                                                                     style={{ width: "inherit", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                                                                                     {p.taskName}
                                                                                 </div>
                                                                             </TableCell>
-                                                                            <TableCell width={100}>{p.hours}</TableCell>
-                                                                            <TableCell width={200}>{dateAsShortStrFromNumber(p.taskStart)} - {dateAsShortStrFromNumber(p.taskEnd)}</TableCell>
+                                                                            <TableCell width={100} style={tdStyle}>{p.hours}</TableCell>
+                                                                            <TableCell width={200} style={tdStyle}>{dateAsShortStrFromNumber(p.taskStart)} - {dateAsShortStrFromNumber(p.taskEnd)}</TableCell>
                                                                         </TableRow>
                                                                         )
                                                                     }

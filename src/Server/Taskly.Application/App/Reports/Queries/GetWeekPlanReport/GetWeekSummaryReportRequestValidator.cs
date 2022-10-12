@@ -2,9 +2,9 @@ using FluentValidation;
 
 namespace Taskly.Application.App.Reports;
 
-public class GetWeekSummaryReportRequestValidator : AbstractValidator<GetWeekSummaryReportRequest>
+public class GetWeekPlanReportRequestValidator : AbstractValidator<GetWeekPlanReportRequest>
 {
-    public GetWeekSummaryReportRequestValidator()
+    public GetWeekPlanReportRequestValidator()
     {
         RuleFor(i => i.Monday.DayOfWeek).Equal(DayOfWeek.Monday);
     }

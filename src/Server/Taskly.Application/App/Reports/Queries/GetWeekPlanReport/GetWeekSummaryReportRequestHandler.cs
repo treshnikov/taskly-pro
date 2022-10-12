@@ -4,19 +4,19 @@ using Taskly.Application.Interfaces;
 
 namespace Taskly.Application.App.Reports;
 
-public class GetWeekSummaryReportRequestHandler : IRequestHandler<GetWeekSummaryReportRequest, WeekSummaryReportVm>
+public class GetWeekPlanReportRequestHandler : IRequestHandler<GetWeekPlanReportRequest, WeekPlanReportVm>
 {
     private readonly ITasklyDbContext _dbContext;
 
-    public GetWeekSummaryReportRequestHandler(ITasklyDbContext dbContext)
+    public GetWeekPlanReportRequestHandler(ITasklyDbContext dbContext)
     {
         _dbContext = dbContext;
     }
-    public async Task<WeekSummaryReportVm> Handle(GetWeekSummaryReportRequest request, CancellationToken cancellationToken)
+    public async Task<WeekPlanReportVm> Handle(GetWeekPlanReportRequest request, CancellationToken cancellationToken)
     {
-        var res = new WeekSummaryReportVm
+        var res = new WeekPlanReportVm
         {
-            Departments = new List<WeekSummaryDepartmentVm>()
+            Departments = new List<WeekPlanDepartmentVm>()
         };
 
         var deps = await _dbContext.Departments
@@ -34,6 +34,7 @@ public class GetWeekSummaryReportRequestHandler : IRequestHandler<GetWeekSummary
                     u.HiringDate <= request.Monday &&
                     (u.QuitDate == null || u.QuitDate > request.Monday.AddDays(5)) &&
                     u.UserDepartments.Any(ud => ud.DepartmentId == dep.Id && ud.Rate > 0.1))
+                .OrderBy(i => i.Name)
                 .AsNoTracking()
                 .ToListAsync(cancellationToken);
             var userIds = depUsers.Select(i => i.Id).ToList();
@@ -46,24 +47,24 @@ public class GetWeekSummaryReportRequestHandler : IRequestHandler<GetWeekSummary
                 .AsNoTracking()
                 .ToListAsync(cancellationToken);
 
-            var depVm = new WeekSummaryDepartmentVm
+            var depVm = new WeekPlanDepartmentVm
             {
                 Name = dep.Name,
-                Users = new List<WeekSummaryUserVm>()
+                Users = new List<WeekPlanUserVm>()
             };
 
             foreach (var user in depUsers)
             {
-                var userVm = new WeekSummaryUserVm
+                var userVm = new WeekPlanUserVm
                 {
                     Name = user.Name,
                     Rate = user.UserDepartments.Select(ud => ud.Rate).Max(),
-                    Plans = new List<WeekSummaryPlanVm>()
+                    Plans = new List<WeekPlanVm>()
                 };
 
                 foreach (var p in userPlans.Where(u => u.UserId == user.Id))
                 {
-                    userVm.Plans.Add(new WeekSummaryPlanVm
+                    userVm.Plans.Add(new WeekPlanVm
                     {
                         TaskName = $"{p.ProjectTask.Project.Id}: {p.ProjectTask.Project.ShortName} - {p.ProjectTask.Description}",
                         Hours = p.Hours,

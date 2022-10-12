@@ -86,6 +86,7 @@
     "info": "Info",
     "available-time-for-planning": "Available time for planning",
     "employees": "employees",
+    "employee": "Employee",
     "weeks": "weeks",
     "from": "from",
     "to": "to",
@@ -111,7 +112,7 @@
     "non-working-days": "Non working days",
     "week-days": "Mon,Tue,Wed,Thurs,Fri,Sat,Sun",
     "months": "January,February,March,April,May,June,July,August,September,October,November,December",
-    "week-summary": "Week summary",
-    "week-summary-welcome": "Department working plans report.",
+    "week-plan": "Work plan for the week ",
+    "week-plan-welcome": "Department working plans report.",
     "report": "Report"
 }

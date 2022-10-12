@@ -12,7 +12,7 @@ export type WeekSummaryProps = {
     setWeek: (arg: Date) => void
 }
 
-export const WeekSummaryToolbar: React.FunctionComponent<WeekSummaryProps> = ({ week, setWeek }) => {
+export const WeekPlanReportToolbar: React.FunctionComponent<WeekSummaryProps> = ({ week, setWeek }) => {
     const { request } = useHttp()
     const { t } = useTranslation()
 
@@ -43,7 +43,7 @@ export const WeekSummaryToolbar: React.FunctionComponent<WeekSummaryProps> = ({ 
                         <Typography
                             variant='h6'
                             style={{ whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden" }}>
-                            {t('week-summary')} #{moment(week).format('W')} {dateAsShortStr(week)}
+                            {t('week-plan')} #{moment(week).format('W')} {dateAsShortStr(week)}
                         </Typography>
                         <Button
                             variant="contained"

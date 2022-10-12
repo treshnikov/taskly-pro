@@ -77,18 +77,18 @@ export const Home: React.FunctionComponent = () => {
               <Typography
                 variant="h5"
                 component="div">
-                <GradingIcon />&nbsp;{t('week-summary') as string}
+                <GradingIcon />&nbsp;{t('week-plan') as string}
               </Typography>
               <Typography
                 variant="body2">
-                <>{t('week-summary-welcome')}</><br />&nbsp;
+                <>{t('week-plan-welcome')}</><br />&nbsp;
               </Typography>
             </CardContent>
             <CardActions>
               <Button
                 size='small'
                 variant='contained'
-                onClick={e => { navigate("/weekSummary") }}>{t('report') as string}
+                onClick={e => { navigate("/weekPlanReport") }}>{t('report') as string}
               </Button>
             </CardActions>
           </Card>

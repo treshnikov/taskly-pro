@@ -13,7 +13,7 @@ import { Departments } from '../pages/Departments';
 import { DepartmentSettings } from './Settings/DepartmentSettings';
 import { DepartmentPlans } from '../pages/DepartmentPlans';
 import { DepartmentDetailedPlan } from '../pages/DepartmentDetailedPlan';
-import { WeekSummary } from '../pages/WeekSummary';
+import { WeekPlanReport } from '../pages/WeekPlanReport';
 
 export const useAppRoutes: React.FunctionComponent = () => {
   const isAuthenticated = useAppSelector(state => state.authReducer.isAuthenticated)
@@ -56,8 +56,8 @@ export const useAppRoutes: React.FunctionComponent = () => {
             element={<DepartmentSettings />}
           />
           <Route
-            path="/weekSummary"
-            element={<WeekSummary />}
+            path="/weekPlanReport"
+            element={<WeekPlanReport />}
           />          
           <Route
             path="/settings"

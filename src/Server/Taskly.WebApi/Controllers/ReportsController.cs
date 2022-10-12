@@ -9,13 +9,13 @@ namespace Taskly.WebApi.Controllers;
 [Authorize]
 public class ReportsController : BaseController
 {
-    [HttpGet("week-summary/{monday}")]
+    [HttpGet("week-plan/{monday}")]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult> GetWeekSummary(DateTime monday)
+    public async Task<ActionResult> GetWeekPlan(DateTime monday)
     {
-        var res = await Mediator.Send(new GetWeekSummaryReportRequest { Monday = monday });
+        var res = await Mediator.Send(new GetWeekPlanReportRequest { Monday = monday });
         return Ok(res);
     }
 }

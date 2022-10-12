@@ -46,3 +46,7 @@
 .ellipsis-text {
     text-overflow: ellipsis;
 }
+
+.css-dsuxgy-MuiTableCell-root {
+    border: none;
+}
