@@ -12,13 +12,12 @@ export type WeekSummaryProps = {
     setWeek: (arg: Date) => void
 }
 
-export const WeekSummaryToolbar: React.FunctionComponent<WeekSummaryProps> = ({week, setWeek}) => {
+export const WeekSummaryToolbar: React.FunctionComponent<WeekSummaryProps> = ({ week, setWeek }) => {
     const { request } = useHttp()
     const { t } = useTranslation()
 
     const onWeekChanged = (direction: number) => {
-        if (!week)
-        {
+        if (!week) {
             return
         }
 
@@ -28,13 +27,16 @@ export const WeekSummaryToolbar: React.FunctionComponent<WeekSummaryProps> = ({w
         setWeek(dt)
     }
 
-    if (!week)
-    {
+    if (!week) {
         return <></>
     }
 
     return <div>
-        <div style={{ position: "fixed", top: "5em", left: "1em" }}>
+
+        <div style={{
+            position: "fixed", top: "5em", background: "white", zIndex: 99,
+            height: "3em", paddingTop: "8px", marginTop: "-20px", width: "100%", marginLeft: "-1em", paddingLeft: "2em"
+        }}>
             <Grid container>
                 <Grid item xs={12}>
                     <Stack direction={"row"} spacing={1} alignItems={"center"}>
@@ -46,14 +48,14 @@ export const WeekSummaryToolbar: React.FunctionComponent<WeekSummaryProps> = ({w
                         <Button
                             variant="contained"
                             size="small"
-                            onClick={() => {onWeekChanged(-1)}}
+                            onClick={() => { onWeekChanged(-1) }}
                             startIcon={<ArrowLeftIcon />}
                         >
                         </Button>
                         <Button
                             variant="contained"
                             size="small"
-                            onClick={() => {onWeekChanged(+1)}}
+                            onClick={() => { onWeekChanged(+1) }}
                             startIcon={<ArrowRightIcon />}
                         >
                         </Button>
