@@ -96,7 +96,13 @@ export const WeekSummary: React.FunctionComponent = () => {
                                                                 <tbody>
                                                                     {
                                                                         u.plans.map(p => <TableRow key={u.name + p.taskName}>
-                                                                            <TableCell width={400} >{p.taskName}</TableCell>
+                                                                            <TableCell width={600} >
+                                                                                <div
+                                                                                    title={p.taskName} 
+                                                                                    style={{ width: "inherit", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                                                                                    {p.taskName}
+                                                                                </div>
+                                                                            </TableCell>
                                                                             <TableCell width={100}>{p.hours}</TableCell>
                                                                             <TableCell width={200}>{dateAsShortStrFromNumber(p.taskStart)} - {dateAsShortStrFromNumber(p.taskEnd)}</TableCell>
                                                                         </TableRow>
