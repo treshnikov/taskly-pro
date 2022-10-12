@@ -74,6 +74,21 @@ export const WeekPlanReport: React.FunctionComponent = () => {
                                             <b>{t('rate')}</b>
                                         </TableCell>
                                         <TableCell>
+                                            <Table size="small">
+                                                <TableHead>
+                                                    <TableRow>
+                                                        <TableCell style={tdStyle} width={600}>
+                                                            <b>{t('task')}</b>
+                                                        </TableCell>
+                                                        <TableCell style={tdStyle} width={100}>
+                                                            <b>{t('hours')}</b>
+                                                        </TableCell>
+                                                        <TableCell style={tdStyle} width={200}>
+                                                            <b>{t('task-period')}</b>
+                                                        </TableCell>
+                                                    </TableRow>
+                                                </TableHead>
+                                            </Table>
                                         </TableCell>
                                     </TableRow>
                                 </TableHead>
@@ -87,19 +102,6 @@ export const WeekPlanReport: React.FunctionComponent = () => {
                                                     u.plans.length > 0 ?
                                                         (
                                                             <Table size="small">
-                                                                <TableHead>
-                                                                    <TableRow>
-                                                                        <TableCell style={tdStyle}>
-                                                                            <b>{t('task')}</b>
-                                                                        </TableCell>
-                                                                        <TableCell style={tdStyle}>
-                                                                            <b>{t('hours')}</b>
-                                                                        </TableCell>
-                                                                        <TableCell style={tdStyle}>
-                                                                            <b>{t('task-period')}</b>
-                                                                        </TableCell>
-                                                                    </TableRow>
-                                                                </TableHead>
                                                                 <tbody>
                                                                     {
                                                                         u.plans.map((p, pIdx) => <TableRow key={"p" + depIdx + "_" + uIdx + "_" + pIdx}>
