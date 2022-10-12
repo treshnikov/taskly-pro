@@ -14,6 +14,8 @@ export type WeekPlanUserVm = {
 }
 
 export type WeekPlanVm = {
+    projectId: number
+    projectName: string
     taskName: string
     hours: number
     taskStart: number

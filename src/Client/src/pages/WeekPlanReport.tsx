@@ -10,10 +10,12 @@ import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material"
 import { useTranslation } from "react-i18next"
+import { useNavigate } from "react-router-dom";
 
 export const WeekPlanReport: React.FunctionComponent = () => {
     const { request } = useHttp()
     const { t } = useTranslation();
+    const navigate = useNavigate()
     const [week, setWeek] = useState<Date>()
     const [reportData, setReportData] = useState<WeekPlanReportVm>()
 
@@ -103,9 +105,19 @@ export const WeekPlanReport: React.FunctionComponent = () => {
                                                                         u.plans.map(p => <TableRow key={u.name + p.taskName}>
                                                                             <TableCell width={600} style={tdStyle}>
                                                                                 <div
-                                                                                    title={p.taskName} 
-                                                                                    style={{ width: "inherit", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                                                                                    {p.taskName}
+                                                                                    title={p.taskName}
+                                                                                    style={{ display: "flex", flexDirection: "row", width: "inherit", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                                                                                    <div
+                                                                                        style={{ cursor: "pointer" }}
+                                                                                        onClick={() => { navigate(`/projects/${p.projectId}`) }}>
+                                                                                        {p.projectId}:&nbsp;
+                                                                                    </div>
+                                                                                    <div>
+                                                                                        {p.projectName} -
+                                                                                    </div>
+                                                                                    <div>
+                                                                                        &nbsp;{p.taskName}
+                                                                                    </div>
                                                                                 </div>
                                                                             </TableCell>
                                                                             <TableCell width={100} style={tdStyle}>{p.hours}</TableCell>

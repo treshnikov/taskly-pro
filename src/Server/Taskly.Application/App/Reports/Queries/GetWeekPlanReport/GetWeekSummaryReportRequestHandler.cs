@@ -66,7 +66,9 @@ public class GetWeekPlanReportRequestHandler : IRequestHandler<GetWeekPlanReport
                 {
                     userVm.Plans.Add(new WeekPlanVm
                     {
-                        TaskName = $"{p.ProjectTask.Project.Id}: {p.ProjectTask.Project.ShortName} - {p.ProjectTask.Description}",
+                        ProjectId = p.ProjectTask.Project.Id,
+                        ProjectName = p.ProjectTask.Project.ShortName,
+                        TaskName = p.ProjectTask.Description,
                         Hours = p.Hours,
                         TaskStart = p.ProjectTask.Start,
                         TaskEnd = p.ProjectTask.End,
