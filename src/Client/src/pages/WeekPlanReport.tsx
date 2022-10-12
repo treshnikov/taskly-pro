@@ -110,13 +110,15 @@ export const WeekPlanReport: React.FunctionComponent = () => {
                                                                                     <div
                                                                                         style={{ cursor: "pointer" }}
                                                                                         onClick={() => { navigate(`/projects/${p.projectId}`) }}>
-                                                                                        {p.projectId}:&nbsp;
+                                                                                        {p.projectId}
                                                                                     </div>
                                                                                     <div>
-                                                                                        {p.projectName} -
+                                                                                        {p.projectName}
                                                                                     </div>
                                                                                     <div>
-                                                                                        &nbsp;{p.taskName}
+                                                                                        {
+                                                                                            p.isVacation ? <>{t('vacation')}</> : <>{p.taskName}</>
+                                                                                        }
                                                                                     </div>
                                                                                 </div>
                                                                             </TableCell>

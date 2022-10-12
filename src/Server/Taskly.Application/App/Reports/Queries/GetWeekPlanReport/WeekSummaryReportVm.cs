@@ -20,12 +20,13 @@ namespace Taskly.Application.App.Reports
 
     public class WeekPlanVm
     {
-        public int ProjectId { get; internal set; }
+        public int? ProjectId { get; internal set; }
         public string? ProjectName { get; internal set; }
         public string TaskName { get; set; }
         public double Hours { get; set; }
         public DateTime TaskStart { get; set; }
         public DateTime TaskEnd { get; set; }
         public bool TaskIsOutdated { get; set; }
+        public bool IsVacation { get; set; }
     }
 }

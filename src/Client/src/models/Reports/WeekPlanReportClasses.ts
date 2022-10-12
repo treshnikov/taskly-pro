@@ -14,11 +14,12 @@ export type WeekPlanUserVm = {
 }
 
 export type WeekPlanVm = {
-    projectId: number
-    projectName: string
+    projectId?: number
+    projectName?: string
     taskName: string
     hours: number
     taskStart: number
     taskEnd: number
     taskIsOutdated: boolean
+    isVacation: boolean 
 }

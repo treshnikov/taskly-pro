@@ -1,5 +1,6 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Taskly.Application.Calendar;
 using Taskly.Application.Interfaces;
 
 namespace Taskly.Application.App.Reports;
@@ -7,10 +8,12 @@ namespace Taskly.Application.App.Reports;
 public class GetWeekPlanReportRequestHandler : IRequestHandler<GetWeekPlanReportRequest, WeekPlanReportVm>
 {
     private readonly ITasklyDbContext _dbContext;
+    private readonly ICalendarService _calendar;
 
-    public GetWeekPlanReportRequestHandler(ITasklyDbContext dbContext)
+    public GetWeekPlanReportRequestHandler(ITasklyDbContext dbContext, ICalendarService calendar)
     {
         _dbContext = dbContext;
+        _calendar = calendar;
     }
     public async Task<WeekPlanReportVm> Handle(GetWeekPlanReportRequest request, CancellationToken cancellationToken)
     {
@@ -55,24 +58,41 @@ public class GetWeekPlanReportRequestHandler : IRequestHandler<GetWeekPlanReport
 
             foreach (var user in depUsers)
             {
+                var userRate = user.UserDepartments.Select(ud => ud.Rate).Max();
                 var userVm = new WeekPlanUserVm
                 {
                     Name = user.Name,
-                    Rate = user.UserDepartments.Select(ud => ud.Rate).Max(),
+                    Rate = userRate,
                     Plans = new List<WeekPlanVm>()
                 };
 
+                // add project plans
                 foreach (var p in userPlans.Where(u => u.UserId == user.Id))
                 {
                     userVm.Plans.Add(new WeekPlanVm
                     {
                         ProjectId = p.ProjectTask.Project.Id,
-                        ProjectName = p.ProjectTask.Project.ShortName,
+                        ProjectName = $" : {p.ProjectTask.Project.ShortName} - ",
                         TaskName = p.ProjectTask.Description,
                         Hours = p.Hours,
                         TaskStart = p.ProjectTask.Start,
                         TaskEnd = p.ProjectTask.End,
                         TaskIsOutdated = !(request.Monday >= p.ProjectTask.Start && request.Monday <= p.ProjectTask.End)
+                    });
+                }
+
+                // add vacations
+                var days = await _calendar.GetUserDaysInfoAsync(user.Name, request.Monday, request.Monday.AddDays(5).AddSeconds(-1), cancellationToken);
+                var vacationDays = days.Where(d => d.DayType == Domain.CalendarDayType.Vacation);
+                if (vacationDays.Any())
+                {
+                    userVm.Plans.Add(new WeekPlanVm
+                    {
+                        Hours = vacationDays.Count() * 8 * userRate,
+                        TaskStart = vacationDays.Min(d => d.Date),
+                        TaskEnd = vacationDays.Max(d => d.Date),
+                        TaskIsOutdated = false,
+                        IsVacation = true
                     });
                 }
 
