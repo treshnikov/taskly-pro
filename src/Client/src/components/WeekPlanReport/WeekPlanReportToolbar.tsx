@@ -1,11 +1,10 @@
-import { Button, Grid, Stack, Typography } from "@mui/material"
+import { Button, Grid, Stack, TextField, Typography } from "@mui/material"
 import { useTranslation } from "react-i18next";
-import { useHttp } from "../../hooks/http.hook";
-import { useEffect, useState } from "react";
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import { dateAsShortStr } from "../../common/dateFormatter";
 import moment from "moment";
+import { DatePicker } from "@mui/lab";
 
 export type WeekSummaryProps = {
     week: Date,
@@ -13,16 +12,29 @@ export type WeekSummaryProps = {
 }
 
 export const WeekPlanReportToolbar: React.FunctionComponent<WeekSummaryProps> = ({ week, setWeek }) => {
-    const { request } = useHttp()
     const { t } = useTranslation()
 
-    const onWeekChanged = (direction: number) => {
+    const onWeekChangedByArrowButtons = (direction: number) => {
         if (!week) {
             return
         }
 
         let dt = new Date(week)
         dt.setDate(dt.getDate() + 7 * direction)
+
+        setWeek(dt)
+    }
+
+    const onWeekChangedByDatetimePicker = (newValue: number | null | undefined, keyboardInputValue?: string) => {
+        if (!newValue) {
+            return
+        }
+
+        // get nearest monday
+        let dt = new Date(newValue)
+        while (dt.getDay() !== 1) {
+            dt.setDate(dt.getDate() - 1)
+        }
 
         setWeek(dt)
     }
@@ -43,19 +55,32 @@ export const WeekPlanReportToolbar: React.FunctionComponent<WeekSummaryProps> = 
                         <Typography
                             variant='h6'
                             style={{ whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden" }}>
-                            {t('week-plan')} #{moment(week).format('W')} {dateAsShortStr(week)}
+                            {t('week-plan')} #{moment(week).format('W')}
                         </Typography>
+                        <DatePicker
+                            views={['day']}
+                            label={t('start')}
+                            inputFormat="yyyy-MM-DD"
+                            value={week}
+                            onChange={onWeekChangedByDatetimePicker}
+                            renderInput={(params) =>
+                                <TextField
+                                    sx={{ width: 170 }}
+                                    size="small"
+                                    {...params}
+                                />}
+                        />
                         <Button
                             variant="contained"
                             size="small"
-                            onClick={() => { onWeekChanged(-1) }}
+                            onClick={() => { onWeekChangedByArrowButtons(-1) }}
                             startIcon={<ArrowLeftIcon />}
                         >
                         </Button>
                         <Button
                             variant="contained"
                             size="small"
-                            onClick={() => { onWeekChanged(+1) }}
+                            onClick={() => { onWeekChangedByArrowButtons(+1) }}
                             startIcon={<ArrowRightIcon />}
                         >
                         </Button>

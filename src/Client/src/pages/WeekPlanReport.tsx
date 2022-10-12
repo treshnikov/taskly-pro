@@ -54,7 +54,7 @@ export const WeekPlanReport: React.FunctionComponent = () => {
         <div
             style={{ marginTop: "8em" }}>
             {
-                reportData.departments.map(dep => <Accordion key={dep.name}>
+                reportData.departments.map((dep, depIdx) => <Accordion key={"dep_" + depIdx}>
                     <AccordionSummary
                         expandIcon={<ExpandMoreIcon />}
                     >
@@ -79,7 +79,7 @@ export const WeekPlanReport: React.FunctionComponent = () => {
                                 </TableHead>
                                 <TableBody>
                                     {
-                                        dep.users.map(u => <TableRow key={u.name}>
+                                        dep.users.map((u, uIdx) => <TableRow key={"u" + depIdx + "_" + uIdx}>
                                             <TableCell>{u.name}</TableCell>
                                             <TableCell>{u.rate}</TableCell>
                                             <TableCell>
@@ -102,7 +102,7 @@ export const WeekPlanReport: React.FunctionComponent = () => {
                                                                 </TableHead>
                                                                 <tbody>
                                                                     {
-                                                                        u.plans.map(p => <TableRow key={u.name + p.taskName}>
+                                                                        u.plans.map((p, pIdx) => <TableRow key={"p" + depIdx + "_" + uIdx + "_" + pIdx}>
                                                                             <TableCell width={600} style={tdStyle}>
                                                                                 <div
                                                                                     title={p.taskName}
@@ -124,7 +124,7 @@ export const WeekPlanReport: React.FunctionComponent = () => {
                                                                             </TableCell>
                                                                             <TableCell width={100} style={tdStyle}>{p.hours}</TableCell>
                                                                             <TableCell width={200} style={tdStyle}>
-                                                                                <div style={{color: p.taskIsOutdated ? "red" : "black"}}>
+                                                                                <div style={{ color: p.taskIsOutdated ? "red" : "black" }}>
                                                                                     {dateAsShortStrFromNumber(p.taskStart)} - {dateAsShortStrFromNumber(p.taskEnd)}
                                                                                 </div>
                                                                             </TableCell>
