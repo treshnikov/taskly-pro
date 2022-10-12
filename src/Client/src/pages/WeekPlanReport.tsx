@@ -96,7 +96,7 @@ export const WeekPlanReport: React.FunctionComponent = () => {
                                                                             <b>{t('hours')}</b>
                                                                         </TableCell>
                                                                         <TableCell style={tdStyle}>
-                                                                            <b>{t('start')} - {t('end')}</b>
+                                                                            <b>{t('task-period')}</b>
                                                                         </TableCell>
                                                                     </TableRow>
                                                                 </TableHead>
@@ -117,17 +117,20 @@ export const WeekPlanReport: React.FunctionComponent = () => {
                                                                                     </div>
                                                                                     <div>
                                                                                         {
-                                                                                            p.isVacation ? <>{t('vacation')}</> : <>{p.taskName}</>
+                                                                                            p.isVacation ? <>{t('vacation')}</> : <>&nbsp;{p.taskName}</>
                                                                                         }
                                                                                     </div>
                                                                                 </div>
                                                                             </TableCell>
                                                                             <TableCell width={100} style={tdStyle}>{p.hours}</TableCell>
-                                                                            <TableCell width={200} style={tdStyle}>{dateAsShortStrFromNumber(p.taskStart)} - {dateAsShortStrFromNumber(p.taskEnd)}</TableCell>
+                                                                            <TableCell width={200} style={tdStyle}>
+                                                                                <div style={{color: p.taskIsOutdated ? "red" : "black"}}>
+                                                                                    {dateAsShortStrFromNumber(p.taskStart)} - {dateAsShortStrFromNumber(p.taskEnd)}
+                                                                                </div>
+                                                                            </TableCell>
                                                                         </TableRow>
                                                                         )
                                                                     }
-
                                                                 </tbody>
                                                             </Table>
                                                         ) : (<></>)
