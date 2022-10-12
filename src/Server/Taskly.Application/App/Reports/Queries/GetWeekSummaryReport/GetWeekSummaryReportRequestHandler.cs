@@ -16,7 +16,7 @@ public class GetWeekSummaryReportRequestHandler : IRequestHandler<GetWeekSummary
     {
         var res = new WeekSummaryReportVm
         {
-            Departments = new List<WeekSummaryReportDepartmentVm>()
+            Departments = new List<WeekSummaryDepartmentVm>()
         };
 
         var deps = await _dbContext.Departments
@@ -27,11 +27,30 @@ public class GetWeekSummaryReportRequestHandler : IRequestHandler<GetWeekSummary
 
         foreach (var dep in deps)
         {
-            var depVm = new WeekSummaryReportDepartmentVm
+            var depUsers = await _dbContext.Users
+                .Include(i => i.UserDepartments)
+                .Where(u =>
+                    u.HiringDate <= request.Monday &&
+                    (u.QuitDate == null || u.QuitDate > request.Monday.AddDays(5)) &&
+                    u.UserDepartments.Any(ud => ud.DepartmentId == dep.Id && ud.Rate > 0.1))
+                .AsNoTracking()
+                .ToListAsync(cancellationToken);
+
+            var depVm = new WeekSummaryDepartmentVm
             {
-                Name = dep.Name
+                Name = dep.Name,
+                Users = new List<WeekSummaryUserVm>()
             };
 
+            foreach (var user in depUsers)
+            {
+                var userVm = new WeekSummaryUserVm{
+                    Name = user.Name,
+                    Rate = user.UserDepartments.Select(ud => ud.Rate).Max()
+                };
+
+                depVm.Users.Add(userVm);
+            }
             res.Departments.Add(depVm);
         }
 

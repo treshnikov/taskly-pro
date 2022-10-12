@@ -2,11 +2,19 @@ namespace Taskly.Application.App.Reports
 {
     public class WeekSummaryReportVm
     {
-        public List<WeekSummaryReportDepartmentVm> Departments { get; set; }
+        public List<WeekSummaryDepartmentVm> Departments { get; set; }
     }
 
-    public class WeekSummaryReportDepartmentVm
+    public class WeekSummaryDepartmentVm
     {
         public string Name { get; set; }
+        public List<WeekSummaryUserVm> Users { get; set; }
+    }
+
+    public class WeekSummaryUserVm
+    {
+        public string Name { get; set; }
+        public double Rate { get; set; }
+        
     }
 }
