@@ -36,16 +36,17 @@ export const DepartmentPlanToolbar: React.FunctionComponent<DepartmentPlanToolba
     const startDate = useAppSelector(state => state.departmentPlanReducer.startDate)
     const endDate = useAppSelector(state => state.departmentPlanReducer.endDate)
 
-    const projectsWithEstimation: ProjectSelectItem = { id: 'projects-with-estimation', name: t('projects-with-estimation') }
-    const allProjectsItem: ProjectSelectItem = { id: 'all-projects', name: t('all-projects') }
-    const [projectFilter, setprojectFilter] = useState<string>(projectsWithEstimation.id);
+    const tasksWithEstimation: ProjectSelectItem = { id: 'projects-with-estimation', name: t('projects-with-estimation') }
+    const tasksWithNoEstimation: ProjectSelectItem = { id: 'projects-with-no-estimation', name: t('projects-with-no-estimation') }
+    const allTasksItem: ProjectSelectItem = { id: 'all-projects', name: t('all-projects') }
+    const [projectFilter, setprojectFilter] = useState<string>(tasksWithEstimation.id);
     const [projectSelectItems, setProjectSelectItems] = useState<ProjectSelectItem[]>([])
 
     const onProjectFilterChanged = (event: SelectChangeEvent) => {
         const projId = event.target.value as string
         setprojectFilter(projId)
 
-        if (projId === allProjectsItem.id) {
+        if (projId === allTasksItem.id) {
             // workaround to avoid freezing of select mui component in Firefox
             setTimeout(() => {
                 updateHiddenRows([])
@@ -53,10 +54,18 @@ export const DepartmentPlanToolbar: React.FunctionComponent<DepartmentPlanToolba
             return
         }
 
-        if (projId === projectsWithEstimation.id) {
+        if (projId === tasksWithEstimation.id) {
             // workaround to avoid freezing of select mui component in Firefox
             setTimeout(() => {
                 updateHiddenRows(DepartmentPlanHelper.getProjectRows(plan, i => !i.hours))
+            }, 0)
+            return
+        }
+
+        if (projId === tasksWithNoEstimation.id) {
+            // workaround to avoid freezing of select mui component in Firefox
+            setTimeout(() => {
+                updateHiddenRows(DepartmentPlanHelper.getProjectRows(plan, i => i.hours != null && i.hours != ''))
             }, 0)
             return
         }
@@ -102,7 +111,7 @@ export const DepartmentPlanToolbar: React.FunctionComponent<DepartmentPlanToolba
         restoreCollapsedRows(collapsedRows)
     }
 
-    const storeCollapsedRows = () : number[] => {
+    const storeCollapsedRows = (): number[] => {
         // using hooks causes render and the table renders all its rows expanded 
         // even if they were collapsed previously  
         // this fact brings us to a need to save and restore collapsed rows
@@ -202,12 +211,16 @@ export const DepartmentPlanToolbar: React.FunctionComponent<DepartmentPlanToolba
                                     onChange={onProjectFilterChanged}
                                 >
                                     <MenuItem
-                                        value={projectsWithEstimation.id}>
-                                        {projectsWithEstimation.name}
+                                        value={allTasksItem.id}>
+                                        {allTasksItem.name}
                                     </MenuItem>
                                     <MenuItem
-                                        value={allProjectsItem.id}>
-                                        {allProjectsItem.name}
+                                        value={tasksWithEstimation.id}>
+                                        {tasksWithEstimation.name}
+                                    </MenuItem>
+                                    <MenuItem
+                                        value={tasksWithNoEstimation.id}>
+                                        {tasksWithNoEstimation.name}
                                     </MenuItem>
                                     <Divider />
                                     {
