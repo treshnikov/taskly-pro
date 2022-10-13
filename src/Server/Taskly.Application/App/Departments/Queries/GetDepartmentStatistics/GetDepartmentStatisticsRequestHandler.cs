@@ -72,6 +72,15 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
             var externalProjectsHours = res.Projects.Where(p => p.ProjectType == ProjectType.External).Select(i => i.PlannedTaskHoursForDepartment).Sum();
             var internalProjectsHours = res.Projects.Where(p => p.ProjectType == ProjectType.Internal).Select(i => i.PlannedTaskHoursForDepartment).Sum();
             res.Summary.ExternalProjectsRateInPercentage = Math.Round(100 * externalProjectsHours / (internalProjectsHours + externalProjectsHours), 2);
+        
+            // check NaN
+            if (
+                double.IsNaN(res.Summary.WorkLoadPercentage) || double.IsInfinity(res.Summary.WorkLoadPercentage) ||
+                double.IsNaN(res.Summary.ExternalProjectsRateInPercentage) || double.IsInfinity(res.Summary.ExternalProjectsRateInPercentage))
+            {
+                res.Summary.ExternalProjectsRateInPercentage = 0;
+                res.Summary.WorkLoadPercentage = 0;
+            }
         }
 
         private async Task FillProjectToDepartmentEstimationsAsync(GetDepartmentStatisticsRequest request, DepartmentStatisticsVm res, Department dep, List<ProjectTask> tasks, List<DepartmentPlan> plans, CancellationToken cancellationToken)
