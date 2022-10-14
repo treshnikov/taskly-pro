@@ -176,7 +176,15 @@ export const DepartmentPlanToolbar: React.FunctionComponent<DepartmentPlanToolba
             <Grid container>
                 <Grid item xs={12}>
                     <Stack direction={"row"} spacing={1} alignItems={"center"}>
-                        <Typography variant='h6' style={{ maxWidth: "200px", whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden" }}>{departmentName}</Typography>
+                        <Typography
+                            variant='h6'
+                            style={{ maxWidth: "200px", whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden" }}
+                        >
+                            <div
+                                title={departmentName}>
+                                {departmentName}
+                            </div>
+                        </Typography>
 
                         <DatePicker
                             views={['day']}
