@@ -96,9 +96,15 @@ namespace Taskly.Application.Users
             using var reader = await command.ExecuteReaderAsync(cancellationToken);
             while (await reader.ReadAsync(cancellationToken))
             {
+                // the rate is 1 when the DB doesn't have information about the rate
                 var userRateAsStr = reader["cb_effectiverate"] == DBNull.Value
-                    ? ""
+                    ? "1"
                     : reader.GetString("cb_effectiverate").Replace(",", ".");
+
+                if (string.IsNullOrWhiteSpace(userRateAsStr))
+                {
+                    userRateAsStr = "1";
+                }
 
                 var ci = (CultureInfo)CultureInfo.CurrentCulture.Clone();
                 ci.NumberFormat.CurrencyDecimalSeparator = ".";
@@ -231,7 +237,7 @@ namespace Taskly.Application.Users
                 "select u.email, e.date " +
                 "from marks_calendar e " +
                 "join jos_users u on u.id = e.employee_ID " +
-                "where u.email <> '' and e.employee_ID is not null and e.day_type_ID = 2 " +
+                "where u.email <> '' and e.employee_ID is not null and e.day_type_ID in (2, 7) " +
                 "order by e.date";
 
             command.CommandText = sql;
