@@ -113,7 +113,8 @@ namespace Taskly.Application.Users
                         Id = Guid.NewGuid(),
                         Date = rec.Date,
                         User = user,
-                        UserId = user.Id
+                        UserId = user.Id,
+                        DayType = rec.IsMaternityLeave ? CalendarDayType.MaternityLeave : CalendarDayType.Vacation
                     });
                 }
 

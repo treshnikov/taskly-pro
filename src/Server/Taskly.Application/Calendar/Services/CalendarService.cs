@@ -11,6 +11,7 @@ public class CalendarService : ICalendarService
 {
     private readonly IEnumerable<CalendarDay> _calendar;
     private readonly HashSet<Tuple<Guid, DateTime>> _vacations;
+    private readonly HashSet<Tuple<Guid, DateTime>> _vacationsWithNoMaternityLeave;
     private readonly ITasklyDbContext _dbContext;
 
     public CalendarService(ITasklyDbContext dbContext)
@@ -18,6 +19,7 @@ public class CalendarService : ICalendarService
         _dbContext = dbContext;
         _calendar = dbContext.Calendar.ToList();
         _vacations = new HashSet<Tuple<Guid, DateTime>>(_dbContext.Vacations.Select(i => new Tuple<Guid, DateTime>(i.UserId, i.Date)));
+        _vacationsWithNoMaternityLeave = new HashSet<Tuple<Guid, DateTime>>(_dbContext.Vacations.Where(v => v.DayType != CalendarDayType.MaternityLeave).Select(i => new Tuple<Guid, DateTime>(i.UserId, i.Date)));
     }
 
     public async Task<double> GetSumOfDepartmentWorkingHoursAsync(Guid departmentId, DateTime start, DateTime end, CancellationToken cancellationToken)
@@ -182,7 +184,7 @@ public class CalendarService : ICalendarService
             foreach (var user in users)
             {
                 var rate = user.UserDepartments.OrderByDescending(i => i.Rate).First().Rate;
-                if (_vacations.Contains(new Tuple<Guid, DateTime>(user.Id, dt)))
+                if (_vacationsWithNoMaternityLeave.Contains(new Tuple<Guid, DateTime>(user.Id, dt)))
                 {
                     res += 8 * rate;
                 }

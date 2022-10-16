@@ -234,7 +234,7 @@ namespace Taskly.Application.Users
 
             using var command = conn.CreateCommand();
             var sql =
-                "select u.email, e.date " +
+                "select u.email, e.date, e.day_type_ID " +
                 "from marks_calendar e " +
                 "join jos_users u on u.id = e.employee_ID " +
                 "where u.email <> '' and e.employee_ID is not null and e.day_type_ID in (2, 7) " +
@@ -248,6 +248,7 @@ namespace Taskly.Application.Users
                 {
                     Email = reader.GetString("email"),
                     Date = reader.GetDateTime("date"),
+                    IsMaternityLeave = reader.GetInt32("day_type_ID") == 7
                 });
             }
 
