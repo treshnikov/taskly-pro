@@ -12,3 +12,5 @@ export const WEEK_HAS_NO_ASSIGNED_PROJECT_TASKS_COLOR: string = "#f3f4f5cc"
 
 export const HOLIDAY_COLOR: string = "red"
 export const VACATION_COLOR: string = "green"
+export const MATERNITY_LEAVE_DAY_BACKGROUND_COLOR: string = "#dddd"
+export const VACATION_BACKGROUND_COLOR: string = "#ecffebaa"

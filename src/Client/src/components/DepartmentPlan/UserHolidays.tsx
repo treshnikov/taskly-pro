@@ -1,9 +1,9 @@
 import { Table, TableCell, TableHead } from "@mui/material"
-import { useCallback } from "react"
 import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { CalendarDayType, DayInfoVm } from "../../models/DepartmentPlan/DepartmentPlanClasses"
-import { GOOD_PLANING_TIME_COLOR, HOLIDAY_COLOR, VACATION_COLOR } from "./DepartmentPlanConst"
+import { VACATION_BACKGROUND_COLOR, HOLIDAY_COLOR, VACATION_COLOR, MATERNITY_LEAVE_DAY_BACKGROUND_COLOR } from "./DepartmentPlanConst"
+import { UserHolidaysLegend } from "./UserHolidaysLegend"
 
 export type UserHolidaysProps = {
     start: number
@@ -49,15 +49,20 @@ export const UserHolidays: React.FunctionComponent<UserHolidaysProps> = (props) 
         const dayInfo = props.days.find(d => d.date === date.getTime())
         const isHoliday = dayInfo && dayInfo.dayType === CalendarDayType.Holiday
         const isVacation = dayInfo && dayInfo.dayType === CalendarDayType.Vacation
+        const isMaternityLeave = dayInfo && dayInfo.dayType === CalendarDayType.MaternityLeave
 
         return {
             color:
                 isHoliday
                     ? HOLIDAY_COLOR
-                    : isVacation
+                    : isVacation || isMaternityLeave
                         ? VACATION_COLOR
                         : '',
-            background: isVacation ? GOOD_PLANING_TIME_COLOR : '',
+            background: isVacation
+                ? VACATION_BACKGROUND_COLOR
+                : isMaternityLeave 
+                    ? MATERNITY_LEAVE_DAY_BACKGROUND_COLOR
+                    : '',
             textAlign: "center" as const,
             fontWeight: isHoliday || isVacation ? "bold" : '',
         }
@@ -122,6 +127,7 @@ export const UserHolidays: React.FunctionComponent<UserHolidaysProps> = (props) 
                             }
                         </tbody>
                     </Table>
+                    <UserHolidaysLegend/>
                 </div>
             )
         }
