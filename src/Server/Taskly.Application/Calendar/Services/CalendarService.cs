@@ -219,11 +219,11 @@ public class CalendarService : ICalendarService
             var day = days.FirstOrDefault(d => d.Date == v.Date);
             if (day == null)
             {
-                days.Add(new CalendarDay { Date = v.Date, DayType = CalendarDayType.Vacation });
+                days.Add(new CalendarDay { Date = v.Date, DayType = v.DayType });
             }
             else
             {
-                day.DayType = CalendarDayType.Vacation;
+                day.DayType = v.DayType;
             }
         }
 
