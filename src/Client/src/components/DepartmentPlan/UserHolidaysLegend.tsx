@@ -20,7 +20,7 @@ export const UserHolidaysLegend: React.FunctionComponent = () => {
     }
 
     return <>
-        <Stack direction={"row"} position={"fixed"} paddingTop={1} paddingRight={1} spacing={1} alignContent={"center"} alignItems={"center"}>
+        <Stack direction={"row"} paddingTop={1} paddingRight={1} spacing={1} alignContent={"center"} alignItems={"center"}>
 
             <div
                 style={getLegendStyle(VACATION_BACKGROUND_COLOR)}>
