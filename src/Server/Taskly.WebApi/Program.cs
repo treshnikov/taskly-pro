@@ -2,6 +2,7 @@ using Taskly.DAL;
 using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.SystemConsole.Themes;
+using System.Reflection;
 
 namespace Taskly.WebApi
 {
@@ -9,6 +10,12 @@ namespace Taskly.WebApi
     {
         public static void Main(string[] args)
         {
+            var currentVersion = Assembly
+                        .GetEntryAssembly()?
+                        .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?
+                        .InformationalVersion ?? string.Empty;
+
+            Console.WriteLine($"Taskly v{currentVersion}");
             var host = CreateHostBuilder(args).Build();
             var conf = host.Services.GetService<IConfiguration>();
 
