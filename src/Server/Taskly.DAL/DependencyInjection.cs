@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Taskly.DAL;
 using Taskly.Application.Interfaces;
 
 namespace Taskly.DAL;
@@ -17,6 +16,14 @@ public static class DependencyInjection
         });
 
         services.AddScoped<ITasklyDbContext, TasklyDbContext>();
+
+        services
+            .AddGraphQLServer()
+            .AddAuthorization()
+            .RegisterDbContext<TasklyDbContext>(DbContextKind.Synchronized)
+            .AddQueryType<GraphQLQuery>();
+
         return services;
     }
 }
+

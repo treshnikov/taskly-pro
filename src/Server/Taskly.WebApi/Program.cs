@@ -16,7 +16,7 @@ namespace Taskly.WebApi
 
             // logger
             var logDirectory = conf!["Logger:Directory"];
-            var logFileName = Path.Combine(logDirectory, "log-.log");
+            var logFileName = System.IO.Path.Combine(logDirectory, "log-.log");
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
