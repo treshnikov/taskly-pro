@@ -9,7 +9,7 @@ namespace Taskly.Application.Users
 {
     public class SharepointProjectTasksMerger
     {
-        private const bool IgnoreHolidays = true;
+        private const bool _ignoreHolidays = true;
 
         public SharepointProjectTasksMerger(ITasklyDbContext dbContext)
         {
@@ -20,6 +20,7 @@ namespace Taskly.Application.Users
         {
             var path = Directory.GetParent(typeof(ImportDataFromIntranetRequestHandler).Assembly.Location)!.FullName;
             var projectTasksFileName = Path.Combine(path, fileName);
+
             var tasks = ParseTasks(projectTasksFileName);
             var rand = new Random();
 
@@ -49,7 +50,7 @@ namespace Taskly.Application.Users
                         dbProject = new Project
                         {
                             Id = rand.Next(10_000, 100_000),
-                            Name = t.ProjectName,
+                            Name = t.ProjectName!,
                             ShortName = t.ProjectName,
                             IsOpened = true,
                             Type = ProjectType.Internal,
@@ -180,7 +181,7 @@ namespace Taskly.Application.Users
                 int? projectId = null;
                 string? projectName = string.Empty;
                 var projectIdAsStr = worksheet.Cell(rowIdx, 3).GetValue<string>();
-                if (IgnoreHolidays && string.Equals("отпуск", projectIdAsStr.ToLower().Trim()))
+                if (_ignoreHolidays && string.Equals("отпуск", projectIdAsStr.ToLower().Trim()))
                 {
                     continue;
                 }
@@ -215,6 +216,10 @@ namespace Taskly.Application.Users
                     ? DateTime.Today.AddDays(-1)
                     : DateTime.Parse(startStr);
                 var endStr = worksheet.Cell(rowIdx, 13).GetValue<string>();
+                
+                // fix common fill in mistakes
+                endStr = endStr.Replace("31.11", "31.12");
+                
                 var end = string.IsNullOrWhiteSpace(endStr)
                     ? DateTime.Today
                     : DateTime.Parse(endStr);

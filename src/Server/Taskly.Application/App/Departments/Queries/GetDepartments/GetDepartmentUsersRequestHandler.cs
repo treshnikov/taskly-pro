@@ -24,18 +24,16 @@ namespace Taskly.Application.Departments.Queries
 
             var deps = await _dbContext.Departments.OrderBy(i => i.ParentDepartmentId).Include(u => u.ParentDepartment).AsNoTracking().ToListAsync(cancellationToken: cancellationToken);
             List<Domain.User> users = new List<Domain.User>();
-            if (request.IncludeUsers)
-            {
-                users = await _dbContext.Users
-                    .Include(u => u.UserDepartments).ThenInclude(u => u.UserPosition)
-                    .AsNoTracking().ToListAsync(cancellationToken: cancellationToken);
-            }
-            HandleDepartment(null, root, deps, users);
+            users = await _dbContext.Users
+                .Include(u => u.UserDepartments).ThenInclude(u => u.UserPosition)
+                .AsNoTracking().ToListAsync(cancellationToken: cancellationToken);
+
+            HandleDepartment(null, root, deps, users, request.IncludeUsers);
 
             return await Task.FromResult(root);
         }
 
-        private void HandleDepartment(Guid? parentId, DepartmentUserVm parentVm, List<Domain.Department> deps, List<Domain.User> users)
+        private void HandleDepartment(Guid? parentId, DepartmentUserVm parentVm, List<Domain.Department> deps, List<Domain.User> users, bool includeUsers)
         {
             var childs = deps.Where(i => i.ParentDepartmentId == parentId).ToList();
             foreach (var c in childs)
@@ -46,26 +44,29 @@ namespace Taskly.Application.Departments.Queries
                     Name = $"{c.Name}",
                     Children = new List<DepartmentUserVm>(),
                     Type = DepartmentUserType.Department,
-                    IncludeInWorkPlan = c.IncludeInWorkPlan
+                    IncludeInWorkPlan = c.IncludeInWorkPlan,
                 };
 
                 parentVm.Children!.Add(newDepVm);
 
-                // add users
-                foreach (var u in users.Where(u => u.WorksInTheCompany() && u.UserDepartments.Any(uu => uu.DepartmentId == newDepVm.Id)).OrderBy(u => u.Name))
+                if (includeUsers)
                 {
-                    var userVm = new DepartmentUserVm
+                    // add users
+                    foreach (var u in users.Where(u => u.WorksInTheCompany() && u.UserDepartments.Any(uu => uu.DepartmentId == newDepVm.Id)).OrderBy(u => u.Name))
                     {
-                        Id = u.Id,
-                        Name = $"{u.Name} / {u.UserDepartments.First(uu => uu.DepartmentId == newDepVm.Id).UserPosition.Name}",
-                        Children = new List<DepartmentUserVm>(),
-                        Type = DepartmentUserType.User
-                    };
+                        var userVm = new DepartmentUserVm
+                        {
+                            Id = u.Id,
+                            Name = $"{u.Name} / {u.UserDepartments.First(uu => uu.DepartmentId == newDepVm.Id).UserPosition.Name}",
+                            Children = new List<DepartmentUserVm>(),
+                            Type = DepartmentUserType.User
+                        };
 
-                    newDepVm.Children.Add(userVm);
+                        newDepVm.Children.Add(userVm);
+                    }
                 }
 
-                HandleDepartment(c.Id, newDepVm, deps, users);
+                HandleDepartment(c.Id, newDepVm, deps, users, includeUsers);
             }
         }
     }

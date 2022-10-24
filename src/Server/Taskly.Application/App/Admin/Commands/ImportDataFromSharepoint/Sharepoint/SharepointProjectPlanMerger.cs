@@ -194,9 +194,15 @@ namespace Taskly.Application.Users
                 while (true)
                 {
                     var weekStartStr = worksheet.Cell(1, weekIdx).GetValue<string>();
+    
+                    if (weekStartStr == "После")
+                    {
+                        break;
+                    }
+
                     if (!DateTime.TryParse(weekStartStr, out DateTime weekStartAsDt))
                     {
-                        Log.Logger.Error($"Cannot conver {weekStartStr} to DateTime");
+                        Log.Logger.Error($"Cannot conver {weekStartStr} to DateTime in file {Path.GetFileName(filePath)} {rowIdx}:{weekIdx}");
                         break;
                     }
 
@@ -240,7 +246,7 @@ namespace Taskly.Application.Users
                         if (!int.TryParse(projCodeAsStr, out int projCode))
                         {
                             // handle АДМ, Партнеры, Больичный, Отпуск, etc.
-                            Log.Logger.Error($"Cannot conver {projCodeAsStr} to int");
+                            //Log.Logger.Error($"Cannot conver {projCodeAsStr} to int");
                             projCode = -1;
                         }
 
@@ -251,7 +257,7 @@ namespace Taskly.Application.Users
 
                         if (!float.TryParse(estAsStr, NumberStyles.Any, cultureInfo, out float est))
                         {
-                            Log.Logger.Error($"Cannot convert {estAsStr} to float");
+                            Log.Logger.Error($"Cannot convert {estAsStr} to float in file {Path.GetFileName(filePath)} {rowIdx}:{weekIdx}");
                             continue;
                         }
 

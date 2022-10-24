@@ -4,6 +4,6 @@ namespace Taskly.Application.Users
 {
     public class ImportDataFromSharepointRequest : IRequest
     {
-        public string ProjectTasksFileName { get; set; } = "import/project_tasks.xlsx";
+        public string ProjectTasksFileName { get; set; } = "import/Сводный_шаблон.xlsm";
     }
 }
