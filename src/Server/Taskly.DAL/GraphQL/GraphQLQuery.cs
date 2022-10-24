@@ -13,6 +13,12 @@ public class GraphQLQuery
     }
 
     [Authorize]
+    public IQueryable<User> GetUsersByName(string userName, TasklyDbContext dbContext)
+    {
+        return dbContext.Users.Where(i => i.Name.Contains(userName));
+    }
+    
+    [Authorize]
     public IQueryable<Project> GetProjects(ClaimsPrincipal claimsPrincipal, TasklyDbContext dbContext)
     {
         var userId = claimsPrincipal.FindFirstValue(ClaimTypes.NameIdentifier);
