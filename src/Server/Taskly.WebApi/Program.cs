@@ -10,7 +10,7 @@ namespace Taskly.WebApi
     {
         public static void Main(string[] args)
         {
-            PrintProductNameAndVersion();
+            Console.WriteLine($"Taskly {ProductVersion}");
             var host = CreateHostBuilder(args).Build();
             var conf = host.Services.GetService<IConfiguration>();
 
@@ -41,14 +41,23 @@ namespace Taskly.WebApi
             host.Run();
         }
 
-        private static void PrintProductNameAndVersion()
+        public static string ProductVersion
         {
-            var currentVersion = Assembly
-                        .GetEntryAssembly()?
-                        .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?
-                        .InformationalVersion ?? string.Empty;
+            get
+            {
+                var version = Assembly
+                    .GetEntryAssembly()?
+                    .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?
+                    .InformationalVersion
+                    .Replace("+", ".");
 
-            Console.WriteLine($"Taskly v{currentVersion}");
+                if (version == null)
+                {
+                    return string.Empty;
+                }
+
+                return $"v{version}";
+            }
         }
 
         private static IHostBuilder CreateHostBuilder(string[] args) =>

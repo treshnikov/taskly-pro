@@ -139,6 +139,8 @@ public class Startup
         {
             endpoints.MapControllers();
             endpoints.MapGraphQL();
+            endpoints.MapGet("/version", () => Program.ProductVersion);
+
         });
 
         if (!env.IsDevelopment())

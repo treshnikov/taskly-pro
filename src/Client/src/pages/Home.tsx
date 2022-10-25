@@ -6,6 +6,7 @@ import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import SettingsIcon from '@mui/icons-material/Settings';
 import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
 import GradingIcon from '@mui/icons-material/Grading';
+import { Version } from '../components/Home/Version';
 
 export const Home: React.FunctionComponent = () => {
   const navigate = useNavigate()
@@ -135,6 +136,7 @@ export const Home: React.FunctionComponent = () => {
           xs={3}>
         </Grid>
       </Grid>
+      <Version></Version>
     </div>
   )
 }
