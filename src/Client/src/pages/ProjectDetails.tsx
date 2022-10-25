@@ -29,7 +29,7 @@ export const ProjectDetails: React.FunctionComponent = () => {
   const ganttChartZoomLevel = useAppSelector(state => state.projectDetailsReducer.ganttChartZoomLevel)
   const hiddenColumns = useAppSelector(state => state.projectDetailsReducer.hiddenColumns)
 
-  const defaultColWidths = [5, 300, 150, 70, 310, 100, 100]
+  const defaultColWidths = [5, 330, 330, 70, 310, 100, 100, 120]
   const defaultHeaders = useMemo(() => ['', t('task'), t('comment'), t('estimationH'), t('departments'), t('start'), t('end')], [t])
   const [headers, setHeaders] = useState<string[]>(defaultHeaders)
 

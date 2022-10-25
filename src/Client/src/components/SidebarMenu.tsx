@@ -9,6 +9,7 @@ import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { Logout } from '@mui/icons-material';
+import GradingIcon from '@mui/icons-material/Grading';
 
 export const SidebarMenu: React.FunctionComponent = () => {
     const [toggled, setToggled] = useState<boolean>(false)
@@ -56,6 +57,18 @@ export const SidebarMenu: React.FunctionComponent = () => {
                         </ListItemIcon>
                         <ListItemText
                             primary={t('departments') as string} />
+                    </ListItemButton>
+                </ListItem>
+
+                <ListItem
+                    disablePadding
+                    onClick={() => navigate("/weekPlanReport")}>
+                    <ListItemButton>
+                        <ListItemIcon>
+                            <GradingIcon />
+                        </ListItemIcon>
+                        <ListItemText
+                            primary={t('week-plan') as string} />
                     </ListItemButton>
                 </ListItem>
 

@@ -16,7 +16,7 @@ type ProjectDetailsStoreStateType = {
 }
 
 const initState = {
-    ganttChartZoomLevel: 0.3,
+    ganttChartZoomLevel: 0.18,
     compactMode: false,
     showStatistics: false,
     showDepartmentsPlan: false,
