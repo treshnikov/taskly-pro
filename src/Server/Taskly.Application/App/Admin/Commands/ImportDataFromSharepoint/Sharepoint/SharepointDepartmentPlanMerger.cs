@@ -7,13 +7,13 @@ using Taskly.Domain;
 
 namespace Taskly.Application.Users
 {
-    public class SharepointProjectPlanMerger
+    public class SharepointDepartmentPlanMerger
     {
         private const bool IgnoreHolidays = true;
 
         private readonly ITasklyDbContext _dbContext;
 
-        public SharepointProjectPlanMerger(ITasklyDbContext dbContext)
+        public SharepointDepartmentPlanMerger(ITasklyDbContext dbContext)
         {
             _dbContext = dbContext;
         }
@@ -49,7 +49,7 @@ namespace Taskly.Application.Users
 
             var dbProjects = await _dbContext.Projects
                 .Include(p => p.Tasks)
-                    .ThenInclude(i => i.DepartmentEstimations).ThenInclude(i => i.Department)
+                    .ThenInclude(i => i.ProjectTaskEstimations).ThenInclude(i => i.Department)
                 .ToListAsync(cancellationToken);
 
             foreach (var planItem in plans)
@@ -114,14 +114,14 @@ namespace Taskly.Application.Users
                                     Description = projectFromExcel.ProjectName,
                                     Start = new DateTime(DateTime.Today.Year, 01, 01),
                                     End = new DateTime(DateTime.Today.Year + 1, 01, 01),
-                                    DepartmentEstimations = new List<ProjectTaskDepartmentEstimation>()
+                                    ProjectTaskEstimations = new List<ProjectTaskEstimation>()
                                 }
                             };
                         }
 
                         var tasksToAssign = project.Tasks
                             .Where(t =>
-                                t.DepartmentEstimations.Any(de => de.Department.Id == dbDep.Id) &&
+                                t.ProjectTaskEstimations.Any(de => de.Department.Id == dbDep.Id) &&
                                 t.End >= week.WeekStart)
                             .OrderBy(t => t.Start)
                             .ToList();

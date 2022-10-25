@@ -1,6 +1,6 @@
 namespace Taskly.Domain
 {
-    public class ProjectTaskDepartmentEstimationToUserPosition
+    public class ProjectTaskUserPositionEstimation
     {
         public Guid Id { get; set; }
 
@@ -10,6 +10,6 @@ namespace Taskly.Domain
 
         // navigation
         public Guid ProjectTaskDepartmentEstimationId { get; set; }
-        public ProjectTaskDepartmentEstimation ProjectTaskDepartmentEstimation { get; set; }
+        public ProjectTaskEstimation ProjectTaskDepartmentEstimation { get; set; }
     }
 }

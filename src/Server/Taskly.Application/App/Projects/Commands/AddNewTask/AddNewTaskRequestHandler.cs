@@ -26,7 +26,7 @@ namespace Taskly.Application.Projects.Commands.AddNewTask
                 Description = "...",
                 Start = proj.Start,
                 End = proj.End,
-                DepartmentEstimations = new List<ProjectTaskDepartmentEstimation>(),
+                ProjectTaskEstimations = new List<ProjectTaskEstimation>(),
             };
             _dbContext.ProjectTasks.Add(newTask);
             await _dbContext.SaveChangesAsync(cancellationToken);

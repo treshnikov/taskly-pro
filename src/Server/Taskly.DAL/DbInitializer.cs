@@ -239,84 +239,100 @@ namespace Taskly.DAL
                     Tasks = new List<ProjectTask>()
                 };
 
-                var getEstimations = List<ProjectTaskDepartmentEstimation> () => new List<ProjectTaskDepartmentEstimation>
+                var getEstimations = List<ProjectTaskEstimation> () => new List<ProjectTaskEstimation>
                 {
-                    new ProjectTaskDepartmentEstimation
+                    new ProjectTaskEstimation
                     {
+                        Id = Guid.NewGuid(),
                         Department = analyticsDep,
-                        Estimations = new List<ProjectTaskDepartmentEstimationToUserPosition>
+                        Estimations = new List<ProjectTaskUserPositionEstimation>
                         {
-                            new ProjectTaskDepartmentEstimationToUserPosition{
+                            new ProjectTaskUserPositionEstimation{
+                                Id = Guid.NewGuid(),
                                 Hours = 360 + rand.Next(0, 120),
                                 UserPosition = seniorA
                             },
 
-                            new ProjectTaskDepartmentEstimationToUserPosition{
+                            new ProjectTaskUserPositionEstimation{
+                                Id = Guid.NewGuid(),
                                 Hours = 180 + rand.Next(0, 120),
                                 UserPosition = analytics
                             },
 
-                            new ProjectTaskDepartmentEstimationToUserPosition{
+                            new ProjectTaskUserPositionEstimation{
+                                Id = Guid.NewGuid(),
                                 Hours = 80 + rand.Next(0, 120),
                                 UserPosition = junAnalytics
                             },
                         }
                     },
 
-                    new ProjectTaskDepartmentEstimation
+                    new ProjectTaskEstimation
                     {
+                        Id = Guid.NewGuid(),
                         Department = itDep,
-                        Estimations = new List<ProjectTaskDepartmentEstimationToUserPosition>
+                        Estimations = new List<ProjectTaskUserPositionEstimation>
                         {
-                            new ProjectTaskDepartmentEstimationToUserPosition{
+                            new ProjectTaskUserPositionEstimation{
+                                Id = Guid.NewGuid(),
                                 Hours = 360 + rand.Next(0, 120),
                                 UserPosition = seniorDev
                             },
-                            new ProjectTaskDepartmentEstimationToUserPosition{
+                            new ProjectTaskUserPositionEstimation{
+                                Id = Guid.NewGuid(),
                                 Hours = 200 + rand.Next(0, 120),
                                 UserPosition = dev
                             },
-                            new ProjectTaskDepartmentEstimationToUserPosition{
+                            new ProjectTaskUserPositionEstimation{
+                                Id = Guid.NewGuid(),
                                 Hours = 40 + rand.Next(0, 120),
                                 UserPosition = junDev
                             },
                         }
                     },
 
-                    new ProjectTaskDepartmentEstimation
+                    new ProjectTaskEstimation
                     {
+                        Id = Guid.NewGuid(),
                         Department = qaDep,
-                        Estimations = new List<ProjectTaskDepartmentEstimationToUserPosition>
+                        Estimations = new List<ProjectTaskUserPositionEstimation>
                         {
-                            new ProjectTaskDepartmentEstimationToUserPosition{
+                            new ProjectTaskUserPositionEstimation{
+                                Id = Guid.NewGuid(),
                                 Hours = 360 + rand.Next(0, 120),
                                 UserPosition = seniorQa
                             },
-                            new ProjectTaskDepartmentEstimationToUserPosition{
+                            new ProjectTaskUserPositionEstimation{
+                                Id = Guid.NewGuid(),
                                 Hours = 200 + rand.Next(0, 120),
                                 UserPosition = qa
                             },
-                            new ProjectTaskDepartmentEstimationToUserPosition{
+                            new ProjectTaskUserPositionEstimation{
+                                Id = Guid.NewGuid(),
                                 Hours = 40 + rand.Next(0, 120),
                                 UserPosition = junQa
                             },
                         }
                     },
 
-                    new ProjectTaskDepartmentEstimation
+                    new ProjectTaskEstimation
                     {
+                        Id = Guid.NewGuid(),
                         Department = devOpsDep,
-                        Estimations = new List<ProjectTaskDepartmentEstimationToUserPosition>
+                        Estimations = new List<ProjectTaskUserPositionEstimation>
                         {
-                            new ProjectTaskDepartmentEstimationToUserPosition{
+                            new ProjectTaskUserPositionEstimation{
+                                Id = Guid.NewGuid(),
                                 Hours = 360 + rand.Next(0, 120),
                                 UserPosition = seniorDevOps
                             },
-                            new ProjectTaskDepartmentEstimationToUserPosition{
+                            new ProjectTaskUserPositionEstimation{
+                                Id = Guid.NewGuid(),
                                 Hours = 200 + rand.Next(0, 120),
                                 UserPosition = devOps
                             },
-                            new ProjectTaskDepartmentEstimationToUserPosition{
+                            new ProjectTaskUserPositionEstimation{
+                                Id = Guid.NewGuid(),
                                 Hours = 40 + rand.Next(0, 120),
                                 UserPosition = junDevOps
                             },
@@ -326,35 +342,39 @@ namespace Taskly.DAL
 
                 project.Tasks.Add(new ProjectTask
                 {
+                    Id = Guid.NewGuid(),
                     Description = "Analyze requirements",
                     Start = task1Start,
                     End = task1Start.AddDays(rand.Next(60, 120)),
-                    DepartmentEstimations = getEstimations()
+                    ProjectTaskEstimations = getEstimations()
                 });
 
                 project.Tasks.Add(new ProjectTask
                 {
+                    Id = Guid.NewGuid(),
                     Description = "Prepare technical statements",
                     Start = task2Start,
                     End = task2Start.AddDays(rand.Next(60, 120)),
-                    DepartmentEstimations = getEstimations()
+                    ProjectTaskEstimations = getEstimations()
 
                 });
 
                 project.Tasks.Add(new ProjectTask
                 {
+                    Id = Guid.NewGuid(),
                     Description = "Develop software",
                     Start = task3Start,
                     End = task3Start.AddDays(rand.Next(60, 120)),
-                    DepartmentEstimations = getEstimations()
+                    ProjectTaskEstimations = getEstimations()
                 });
 
                 project.Tasks.Add(new ProjectTask
                 {
+                    Id = Guid.NewGuid(),
                     Description = "Delivery and support",
                     Start = task4Start,
                     End = task4Start.AddDays(rand.Next(60, 120)),
-                    DepartmentEstimations = getEstimations()
+                    ProjectTaskEstimations = getEstimations()
                 });
 
                 project.End = project.Tasks.Max(i => i.End).AddDays(20);

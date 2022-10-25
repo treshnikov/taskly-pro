@@ -21,7 +21,8 @@ public static class DependencyInjection
             .AddGraphQLServer()
             .AddAuthorization()
             .RegisterDbContext<TasklyDbContext>(DbContextKind.Synchronized)
-            .AddQueryType<GraphQLQuery>();
+            .AddQueryType<GraphQLQuery>()
+            .AddFiltering();
 
         return services;
     }

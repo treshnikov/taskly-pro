@@ -25,9 +25,9 @@ namespace Taskly.Application.Projects
                     .Include(p => p.ChiefEngineer)
                     .Include(p => p.Company)
                     .Include(p => p.Tasks)
-                        .ThenInclude(p => p.DepartmentEstimations).ThenInclude(i => i.Estimations).ThenInclude(i => i.UserPosition)
+                        .ThenInclude(p => p.ProjectTaskEstimations).ThenInclude(i => i.Estimations).ThenInclude(i => i.UserPosition)
                     .Include(p => p.Tasks)
-                        .ThenInclude(p => p.DepartmentEstimations).ThenInclude(p => p.Department)
+                        .ThenInclude(p => p.ProjectTaskEstimations).ThenInclude(p => p.Department)
                 .FirstAsync(i => i.Id == request.ProjectId, cancellationToken: cancellationToken);
 
             var deps = await _dbContext.Departments.AsNoTracking().Include(u => u.UserDepartments).ThenInclude(u => u.UserPosition).ToListAsync(cancellationToken);

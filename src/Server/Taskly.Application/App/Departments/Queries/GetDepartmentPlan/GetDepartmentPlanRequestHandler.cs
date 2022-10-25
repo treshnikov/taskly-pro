@@ -35,14 +35,14 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentPlan
                 // get project tasks that have any estimation for the given department
                 var tasks = await _dbContext.ProjectTasks
                     .Include(i => i.Project)
-                    .Include(i => i.DepartmentEstimations).ThenInclude(i => i.Department)
-                    .Include(i => i.DepartmentEstimations).ThenInclude(i => i.Estimations)
+                    .Include(i => i.ProjectTaskEstimations).ThenInclude(i => i.Department)
+                    .Include(i => i.ProjectTaskEstimations).ThenInclude(i => i.Estimations)
                     //.Include(i => i.DepartmentEstimations).ThenInclude(i => i.ProjectTask).ThenInclude(i => i.Project)
                     .AsNoTracking()
                     .Where(
                         t =>
                             request.Start <= t.End && t.Start <= request.End &&
-                            t.DepartmentEstimations.Any(de => de.Department.Id == request.DepartmentId && de.Estimations.Sum(des => des.Hours) > 0)
+                            t.ProjectTaskEstimations.Any(de => de.Department.Id == request.DepartmentId && de.Estimations.Sum(des => des.Hours) > 0)
                     )
                     .ToListAsync(cancellationToken);
 

@@ -15,10 +15,10 @@ namespace Taskly.Application.Users
         {
             try
             {
-                var sharepointTasksMerger = new SharepointProjectTasksMerger(_dbContext);
-                await sharepointTasksMerger.UpdateProjectTasks(request.ProjectTasksFileName, cancellationToken);
+                var sharepointTasksMerger = new SharepointProjectPlansMerger(_dbContext);
+                await sharepointTasksMerger.MergeProjectPlans(request.ProjectTasksFileName, cancellationToken);
 
-                var sharepointPlanMerger = new SharepointProjectPlanMerger(_dbContext);
+                var sharepointPlanMerger = new SharepointDepartmentPlanMerger(_dbContext);
                 await sharepointPlanMerger.UpdateProjectPlan("import/ОП ДС.XLSX", 244, cancellationToken);
                 await sharepointPlanMerger.UpdateProjectPlan("import/ОП_АС.xlsx", 245, cancellationToken);
                 await sharepointPlanMerger.UpdateProjectPlan("import/АСУТПвН.xlsx", 243, cancellationToken);

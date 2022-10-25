@@ -7,95 +7,65 @@ using Taskly.Domain;
 
 namespace Taskly.Application.Users
 {
-    public class SharepointProjectTasksMerger
+    public class SharepointProjectPlansMerger
     {
         private const bool _ignoreHolidays = true;
 
-        public SharepointProjectTasksMerger(ITasklyDbContext dbContext)
+        public SharepointProjectPlansMerger(ITasklyDbContext dbContext)
         {
             _dbContext = dbContext;
         }
 
-        public async Task UpdateProjectTasks(string fileName, CancellationToken cancellationToken)
+        public async Task MergeProjectPlans(string fileName, CancellationToken cancellationToken)
         {
+            // get tasks
             var path = Directory.GetParent(typeof(ImportDataFromIntranetRequestHandler).Assembly.Location)!.FullName;
             var projectTasksFileName = Path.Combine(path, fileName);
-
-            var tasks = ParseTasks(projectTasksFileName);
-            var rand = new Random();
+            var tasksFromSharepoint = ParseTasks(projectTasksFileName);
 
             using var transaction = _dbContext.Database.BeginTransaction();
 
-            var dbProjects = _dbContext.Projects
-                .Include(p => p.Tasks)
-                .ToList();
-            var dbPositions = await _dbContext.UserePositions.ToListAsync(cancellationToken);
-            var dbDeps = await _dbContext.Departments.ToListAsync(cancellationToken);
+            await AddNewProjectsAndTasks(tasksFromSharepoint, cancellationToken);
+            await ClearProjectTaskEstimationsAsync(cancellationToken);
+            await ImportProjectTaskEstimationsAsync(tasksFromSharepoint, cancellationToken);
 
-            foreach (var p in dbProjects)
+            transaction.Commit();
+        }
+
+        private async Task ClearProjectTaskEstimationsAsync(CancellationToken cancellationToken)
+        {
+            foreach (var pte in _dbContext.ProjectTaskEstimations)
             {
-                p.Tasks.Clear();
+                _dbContext.ProjectTaskEstimations.Remove(pte);
             }
 
             await _dbContext.SaveChangesAsync(cancellationToken);
+        }
 
-            foreach (var t in tasks)
+        private async Task ImportProjectTaskEstimationsAsync(SharepointProjectTaskInfoXlsx[] tasksFromSharepoint, CancellationToken cancellationToken)
+        {
+            var dbProjects = await _dbContext.Projects
+                .Include(p => p.Tasks)
+                    .ThenInclude(i => i.ProjectTaskEstimations)
+                    .ThenInclude(i => i.Estimations)
+                    .ThenInclude(i => i.UserPosition)
+                .ToListAsync(cancellationToken);
+            var dbPositions = await _dbContext.UserePositions.ToListAsync(cancellationToken);
+            var dbDeps = await _dbContext.Departments.ToListAsync(cancellationToken);
+
+            foreach (var sharepointTask in tasksFromSharepoint)
             {
-                Project? dbProject = null;
-                if (!t.ProjectId.HasValue)
-                {
-                    dbProject = dbProjects.FirstOrDefault(i => i.Name == t.ProjectName);
-                    if (dbProject == null)
-                    {
-                        dbProject = new Project
-                        {
-                            Id = rand.Next(10_000, 100_000),
-                            Name = t.ProjectName!,
-                            ShortName = t.ProjectName,
-                            IsOpened = true,
-                            Type = ProjectType.Internal,
-                            Start = new DateTime(2000, 01, 01),
-                            End = new DateTime(2050, 01, 01),
-                            Contract = t.ProjectName,
-                            Tasks = new List<ProjectTask>()
-                        };
-                        _dbContext.Projects.Add(dbProject);
-                        dbProjects.Add(dbProject);
-                        await _dbContext.SaveChangesAsync(cancellationToken);
-                    }
-                }
-                else
-                {
-                    dbProject = dbProjects.FirstOrDefault(i => i.Id == t.ProjectId);
-                }
+                var dbProject = sharepointTask.ProjectId.HasValue
+                    ? dbProjects.First(i => i.Id == sharepointTask.ProjectId.Value)
+                    : dbProjects.First(i => i.ShortName == sharepointTask.ProjectName);
 
-                if (dbProject == null)
-                {
-                    Log.Logger.Warning($"Cannot import tasks for projectId={t.ProjectId} {t.ProjectName}");
-                    continue;
-                }
-
-                dbProject.Type = t.ProjectType == ProjectType.External && !dbProject.ShortName!.Contains("Внутр.")
-                    ? ProjectType.External
-                    : ProjectType.Internal;
-
-                // task
-                var newTask = new ProjectTask
-                {
-                    Id = Guid.NewGuid(),
-                    ProjectId = dbProject.Id,
-                    Description = t.Description,
-                    Comment = t.Comment,
-                    Start = t.Start,
-                    End = t.End,
-                    DepartmentEstimations = new List<ProjectTaskDepartmentEstimation>(),
-                };
+                var dbTask = dbProject.Tasks.First(t => t.Description == sharepointTask.Description);
 
                 // estimations by departments
                 var idx = 0;
                 var positionIdx = 1;
                 var depCode = 0;
-                Domain.Department dbDep = null;
+                Department? dbDep = null;
                 while (idx < DepartmentUserMap.Length)
                 {
                     if (int.TryParse(DepartmentUserMap[idx], out depCode))
@@ -110,41 +80,41 @@ namespace Taskly.Application.Users
                     var dbPosition = dbPositions.FirstOrDefault(p => p.Name == positionName);
                     if (dbPosition == null)
                     {
-                        //Console.WriteLine($"{positionIdx}       >> Cannot find user position with the name = {DepartmentUserMap[idx]}");
+                        //Log.Logger.Error($"{positionIdx}       >> Cannot find user position with the name = {DepartmentUserMap[idx]}");
                     }
                     else
                     {
                         //($"{positionIdx}       >> " + dbPosition.Name);
-                        var depEst = newTask.DepartmentEstimations.FirstOrDefault(i => i.Department.Id == dbDep.Id);
-                        if (depEst == null)
+                        var projTaskEst = dbTask.ProjectTaskEstimations.FirstOrDefault(i => i.Department.Id == dbDep!.Id);
+                        if (projTaskEst == null)
                         {
-                            depEst = new ProjectTaskDepartmentEstimation
+                            projTaskEst = new ProjectTaskEstimation
                             {
                                 Id = Guid.NewGuid(),
-                                Estimations = new List<ProjectTaskDepartmentEstimationToUserPosition>(),
-                                ProjectTask = newTask,
-                                ProjectTaskId = newTask.Id,
-                                Department = dbDep
+                                Estimations = new List<ProjectTaskUserPositionEstimation>(),
+                                ProjectTask = dbTask,
+                                ProjectTaskId = dbTask.Id,
+                                Department = dbDep!
                             };
-                            newTask.DepartmentEstimations.Add(depEst);
+                            dbTask.ProjectTaskEstimations.Add(projTaskEst);
+                            //_dbContext.ProjectTaskEstimations.Add(projTaskEst);
+                            //_dbContext.ProjectTasks.Update(dbTask);
                         }
 
-                        var estAsStr = t.Estimations[positionIdx - 1].Replace(",", ".").Split('.')[0];
+                        var estAsStr = sharepointTask.Estimations[positionIdx - 1].Replace(",", ".").Split('.')[0];
                         var ci = (CultureInfo)CultureInfo.CurrentCulture.Clone();
-                        if (float.TryParse(estAsStr, NumberStyles.Any, ci, out float hours))
+                        if (float.TryParse(estAsStr, NumberStyles.Any, ci, out float hours) && hours > 0)
                         {
-                            if (hours > 0)
+                            var userEst = new ProjectTaskUserPositionEstimation
                             {
-                                depEst.Estimations.Add(new ProjectTaskDepartmentEstimationToUserPosition
-                                {
-                                    Id = Guid.NewGuid(),
-                                    //todo float
-                                    Hours = (int)hours,
-                                    ProjectTaskDepartmentEstimation = depEst,
-                                    ProjectTaskDepartmentEstimationId = depEst.Id,
-                                    UserPosition = dbPosition
-                                });
-                            }
+                                Id = Guid.NewGuid(),
+                                Hours = (int)hours,
+                                ProjectTaskDepartmentEstimation = projTaskEst,
+                                ProjectTaskDepartmentEstimationId = projTaskEst.Id,
+                                UserPosition = dbPosition
+                            };
+
+                            projTaskEst.Estimations.Add(userEst);
                         }
 
                     }
@@ -153,15 +123,91 @@ namespace Taskly.Application.Users
                 }
 
                 // remove records with zero estimation
-                newTask.DepartmentEstimations = newTask.DepartmentEstimations.Where(e => e.Estimations.Count > 0).ToList();
-                _dbContext.ProjectTasks.Add(newTask);
-
-                dbProject.Tasks.Add(newTask);
-                _dbContext.Projects.Update(dbProject);
+                dbTask.ProjectTaskEstimations = dbTask.ProjectTaskEstimations.Where(e => e.Estimations.Count > 0).ToList();
+                _dbContext.ProjectTaskEstimations.RemoveRange(dbTask.ProjectTaskEstimations.Where(e => e.Estimations.Count <= 0));
             }
-
             await _dbContext.SaveChangesAsync(cancellationToken);
-            transaction.Commit();
+        }
+
+        private async Task AddNewProjectsAndTasks(SharepointProjectTaskInfoXlsx[] tasksFromSharepoint, CancellationToken cancellationToken)
+        {
+            var dbProjects = await _dbContext.Projects
+                .Include(p => p.Tasks)
+                    .ThenInclude(i => i.ProjectTaskEstimations)
+                    .ThenInclude(i => i.Estimations)
+                    .ThenInclude(i => i.UserPosition)
+                .ToListAsync(cancellationToken);
+
+            foreach (var sharepointTask in tasksFromSharepoint)
+            {
+                Project? dbProject = null;
+
+                // Project with custom name such as Отпуск, АДМ, etc.
+                if (!sharepointTask.ProjectId.HasValue)
+                {
+                    dbProject = dbProjects.FirstOrDefault(i => i.ShortName == sharepointTask.ProjectName);
+                    if (dbProject == null)
+                    {
+                        dbProject = new Project
+                        {
+                            Id = Random.Shared.Next(10_000, 100_000),
+                            Name = sharepointTask.ProjectName!,
+                            ShortName = sharepointTask.ProjectName,
+                            IsOpened = true,
+                            Type = ProjectType.Internal,
+                            Start = new DateTime(2000, 01, 01),
+                            End = new DateTime(2050, 01, 01),
+                            Contract = sharepointTask.ProjectName,
+                            Tasks = new List<ProjectTask>()
+                        };
+
+                        _dbContext.Projects.Add(dbProject);
+                        dbProjects.Add(dbProject);
+                        Log.Logger.Warning($"New project was added {sharepointTask.ProjectId} {sharepointTask.ProjectName}");
+                        await _dbContext.SaveChangesAsync(cancellationToken);
+                    }
+                }
+                // projects with Id
+                else
+                {
+                    dbProject = dbProjects.FirstOrDefault(i => i.Id == sharepointTask.ProjectId);
+                }
+
+                if (dbProject == null)
+                {
+                    Log.Logger.Error($"Cannot import tasks for projectId={sharepointTask.ProjectId} {sharepointTask.ProjectName}");
+                    continue;
+                }
+
+                dbProject.Type = sharepointTask.ProjectType == ProjectType.External && !dbProject.ShortName!.Contains("Внутр.")
+                    ? ProjectType.External
+                    : ProjectType.Internal;
+
+                var dbTask = dbProject.Tasks.FirstOrDefault(t => t.ProjectId == dbProject.Id && t.Description == sharepointTask.Description);
+                if (dbTask == null)
+                {
+                    dbTask = new ProjectTask
+                    {
+                        Id = Guid.NewGuid(),
+                        ProjectId = dbProject.Id,
+                        Description = sharepointTask.Description,
+                        Comment = sharepointTask.Comment,
+                        Start = sharepointTask.Start,
+                        End = sharepointTask.End,
+                        ProjectTaskEstimations = new List<ProjectTaskEstimation>(),
+                        Project = dbProject
+                    };
+                    dbProject.Tasks.Add(dbTask);
+                    Log.Logger.Information($"New task added {dbProject.ShortName} : {dbTask.Description}");
+                }
+                else
+                {
+                    dbTask.Comment = sharepointTask.Comment;
+                    dbTask.Start = sharepointTask.Start;
+                    dbTask.End = sharepointTask.End;
+                }
+            }
+            await _dbContext.SaveChangesAsync(cancellationToken);
         }
 
         private static SharepointProjectTaskInfoXlsx[] ParseTasks(string projectTasksFileName)
@@ -181,6 +227,13 @@ namespace Taskly.Application.Users
                 int? projectId = null;
                 string? projectName = string.Empty;
                 var projectIdAsStr = worksheet.Cell(rowIdx, 3).GetValue<string>();
+
+                if (string.IsNullOrWhiteSpace(projectIdAsStr))
+                {
+                    Log.Logger.Information($"Parsing of file {projectTasksFileName} stoped at row = {rowIdx} because the cell with id of the project is empty.");
+                    break;
+                }
+
                 if (_ignoreHolidays && string.Equals("отпуск", projectIdAsStr.ToLower().Trim()))
                 {
                     continue;
@@ -206,7 +259,7 @@ namespace Taskly.Application.Users
 
                 if (string.IsNullOrWhiteSpace(task))
                 {
-                    break;
+                    task = "---";
                 }
                 var projectTypeAsStr = worksheet.Cell(rowIdx, 2).GetValue<string>();
                 var projectType = GetProjectType(projectTypeAsStr);
@@ -216,10 +269,10 @@ namespace Taskly.Application.Users
                     ? DateTime.Today.AddDays(-1)
                     : DateTime.Parse(startStr);
                 var endStr = worksheet.Cell(rowIdx, 13).GetValue<string>();
-                
+
                 // fix common fill in mistakes
                 endStr = endStr.Replace("31.11", "31.12");
-                
+
                 var end = string.IsNullOrWhiteSpace(endStr)
                     ? DateTime.Today
                     : DateTime.Parse(endStr);

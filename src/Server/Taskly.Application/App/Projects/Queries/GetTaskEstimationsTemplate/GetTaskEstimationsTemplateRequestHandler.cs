@@ -22,7 +22,7 @@ namespace Taskly.Application.Projects.Queries
             {
                 Tasks = new List<ProjectTask>{
                     new ProjectTask{
-                        DepartmentEstimations = new List<ProjectTaskDepartmentEstimation>()
+                        ProjectTaskEstimations = new List<ProjectTaskEstimation>()
                     }
                 }
             };

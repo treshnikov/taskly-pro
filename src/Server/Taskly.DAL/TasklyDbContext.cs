@@ -16,7 +16,8 @@ namespace Taskly.DAL
         public DbSet<Project> Projects { get; set; }
         public DbSet<ProjectTask> ProjectTasks { get; set; }
         public DbSet<UserPosition> UserePositions { get; set; }
-        public DbSet<ProjectTaskDepartmentEstimationToUserPosition> ProjectTaskDepartmentEstimationToUserPosition { get; set; }
+        public DbSet<ProjectTaskUserPositionEstimation> ProjectTaskUserPositionEstimations { get; set; }
+        public DbSet<ProjectTaskEstimation> ProjectTaskEstimations { get; set; }
         public DbSet<CalendarDay> Calendar { get; set; }
         public DbSet<VacationDay> Vacations { get; set; }
         public TasklyDbContext(DbContextOptions<TasklyDbContext> options) : base(options)
@@ -26,18 +27,23 @@ namespace Taskly.DAL
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.ApplyConfiguration(new NoteConfiguration());
+
             builder.ApplyConfiguration(new UserConfiguration());
+            builder.ApplyConfiguration(new UserPositionConfiguration());
             builder.ApplyConfiguration(new RoleConfiguration());
+
             builder.ApplyConfiguration(new DepartmentConfiguration());
             builder.ApplyConfiguration(new UserDepartmentConfiguration());
+            
             builder.ApplyConfiguration(new ProjectConfiguration());
-            builder.ApplyConfiguration(new CustomerConfiguration());
             builder.ApplyConfiguration(new ProjectTaskConfiguration());
-            builder.ApplyConfiguration(new ProjectTaskDepartmentEstimationConfiguration());
-            builder.ApplyConfiguration(new UserPositionConfiguration());
-            builder.ApplyConfiguration(new ProjectTaskDepartmentEstimationToUserPositionConfiguration());
+            builder.ApplyConfiguration(new ProjectTaskEstimationConfiguration());
+            builder.ApplyConfiguration(new ProjectTaskUserPositionEstimationConfiguration());
+            builder.ApplyConfiguration(new CustomerConfiguration());
+                        
             builder.ApplyConfiguration(new CalendarDayConfiguration());
             builder.ApplyConfiguration(new VacationDayConfiguration());
+            
             base.OnModelCreating(builder);
         }
 

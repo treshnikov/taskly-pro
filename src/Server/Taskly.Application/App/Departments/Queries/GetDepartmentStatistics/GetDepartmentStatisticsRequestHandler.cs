@@ -34,12 +34,12 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
 
             var tasks = await _dbContext.ProjectTasks
                 .Include(i => i.Project)
-                .Include(i => i.DepartmentEstimations).ThenInclude(i => i.Estimations).ThenInclude(i => i.UserPosition)
-                .Include(i => i.DepartmentEstimations).ThenInclude(i => i.Department)
+                .Include(i => i.ProjectTaskEstimations).ThenInclude(i => i.Estimations).ThenInclude(i => i.UserPosition)
+                .Include(i => i.ProjectTaskEstimations).ThenInclude(i => i.Department)
                 .AsNoTracking()
                 .Where(t =>
                         request.Start <= t.End && t.Start <= request.End &&
-                        t.DepartmentEstimations.Any(de => de.Department.Id == request.DepartmentId && de.Estimations.Sum(des => des.Hours) > 0)
+                        t.ProjectTaskEstimations.Any(de => de.Department.Id == request.DepartmentId && de.Estimations.Sum(des => des.Hours) > 0)
                 )
                 .OrderBy(i => i.Id)
                 .ToListAsync(cancellationToken);
@@ -134,7 +134,7 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
                     double projHours = 0;
                     foreach (var task in taskGroup)
                     {
-                        foreach (var de in task.DepartmentEstimations.Where(d => d.Department.Id == dep.Id))
+                        foreach (var de in task.ProjectTaskEstimations.Where(d => d.Department.Id == dep.Id))
                         {
                             foreach (var e in de.Estimations)
                             {
@@ -231,7 +231,7 @@ namespace Taskly.Application.Departments.Queries.GetDepartmentStatistics
 
                 foreach (var task in taskGroup)
                 {
-                    foreach (var de in task.DepartmentEstimations.Where(d => d.Department.Id == dep.Id))
+                    foreach (var de in task.ProjectTaskEstimations.Where(d => d.Department.Id == dep.Id))
                     {
                         foreach (var e in de.Estimations)
                         {

@@ -7,6 +7,7 @@ namespace Taskly.DAL;
 public class GraphQLQuery
 {
     [Authorize]
+    [UseFiltering]
     public IQueryable<User> GetUsers(TasklyDbContext dbContext)
     {
         return dbContext.Users;
@@ -19,9 +20,9 @@ public class GraphQLQuery
     }
     
     [Authorize]
-    public IQueryable<Project> GetProjects(ClaimsPrincipal claimsPrincipal, TasklyDbContext dbContext)
+    [UseFiltering]
+    public IQueryable<Project> GetProjects(TasklyDbContext dbContext)
     {
-        var userId = claimsPrincipal.FindFirstValue(ClaimTypes.NameIdentifier);
         return dbContext.Projects;
     }
 }

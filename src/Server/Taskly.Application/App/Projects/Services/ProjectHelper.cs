@@ -10,14 +10,14 @@ namespace Taskly.Application.Projects
 
             foreach (var t in project.Tasks)
             {
-                var depsToAdd = defaultDepartments.Where(i => !t.DepartmentEstimations.Any(j => j.Department.Code == i.Code));
+                var depsToAdd = defaultDepartments.Where(i => !t.ProjectTaskEstimations.Any(j => j.Department.Code == i.Code));
                 foreach (var u in depsToAdd)
                 {
-                    t.DepartmentEstimations.Add(new ProjectTaskDepartmentEstimation
+                    t.ProjectTaskEstimations.Add(new ProjectTaskEstimation
                     {
                         // todo - this record does not exist in the DB, only in view model
                         Id = Guid.NewGuid(),
-                        Estimations = new List<ProjectTaskDepartmentEstimationToUserPosition>(),
+                        Estimations = new List<ProjectTaskUserPositionEstimation>(),
                         Department = u,
                         ProjectTask = t,
                         ProjectTaskId = t.Id
@@ -32,14 +32,14 @@ namespace Taskly.Application.Projects
 
             foreach (var t in project.Tasks)
             {
-                foreach (var ue in t.DepartmentEstimations)
+                foreach (var ue in t.ProjectTaskEstimations)
                 {
                     // add zero-estimation records for missed user positions 
                     var zeroEstimationPositionsToAdd = depToUserPositions[ue.Department.Id]
                         .Where(dict => !ue.Estimations.Any(j => j.UserPosition.Id == dict.Id));
                     foreach (var i in zeroEstimationPositionsToAdd)
                     {
-                        ue.Estimations.Add(new ProjectTaskDepartmentEstimationToUserPosition()
+                        ue.Estimations.Add(new ProjectTaskUserPositionEstimation()
                         {
                             // todo - this record does not exist in the DB, only in view model 
                             Id = Guid.NewGuid(),
@@ -52,7 +52,7 @@ namespace Taskly.Application.Projects
                     ue.Estimations = ue.Estimations.OrderBy(i => i.UserPosition.Name).ToList();
                 }
 
-                t.DepartmentEstimations = t.DepartmentEstimations.OrderBy(i => i.Department.Name).ToList();
+                t.ProjectTaskEstimations = t.ProjectTaskEstimations.OrderBy(i => i.Department.Name).ToList();
             }
         }
 

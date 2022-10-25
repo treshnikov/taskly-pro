@@ -11,7 +11,7 @@ namespace Taskly.Application.Projects
 
         public EstimationVm[] Estimations { get; set; }
 
-        public static ProjectTaskDepartmentEstimationVm From(ProjectTaskDepartmentEstimation arg)
+        public static ProjectTaskDepartmentEstimationVm From(ProjectTaskEstimation arg)
         {
             return new ProjectTaskDepartmentEstimationVm
             {
@@ -50,7 +50,7 @@ namespace Taskly.Application.Projects
                 Comment = arg.Comment,
                 Start = arg.Start,
                 End = arg.End,
-                DepartmentEstimations = arg.DepartmentEstimations.Select(i => ProjectTaskDepartmentEstimationVm.From(i)).ToArray()
+                DepartmentEstimations = arg.ProjectTaskEstimations.Select(i => ProjectTaskDepartmentEstimationVm.From(i)).ToArray()
             };
         }
     }

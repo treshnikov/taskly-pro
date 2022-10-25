@@ -7,7 +7,7 @@ namespace Taskly.Domain
         public DateTime End { get; set; }
         public string Description { get; set; }
         public string? Comment { get; set; }
-        public ICollection<ProjectTaskDepartmentEstimation> DepartmentEstimations { get; set; }
+        public ICollection<ProjectTaskEstimation> ProjectTaskEstimations { get; set; }
 
         // navigation
         public int ProjectId { get; set; }

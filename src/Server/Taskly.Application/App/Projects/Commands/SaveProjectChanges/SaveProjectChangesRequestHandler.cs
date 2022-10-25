@@ -36,22 +36,24 @@ namespace Taskly.Application.Projects.Commands.UpdateTasks
                     Comment = t.Comment,
                     Start = t.Start,
                     End = t.End,
-                    DepartmentEstimations = new List<ProjectTaskDepartmentEstimation>()
+                    ProjectTaskEstimations = new List<ProjectTaskEstimation>()
                 };
 
                 foreach (var est in t.DepartmentEstimations)
                 {
-                    var newEst = new ProjectTaskDepartmentEstimation
+                    var newEst = new ProjectTaskEstimation
                     {
+                        Id = Guid.NewGuid(),
                         Department = await _dbContext.Departments.FirstAsync(i => i.Id == est.DepartmentId, cancellationToken),
                         ProjectTaskId = newDbTask.Id,
-                        Estimations = new List<ProjectTaskDepartmentEstimationToUserPosition>()
+                        Estimations = new List<ProjectTaskUserPositionEstimation>()
                     };
 
                     foreach (var e in est.Estimations)
                     {
-                        var u = new ProjectTaskDepartmentEstimationToUserPosition
+                        var u = new ProjectTaskUserPositionEstimation
                         {
+                            Id = Guid.NewGuid(),
                             UserPosition = await _dbContext.UserePositions.FirstAsync(i => i.Id == e.UserPositionId, cancellationToken),
                             Hours = e.Hours,
                             ProjectTaskDepartmentEstimationId = newEst.Id
@@ -60,7 +62,7 @@ namespace Taskly.Application.Projects.Commands.UpdateTasks
                         newEst.Estimations.Add(u);
                     }
 
-                    newDbTask.DepartmentEstimations.Add(newEst);
+                    newDbTask.ProjectTaskEstimations.Add(newEst);
                 }
 
                 _dbContext.ProjectTasks.Add(newDbTask);

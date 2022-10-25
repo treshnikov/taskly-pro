@@ -5,16 +5,16 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Taskly.DAL.EntityTypeConfigurations
 {
-    public class ProjectTaskConfiguration : IEntityTypeConfiguration<ProjectTask>
+    public class ProjectTaskUserPositionEstimationConfiguration : IEntityTypeConfiguration<ProjectTaskUserPositionEstimation>
     {
-        public void Configure(EntityTypeBuilder<ProjectTask> builder)
+        public void Configure(EntityTypeBuilder<ProjectTaskUserPositionEstimation> builder)
         {
-            builder.ToTable("ProjectTasks");
+            builder.ToTable("ProjectTaskUserPositionEstimation");
             builder.HasKey(u => u.Id);
-
+            
             // check https://github.com/npgsql/efcore.pg/issues/971
             builder.Property(i => i.Id).IsRequired().ValueGeneratedNever();
-            builder.HasOne(u => u.Project).WithMany(u => u.Tasks).HasForeignKey(i => i.ProjectId).OnDelete(DeleteBehavior.Cascade);
+            builder.HasOne(u => u.UserPosition);
         }
     }
 
