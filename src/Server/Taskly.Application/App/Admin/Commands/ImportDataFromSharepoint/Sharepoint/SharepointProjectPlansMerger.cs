@@ -271,7 +271,11 @@ namespace Taskly.Application.Users
                 var endStr = worksheet.Cell(rowIdx, 13).GetValue<string>();
 
                 // fix common fill in mistakes
-                endStr = endStr.Replace("31.11", "31.12");
+                if (endStr.Contains("31.11"))
+                {
+                    Log.Logger.Warning($"An incorrect format of date {endStr} found at {projectTasksFileName} projectId: {projectIdAsStr} rowIdx: {rowIdx}");
+                    endStr = endStr.Replace("31.11", "31.12");
+                }
 
                 var end = string.IsNullOrWhiteSpace(endStr)
                     ? DateTime.Today

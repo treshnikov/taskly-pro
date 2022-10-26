@@ -219,14 +219,15 @@ namespace Taskly.Application.Users
                         Projects = new List<SharepointProjectPlan>()
                     };
 
-                    foreach (var rec in planStr.Split("\n"))
+                    planStr = planStr.Trim().Replace("\r", string.Empty).Replace("\n", string.Empty).Replace("№", string.Empty);
+                    foreach (var rec in planStr.Split("#"))
                     {
-                        if (string.IsNullOrWhiteSpace(rec) || !rec.Contains("="))
+                        if (string.IsNullOrWhiteSpace(rec) || !rec.Contains('='))
                         {
                             continue;
                         }
 
-                        var projCodeAsStr = rec.Split("=")[0].Replace("#", string.Empty).Replace("№", string.Empty);
+                        var projCodeAsStr = rec.Split("=")[0];
 
                         if (IgnoreHolidays && projCodeAsStr.ToLower().Contains("отпуск"))
                         {
