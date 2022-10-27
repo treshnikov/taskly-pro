@@ -1,9 +1,8 @@
 using MediatR;
 
-namespace Taskly.Application.Departments.Queries
+namespace Taskly.Application.Departments.Queries;
+
+public class GetDepartmentUsersRequest : IRequest<DepartmentUserVm>
 {
-    public class GetDepartmentUsersRequest : IRequest<DepartmentUserVm>
-    {
-        public bool IncludeUsers { get; set; } = false;
-    }
+	public bool IncludeUsers { get; set; } = false;
 }

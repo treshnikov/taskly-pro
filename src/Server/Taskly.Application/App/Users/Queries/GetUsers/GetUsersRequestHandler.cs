@@ -1,36 +1,29 @@
-﻿using AutoMapper;
-using AutoMapper.QueryableExtensions;
-using MediatR;
+﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Taskly.Application.Interfaces;
-using Taskly.Domain;
 
-namespace Taskly.Application.Users
+namespace Taskly.Application.Users;
+
+public class GetUsersRequestHandler : IRequestHandler<GetUsersRequest, IEnumerable<UserVm>>
 {
-    public class GetUsersRequestHandler : IRequestHandler<GetUsersRequest, IEnumerable<UserVm>>
-    {
-        private readonly ITasklyDbContext _dbContext;
-        private readonly IMapper _mapper;
+	private readonly ITasklyDbContext _dbContext;
+	public GetUsersRequestHandler(ITasklyDbContext dbContext)
+	{
+		_dbContext = dbContext;
+	}
+	public async Task<IEnumerable<UserVm>> Handle(GetUsersRequest request, CancellationToken cancellationToken)
+	{
+		var users = await _dbContext
+			.Users
+			.Include(u => u.UserDepartments).ThenInclude(u => u.Department)
+			.Include(u => u.UserDepartments).ThenInclude(u => u.UserPosition)
+			.Where(u => u.QuitDate == null)
+			.AsNoTracking()
+			.OrderBy(u => u.Name)
+			.Select(u => UserVm.FromUser(u))
+			.ToListAsync(cancellationToken: cancellationToken);
 
-        public GetUsersRequestHandler(ITasklyDbContext dbContext, IMapper mapper)
-        {
-            _dbContext = dbContext;
-            _mapper = mapper;
-        }
-        public async Task<IEnumerable<UserVm>> Handle(GetUsersRequest request, CancellationToken cancellationToken)
-        {
-            var users = await _dbContext
-                .Users
-                .Include(u => u.UserDepartments).ThenInclude(u => u.Department)
-                .Include(u => u.UserDepartments).ThenInclude(u => u.UserPosition)
-                .Where(u => u.QuitDate == null)
-                .AsNoTracking()
-                .OrderBy(u => u.Name)
-                .Select(u => UserVm.FromUser(u))
-                .ToListAsync(cancellationToken: cancellationToken);
-            
-            return users;
-        }
+		return users;
+	}
 
-    }
 }

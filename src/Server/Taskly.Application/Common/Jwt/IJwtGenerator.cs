@@ -1,9 +1,8 @@
 ﻿using Taskly.Domain;
 
-namespace Taskly.Application.Jwt
+namespace Taskly.Application.Jwt;
+
+public interface IJwtGenerator
 {
-    public interface IJwtGenerator
-    {
-        string CreateToken(User user);
-    }
+	string CreateToken(User user);
 }

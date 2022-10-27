@@ -8,11 +8,10 @@ namespace Taskly.WebApi.Controllers;
 [Route("api/[controller]/[action]")]
 public class BaseController : ControllerBase
 {
-    private IMediator _mediator;
-    protected IMediator Mediator => _mediator ??= HttpContext.RequestServices.GetService<IMediator>();
+	protected IMediator Mediator => HttpContext.RequestServices.GetService<IMediator>() ?? throw new ArgumentException(nameof(Mediator));
 
-    internal Guid UserId => !User.Identity.IsAuthenticated
-        ? Guid.Empty
-        : Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+	internal Guid UserId => !(User.Identity?.IsAuthenticated ?? false)
+		? Guid.Empty
+		: Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? throw new Exception($"Cannot find a {nameof(ClaimTypes.NameIdentifier)} in the user claims."));
 
 }

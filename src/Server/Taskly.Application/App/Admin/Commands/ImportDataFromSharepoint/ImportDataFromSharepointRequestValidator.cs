@@ -1,12 +1,11 @@
 using FluentValidation;
 
-namespace Taskly.Application.Users
+namespace Taskly.Application.Users;
+
+public class ImportDataFromSharepointRequestValidator : AbstractValidator<ImportDataFromSharepointRequest>
 {
-    public class ImportDataFromSharepointRequestValidator : AbstractValidator<ImportDataFromSharepointRequest>
-    {
-        public ImportDataFromSharepointRequestValidator()
-        {
-            RuleFor(i => i.ProjectTasksFileName).NotEmpty();
-        }
-    }
+	public ImportDataFromSharepointRequestValidator()
+	{
+		RuleFor(i => i.ProjectTasksFileName).NotEmpty();
+	}
 }

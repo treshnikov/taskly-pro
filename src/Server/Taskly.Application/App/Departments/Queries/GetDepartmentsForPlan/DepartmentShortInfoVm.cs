@@ -1,9 +1,8 @@
-namespace Taskly.Application.Departments.Queries.GetDepartmentsForPlan
+namespace Taskly.Application.Departments.Queries.GetDepartmentsForPlan;
+
+public class DepartmentShortInfoVm
 {
-    public class DepartmentShortInfoVm
-    {
-        public Guid Id { get; set; }
-        public string Name { get; set; }
-        public string ShortName { get; internal set; }
-    }
+	public Guid Id { get; set; }
+	public string Name { get; set; } = string.Empty;
+	public string ShortName { get; internal set; } = string.Empty;
 }

@@ -4,6 +4,6 @@ namespace Taskly.WebApi.Models;
 
 public class UpdateDepartmentPlanVm
 {
-    public Guid DepartmentId { get; set; }
-    public DepartmentPlanRecordVm[] Data { get; set; }
+	public Guid DepartmentId { get; set; }
+	public DepartmentPlanRecordVm[] Data { get; set; } = Array.Empty<DepartmentPlanRecordVm>();
 }

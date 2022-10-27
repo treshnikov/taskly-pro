@@ -1,8 +1,7 @@
-namespace Taskly.Domain
+namespace Taskly.Domain;
+
+public enum ProjectType
 {
-    public enum ProjectType
-    {
-        Internal = 0,
-        External = 1
-    }
+	Internal = 0,
+	External = 1
 }

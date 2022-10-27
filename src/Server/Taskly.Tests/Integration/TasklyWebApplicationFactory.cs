@@ -9,34 +9,32 @@ namespace Taskly.IntegrationTests;
 
 public class TasklyWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup> where TStartup : class
 {
-    protected override void ConfigureWebHost(IWebHostBuilder builder)
-    {
-        builder.ConfigureServices(services =>
-        {
-            var descriptor = services.SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<TasklyDbContext>));
-            services.Remove(descriptor);
-            services.AddDbContext<TasklyDbContext>(options =>
-            {
-                options.UseInMemoryDatabase("InMemoryDbForTesting");
-            });
+	protected override void ConfigureWebHost(IWebHostBuilder builder)
+	{
+		builder.ConfigureServices(services =>
+		{
+			var descriptor = services.Single(d => d.ServiceType == typeof(DbContextOptions<TasklyDbContext>));
+			services.Remove(descriptor);
+			services.AddDbContext<TasklyDbContext>(options =>
+			{
+				options.UseInMemoryDatabase("InMemoryDbForTesting");
+			});
 
-            var sp = services.BuildServiceProvider();
-            using (var scope = sp.CreateScope())
-            {
-                var serviceProvider = scope.ServiceProvider;
-                var context = serviceProvider.GetRequiredService<TasklyDbContext>();
-                var logger = serviceProvider.GetRequiredService<ILogger<TasklyWebApplicationFactory<TStartup>>>();
-                context.Database.EnsureCreated();
+			var sp = services.BuildServiceProvider();
+			using var scope = sp.CreateScope();
+			var serviceProvider = scope.ServiceProvider;
+			var context = serviceProvider.GetRequiredService<TasklyDbContext>();
+			var logger = serviceProvider.GetRequiredService<ILogger<TasklyWebApplicationFactory<TStartup>>>();
+			context.Database.EnsureCreated();
 
-                try
-                {
-                    DbInitializer.Initialize(context, true);
-                }
-                catch (Exception ex)
-                {
-                    logger.LogError(ex, "An error occurred seeding the database with test messages. Error: {Message}", ex.Message);
-                }
-            }
-        });
-    }
+			try
+			{
+				DbInitializer.Initialize(context, true);
+			}
+			catch (Exception ex)
+			{
+				logger.LogError(ex, "An error occurred seeding the database with test messages. Error: {Message}", ex.Message);
+			}
+		});
+	}
 }

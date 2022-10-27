@@ -1,8 +1,7 @@
-namespace Taskly.Application.Calendar
+namespace Taskly.Application.Calendar;
+
+public class WeekInfo
 {
-    public class WeekInfo
-    {
-        public DateTime Monday { get; set; }
-        public double HoursAvailableForPlanning { get; set; }
-    }
+	public DateTime Monday { get; set; }
+	public double HoursAvailableForPlanning { get; set; }
 }

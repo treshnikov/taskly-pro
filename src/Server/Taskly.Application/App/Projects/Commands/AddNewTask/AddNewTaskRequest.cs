@@ -1,9 +1,8 @@
 using MediatR;
 
-namespace Taskly.Application.Projects.Commands.AddNewTask
+namespace Taskly.Application.Projects.Commands.AddNewTask;
+
+public class AddNewTaskRequest : IRequest<ProjectTaskVm>
 {
-    public class AddNewTaskRequest : IRequest<ProjectTaskVm>
-    {
-        public int ProjectId { get; set; }
-    }
+	public int ProjectId { get; set; }
 }

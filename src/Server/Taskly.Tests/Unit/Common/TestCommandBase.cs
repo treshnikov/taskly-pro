@@ -8,40 +8,40 @@ namespace Taskly.Tests.Common;
 
 public class TestCommandBase : IDisposable
 {
-    protected readonly TasklyDbContext Context;
-    public static IMapper Mapper { get; set; }
+	protected readonly TasklyDbContext Context;
+	public static IMapper Mapper { get; set; }
 
-    static TestCommandBase()
-    {
-        var configurationProvider = new MapperConfiguration(conf =>
-        {
-            conf.AddProfile(new AssemblyMappingProfile(typeof(ITasklyDbContext).Assembly));
-        });
+	static TestCommandBase()
+	{
+		var configurationProvider = new MapperConfiguration(conf =>
+		{
+			conf.AddProfile(new AssemblyMappingProfile(typeof(ITasklyDbContext).Assembly));
+		});
 
-        Mapper = configurationProvider.CreateMapper();
-    }
+		Mapper = configurationProvider.CreateMapper();
+	}
 
-    public TestCommandBase()
-    {
-        Context = TasklyTestContext.CreateDbContext();
-    }
+	public TestCommandBase()
+	{
+		Context = TasklyTestContext.CreateDbContext();
+	}
 
-    protected virtual void Dispose(bool disposing)
-    {
-        if (disposing)
-        {
-            TasklyTestContext.DestroyTasklyDbContext(Context);
-        }
-    }
+	protected virtual void Dispose(bool disposing)
+	{
+		if (disposing)
+		{
+			TasklyTestContext.DestroyTasklyDbContext(Context);
+		}
+	}
 
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
+	public void Dispose()
+	{
+		Dispose(true);
+		GC.SuppressFinalize(this);
+	}
 
-    ~TestCommandBase()
-    {
-        Dispose(false);
-    }
+	~TestCommandBase()
+	{
+		Dispose(false);
+	}
 }

@@ -4,37 +4,34 @@ using Microsoft.Extensions.Configuration;
 using Taskly.Application.Interfaces;
 using Taskly.Domain;
 
-namespace Taskly.Application.Projects.Queries
+namespace Taskly.Application.Projects.Queries;
+
+public class GetDefaultTaskEstimationsRequestHandler : IRequestHandler<GetDefaultTaskEstimationsRequest, ProjectTaskDepartmentEstimationVm[]>
 {
-    public class GetDefaultTaskEstimationsRequestHandler : IRequestHandler<GetDefaultTaskEstimationsRequest, ProjectTaskDepartmentEstimationVm[]>
-    {
-        private readonly ITasklyDbContext _dbContext;
-        private int[] _defaultDepartmentCodes;
+	private readonly ITasklyDbContext _dbContext;
 
-        public GetDefaultTaskEstimationsRequestHandler(ITasklyDbContext dbContext, IConfiguration configuration)
-        {
-            _dbContext = dbContext;
-        }
+	public GetDefaultTaskEstimationsRequestHandler(ITasklyDbContext dbContext, IConfiguration configuration)
+	{
+		_dbContext = dbContext;
+	}
 
-        public async Task<ProjectTaskDepartmentEstimationVm[]> Handle(GetDefaultTaskEstimationsRequest request, CancellationToken cancellationToken)
-        {
-            var project = new Project
-            {
-                Tasks = new List<ProjectTask>{
-                    new ProjectTask{
-                        ProjectTaskEstimations = new List<ProjectTaskEstimation>()
-                    }
-                }
-            };
+	public async Task<ProjectTaskDepartmentEstimationVm[]> Handle(GetDefaultTaskEstimationsRequest request, CancellationToken cancellationToken)
+	{
+		var project = new Project
+		{
+			Tasks = new List<ProjectTask>{
+				new ProjectTask{
+					ProjectTaskEstimations = new List<ProjectTaskEstimation>()
+				}
+			}
+		};
 
-            var deps = await _dbContext.Departments.AsNoTracking().Include(u => u.UserDepartments).ThenInclude(u => u.UserPosition).ToListAsync(cancellationToken);
+		var deps = await _dbContext.Departments.AsNoTracking().Include(u => u.UserDepartments).ThenInclude(u => u.UserPosition).ToListAsync(cancellationToken);
 
-            ProjectHelper.AddDefaultDepartments(project, deps);
-            ProjectHelper.AddDefaultDepartmentPositionsToEstimationsVms(project, deps, cancellationToken);
+		ProjectHelper.AddDefaultDepartments(project, deps);
+		ProjectHelper.AddDefaultDepartmentPositionsToEstimationsVms(project, deps, cancellationToken);
 
-            var vm = ProjectTaskVm.From(project.Tasks.ElementAt(0));
-            return vm.DepartmentEstimations;
-        }
-    }
-
+		var vm = ProjectTaskVm.From(project.Tasks.ElementAt(0));
+		return vm.DepartmentEstimations;
+	}
 }

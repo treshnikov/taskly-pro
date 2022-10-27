@@ -1,9 +1,8 @@
 using MediatR;
 
-namespace Taskly.Application.Projects
+namespace Taskly.Application.Projects;
+
+public class GetProjectsDetailedInfoRequest : IRequest<ProjectDetailedInfoVm>
 {
-    public class GetProjectsDetailedInfoRequest : IRequest<ProjectDetailedInfoVm>
-    {
-        public int ProjectId { get; set; }
-    }
+	public int ProjectId { get; set; }
 }

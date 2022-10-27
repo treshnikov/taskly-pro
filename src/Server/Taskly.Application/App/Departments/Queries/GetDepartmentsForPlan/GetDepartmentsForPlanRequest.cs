@@ -1,10 +1,8 @@
 using MediatR;
 
-namespace Taskly.Application.Departments.Queries.GetDepartmentsForPlan
+namespace Taskly.Application.Departments.Queries.GetDepartmentsForPlan;
+
+public class GetDepartmentsForPlanRequest : IRequest<DepartmentShortInfoVm[]>
 {
-    public class GetDepartmentsForPlanRequest : IRequest<DepartmentShortInfoVm[]>
-    {
-        
-    }
 
 }

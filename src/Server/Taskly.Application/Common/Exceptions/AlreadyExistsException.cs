@@ -1,24 +1,22 @@
 ﻿using System.Runtime.Serialization;
 
-namespace Taskly.Application.Common.Exceptions
+namespace Taskly.Application.Common.Exceptions;
+
+public class AlreadyExistsException : Exception
 {
-    public class AlreadyExistsException : Exception
-    {
-        public AlreadyExistsException()
-        {
-        }
+	public AlreadyExistsException()
+	{
+	}
 
-        public AlreadyExistsException(string? message) : base(message)
-        {
-        }
+	public AlreadyExistsException(string? message) : base(message)
+	{
+	}
 
-        public AlreadyExistsException(string? message, Exception? innerException) : base(message, innerException)
-        {
-        }
+	public AlreadyExistsException(string? message, Exception? innerException) : base(message, innerException)
+	{
+	}
 
-        protected AlreadyExistsException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-        }
-    }
-
+	protected AlreadyExistsException(SerializationInfo info, StreamingContext context) : base(info, context)
+	{
+	}
 }

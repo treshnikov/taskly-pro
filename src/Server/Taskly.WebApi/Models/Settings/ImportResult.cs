@@ -1,7 +1,6 @@
-namespace Taskly.WebApi.Models
+namespace Taskly.WebApi.Models;
+
+public class ImportResult
 {
-    public class ImportResult
-    {
-        
-    }
+
 }

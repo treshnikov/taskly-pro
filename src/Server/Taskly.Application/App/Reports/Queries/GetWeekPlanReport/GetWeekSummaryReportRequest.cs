@@ -4,5 +4,5 @@ namespace Taskly.Application.App.Reports;
 
 public class GetWeekPlanReportRequest : IRequest<WeekPlanReportVm>
 {
-    public DateTime Monday { get; set; }
+	public DateTime Monday { get; set; }
 }
