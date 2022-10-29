@@ -5,14 +5,26 @@ using Taskly.Application.Interfaces;
 
 namespace Taskly.DAL;
 
+public class TasklyPersistenceOptions
+{
+	public string DbConnectionString { get; set; } = string.Empty;
+}
+
 public static class DependencyInjection
 {
-	public static IServiceCollection AddPersistence(this IServiceCollection services, IConfiguration configuration)
+
+	public static IServiceCollection AddPersistence(this IServiceCollection services, Action<TasklyPersistenceOptions> config)
 	{
-		var connectionString = configuration["DbConnection"];
+		if (config == null)
+		{
+			throw new ArgumentException(null, nameof(config));
+		}
+
+		TasklyPersistenceOptions tasklyPersistanceOptions = new();
+		config(tasklyPersistanceOptions);
 		services.AddDbContext<TasklyDbContext>(opt =>
 		{
-			opt.UseSqlite(connectionString);
+			opt.UseSqlite(tasklyPersistanceOptions.DbConnectionString);
 		});
 
 		services.AddScoped<ITasklyDbContext, TasklyDbContext>();
