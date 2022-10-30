@@ -11,9 +11,9 @@ namespace Taskly.WebApi.Controllers;
 [Route("api/v{version:apiVersion}/admin")]
 public class AdminController : BaseController
 {
-	private readonly IOptions<IntranetDbConnectionSettings> _intranetDbConnectionSettings;
+	private readonly IntranetDbConnectionSettings _intranetDbConnectionSettings;
 
-	public AdminController(IOptions<IntranetDbConnectionSettings> intranetDbConnectionSettings)
+	public AdminController(IntranetDbConnectionSettings intranetDbConnectionSettings)
 	{
 		_intranetDbConnectionSettings = intranetDbConnectionSettings;
 	}
@@ -22,7 +22,7 @@ public class AdminController : BaseController
 	[Authorize(Roles = RoleIdents.Admin)]
 	public async Task<ActionResult> ImportFromIntranetAsync()
 	{
-		var request = new ImportDataFromIntranetRequest(_intranetDbConnectionSettings.Value);
+		var request = new ImportDataFromIntranetRequest(_intranetDbConnectionSettings);
 		await Mediator.Send(request);
 		return Ok(new ImportResult());
 	}

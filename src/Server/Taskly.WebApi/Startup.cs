@@ -48,6 +48,7 @@ public class Startup
 
 		// IntranetDb connection config
 		services.Configure<IntranetDbConnectionSettings>(Configuration.GetSection(nameof(IntranetDbConnectionSettings)));
+		services.AddSingleton(resolver => resolver.GetRequiredService<IOptions<IntranetDbConnectionSettings>>().Value);
 
 		services.AddCors(options =>
 		{
