@@ -46,13 +46,7 @@ public class Startup
 			opt.JsonSerializerOptions.Converters.Add(new DateTimeNullableToNumberJsonConverter());
 		});
 
-		// IntranetDb connection config
-		services
-			.AddOptions<IntranetDbConnectionSettings>()
-			.BindConfiguration(nameof(IntranetDbConnectionSettings))
-			.ValidateDataAnnotations()
-			.ValidateOnStart();
-		services.AddScoped(resolver => resolver.GetRequiredService<IOptions<IntranetDbConnectionSettings>>().Value);
+		services.AddOptionsWithValidation<IntranetDbConnectionSettings, IntranetDbConnectionSettingsValidator>(nameof(IntranetDbConnectionSettings));
 
 		services.AddCors(options =>
 		{
