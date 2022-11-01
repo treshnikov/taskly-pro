@@ -59,7 +59,10 @@ public class SharepointProjectPlansMerger
 				? dbProjects.First(i => i.Id == sharepointTask.ProjectId.Value)
 				: dbProjects.First(i => i.ShortName == sharepointTask.ProjectName);
 
-			var dbTask = dbProject.Tasks.First(t => t.Description == sharepointTask.Description);
+			var dbTask = dbProject.Tasks.FirstOrDefault(
+					t => t.ProjectId == dbProject.Id &&
+					t.Description == sharepointTask.Description &&
+					t.Comment == sharepointTask.Comment);
 
 			// estimations by departments
 			var idx = 0;
@@ -183,7 +186,11 @@ public class SharepointProjectPlansMerger
 				? ProjectType.External
 				: ProjectType.Internal;
 
-			var dbTask = dbProject.Tasks.FirstOrDefault(t => t.ProjectId == dbProject.Id && t.Description == sharepointTask.Description);
+			var dbTask = dbProject.Tasks.FirstOrDefault(
+					t => t.ProjectId == dbProject.Id &&
+					t.Description == sharepointTask.Description &&
+					t.Comment == sharepointTask.Comment);
+
 			if (dbTask == null)
 			{
 				dbTask = new ProjectTask
@@ -202,7 +209,6 @@ public class SharepointProjectPlansMerger
 			}
 			else
 			{
-				dbTask.Comment = sharepointTask.Comment;
 				dbTask.Start = sharepointTask.Start;
 				dbTask.End = sharepointTask.End;
 			}
