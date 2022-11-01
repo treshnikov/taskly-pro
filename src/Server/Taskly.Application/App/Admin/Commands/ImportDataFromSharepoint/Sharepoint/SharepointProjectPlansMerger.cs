@@ -62,7 +62,9 @@ public class SharepointProjectPlansMerger
 			var dbTask = dbProject.Tasks.FirstOrDefault(
 					t => t.ProjectId == dbProject.Id &&
 					t.Description == sharepointTask.Description &&
-					t.Comment == sharepointTask.Comment);
+					t.Comment == sharepointTask.Comment &&
+					t.Start == sharepointTask.Start &&
+					t.End == sharepointTask.End);
 
 			// estimations by departments
 			var idx = 0;
@@ -189,7 +191,9 @@ public class SharepointProjectPlansMerger
 			var dbTask = dbProject.Tasks.FirstOrDefault(
 					t => t.ProjectId == dbProject.Id &&
 					t.Description == sharepointTask.Description &&
-					t.Comment == sharepointTask.Comment);
+					t.Comment == sharepointTask.Comment &&
+					t.Start == sharepointTask.Start &&
+					t.End == sharepointTask.End);
 
 			if (dbTask == null)
 			{
