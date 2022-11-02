@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Taskly.Application.App.Users.Specs;
 using Taskly.Application.Interfaces;
 
 namespace Taskly.Application.Users;
@@ -17,7 +18,7 @@ public class GetUsersRequestHandler : IRequestHandler<GetUsersRequest, IEnumerab
 			.Users
 			.Include(u => u.UserDepartments).ThenInclude(u => u.Department)
 			.Include(u => u.UserDepartments).ThenInclude(u => u.UserPosition)
-			.Where(u => u.QuitDate == null)
+			.Where(UserSpecs.WorksInTheCompany)
 			.AsNoTracking()
 			.OrderBy(u => u.Name)
 			.Select(u => UserVm.FromUser(u))
