@@ -87,7 +87,7 @@ public class IntranetReader
 		using var command = conn.CreateCommand();
 		var sql =
 			"SELECT u.cb_workentry, u.cb_workfinish, (isnull(u.cb_workfinish) or (u.cb_workfinish = '0000-00-00') or (u.cb_workfinish > now())) as isEmployee, u.cb_effectiverate, u.user_id, p.Title, u.firstname, u.middlename, u.lastname, u2.email, u.cb_departament_fact FROM jos_comprofiler u " +
-			"left join sms_position p on u.user_id = p.UserID and u.cb_departament_fact = p.DepartmentID " +
+			"left join sms_position p on u.user_id = p.UserID and u.cb_departament = p.DepartmentID " +
 			"left join jos_users u2 on u2.id = u.user_id ";
 
 		command.CommandText = sql;
