@@ -6,7 +6,7 @@ public class Spec<T> where T : class
 {
 	private readonly Expression<Func<T, bool>> _expression;
 
-	private Spec(Expression<Func<T, bool>> expression)
+	protected Spec(Expression<Func<T, bool>> expression)
 	{
 		_expression = expression;
 	}

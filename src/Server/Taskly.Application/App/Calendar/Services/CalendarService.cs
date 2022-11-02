@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Taskly.Application.App.Users.Specs;
 using Taskly.Application.Interfaces;
 using Taskly.Domain;
 
@@ -154,7 +155,7 @@ public class CalendarService : ICalendarService
 			weekInfo.HoursAvailableForPlanning *= userDep.Rate;
 
 			if (userDep.User.HiringDate > dt ||
-				(userDep.User.QuitDate is not null && dt >= userDep.User.QuitDate))
+				(!UserSpecs.WorksInTheCompany.IsSatisfiedBy(userDep.User) && dt >= userDep.User.QuitDate))
 			{
 				weekInfo.HoursAvailableForPlanning = 0;
 			}

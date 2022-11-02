@@ -1,5 +1,6 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Taskly.Application.App.Users.Specs;
 using Taskly.Application.Interfaces;
 
 namespace Taskly.Application.Departments.Queries;
@@ -52,7 +53,9 @@ public class GetDepartmentUsersRequestHandler : IRequestHandler<GetDepartmentUse
 			if (includeUsers)
 			{
 				// add users
-				foreach (var u in users.Where(u => u.WorksInTheCompany() && u.UserDepartments.Any(uu => uu.DepartmentId == newDepVm.Id)).OrderBy(u => u.Name))
+				foreach (var u in users
+					.Where(UserSpecs.WorksInTheCompany.IsSatisfiedBy)
+					.Where(u => u.UserDepartments.Any(uu => uu.DepartmentId == newDepVm.Id)).OrderBy(u => u.Name))
 				{
 					var userVm = new DepartmentUserVm
 					{

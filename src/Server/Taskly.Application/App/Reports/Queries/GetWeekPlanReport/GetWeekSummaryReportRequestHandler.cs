@@ -1,5 +1,6 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Taskly.Application.App.Users.Specs;
 using Taskly.Application.Calendar;
 using Taskly.Application.Interfaces;
 
@@ -32,11 +33,8 @@ public class GetWeekPlanReportRequestHandler : IRequestHandler<GetWeekPlanReport
 		{
 			var depUsers = await _dbContext.Users
 				.Include(i => i.UserDepartments)
-				.Where(u =>
-					// todo extract logic to a specification
-					u.HiringDate <= request.Monday &&
-					(u.QuitDate == null || u.QuitDate > request.Monday.AddDays(5)) &&
-					u.UserDepartments.Any(ud => ud.DepartmentId == dep.Id && ud.Rate > 0.1))
+				.Where(UserSpecs.WorkedAtWeek(request.Monday))
+				.Where(u => u.UserDepartments.Any(ud => ud.DepartmentId == dep.Id && ud.Rate > 0.1))
 				.OrderBy(i => i.Name)
 				.AsNoTracking()
 				.ToListAsync(cancellationToken);

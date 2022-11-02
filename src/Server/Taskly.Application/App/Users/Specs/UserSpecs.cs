@@ -8,4 +8,5 @@ public static class UserSpecs
 {
 	public static Spec<User> WorksInTheCompany => _worksInTheCompany;
 	private static readonly Expression<Func<User, bool>> _worksInTheCompany = u => u.QuitDate == null;
+	public static WorkedAtWeekUserSpec WorkedAtWeek(DateTime monday) => new(monday);
 }

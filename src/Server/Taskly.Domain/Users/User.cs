@@ -10,9 +10,4 @@ public class User
 	public DateTime? QuitDate { get; set; }
 	public ICollection<Role> Roles { get; set; }
 	public ICollection<UserDepartment> UserDepartments { get; set; }
-
-	public bool WorksInTheCompany()
-	{
-		return QuitDate is null;
-	}
 }
