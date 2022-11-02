@@ -28,8 +28,11 @@ Features:
 ## Debug mode
 - Navigate to `src/Server/Taskly.WebApi` and run `dotnet build` and then `dotnet run`. The server will create a SQLite DB and populate it with demo data.
 - Navigate to `src/Client` and run `npm i` and then `npm start` to build and run the client app.
-- Default account is `admin@admin.com` with the password 'admin'.
+- Default account is `admin@admin.com` with the password `admin`.
  
 ## Production mode
 - Run `scripts/publish-all.bat` for Windows or `scripts/publish-all.sh` for Linux / Mac.
 - Navigate to `dist` directory and run `Taskly.WebApi.exe`.
+
+## vscode
+- The project provides a set of prepared tasks that allow to build, run, and publish server/client parts or all of them just from vscode. To learn more check `.vscode/tasks.json`.
