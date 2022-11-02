@@ -29,6 +29,7 @@ public partial class ImportDataFromSharepointRequestHandler : IRequestHandler<Im
 			await sharepointPlanMerger.UpdateProjectPlan("import/ЭМУ.xlsx", 179, cancellationToken);
 			await sharepointPlanMerger.UpdateProjectPlan("import/ЭТЛ.xlsx", 177, cancellationToken);
 			await sharepointPlanMerger.UpdateProjectPlan("import/ЭТО.xlsx", 178, cancellationToken);
+			await sharepointPlanMerger.UpdateProjectPlan("import/ПСА.xlsx", 239, cancellationToken);
 
 			return Unit.Value;
 		}
