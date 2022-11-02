@@ -20,7 +20,7 @@ const OpenProjectDetailsButtonRenderer = (props: any) => {
     <Button
       variant='text'
       size='small'
-      style={{marginLeft: "5px", marginTop: "5px"}}
+      style={{ marginLeft: "5px", marginTop: "5px" }}
       onClick={e => { navigate("/projects/" + value) }}>
       {t('open')}
     </Button>
@@ -41,7 +41,9 @@ export const Projects: React.FunctionComponent = () => {
 
     const textLowerCase = text.toLocaleLowerCase()
     const res = projects.filter(p =>
-      p.name.toLocaleLowerCase().includes(textLowerCase) ||
+      p.name?.toLocaleLowerCase().includes(textLowerCase) ||
+      p.shortName?.toLocaleLowerCase().includes(textLowerCase) ||
+      p.сustomer?.toLocaleLowerCase().includes(textLowerCase) ||
       p.projectManager?.toLocaleLowerCase().includes(textLowerCase) ||
       p.chiefEngineer?.toLocaleLowerCase().includes(textLowerCase) ||
       p.id.toString().toLocaleLowerCase().includes(textLowerCase))
