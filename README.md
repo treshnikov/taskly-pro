@@ -1,18 +1,19 @@
 # Overview
-Taskly is a pet project that was developed to cover the needs of project planning processes for my employer.
+Taskly is a pet project that was developed to cover the needs of project planning processes.
 
-There are two main stages:
- - A "bird view" project plan that is used by the project managers to plan a large set of projects within 10-20 big tasks per project. Each project task has its description, time period, and estimations for each company's department.
-- Department plan - contains the weekly plan of a certain department for each employee. The heads of departments have to keep their department plans updated according to the project's tasks (that were planned in the previous step by project managers), and the available working hours of department employees.
+The system covers two stages of planning:
+- In the first step you add a list of projects. Each project contains a set of tasks. Every task has a time range and estimation. Estimation can be added for each department as a list of records - [Employee position; Hours]. As a result, we have a time-bound project plan mapped to the company's departments with estimated hours. Usually, this plan is prepared by project managers as a rough estimation.
+- In the second step you can run planning by week for every department. The system provides UI for each department that allows assigning planned working hours for a particular week and for a specific project task for a certain employee. As a result, we have a working plan for each employee in the given department.
+- And last but not least, we can combine planned and fact hours for analytics. Out of the box, the system provides reports that show available department hours grouped by weeks and planned project tasks that should be done in a certain time period. Also a weekly overview form is provided to display working plans for each department/employee. This form is useful for an overview of the weekly plan during meetings.
 
-As a result, project managers and department heads get a tool that provides the following features:
-- Planning project tasks, including work estimation for each department, qualification of employees, and available time ranges.
-- Scheduling work by week for each department's employee.
-- Showing all projects that contain work for the department.
-- Visualizing project tasks according to their estimation and dates in the weekly plan.
-- Highlighting weeks where a certain department cannot complete all scheduled tasks due to overload. 
-- Comparing planned hours in project with a working plan of the department.
-- Calculation of the load of the department and the required number of employees to perform the work on time.
+Features:
+- Handling users, departments, projects, tasks, task estimations, and holidays.
+- Planning project tasks, including work estimation for each department and employee qualifications.
+- Scheduling work by week for each employee in a certain department.
+- Visualizing all projects that contain tasks for the given department.
+- Highlighting weeks where a certain department cannot complete all scheduled tasks due to overload.
+- Comparing planned hours in a project with a working plan of the department.
+- Calculation the load of the department and the required number of employees to perform the work on time.
 
 ![](https://github.com/treshnikov/taskly-pro/blob/main/img/Taskly.png)
 
