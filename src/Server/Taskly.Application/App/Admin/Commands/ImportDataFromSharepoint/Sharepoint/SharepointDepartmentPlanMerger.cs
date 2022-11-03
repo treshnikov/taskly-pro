@@ -18,7 +18,7 @@ public class SharepointDepartmentPlanMerger
 		_dbContext = dbContext;
 	}
 
-	public async Task UpdateProjectPlan(string fileName, int departmentCode, CancellationToken cancellationToken)
+	public async Task UpdateProjectPlan(string fileName, int departmentCode, CancellationToken cancellationToken, Func<string, bool>? userFilterByName = null)
 	{
 		var path = Directory.GetParent(typeof(ImportDataFromIntranetRequestHandler).Assembly.Location)!.FullName;
 		var filePath = Path.Combine(path, fileName);
@@ -54,6 +54,11 @@ public class SharepointDepartmentPlanMerger
 
 		foreach (var planItem in plans)
 		{
+			if (userFilterByName != null && !userFilterByName(planItem.UserName))
+			{
+				continue;
+			}
+
 			var user = dbUsers.FirstOrDefault(i => i.Name == planItem.UserName);
 			if (user == null)
 			{
