@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 using Taskly.Application.Auth.Consts;
 using Taskly.Application.Users;
 using Taskly.WebApi.Models;

@@ -31,16 +31,10 @@ public class SharepointDepartmentPlanMerger
 		using var transaction = _dbContext.Database.BeginTransaction();
 		var dbDep = _dbContext.Departments.First(i => i.Code == departmentCode);
 
-		// remove old plans
-		var plan = _dbContext.DepartmentPlans.Include(i => i.Department).Where(i => i.Department.Code == departmentCode);
-		foreach (var item in plan)
-		{
-			_dbContext.DepartmentPlans.Remove(item);
-		}
-		await _dbContext.SaveChangesAsync(cancellationToken);
-
 		//extract plans from Excel
 		var plans = ExtractPlans(filePath);
+
+		await RemoveOldPlans(departmentCode, plans, cancellationToken);
 
 		var dbUsers = await _dbContext.Users
 			.Include(i => i.UserDepartments).ThenInclude(i => i.Department)
@@ -154,6 +148,27 @@ public class SharepointDepartmentPlanMerger
 
 		await _dbContext.SaveChangesAsync(cancellationToken);
 		transaction.Commit();
+	}
+
+	private async Task RemoveOldPlans(int departmentCode, List<SharepointUserPlan> newPlans, CancellationToken cancellationToken)
+	{
+		var weeks = newPlans.SelectMany(i => i.Weeks).Select(i => i.WeekStart);
+		var deleteFromDate = weeks.Min();
+		var deleteToDate = weeks.Max();
+
+		// remove old plans
+		var plan = _dbContext
+			.DepartmentPlans
+			.Include(i => i.Department)
+			.Where(i => i.Department.Code == departmentCode)
+			.Where(i => i.WeekStart >= deleteFromDate && i.WeekStart <= deleteToDate);
+
+		foreach (var item in plan)
+		{
+			_dbContext.DepartmentPlans.Remove(item);
+		}
+
+		await _dbContext.SaveChangesAsync(cancellationToken);
 	}
 
 	private static List<SharepointUserPlan> ExtractPlans(string filePath)

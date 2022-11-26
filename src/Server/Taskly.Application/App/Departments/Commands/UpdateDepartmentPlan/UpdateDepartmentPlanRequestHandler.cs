@@ -19,7 +19,7 @@ public class UpdateDepartmentPlanRequestHandler : IRequestHandler<UpdateDepartme
 		using var transaction = _dbContext.Database.BeginTransaction();
 
 		var dep = await _dbContext.Departments.FirstAsync(i => i.Id == request.DepartmentId, cancellationToken);
-		await RemoveDepartmentPlans(dep, cancellationToken);
+		await RemoveDepartmentPlansAsync(dep, request, cancellationToken);
 
 		foreach (var usr in request.Data)
 		{
@@ -46,13 +46,22 @@ public class UpdateDepartmentPlanRequestHandler : IRequestHandler<UpdateDepartme
 		return await Task.FromResult(Unit.Value);
 	}
 
-	private async Task RemoveDepartmentPlans(Department dep, CancellationToken cancellationToken)
+	private async Task RemoveDepartmentPlansAsync(Department dep, UpdateDepartmentPlanRequest request, CancellationToken cancellationToken)
 	{
-		var plan = _dbContext.DepartmentPlans.Where(i => i.DepartmentId == dep.Id);
+		var weeks = request.Data.SelectMany(i => i.Tasks).SelectMany(i => i.Plans).Select(i => i.WeekStart).Distinct();
+		var deleteFromDate = weeks.Min();
+		var deleteToDate = weeks.Max();
+
+		var plan = _dbContext
+			.DepartmentPlans
+			.Where(i => i.DepartmentId == dep.Id)
+			.Where(i => i.WeekStart >= deleteFromDate && i.WeekStart <= deleteToDate);
+
 		foreach (var item in plan)
 		{
 			_dbContext.DepartmentPlans.Remove(item);
 		}
+
 		await _dbContext.SaveChangesAsync(cancellationToken);
 	}
 }
