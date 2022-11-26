@@ -8,7 +8,7 @@ import { useHttp } from "../../hooks/http.hook";
 import { RefObject, useEffect, useState } from "react";
 import HotTable from "@handsontable/react";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux.hook";
-import { setCollapsedRows, setEndDate, setHiddenRows, setStartDate, toggleShowStatistics } from "../../redux/departmentPlanSlice";
+import { setCollapsedRows, setEndDate, setHiddenRows, setStartAndEndDates, setStartDate, toggleShowStatistics } from "../../redux/departmentPlanSlice";
 import { DepartmentUserPlan } from "../../models/DepartmentPlan/DepartmentPlanClasses";
 import { DepartmentPlanHelper } from "../../models/DepartmentPlan/DepartmentPlanHelper";
 import { toast } from 'react-toastify'
@@ -141,7 +141,18 @@ export const DepartmentPlanToolbar: React.FunctionComponent<DepartmentPlanToolba
             return
         }
 
-        dispatch(setStartDate(new Date(newValue).getTime()))
+        // when the user choose a start date that is greater than end date
+        if (newValue > endDate)
+        {
+            const newStartDate = new Date(newValue)
+            const newEndDate = new Date(newValue)
+            newEndDate.setFullYear(newEndDate.getFullYear() + 1)
+            dispatch(setStartAndEndDates({startDate: newStartDate.getTime(), endDate: newEndDate.getTime()}))        
+            
+            return;
+        }
+
+        dispatch(setStartDate(new Date(newValue).getTime()))        
     }
 
     const onEndDateChanged = (newValue: number | null | undefined, keyboardInputValue?: string) => {

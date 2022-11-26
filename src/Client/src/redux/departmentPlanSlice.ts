@@ -35,6 +35,11 @@ export const departmentPlanSlice = createSlice({
             state.endDate = action.payload
         },
 
+        setStartAndEndDates(state: DepartmentPlanState, action: PayloadAction<{ startDate: number, endDate: number }>) {
+            state.startDate = action.payload.startDate
+            state.endDate = action.payload.endDate
+        },
+
         setHideProjectsWithNoEstimation(state: DepartmentPlanState, action: PayloadAction<boolean>) {
             state.hideProjectsWithNoEstimation = action.payload
         },
@@ -58,7 +63,7 @@ export const departmentPlanSlice = createSlice({
     }
 });
 
-export const { setStartDate, setEndDate, setHideProjectsWithNoEstimation, setHiddenRows, toggleShowStatistics, toggleShowUserHolidays, setCollapsedRows } = departmentPlanSlice.actions;
+export const { setStartDate, setEndDate, setStartAndEndDates, setHideProjectsWithNoEstimation, setHiddenRows, toggleShowStatistics, 
+    toggleShowUserHolidays, setCollapsedRows } = departmentPlanSlice.actions;
 export const departmentPlan = (state: RootState) => state.appReducer;
 export default departmentPlanSlice.reducer
- 
